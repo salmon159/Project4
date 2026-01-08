@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/modifyCategoryItem/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/modifyCategoryItem/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_modifyCategoryItem_input.xsd" yfc:rootElement="ModifyCategoryItems">
+        <xsd:appinfo source="yfc:structure">
+            <ModifyCategoryItems hasAttributes="Y">
+                <Category hasAttributes="Y">
+                    <CategoryItemList>
+                        <CategoryItem hasAttributes="Y"/>
+                    </CategoryItemList>
+                </Category>
+            </ModifyCategoryItems>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ModifyCategoryItems" type="yfc:ModifyCategoryItemsXSDType"/>
+    <xsd:complexType name="ModifyCategoryItemsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Category"/>
+        </xsd:all>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ORGANIZATION">
+                <xsd:documentation>Calling Organization used to apply entitlements.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Category">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY">
+            <xsd:documentation>
+                <div>
+					Item category master table.
+					<br>Either the <code>CategoryKey</code> attribute or both the <code>OrganizationCode</code> and <code>CategoryPath</code> attributes must be passed and must be valid.</br>
+                    <Validation>
+                        <Condition>
+							If not passed:
+							</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+							If not valid:
+							</Condition>
+                        <Error Description="Category Not Found" ErrorCode="YCM0034"/>
+                    </Validation>
+                    <Validation>
+                        <Condition> 
+							If an item is created by a sub-catalog organization and that same sub-catalog organization is not the authorized sub-catalog organization or the owner of the parent category or category domain:
+							</Condition>
+                        <Error Description="Invalid category owner" ErrorCode="YCM83_011"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CategoryItemList"/>
+            </xsd:all>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The path for the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The code for the organization this category is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CategoryItemList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CategoryItem"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CategoryItem">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY_ITEM">
+            <xsd:documentation>
+                <div>
+							Stores list of items belonging to a category.
+							<br>Either the <code>ItemKey</code> attribute or the combination of the <code>OrganizationCode</code>, <code>ItemID</code>, and <code>UnitOfMeasure</code> attributes must be passed and must be valid.</br>
+                    <Validation>
+                        <Condition>
+									If an item cannot be uniquely identified given the input.
+									</Condition>
+                        <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+									If item belongs to an item with variations, it can only be added to a category that contains the item with variations and removed from a category that doesn't contain the item with variations.
+									</Condition>
+                        <Error
+                            Description="Children of an item with variations must be assigned to the same categories as the item with variations" ErrorCode="YCM91_001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Create/Delete</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Action">
+                        <xsd:enumeration value="Create"/>
+                        <xsd:enumeration value="Delete"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Along with OrganizationCode and UnitOfMeasure, it identifies a category item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Category item's primary key</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Organization that maintains catalog</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Unit of measure for the category Item</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

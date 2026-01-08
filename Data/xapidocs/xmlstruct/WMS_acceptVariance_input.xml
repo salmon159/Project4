@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- acceptVariance Input XML -->
+<CountRequest AcceptAllVariances="" CountRequestKey="Required"
+    Node="Required" ReasonCode="Required" ReasonText=""
+    SummaryTaskId="Required" xmlns="http://www.sterlingcommerce.com/documentation/WMS/acceptVariance/input">
+    <yfc:doc>
+        <Element EntityName="Location_Inventory_Audit"/>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AcceptAllVariances">
+                <Description>Pass this flag as Y to accept all the variances for a given count request.</Description>
+            </Attribute>
+            <Attribute DataType="Key"
+                EntityName="Location_Inventory_Audit"
+                Name="CountRequestKey" NameInEntity="Count_Request_Key">
+                <Description>
+                    <div>
+						Specifies the count request for which count was created. The <code>CountRequestKey</code> and <code>SummaryTaskId</code> combination should be a valid combination.
+							<Validation>
+                            <Condition>The <code>CountRequestKey</code> and <code>SummaryTaskId</code> combination is invalid.
+								</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="Invalid Count Request Key." ErrorCode="WMS00108"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key"
+                EntityName="Location_Inventory_Audit" Name="Node" NameInEntity="Node_Key">
+                <Description>
+                    <div>
+						Indicates the node or warehouse where inventory variance is being accepted.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> not passed.
+								</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ReasonCode"
+                EntityName="Location_Inventory_Audit" Name="ReasonCode" NameInEntity="Reason_Code">
+                <Description>
+                    <div>
+						Gives the reason code for the inventory transaction. The business significance of this reason code is that inventory bins will be tied to this reason code, which will be used to adjust inventory (for inventory synchronization purposes) on host systems.
+							<Validation>
+                            <Condition>
+                                <code>ReasonCode</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Not a valid <code>ReasonCode</code> in the system.
+								</Condition>
+                            <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>ReasonCode</code> does not have a valid inventory bin.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>ReasonCode</code> is associated to a valid inventory bin and variance resolution is for a misplaced LPN.
+								</Condition>
+                            <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ReasonText"
+                EntityName="Location_Inventory_Audit" Name="ReasonText" NameInEntity="Reason_Text">
+                <Description>Gives the free form reason for the inventory transaction.</Description>
+            </Attribute>
+            <Attribute DataType="SequenceNo" Name="SummaryTaskId">
+                <Description>
+                    <div>
+						A count request generates count tasks, one of which is the parent task for the remaining tasks. <code>SummaryTaskId</code> refers to the task id of such a parent task. A count request may have multiple summary tasks due to multiple count iterations. However from the perspective of accepting variance for a count request, the relevant summary task is the latest one.
+							<Validation>
+                            <Condition>
+                                <code>SummaryTaskId</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The <code>SummaryTaskId</code> and <code>CountRequestKey</code> combination is invalid.
+								</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>SummaryTaskId</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If the <code>SummaryTaskId</code> passed is not of the latest summary task.
+								</Condition>
+                            <Error
+                                Description="Summary Task is not the latest summary task." ErrorCode="WMS00144"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <CountResultList yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="Count_Result">
+                <Description>
+                    <div>Gives the list of count results to resolve variances.
+							<Validation>
+                            <Condition>If <code>AcceptAllVariances</code> is not Y then
+									<code>CountResultList</code> must be passed, if not passed 
+								</Condition>
+                            <Error Description="Invalid XML." ErrorCode="WMS00024"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <CountResult CaseId="" CountQuantity="" CountResultKey=""
+            InventoryStatus="" InventoryTagKey="" IsResolvable=""
+            ItemID="" LocationId="" OrganizationCode="" PalletId=""
+            ProductClass="" Segment="" SegmentType="" SerialNo=""
+            ShipByDate="" SystemQuantity="" TaskId="" TaskType=""
+            UnitOfMeasure="" VarianceAccepted="" VariancePercentage=""
+            VarianceQuantity="" VarianceType="" VarianceValue="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="N"
+                IncludeXMLFileName="YFS_Count_Result_tran.xml"
+                IncludeXMLPath="/CountResult" RemoveDBHouseKeeping="Y"/>
+            <yfc:doc>
+                <Element EntityName="Count_Result">
+                    <Description>
+                        <div> The Count Result being accepted for resolving variance.  
+						<Validation>
+                                <Condition>Either <code>CountResultKey</code> or Attributes to determine unique Count Result record needs to be passed. Error if a unique Count Result record is not obtained from the given parameters.
+							</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="LPNNo" Name="CaseId">
+                        <Description>
+                            <div>
+								A CaseId
+									<Validation>
+                                    <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+										</Condition>
+                                    <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity"
+                        EntityName="Count_Result" Name="CountQuantity" NameInEntity="Count_Quantity">
+                        <Description>Physical quantity of inventory existing in the warehouse as counted by the warehouse user.</Description>
+                    </Attribute>
+                    <Attribute DataType="Key" EntityName="Count_Result"
+                        Name="CountResultKey" NameInEntity="Count_Result_Key">
+                        <Description>
+                            <div>
+								Unique Key for the count result. If <code>CountResultKey</code> is passed, variance will be resolved for the inventory associated to this count result.
+									<Validation>
+                                    <Condition>
+                                    <code>CountResultKey</code> not passed.
+										</Condition>
+                                    <Error
+                                    Description="Invalid Count Result Key." ErrorCode="WMS00146"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="InventoryStatus"
+                        EntityName="Count_Result" Name="InventoryStatus" NameInEntity="Inventory_Status">
+                        <Description>
+                            <div>
+								Gives the status of the inventory.
+									<Validation>
+                                    <Condition>If <code>InventoryStatus</code> passed is not a valid status.
+										</Condition>
+                                    <Error
+                                    Description="Inventory Status not passed and transition is not specified for blank Status." ErrorCode="WMS00023"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Key" EntityName="Count_Result"
+                        Name="InventoryTagKey" NameInEntity="Inventory_Tag_Key">
+                        <Description>Unique key for the tag associated with inventory.</Description>
+                    </Attribute>
+                    <Attribute DataType="ItemID"
+                        EntityName="Count_Result" Name="ItemID" NameInEntity="Item_ID">
+                        <Description>
+                            <div>
+								Item identity for the inventory.
+									<Validation>
+                                    <Condition>If <code>SerialNo</code> is passed, <code>ItemID</code> along with <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                    <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="LocationId"
+                        EntityName="Count_Result" Name="LocationId" NameInEntity="Location_Id">
+                        <Description>
+                            <div>
+								Indicates the location where inventory variance is being accepted.
+									<Validation>
+                                    <Condition>If <code>LocationId</code> is not a valid location.
+										</Condition>
+                                    <Error
+                                    Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="OrgCode"
+                        EntityName="Count_Result"
+                        Name="OrganizationCode" NameInEntity="Organization_Code">
+                        <Description>
+                            <div>
+								Indicates the inventory organization of the item whose variance is being accepted.
+									<Validation>
+                                    <Condition>If <code>SerialNo</code> is passed, <code>OrganizationCode</code> along with <code>ItemID</code>, <code>ProductClass</code> and <code>UnitOfMeasure</code> become mandatory. 
+										</Condition>
+                                    <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="LPNNo" Name="PalletId">
+                        <Description>
+                            <div>
+								A PalletId 
+									<Validation>
+                                    <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+										</Condition>
+                                    <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="ProductClass"
+                        EntityName="Count_Result" Name="ProductClass" NameInEntity="Product_Class">
+                        <Description>
+                            <div>
+								Item identity for the inventory.
+									<Validation>
+                                    <Condition>If <code>SerialNo</code> is passed, <code>ProductClass</code> along with <code>UnitOfMeasure</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                    <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Segment"
+                        EntityName="Count_Result" Name="Segment" NameInEntity="Segment">
+                        <Description>Segment for particular enterprise or organization.</Description>
+                    </Attribute>
+                    <Attribute DataType="SegmentType"
+                        EntityName="Count_Result" Name="SegmentType" NameInEntity="Segment_Type">
+                        <Description>SegmentType for particular enterprise or organization.</Description>
+                    </Attribute>
+                    <Attribute DataType="SerialNo"
+                        EntityName="Count_Result" Name="SerialNo" NameInEntity="Serial_No">
+                        <Description>
+                            <div>
+								Unique identity for each serial.
+									<Validation>
+                                    <Condition>If passed, item details comprising <code>ItemID</code>, <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory. Validation if <code>SerialNo</code> is passed and Item details are not passed
+										</Condition>
+                                    <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity"
+                        EntityName="Count_Result" Name="SystemQuantity" NameInEntity="System_Quantity">
+                        <Description>Gives the system quantity for the inventory.</Description>
+                    </Attribute>
+                    <Attribute DataType="UOM" EntityName="Count_Result"
+                        Name="UnitOfMeasure" NameInEntity="Uom">
+                        <Description>
+                            <div>
+								Item identity for the inventory.
+									<Validation>
+                                    <Condition>If <code>SerialNo</code> is passed, <code>UnitOfMeasure</code> along with <code>ProductClass</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                    <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity"
+                        EntityName="Count_Result"
+                        Name="VarianceQuantity" NameInEntity="Variance_Quantity">
+                        <Description>
+                            <div>
+								Variance quantity for the inventory. Inventory adjustment will not happen if VarianceQuantity is zero. The negative quantity specifies missing inventory and hence negative adjustment needs to be performed to resolve variance. The positive quantity specifies new inventory and hence positive adjustment needs to be performed to resolve variance 
+									<Validation>
+                                    <Condition>Validation If <code>SerialNo</code> is passed, the quantity is not 0 or +/-1.
+										</Condition>
+                                    <Error
+                                    Description="Invalid Serial Quantity." ErrorCode="WMS00145"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-20"
+                        EntityName="Count_Result" Name="VarianceType" NameInEntity="Variance_Type">
+                        <Description>
+                            <div>
+								Gives the variance type. For items, it will be <i>New</i> if <code>VarianceQuantity</code> &gt; 0, <i>Missing</i> if <code>VarianceQuantity</code> &lt; 0, and <i>No Variance</i> otherwise. For License Plates however, this will not be computed based on <code>VarianceQuantity</code>. For License Plates, <code>VarianceType</code> will set to <i>New</i> if a Case/Pallet is found at a Location when it is not present in the system inventory at that Location, <i>Missing</i> if the Case/Pallet that is supposed to exist at a Location as per the system inventory is not found and <i>No Variance</i> for situations when there is no count discrepancy.
+								</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="VarianceValue"
+                        EntityName="Count_Result" Name="VarianceValue" NameInEntity="Variance_Value">
+                        <Description>
+                            <div>
+								Variance value for the inventory. <code>VarianceValue</code> for an item is the product of item's <code>VarianceQuantity</code> and Unit Cost of the item.
+								</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <CountResultTag BatchNo="" CountResultKey=""
+                CountResultTagKey="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" RevisionNo="">
+                <yfc:includeInParent IncludeXMLChildNodes="N"
+                    IncludeXMLFileName="YFS_Count_Result_Tag_master.xml"
+                    IncludeXMLPath="/CountResultTag" RemoveDBHouseKeeping="Y"/>
+                <yfc:doc>
+                    <Element EntityName="Count_Result_Tag">
+                        <Description>Gives the information about the tag to which inventory belongs. Attributes passed in this element will be used to identify a tag for the item in inventory based on attributes marked as unique tag attributes in the item catalog.</Description>
+                    </Element>
+                </yfc:doc>
+            </CountResultTag>
+        </CountResult>
+    </CountResultList>
+</CountRequest>

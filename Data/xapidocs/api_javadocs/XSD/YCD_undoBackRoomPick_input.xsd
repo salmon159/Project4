@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/undoBackRoomPick/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/undoBackRoomPick/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCD_undoBackRoomPick_input.xsd" yfc:rootElement="UndoPick">
+        <xsd:appinfo source="yfc:structure">
+            <UndoPick>
+                <Shipment hasAttributes="Y">
+                    <ShipmentLines>
+                        <ShipmentLine hasAttributes="Y"/>
+                    </ShipmentLines>
+                    <ShipmentStatusAudit hasAttributes="Y"/>
+                </Shipment>
+            </UndoPick>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="UndoPick" type="yfc:UndoPickXSDType"/>
+    <xsd:complexType name="UndoPickXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div> The shipment to undo pick. Pass  <code>ShipmentKey</code>
+                    <i>or</i> pass <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code>  to identify the shipment.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentLines"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentStatusAudit"/>
+            </xsd:all>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionId" type="yfctype:TranId" use="required">
+                <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                    <xsd:documentation>
+                        <div>Identifies a transaction. The transaction identified must be derived from
+					 the abstract transaction <code>CHANGE_SHIPMENT_STATUS</code>.
+					 <Validation>
+                                <Condition>Valid <code>TransactionId</code> must be passed.
+								</Condition>
+                                <Error
+                                    Description="Invalid Transaction Id" ErrorCode="YCD00016"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLine">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+            <xsd:documentation>
+                <div> The shipment line to undo pick. Pass  <code>ShipmentLineKey</code>
+                    <i>or</i>
+                    <code>ShipmentLineNo</code>and <code>ShipmentSubLineNo</code>  to identify a shipment line uniquely.
+					 <Validation>
+                        <Condition>At least one <code>ShipmentLine</code> must be passed.
+								</Condition>
+                        <Error
+                            Description="Invalid Input. At least one shipment line should be provided in the input" ErrorCode="YCD00019"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipmentLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>A part of the primary key . The shipment line number is unique for a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentSubLineNo"
+                type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_SUB_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>This is a part of the unique key. ShipmentSubLineNo along with the ShipmentLineNo is used to identify the logical kit component shipment line. The value of this field is zero - for kit parent shipment lines and shipment lines with items that are not kit components, and greater than zero if the the shipment line corresponds to a logical kit component item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentStatusAudit">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_STATUS_AUDIT">
+            <xsd:documentation>This table stores shipment status change audit. Each time the shipment status changes because of a business process, an audit is posted along with the status, timestamp, reason code and text, user ID and program ID. All transactions in the shipment pipeline have entries in this table upon completion of a transaction.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_SHIPMENT_STATUS_AUDIT">
+                    <xsd:documentation>Reason code indicating the reason for the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_SHIPMENT_STATUS_AUDIT">
+                    <xsd:documentation>Free-form reason text indicating any additional information related to the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StatusDate" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

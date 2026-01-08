@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/createCalendar/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/createCalendar/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_createCalendar_input.xsd" yfc:rootElement="Calendar">
+        <xsd:appinfo source="yfc:structure">
+            <Calendar hasAttributes="Y">
+                <InheritFromCalendar hasAttributes="Y"/>
+                <EffectivePeriods>
+                    <EffectivePeriod hasAttributes="Y">
+                        <Shifts>
+                            <Shift hasAttributes="Y"/>
+                        </Shifts>
+                    </EffectivePeriod>
+                </EffectivePeriods>
+                <CalendarDayExceptions>
+                    <CalendarDayException hasAttributes="Y">
+                        <ExceptionShifts>
+                            <ExceptionShift>
+                                <Shift hasAttributes="Y"/>
+                            </ExceptionShift>
+                        </ExceptionShifts>
+                    </CalendarDayException>
+                </CalendarDayExceptions>
+            </Calendar>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Calendar" type="yfc:CalendarXSDType">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR">
+            <xsd:documentation>
+                <div>
+				This is a mandatory element. It stores information related to a Calendar. A calendar can be created for an organization or for a ship node. A calendar is created by the <code>createCalendar</code> API and managed by <code>changeCalendar</code> API. 
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CalendarXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InheritFromCalendar"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EffectivePeriods"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CalendarDayExceptions"/>
+        </xsd:all>
+        <xsd:attribute name="AllowShiftOverride" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="ALLOW_SHIFT_OVERRIDE" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Indicates whether shifts are overriden for an inherited Calendar.Valid values are 'Y', 'N' and null. Default value is null.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CalendarDescription"
+            type="yfctype:Description" use="optional">
+            <xsd:annotation yfc:columnName="CALENDAR_DESCRIPTION" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Description of the Calendar.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CalendarId" type="yfctype:Identifier" use="required">
+            <xsd:annotation yfc:columnName="CALENDAR_ID" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>
+                    <div>
+					Unique key to identify a Calendar.
+						<Validation>
+                            <Condition>
+                                <code>CalendarId</code> must be passed. If not passed:
+							</Condition>
+                            <Error Description="CalendarId is mandatory" ErrorCode="YFS10512"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>
+                    <div>
+					The organization that owns the the Calendar.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be passed. If not passed:
+							</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory" ErrorCode="YFS10513"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be valid. If not valid:
+							</Condition>
+                            <Error Description="Invalid Organization" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="InheritFromCalendar">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR">
+            <xsd:documentation>
+                <div>
+				The parent calendar for which this calendar inherites its definition from.  Either <code>CalendarKey</code> or {<code>CalendarId</code> and <code>OrganizationCode</code>} can be used to identify the parent calendar of this calendar.
+				<br/>The parent calendar has the following restrictions:
+				<br/>The parent calendar cannot inherit its definition from another calendar.  
+				<br/>The parent calendar must belong to the organization of this calendar or its primary enterprise.
+					<Validation>
+                        <Condition>
+						Invalid Calendar information provided.
+						</Condition>
+                        <Error Description="Calendar not found." ErrorCode="YFS10516"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Parent calendar inherits its definition from another calendar.
+						</Condition>
+                        <Error
+                            Description="The parent calendar cannot inherit its definition from another calendar." ErrorCode="YCP75_00008"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The parent calendar does not belong to the organization of this calendar or its primary enterprise.
+						</Condition>
+                        <Error
+                            Description="The parent calendar must belong to the organization of this calendar or its primary enterprise." ErrorCode="YCP75_00009"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CalendarId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_ID" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>CalendarId</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InheritCalendarKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_KEY" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>CalendarKey</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>OrganizationCode</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EffectivePeriods">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EffectivePeriod"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EffectivePeriod">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+            <xsd:documentation>
+                <div>
+						This is an optional element. Stores information about the Shift Effective Periods for a Calendar. Shift Effective Periods can be created for a date range. Shift Effective Periods can be created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API. A calendar can have multiple Effective Periods specified.  However, a calendar that inherits from another calendar cannot define its own Effective Periods as they will be derived from the parent calendar.
+							<Validation>
+                        <Condition>
+								One <code>EffectivePeriod</code> should not overlap another. If they overlap:
+								</Condition>
+                        <Error
+                            Description="EffectivePeriods should not overlap" ErrorCode="YFS10511"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+								If this calendar is inheriting its definition from another calendar and an <code>EffectivePeriod</code> is specified:
+								</Condition>
+                        <Error
+                            Description="Inherited calendar cannot define any EffectivePeriods." ErrorCode="YCP75_00007"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shifts"/>
+            </xsd:all>
+            <xsd:attribute name="EffectiveFromDate" type="yfctype:Date" use="required">
+                <xsd:annotation yfc:columnName="EFFECTIVE_FROM_DATE" yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+                    <xsd:documentation>
+                        <div>
+							The date from which shift is effective.
+								<Validation>
+                                <Condition>
+                                    <code>EffectiveFromDate</code> must be passed. If not passed:
+									</Condition>
+                                <Error
+                                    Description="EffectiveFromDate and EffectiveToDate must be passed" ErrorCode="YFS10521"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>EffectiveFromDate</code> must be before <code>EffectiveToDate</code>. If not:
+									</Condition>
+                                <Error
+                                    Description="EffectiveFromDate must come before EffectiveToDate" ErrorCode="YFS10522"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EffectiveToDate" type="yfctype:Date" use="required">
+                <xsd:annotation yfc:columnName="EFFECTIVE_TO_DATE" yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+                    <xsd:documentation>
+                        <div>
+							The date on which shift expires. 
+								<Validation>
+                                <Condition>
+                                    <code>EffectiveToDate</code> must be passed. If not passed:
+									</Condition>
+                                <Error
+                                    Description="EffectiveFromDate and EffectiveToDate must be passed" ErrorCode="YFS10521"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>EffectiveToDate</code> must be after <code>EffectiveFromDate</code>. If not:
+									</Condition>
+                                <Error
+                                    Description="EffectiveFromDate must come before EffectiveToDate" ErrorCode="YFS10522"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shifts">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Shift">
+                    <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT">
+                        <xsd:documentation>
+                            <div>
+								This is an optional element. It stores information related to a shift. Shifts can be defined for a given effective period; this API indicates the <code>ShiftName</code>, <code>ShiftStartTime</code>, <code>ShiftEndTime</code>, and the day of week that shift is valid. A shift is created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+									<Validation>
+                                    <Condition>
+                                    <code>ShiftStartTime</code> and <code>ShiftEndTime</code> must be passed and must be valid. If not passed:
+										</Condition>
+                                    <Error
+                                    Description="ShiftStartTime and ShiftEndTime must be passed" ErrorCode="YFS10518"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+										Valid values for <code>*Valid</code> are <code>
+                                    <b>Y</b>
+                                    </code> or <code>
+                                    <b>N</b>
+                                    </code>. There is no validation for <code>*Valid</code>.
+										</Condition>
+                                </Validation>
+                            </div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="FridayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FRIDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Friday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MondayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MONDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Monday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SaturdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SATURDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Saturday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftEndTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_END_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift ends.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftName"
+                            type="yfctype:ShiftName" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_NAME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Name for shift.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftStartTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_START_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift starts.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftType"
+                            type="yfctype:ShiftType" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_TYPE" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Future considerations.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SundayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SUNDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Sunday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ThursdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="THURSDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Thursday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="TuesdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="TUESDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Tuesday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="WednesdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="WEDNESDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Wednesday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CalendarDayExceptions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:CalendarDayException"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CalendarDayException">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+            <xsd:documentation>
+                <div>
+					This is an optional element. It stores information about the Calendar Day Exceptions for a Calendar. Calendar Day Exceptions are created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ExceptionShifts"/>
+            </xsd:all>
+            <xsd:attribute name="Date" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="EXCEPTION_DATE" yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+                    <xsd:documentation>
+                        <div>
+						The Date for which the exception has been specified.
+							<Validation>
+                                <Condition>
+                                    <code>Date</code> must fall into some of the effective period specified.  If the calendar inherits its definition from another calendar, <code>Date</code> must fall into some of the effective period of the parent calendar.  If not:
+								</Condition>
+                                <Error
+                                    Description="Exception date does not fall into any effective periods" ErrorCode="YFS10517"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExceptionType" type="yfctype:Text-1" use="optional">
+                <xsd:annotation yfc:columnName="EXCEPTION_TYPE" yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+                    <xsd:documentation>
+                        <div>
+						The Exception Type. Valid values are: <code>
+                                <b>1</b>
+                            </code> (Working Day) and <code>
+                                <b>0</b>
+                            </code> (Off Day). There is no validation. If <code>ExceptionType</code> is set to <code>
+                                <b>0</b>,</code> all of the exception shifts are removed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ExceptionShifts">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ExceptionShift"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ExceptionShift">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_EXCP_SHIFT">
+            <xsd:documentation>
+                <div>
+								This is an optional element that specifies an exception shift for a specific exception date. It stores information about the Exception Shift of Calendar Day Exceptions for a Calendar. Exception shifts can be created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+								<Validation>
+                        <Condition>
+									If the calendar inherits its definition from another calendar and the start time and end time of the exception shift do not match the start time and end time of any standard shifts in the effective period of the parent calendar.  
+									</Condition>
+                        <Error
+                            Description="The parent calendar does not have any shifts that match the exception shift of the child calendar." ErrorCode="YCP75_00010"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Shift">
+                    <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT">
+                        <xsd:documentation>Stores information related to a Shift. Shifts can be defined for a given effective period. A Shift is created or managed by the createCalendar API or changeCalendar API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="ShiftEndTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_END_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift ends.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftStartTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_START_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift starts.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftType"
+                            type="yfctype:ShiftType" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_TYPE" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Future considerations.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

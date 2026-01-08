@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM
+     IBM Sterling Selling and Fulfillment Suite
+     (C) Copyright IBM Corp. 2001, 2013 All Rights Reserved.
+     US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<!-- getPage input XML -->
+<Page PageNumber="" PageSetToken="" PageSize="" PaginationStrategy=""
+    Refresh="" StartRowNumber="" XMLPath="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/getPage/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Integer" Name="PageNumber">
+                <Description>
+                    <div>Page number to retrieve. Page numbers are 1-based (the first page number is 1).</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="PageSetToken">
+                <Description>
+                    <div>Reference to an existing page result to extract data from. If it doesn't exist, this token will be used to identify a new set of pages. This attribute is only used when the <code>PaginationStrategy</code> is GENERIC.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Integer" Name="PageSize">
+                <Description>
+                    <div>Number of records per page</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="PaginationStrategy">
+                <Options IsEnumeration="Y">
+                    <Option
+                        Description="Page data from any List API by executing the API normally and post-processing the results."
+                        IsDefault="Y" Value="GENERIC"/>
+                    <Option
+                        Description="Uses database-specific SQL commands to fetch a specific page of data. Note this is not supported on all databases." Value="ROWNUM"/>
+                    <Option
+                        Description="Retrieves data from the database up to and including the requested page, then discards the unused portion." Value="RESULTSET"/>
+                    <Option
+                        Description="Given a reference to the last record of a page of data, returns the next page by manipulating the SQL where clause." Value="NEXTPAGE"/>
+                </Options>
+            </Attribute>
+            <Attribute DataType="Boolean" Name="Refresh">
+                <Options IsEnumeration="Y">
+                    <Option
+                        Description="Discard any results associated with the PageSetToken and re-execute the API." Value="Y"/>
+                    <Option
+                        Description="Return data from a cache if available"
+                        IsDefault="Y" Value="N"/>
+                </Options>
+            </Attribute>
+            <Attribute DataType="Integer" Name="StartRowNumber">
+                <Description>
+                    <div>Row number of the first record in the page. This <code>StartRowNumber</code>
+				takes precedence over the <code>PageNumber</code> attribute when determining how to retrieve
+				records. Row numbers are 0-based (the first row number is 0).</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="XMLPath">
+                <Description>
+					Path of the parent output XML element whose children will be paged.
+					For example, the <code>User</code> elements in the following XML will be
+					paged when an <code>XMLPath</code> of <code>/UserList</code>
+					is given.<br/>
+                    <pre>&lt;Organization&gt;
+    &lt;UserList&gt;
+        &lt;User Loginid="User1"/&gt;
+        &lt;User Loginid="User2"/&gt;
+    &lt;/UserList&gt;
+&lt;/Organization&gt;</pre>
+					Note if the <code>XMLPath</code> is not found in the output, the
+					output of <code>getPage</code> will be marked as invalid.
+					<p>
+					This attribute is only supported for the GENERIC <code>PaginationStrategy</code>.
+					The default behavior is to select the root element. To explicitly select the root element, use a single slash (<code>/</code>).
+					</p>
+                </Description>
+            </Attribute>
+        </Attributes>
+        <Element>
+            <Description>
+                <div>Paginate an API.
+					<Validation>
+                        <Condition>If PaginationStrategy is not GENERIC or ROWNUM or RESULTSET or NEXTPAGE</Condition>
+                        <Error Description="Invalid pagination strategy" ErrorCode="PLT3005"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+    </yfc:doc>
+    <ReferenceData yfc:AllowAnyElement="skip">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>Search for a page of data that contains this record. Unique identifiers for the record must be given.</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ReferenceData>
+    <PreviousPage PageNumber="" yfc:AllowAnyElement="skip">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Integer" Name="PageNumber">
+                    <Description>
+                        <div>The page number of the page represented by this data. If this attribute is given and the data is found, the resulting page number will be one greater than this one.</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+            <Element>
+                <Description>
+                    <div>Find a page of data immediately following this record. Unique identifiers for the record must be given.</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </PreviousPage>
+    <API IsFlow="" Name="Required" Version="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="String" Name="IsFlow">
+                    <Description>
+                        <div>
+							Set value to Y only if paginating a service. (NOTE: Only 'GENERIC' strategy is supported while paginating a Service.)		
+						</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-100" Name="Name">
+                    <Description>
+                        <div>Name of the API to call.</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-10" Name="Version">
+                    <Description>
+                        <div>
+							Version number of the API. Only provide a
+							value if a specific version of the API is
+							needed.
+						</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <!-- The Input element must contain a child element that corresponds to
+			the document element of the api input -->
+        <Input yfc:AllowAnyElement="skip" yfc:DTDOccurrence="REQUIRED">PCDATA</Input>
+        <Template yfc:AllowAnyElement="skip">PCDATA</Template>
+    </API>
+</Page>

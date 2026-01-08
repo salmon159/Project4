@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/manageItemBasedAllocationTrigger/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/manageItemBasedAllocationTrigger/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_manageItemBasedAllocationTrigger_input.xsd" yfc:rootElement="ItemBasedAllocationTrigger">
+        <xsd:appinfo source="yfc:structure">
+            <ItemBasedAllocationTrigger hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ItemBasedAllocationTrigger" type="yfc:ItemBasedAllocationTriggerXSDType">
+        <xsd:annotation yfc:tableName="YFS_IBA_TRIGGER">
+            <xsd:documentation>
+                <div>
+				Provide information for an item-based allocation trigger to be processed by the Item-Based Allocation agent.  The <code>OrganizationCode</code>, <code>ItemID</code>, <code>UnitOfMeasure</code>, <code>ProductClass</code>, and <code>Node</code> can be used to uniquely identify an item-based allocation trigger.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemBasedAllocationTriggerXSDType">
+        <xsd:attribute name="IBARequired" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IBA_REQUIRED" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>This flag indicates that Item Based Allocation process is required for this item and node combination.  Valid Values: Y/N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IBARunRequired" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IBA_RUN_REQUIRED" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>This flag indicates that Item Based Allocation agent must process this trigger.  This will not be set to Y unless the IBA_REQUIRED field is set to Y.  Valid Values: Y/N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>
+                    <div>
+				The identifier of the inventory item.
+				<Validation>
+                            <Condition>
+                                <code>ItemID</code> is a mandatory attribute. If not passed:
+					</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing" ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LastIBAProcessedTimestamp"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="LAST_IBA_PROCESSED_TS" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>The timestamp of the last time that the Item Based Allocation agent successfully processed this trigger.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>
+                    <div>
+					The node that is triggered to be processed by the Item-Base Reallocation agent.
+					<Validation>
+                            <Condition>Must an existing ship node.
+						</Condition>
+                            <Error Description="Invalid ship node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                 Valid value is <b>
+                            <code>Delete</code>
+                        </b> or Null.  If not provided the item-based allocation trigger will be created or modified.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>
+                    <div>
+				The inventory organization that maintains the inventory item.
+				<Validation>
+                            <Condition>Must be an existing organization.				
+					</Condition>
+                            <Error Description="Invalid organization." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessOverByTimestamp"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="PROCESS_OVER_BY_TS" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>The timestamp that system expects the Item Based Allocation process to be over by.   System will treat the PROCESSING_BY_AGENT flag as N regardless of the actual value when current timestamp is after this timestamp.  This can be used in the scenario when the Item Based Allocation agent does not complete its operation due to some failures and the PROCESSING_BY_AGENT flag does not get reset to N.  Default Value: current timestamp.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessingByAgent" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="PROCESSING_BY_AGENT" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>This flag indicates that this trigger is being processed by the Item Based Allocation agent.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>The product class of the inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_IBA_TRIGGER">
+                <xsd:documentation>The unit of measure of the inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/postPendingAdjustments/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/postPendingAdjustments/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_postPendingAdjustments_input.xsd" yfc:rootElement="Adjustments">
+        <xsd:appinfo source="yfc:structure">
+            <Adjustments>
+                <ShipNode hasAttributes="Y">
+                    <Item hasAttributes="Y">
+                        <Adjustment hasAttributes="Y"/>
+                    </Item>
+                </ShipNode>
+            </Adjustments>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Adjustments" type="yfc:AdjustmentsXSDType"/>
+    <xsd:complexType name="AdjustmentsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ShipNode"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipNode">
+        <xsd:annotation yfc:tableName="YFS_SHIP_NODE">
+            <xsd:documentation>This table stores receiving node, ship node, and distribution centers in the system for various organizations.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Item"/>
+            </xsd:sequence>
+            <xsd:attribute name="ShipNode" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+						Business key or unique identifier for a ship node. Adjustments pending only on this ship node are considered. Inventory rules are read for the ship node's owner organization's inventory consolidator.
+							<Validation>
+                                <Condition> If <code>ShipNode</code> is not passed:</Condition>
+                                <Error Description="Invalid shipnode" ErrorCode="YFS10048"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> If <code>ShipNode</code> is not a valid ship node:</Condition>
+                                <Error Description="Invalid shipnode" ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+            <xsd:documentation>
+                <div>
+					Inventory costing related table. Picked up by the API to post adjustments. Stores adjustments that have not been posted yet for costing purposes.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Adjustment"/>
+            </xsd:sequence>
+            <xsd:attribute name="AccountNo" type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="ACCOUNT_NO" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+							Used only if <code>PostType</code> is <b>
+                                <code>02</code>
+                            </b>;  otherwise used from adjustment element.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The currency of the pending adjustment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PostType" type="yfctype:Text-2" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <b>
+                                <code>01</code>
+                            </b> for Individual; <b>
+                                <code>02</code>
+                            </b> for summed up. If <code>PostType</code> is not <b>
+                                <code>02</code>
+                            </b>, is not valid, or is not passed, it is defaulted to <b>
+                                <code>01</code>
+                            </b>.	
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+							Used only if <code>PostType</code> is <b>
+                                <code>02</code>
+                            </b>;  otherwise used from adjustment element.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_2" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+							Used only if <code>PostType</code> is <b>
+                                <code>02</code>
+                            </b>;  otherwise used from adjustment element.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitCost" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_COST" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+							Used only if <code>PostType</code> is <b>
+                                <code>02</code>
+                            </b>;  otherwise used from adjustment element.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Adjustment">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+            <xsd:documentation>
+                <div>
+								Inventory costing related table. Stores adjustments that have not been posted yet for costing purposes. Details for the items picked for adjustments. 
+                            The attributes <code>UnitCost</code>, <code>AccountNo</code>, <code>Reference_1</code>, and <code>Reference_2</code> are used only if PostType is <b>
+                        <code>02</code>
+                    </b>; otherwise, the individual record's fields are used. PostTypes: <b>
+                        <code>01</code>
+                    </b> for Individual and <b>
+                        <code>02</code>
+                    </b> for summed up. <b>
+                        <code>01</code>
+                    </b> is the default.
+                            </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AccountNo" type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="ACCOUNT_NO" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+								Used only if <code>PostType</code> is <b>
+                                <code>01</code>
+                            </b>; otherwise used from item element.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AdjustmentKey" type="yfctype:Key" use="required">
+                <xsd:annotation
+                    yfc:columnName="INVENTORY_PENDING_ADJ_KEY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+                            <code>AdjustmentKey</code> is the primary key of for the YFS_INVENTORY_PENDING_ADJ table. Adjustments are posted for this record. If <code>AdjustmentKey</code> is passed, it should exist in the YFS_INVENTORY_PENDING_ADJ table and the status should not be <b>
+                                <code>02</code>
+                            </b>. If <code>AdjustmentKey</code> is not passed, the status is defaulted to <b>
+                                <code>01</code>
+                            </b>. 
+									<Validation>
+                                <Condition> If no record is found for the key:</Condition>
+                                <Error Description="No Record Found" ErrorCode="YFS10001"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> If status for the record is 02:</Condition>
+                                <Error Description="Already Posted" ErrorCode="YFS10401"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The currency of the pending adjustment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Date" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="ADJUSTMENT_DATE" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The adjustment date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The quantity of the pending adjustment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+								Used only if <code>PostType</code> is <b>
+                                <code>01</code>
+                            </b>; otherwise used from item element.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_2" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+								Used only if <code>PostType</code> is <b>
+                                <code>01</code>
+                            </b>; otherwise used from item element.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplyReference"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="SUPPLY_REFERENCE" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The supply reference.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplyReferenceType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SUPPLY_REFERENCE_TYPE" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>The supply reference type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitCost" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_COST" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                    <xsd:documentation>
+                        <div>
+								Used only if <code>PostType</code> is <b>
+                                <code>01</code>
+                            </b>; otherwise used from item element.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

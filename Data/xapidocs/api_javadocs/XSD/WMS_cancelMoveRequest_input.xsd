@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/cancelMoveRequest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/cancelMoveRequest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_cancelMoveRequest_input.xsd" yfc:rootElement="MoveRequest">
+        <xsd:appinfo source="yfc:structure">
+            <MoveRequest hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="MoveRequest" type="yfc:MoveRequestXSDType">
+        <xsd:annotation yfc:tableName="YFS_MOVE_REQUEST">
+            <xsd:documentation>This table stores all the move requests that are created for a node. The move requests may be created from any activity group.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="MoveRequestXSDType">
+        <xsd:attribute name="MoveRequestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_REQUEST_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_MOVE_REQUEST</code> table.
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (MoveRequestNo and Node) must be passed. Error if MoveRequestKey is passed but not exist in the database. 
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Move request should not be in <i>CLOSED</i> status. Error if Move request in <i>CLOSED</i> status.
+								</Condition>
+                            <Error
+                                Description="Move Request cannot be cancelled in this status." ErrorCode="WMS00134"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_REQUEST_NO" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Identifies a move request within the context of an activity group for a node. It is a part of the unique key of the <code>YFS_Move_Request</code> table.
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if <code>MoveRequestNo</code> is not passed alongwith <code>Node</code>. 
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the <code>Node</code> where move request would be executed. It is the primary key attribute of the <code>YFS_SHIP_NODE</code> table. 
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if <code>Node</code> is not passed alongwith <code>MoveRequestNo</code>. 
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="required">
+            <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						User defined common code CodeType <code>MOVE_REQ_CANCEL_RSN</code>.
+							<Validation>
+                            <Condition>
+                                <code>ReasonCode</code> should be passed. Error if <code>ReasonCode</code> not passed.
+								</Condition>
+                            <Error
+                                Description="WMS:ReasonCode cannot be blanks." ErrorCode="WMS00240"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if the passed <code>ReasonCode</code> value does not correspond to one of the common code values.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+            <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Free form reason text. If not passed, <code>ReasonText</code> gets defaulted to BLANK.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

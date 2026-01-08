@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/managePriceType/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/managePriceType/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_managePriceType_input.xsd" yfc:rootElement="PriceType">
+        <xsd:appinfo source="yfc:structure">
+            <PriceType hasAttributes="Y">
+                <PriceTypeLocaleList hasAttributes="Y">
+                    <PriceTypeLocale hasAttributes="Y"/>
+                </PriceTypeLocaleList>
+            </PriceType>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PriceType" type="yfc:PriceTypeXSDType">
+        <xsd:annotation yfc:tableName="YPM_PRICE_TYPE">
+            <xsd:documentation>Maintains a list of Pricing Types for Items</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PriceTypeXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PriceTypeLocaleList"/>
+        </xsd:all>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YPM_PRICE_TYPE">
+                <xsd:documentation>
+                    <div>
+						The calling Organization of the API call. If passed will be used to determine the correct Pricing Organization. 
+						<Validation>
+                            <Condition>
+                                <code>CallingOrganizationCode</code> must refer to a valid Organization</Condition>
+                            <Error
+                                Description="Pricing Org not found for CallingOrganizationCode" ErrorCode="YPM10193"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Description" type="yfctype:Text-240" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YPM_PRICE_TYPE">
+                <xsd:documentation>Description for Price Type</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsPriceTypeForInformationOnly"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="PRICE_TYPE_INFO_ONLY" yfc:tableName="YPM_PRICE_TYPE">
+                <xsd:documentation>Flag to indicate that his Price Type is for informational use only.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+						<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+						<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+						<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+						<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+						<Validation>
+                            <Condition>For Operation <code>Delete</code>, a PriceType cannot be deleted if it has any active PriceTypeAssociations.</Condition>
+                            <Error
+                                Description="Price Type Associations for target Price Type are still in use." ErrorCode="YPM10195"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceTypeName" type="yfctype:PriceTypeName" use="required">
+            <xsd:annotation yfc:columnName="PRICE_TYPE_NAME" yfc:tableName="YPM_PRICE_TYPE">
+                <xsd:documentation>Name of the PriceType</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RecurringType" type="yfctype:CommonCode" use="optional">
+            <xsd:annotation yfc:columnName="RECURRING_TYPE" yfc:tableName="YPM_PRICE_TYPE">
+                <xsd:documentation>Recurring Interval for Price Type; if null, then Price Type is considered non-recurring.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PriceTypeLocaleList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:PriceTypeLocale"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old records are removed and replaced with the new ones.
+							If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PriceTypeLocale">
+        <xsd:annotation yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+            <xsd:documentation>The table is used to store localized information for the related Price Type in different locales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>The country associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-240" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>Description for Price Type</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Language" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="LANGUAGE" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>The language associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> Operation to perform
+								<br/>Valid Values: 
+								<br/>
+                            <b>
+                                <code>Manage</code>
+                            </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+								<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record. 
+								<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+								<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Deletes an existing record.
+								<br/>The default behavior is <b>
+                                <code>Manage</code>
+                            </b>.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PriceTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PRICE_TYPE_KEY" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>The reference key to the YPM_PRICE_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PriceTypeLocaleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PRICE_TYPE_LOCALE_KEY" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>The primary key of the YPM_PRICE_TYPE_LOCALE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Variant" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="VARIANT" yfc:tableName="YPM_PRICE_TYPE_LOCALE">
+                    <xsd:documentation>The variant associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

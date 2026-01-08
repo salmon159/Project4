@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getOrderReleaseDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getOrderReleaseDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getOrderReleaseDetails_input.xsd" yfc:rootElement="OrderReleaseDetail">
+        <xsd:appinfo source="yfc:structure">
+            <OrderReleaseDetail hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderReleaseDetail" type="yfc:OrderReleaseDetailXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_RELEASE">
+            <xsd:documentation>
+                <div>
+			One of the following must be passed to identify the <code>OrderRelease</code>.
+			<br/>- <code>OrderReleaseKey</code>
+                    <br/>- <code>ReleaseNo</code> and <code>OrderHeaderKey</code>
+                    <br/>- <code>ReleaseNo</code>, <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                    <Validation>
+                        <Condition>No release is found for information passed.
+				</Condition>
+                        <Error Description="No Record Found" ErrorCode="YFS10001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>ReleaseNo</code> or <code>OrderReleaseKey</code> not passed.
+					</Condition>
+                        <Error
+                            Description="Invalid input for getOrderReleaseDetail API." ErrorCode="YFS10412"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderReleaseDetailXSDType">
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The enterprise that is associated with this order release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The order header that is associated with this order release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The primary key for the YFS_ORDER_RELEASE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReleaseNo" type="yfctype:ShorterNumber" use="optional">
+            <xsd:annotation yfc:columnName="RELEASE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The release number. Generated as a one up number against that release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

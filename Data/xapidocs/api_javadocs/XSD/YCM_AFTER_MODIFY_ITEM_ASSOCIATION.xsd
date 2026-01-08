@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/AFTER_MODIFY_ITEM_ASSOCIATION"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/AFTER_MODIFY_ITEM_ASSOCIATION" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_AFTER_MODIFY_ITEM_ASSOCIATION.xsd" yfc:rootElement="AssociationList">
+        <xsd:appinfo source="yfc:structure">
+            <AssociationList hasAttributes="Y">
+                <Association hasAttributes="Y">
+                    <Item hasAttributes="Y"/>
+                    <Category hasAttributes="Y"/>
+                    <Query hasAttributes="Y"/>
+                </Association>
+                <Remove>
+                    <Association hasAttributes="Y">
+                        <Item hasAttributes="Y"/>
+                        <Category hasAttributes="Y"/>
+                        <Query hasAttributes="Y"/>
+                    </Association>
+                </Remove>
+            </AssociationList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AssociationList" type="yfc:AssociationListXSDType">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>
+                <div>
+			To identify the item, pass either <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code>.
+			<Validation>
+                        <Condition>If <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> is not passed. </Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> does not identify an <code>Item</code>.
+				</Condition>
+                        <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Item</code> is a bundle item then it cannot be associated to any other item.
+				</Condition>
+                        <Error
+                            Description="Bundle item cannot be associated to any other item." ErrorCode="YCM79_008"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="AssociationListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="Association">
+                <xsd:annotation yfc:tableName="YFS_ASSOCIATION">
+                    <xsd:documentation>
+                        <div>
+					To identify the association, pass <code>AssociationType</code>, <code>EffectiveFrom</code>, and <code>EffectiveTo</code>
+                            <Validation>
+                                <Condition>If <code>AssociationType</code>, <code>EffectiveFrom</code>, and <code>EffectiveTo</code> are not passed. </Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Item">
+                            <xsd:annotation yfc:tableName="YFS_ITEM">
+                                <xsd:documentation>
+                                    <div>
+			To identify the item, pass either <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code>.
+			<Validation>
+                                    <Condition>If <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> is not passed. </Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>The <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> does not identify an <code>Item</code>.
+				</Condition>
+                                    <Error
+                                    Description="Item Not Found" ErrorCode="YCM0033"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If <code>Item</code> is a bundle item then it cannot be associated to any other item.
+				</Condition>
+                                    <Error
+                                    Description="Bundle item cannot be associated to any other item." ErrorCode="YCM79_008"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Try to create circular association for item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code>.
+				</Condition>
+                                    <Error
+                                    Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have a circular association relationship." ErrorCode="YCM82_002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Try to create multiple association relationships for item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code>.
+				</Condition>
+                                    <Error
+                                    Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have multiple association relationships." ErrorCode="YCM82_003"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="ItemID"
+                                    type="yfctype:ItemID" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="ItemKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="OrganizationCode"
+                                    type="yfctype:OrgCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="UnitOfMeasure"
+                                    type="yfctype:UOM" use="optional">
+                                    <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Category">
+                            <xsd:annotation yfc:tableName="YFS_CATEGORY">
+                                <xsd:documentation>
+                                    <div>
+			Pass <code>CategoryKey</code> to create association to whole category.
+		
+			<Validation>
+                                    <Condition>The <code>Category</code> does not exist.
+				</Condition>
+                                    <Error
+                                    Description="Category Not Found" ErrorCode="YCM0034"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="CategoryKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                                    <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Query">
+                            <xsd:annotation yfc:tableName="YFS_QUERY">
+                                <xsd:documentation>
+                                    <div/>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="QueryKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="QUERY_KEY" yfc:tableName="YFS_QUERY">
+                                    <xsd:documentation>Primary key attribute of YFS_QUERY.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:all>
+                    <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                <div>
+					   Action to take.Valid values are <b>
+                                    <code>Modify</code>
+                                    </b>and <b>
+                                    <code>Create</code>
+                                    </b>.  Set <code>Action</code> = "<b>
+                                    <code>Modify</code>
+                                    </b>" to modify the Association.  Default value is <b>
+                                    <code>Create</code>
+                                    </b>. 
+					  </div>
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="AssociatedQuantity"
+                        type="yfctype:Quantity" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="ASSOCIATED_QUANTITY" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>Quantity associated with an Association.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="AssociationGroup"
+                        type="yfctype:Text-40" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="ASSOCIATION_GROUP" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>Associations may be grouped and an indentifier for such a group may be stored here.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="AssociationType"
+                        type="yfctype:Text-20" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="ASSOCIATION_TYPE" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>
+                                <div>
+					Type of association maintained. 
+					<br/>
+                                    <code>AssociationType</code> value for <code>SS</code>(Special Service) item is <code>Service.Y</code>.
+					 <Validation>
+                                    <Condition>
+                                Associating any Item to Special Service Item or 
+                                Associating Special Service Item to non PROD item or 
+                                Not using AssociationType 'Service.Y' to associate Special Service to PROD item or 
+                                Using AssociationType 'Service.Y' for non Special Service Association.
+				</Condition>
+                                    <Error
+                                    Description="Invalid Special Service Association." ErrorCode="YCM922_003"/>
+                                    </Validation>
+                                </div>
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="EffectiveFrom"
+                        type="yfctype:Date" use="optional">
+                        <xsd:annotation yfc:columnName="EFFECTIVE_FROM" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>Date from when an association is valid.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="EffectiveTo"
+                        type="yfctype:Date" use="optional">
+                        <xsd:annotation yfc:columnName="EFFECTIVE_TO" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>Date till when an association is valid.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="IsNewRecord"
+                        type="yfctype:Flag" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                <div>
+				This attribute indicates whether the <code>Association</code> has been created or modified.
+				</div>
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="Priority"
+                        type="yfctype:PriorityWithDecimal" use="optional">
+                        <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_ASSOCIATION">
+                            <xsd:documentation>Priority associated with an Association. The association with highest priority (lowest value) will be considered first in automatic item substitution during scheduling.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Remove"/>
+        </xsd:sequence>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_ID"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Remove">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Association">
+                    <xsd:annotation yfc:tableName="YFS_ASSOCIATION">
+                        <xsd:documentation>
+                            <div>
+					To identify the association, pass <code>AssociationType</code>, <code>EffectiveFrom</code>, and <code>EffectiveTo</code>
+                                <Validation>
+                                    <Condition>If <code>AssociationType</code>, <code>EffectiveFrom</code>, and <code>EffectiveTo</code> are not passed. </Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                                </Validation>
+                            </div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Item">
+                                <xsd:annotation yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>
+                                    <div>
+			To identify the item, pass either <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code>.
+			<Validation>
+                                    <Condition>If <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> is not passed. </Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>The <code>ItemKey</code>, or <code>ItemID</code>, <code>OrganizationCode</code>, and <code>UnitofMeasure</code> does not identify an <code>Item</code>.
+				</Condition>
+                                    <Error
+                                    Description="Item Not Found" ErrorCode="YCM0033"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If <code>Item</code> is a bundle item then it cannot be associated to any other item.
+				</Condition>
+                                    <Error
+                                    Description="Bundle item cannot be associated to any other item." ErrorCode="YCM79_008"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Try to create circular association for item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code>.
+				</Condition>
+                                    <Error
+                                    Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have a circular association relationship." ErrorCode="YCM82_002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Try to create multiple association relationships for item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code>.
+				</Condition>
+                                    <Error
+                                    Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have multiple association relationships." ErrorCode="YCM82_003"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="ItemID"
+                                    type="yfctype:ItemID" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ItemKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="OrganizationCode"
+                                    type="yfctype:OrgCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="UnitOfMeasure"
+                                    type="yfctype:UOM" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Category">
+                                <xsd:annotation yfc:tableName="YFS_CATEGORY">
+                                    <xsd:documentation>
+                                    <div>
+			Pass <code>CategoryKey</code> to create association to whole category.
+		
+			<Validation>
+                                    <Condition>The <code>Category</code> does not exist.
+				</Condition>
+                                    <Error
+                                    Description="Category Not Found" ErrorCode="YCM0034"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="CategoryKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                                    <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Query">
+                                <xsd:annotation yfc:tableName="YFS_QUERY">
+                                    <xsd:documentation>
+                                    <div/>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="QueryKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="QUERY_KEY" yfc:tableName="YFS_QUERY">
+                                    <xsd:documentation>Primary key attribute of YFS_QUERY.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Action" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					   Action to take.Valid values are <b>
+                                    <code>Modify</code>
+                                    </b>and <b>
+                                    <code>Create</code>
+                                    </b>.  Set <code>Action</code> = "<b>
+                                    <code>Modify</code>
+                                    </b>" to modify the Association.  Default value is <b>
+                                    <code>Create</code>
+                                    </b>. 
+					  </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AssociatedQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ASSOCIATED_QUANTITY" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>Quantity associated with an Association.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AssociationGroup"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ASSOCIATION_GROUP" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>Associations may be grouped and an indentifier for such a group may be stored here.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AssociationType"
+                            type="yfctype:Text-20" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ASSOCIATION_TYPE" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>
+                                    <div>
+					Type of association maintained. 
+					<br/>
+                                    <code>AssociationType</code> value for <code>SS</code>(Special Service) item is <code>Service.Y</code>.
+					 <Validation>
+                                    <Condition>
+                                Associating any Item to Special Service Item or 
+                                Associating Special Service Item to non PROD item or 
+                                Not using AssociationType 'Service.Y' to associate Special Service to PROD item or 
+                                Using AssociationType 'Service.Y' for non Special Service Association.
+				</Condition>
+                                    <Error
+                                    Description="Invalid Special Service Association." ErrorCode="YCM922_003"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="EffectiveFrom"
+                            type="yfctype:Date" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EFFECTIVE_FROM" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>Date from when an association is valid.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="EffectiveTo"
+                            type="yfctype:Date" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EFFECTIVE_TO" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>Date till when an association is valid.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Priority"
+                            type="yfctype:PriorityWithDecimal" use="optional">
+                            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_ASSOCIATION">
+                                <xsd:documentation>Priority associated with an Association. The association with highest priority (lowest value) will be considered first in automatic item substitution during scheduling.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

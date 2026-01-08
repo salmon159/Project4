@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="utf-8" indent="yes" method="xml"/>
+    <xsl:strip-space elements="*"/>
+    <!-- Identity transform -->
+    <xsl:template match="@* | node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <!--Transform OrderLine/Extn element-->
+    <xsl:template match="/Order/OrderLines/OrderLine/Extn">
+        <xsl:copy>
+            <!--Copy Extn attributes-->
+            <xsl:apply-templates select="@*"/>
+            <!--Create new element TitanPaymentDetailList-->
+            <xsl:element name="TitanPaymentDetailList">
+                <xsl:variable name="tenderCount">
+                    <xsl:value-of select="../UserData/UserDataField[@name='tenderLineRecordCount']"/>
+                </xsl:variable>
+                <!-- Initiate a recursive call to process the next tender -->
+                <xsl:call-template name="ParseUserData">
+                    <xsl:with-param name="orderLine" select="./.."/>
+                    <xsl:with-param name="tenderCount" select="$tenderCount"/>
+                </xsl:call-template>
+            </xsl:element>
+        </xsl:copy>
+    </xsl:template>
+    <!--Drop all the UserData elements-->
+    <xsl:template match="UserData"/>
+    <!--Template for transforming UserData-->
+    <xsl:template name="ParseUserData">
+        <xsl:param name="orderLine" select="."/>
+        <xsl:param name="tenderCount" select="1"/>
+        <xsl:variable name="userData" select="$orderLine/UserData"/>
+        <xsl:variable name="userDataField" select="$userData/UserDataField"/>
+        <xsl:if test="$tenderCount > 0">
+            <TitanPaymentDetail>
+                <xsl:variable
+                        name="paymentTypeAttr">tenderLine<xsl:value-of select="$tenderCount"/>PaymentType</xsl:variable>
+                <xsl:variable
+                        name="giftCardTypeAttr">tenderLine<xsl:value-of select="$tenderCount"/>GiftCardType</xsl:variable>
+                <xsl:variable name="GiftCardNo">tenderLine<xsl:value-of select="$tenderCount"/>GiftCardNo</xsl:variable>
+                <xsl:variable
+                        name="paymentGatewayAttr">tenderLine<xsl:value-of select="$tenderCount"/>PaymentGateway</xsl:variable>
+                <xsl:variable
+                        name="amountPerUnitAttr">tenderLine<xsl:value-of select="$tenderCount"/>AmountPerUnit</xsl:variable>
+				<xsl:variable
+                        name="amountPerLineAttr">tenderLine<xsl:value-of select="$tenderCount"/>AmountPerLine</xsl:variable>
+                <xsl:variable
+                        name="transRefAttr">tenderLine<xsl:value-of select="$tenderCount"/>TransRef</xsl:variable>
+                <xsl:variable
+                        name="transDateAttr">tenderLine<xsl:value-of select="$tenderCount"/>TransDate</xsl:variable>
+                <xsl:variable
+                        name="encirclePointsPerUnitAttr">tenderLine<xsl:value-of select="$tenderCount"/>EncirclePoints</xsl:variable>
+                <!-- Access tender related details -->
+                <xsl:attribute name="AmountPerUnit">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$amountPerUnitAttr]"/>
+                </xsl:attribute>
+				<xsl:attribute name="AmountPerLine">
+                    <xsl:value-of select="format-number($userDataField[translate(@name, ' ', '')=$amountPerLineAttr], '0.00')"/>
+                </xsl:attribute>
+                <xsl:variable name="PaymentTypeTemp">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$paymentTypeAttr]"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <!-- to stamp PaymentType Tanishq when it is TanishqGC and Mia when it is MiaGC -->
+                    <xsl:when test="$PaymentTypeTemp='TanishqGC'">
+                        <xsl:attribute name="PaymentType">Tanishq</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="$PaymentTypeTemp='MiaGC'">
+                        <xsl:attribute name="PaymentType">Mia</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType Taneira when it is TaneiraGC -->
+                    <xsl:when test="$PaymentTypeTemp='TaneiraGC'">
+                        <xsl:attribute name="PaymentType">Taneira</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCWOT when it is eWOT -->
+                    <xsl:when test="$PaymentTypeTemp='eWOT'">
+                        <xsl:attribute name="PaymentType">eGCWOT</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCFT when it is eFastrack -->
+                    <xsl:when test="$PaymentTypeTemp='eFastrack'">
+                        <xsl:attribute name="PaymentType">eGCFT</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCHelios when it is eHelios -->
+                    <xsl:when test="$PaymentTypeTemp='eHelios'">
+                        <xsl:attribute name="PaymentType">eGCHelios</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCTanishq when it is eTanishqGC -->
+                    <xsl:when test="$PaymentTypeTemp='eTanishqGC'">
+                        <xsl:attribute name="PaymentType">eGCTanishq</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCMia when it is eMiaGC -->
+                    <xsl:when test="$PaymentTypeTemp='eMiaGC'">
+                        <xsl:attribute name="PaymentType">eGCMia</xsl:attribute>
+                    </xsl:when>
+                    <!--to stamp PaymentType eGCTaneira when it is eTaneiraGC -->
+                    <xsl:when test="$PaymentTypeTemp='eTaneiraGC'">
+                        <xsl:attribute name="PaymentType">eGCTaneira</xsl:attribute>
+                    </xsl:when>
+                    <!--ends here-->
+                    <xsl:otherwise>
+                        <xsl:attribute name="PaymentType">
+                            <xsl:value-of select="$PaymentTypeTemp"/>
+                        </xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <!-- ends here -->
+                <xsl:attribute name="TransactionReference">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$transRefAttr]"/>
+                </xsl:attribute>
+                <xsl:attribute name="TransactionTimestamp">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$transDateAttr]"/>
+                </xsl:attribute>
+                <xsl:attribute name="GCKey">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$GiftCardNo]"/>
+                </xsl:attribute>
+                <xsl:attribute name="GiftCardType">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$giftCardTypeAttr]"/>
+                </xsl:attribute>
+                <xsl:attribute name="PaymentGateway">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$paymentGatewayAttr]"/>
+                </xsl:attribute>
+                <xsl:attribute name="EncirclePointsPerUnit">
+                    <xsl:value-of select="$userDataField[translate(@name, ' ', '')=$encirclePointsPerUnitAttr]"/>
+                </xsl:attribute>
+            </TitanPaymentDetail>
+            <!-- Recursive call to process the next tender -->
+            <xsl:call-template name="ParseUserData">
+                <xsl:with-param name="orderLine" select="$orderLine"/>
+                <xsl:with-param name="tenderCount" select="$tenderCount - 1"/>
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>
+</xsl:stylesheet>

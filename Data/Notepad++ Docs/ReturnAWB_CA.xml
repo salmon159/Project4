@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ManageXmlList>
+    <ManageXml Action="Manage" AttributeName="ReturnServiceCode"
+        AttributeValue="11"
+        Condition="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order[@DepartmentCode='CA']" Xpath="/Shipment"/>
+	
+</ManageXmlList>
+
+
+<ManageXmlList>
+    <ManageXml Action="Manage" AttributeName="CarrierServiceCode"
+        AttributeValue="11"
+        Condition="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order[@DepartmentCode='CA']" Xpath="/Shipment"/>
+</ManageXmlList>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output indent="yes" method="xml"/>
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="/Shipment">
+        <Shipment>
+            <xsl:copy-of select="./@*"/>
+            <xsl:variable name="varDepartmentCode" select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@DepartmentCode"/>
+            <xsl:variable name="varShipCA" select="'Ship to CA'"/>
+            <xsl:variable name="varShipUS" select="'Ship to US'"/>
+            <xsl:choose>
+                <xsl:when test="$varDepartmentCode='CA'">
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipCA"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="DepartmentCode">
+                        <xsl:value-of select="$varDepartmentCode"/>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipUS"/>
+                    </xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:apply-templates select="node()"/>
+        </Shipment>
+    </xsl:template>
+    <xsl:template match="/Shipment/Extn">
+        <xsl:variable name="var" select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+        <xsl:variable name="k">1000</xsl:variable>
+        <Extn>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="ExtnTotalNetAmount">
+                <xsl:choose>
+                    <xsl:when test="$var>1000">
+                        <xsl:value-of select="$k"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+        </Extn>
+    </xsl:template>
+    <xsl:template match="/Shipment/ToAddress">
+        <ToAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="DayPhone"/>
+            <xsl:attribute name="EveningPhone"/>
+            <xsl:attribute name="MobilePhone"/>
+        </ToAddress>
+    </xsl:template>
+    <xsl:template match="/Shipment/FromAddress">
+        <FromAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="EMailID">
+                <xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/PersonInfoShipTo/@EMailID"/>
+            </xsl:attribute>
+        </FromAddress>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output indent="yes" method="xml"/>
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="/Shipment">
+        <Shipment>
+            <xsl:copy-of select="./@*"/>
+            <xsl:variable name="varDepartmentCode" select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@DepartmentCode"/>
+            <xsl:variable name="varShipCA" select="'Ship to CA'"/>
+            <xsl:variable name="varShipUS" select="'Ship to US'"/>
+            <xsl:choose>
+                <xsl:when test="$varDepartmentCode='CA'">
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipCA"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="DepartmentCode">
+                        <xsl:value-of select="$varDepartmentCode"/>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipUS"/>
+                    </xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:apply-templates select="node()"/>
+        </Shipment>
+    </xsl:template>
+    <xsl:template match="/Shipment/Extn">
+        <xsl:variable name="var" select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+        <xsl:variable name="k">1000</xsl:variable>
+        <Extn>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="ExtnTotalNetAmount">
+                <xsl:choose>
+                    <xsl:when test="$var>1000">
+                        <xsl:value-of select="$k"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+        </Extn>
+    </xsl:template>
+    <xsl:template match="/Shipment/ToAddress">
+        <ToAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="DayPhone"/>
+            <xsl:attribute name="EveningPhone"/>
+        </ToAddress>
+    </xsl:template>
+    <xsl:template match="/Shipment/FromAddress">
+        <FromAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="EMailID">
+                <xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/PersonInfoShipTo/@EMailID"/>
+            </xsl:attribute>
+        </FromAddress>
+    </xsl:template>
+</xsl:stylesheet>

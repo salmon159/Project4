@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/manageCapacityReservation/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/manageCapacityReservation/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_manageCapacityReservation_input.xsd" yfc:rootElement="CapacityReservationList">
+        <xsd:appinfo source="yfc:structure">
+            <CapacityReservationList hasAttributes="Y">
+                <CapacityReservation hasAttributes="Y">
+                    <AdditionalCapacityLimits>
+                        <AdditionalCapacityLimit hasAttributes="Y"/>
+                    </AdditionalCapacityLimits>
+                    <CapacityConsumption hasAttributes="Y">
+                        <ResourcePool hasAttributes="Y"/>
+                        <ServiceResource hasAttributes="Y"/>
+                    </CapacityConsumption>
+                </CapacityReservation>
+            </CapacityReservationList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CapacityReservationList" type="yfc:CapacityReservationListXSDType"/>
+    <xsd:complexType name="CapacityReservationListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:CapacityReservation"/>
+        </xsd:all>
+        <xsd:attribute name="LockCapacity" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>LockCapacity</code> flag whether to lock for capacity availability. Locking happens depending upon the capacity locking parameters passed in yfs.properties. Default value is <code>
+                            <b>Y</b>
+                        </code>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PersistCapacityAdjustments"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>PersistCapacityAdjustments</code> flag indicates if capacity consumption updates are to be done at transaction commit. Default value is <code>
+                            <b>N</b>
+                        </code>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CapacityReservation">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+            <xsd:documentation>
+                <div>
+			Capacity reservation information.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalCapacityLimits"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:CapacityConsumption"/>
+            </xsd:all>
+            <xsd:attribute name="Capacity" type="yfctype:Capacity" use="optional">
+                <xsd:annotation yfc:columnName="CAPACITY" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>
+                        <div>
+				Capacity to be reserved.  If <code>IsSlotBased</code> is <code>
+                                <b>N</b>
+                            </code>, <code>Capacity</code> will be calculated using consumption's start time and end time.  The calculated capacity will override the provided <code>Capacity</code>.
+				<Validation>
+                                <Condition>
+						If creating or modifying and <code>Capacity</code> is less than or equal to zero and reservation is slot based.
+					</Condition>
+                                <Error Description="Invalid Capacity" ErrorCode="INV71_8"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ConsiderSupplementalCapacity"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				The <code>ConsiderSupplementalCapacity</code> flag indicates whether or not supplemental capacity should be considered as part of the availability calculation if capacity check is performed.   Default value is <code>
+                                <b>N</b>
+                            </code>.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSlotBased" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_SLOT_BASED" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>
+                        <div>
+				Indicates that the reservation is slot based.  Default value is <code>
+                                <b>Y</b>
+                            </code>.
+				<Validation>
+                                <Condition>
+						If creating or modifying and <code>IsSlotBased</code> is <code>
+                                    <b>N</b>
+                                    </code> and capacity is not maintained at the resource level.
+					</Condition>
+                                <Error
+                                    Description="Consumption details is not slot based, but capacity is not maintained at the resource level." ErrorCode="INV71_10"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If the resource pool's <code>Purpose</code> is <code>
+                                    <b>SERVICE</b>
+                                    </code>
+                                    <code>IsSlotBased</code> is <code>
+                                    <b>Y</b>
+                                    </code> and capacity is not maintained at the resource level and <code>OverrideCapacityCheck</code> is not equal to <code>
+                                    <b>Y</b>
+                                    </code>, capacity check will be performed before the reservation is created.
+						If there is not enough capacity to be reserved.
+					</Condition>
+                                <Error
+                                    Description="Not enough capacity." ErrorCode="INV71_12"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If the resource pool's <code>Purpose</code> is not <code>
+                                    <b>SERVICE</b>
+                                    </code> and <code>OverrideCapacityCheck</code> is not equal to <code>
+                                    <b>Y</b>
+                                    </code>, capacity check will be performed before the reservation is created.  If the specified time slot has already been completely or partially reserved or the specified time slot is non-working based on the resource's calendar.
+					</Condition>
+                                <Error
+                                    Description="Not enough capacity." ErrorCode="INV71_12"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If the resource pool's <code>Purpose</code> is not <code>
+                                    <b>SERVICE</b>
+                                    </code> and <code>OverrideCapacityCheck</code> is not equal to <code>
+                                    <b>Y</b>
+                                    </code>, capacity check will be performed before the reservation is created.  If the maximum number of concurrent appointments of the resource pool will be exceeded for the given time slot.
+					</Condition>
+                                <Error
+                                    Description="Not enough capacity due to the restriction on maximum number of concurrent appointments." ErrorCode="INV75_002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If <code>IsSlotBased</code> is <code>
+                                    <b>Y</b>
+                                    </code> and the slot cannot be used for appointment planning. (<code>OverrideCapacityCheck</code> flag will not be considered.)
+					</Condition>
+                                <Error
+                                    Description="Slot based Capacity Consumption cannot be done on slots that cannot be used for taking appointments." ErrorCode="INV80_002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManuallyCreatedReservation"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="MANUALLY_CREATED_RESERVATION" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>This flag indicates whether the reservation is created through the system resource capacity UI. Default value is N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                 Valid value is <b>
+                                <code>Delete</code>
+                            </b> or blank.  If not provided the reservation will be created or modified.
+				<Validation>
+                                <Condition>
+						Invalid value is provided.
+					</Condition>
+                                <Error
+                                    Description="Invalid Application Action." ErrorCode="YFS10411"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>Operation</code> is <b>
+                                    <code>Delete</code>
+                                    </b>, but no existing record found.
+					</Condition>
+                                <Error Description="Record not found" ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OverrideCapacityCheck"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CAPACITY_OVERRIDDEN" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>This flag indicates whether capacity was ignored when taking the appointment. Default value is N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReservationExpirationDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation
+                    yfc:columnName="RESERVATION_EXPIRATION_DATE" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>
+                        <div>
+				Timestamp on which the reservation expires.  If not provided <code>ReservationExpirationDate</code> will be defaulted to current timestamp + <code>DEFAULT_CAPACITY_RESERVATION_EXPIRATION_TIME</code>.
+				If <code>DEFAULT_CAPACITY_RESERVATION_EXPIRATION_TIME</code> is 0 or if <code>ManuallyCreatedReservation</code> is <code>
+                                <b>Y</b>
+                            </code>,  <code>ReservationExpirationDate</code> will be defaulted to a high date.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReservationId" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="RESERVATION_ID" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>
+                        <div>
+                            <code>ReservationId</code> provided is assumed to be unique through out the system.  If <code>ReservationId</code> is not provided, a unique value will be generated as <code>ReservationId</code>.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReservationReason"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="RESERVATION_REASON" yfc:tableName="YFS_RES_POOL_CONSMPTN_DTLS">
+                    <xsd:documentation>The reason this capacity reservation was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalCapacityLimits">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>The additional capacity units of measure in which capacity needs to be reserved. This will be considered only if the resource pool has its capacity limited in additional dimensions.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AdditionalCapacityLimit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalCapacityLimit">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL_SECONDARY_UOM">
+            <xsd:documentation>This table contains units of measures that are used as secondary resource pool capacity constraints.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Capacity" type="yfctype:Capacity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The capacity to be reserved in the secondary unit of measure.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CapacityUnitOfMeasure"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_RES_POOL_SECONDARY_UOM">
+                    <xsd:documentation>
+                        <div>The secondary unit of measure in which the resource pool's capacity is limited.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Valid value is <b>
+                                <code>Delete</code>
+                            </b> or blank.  If not provided the reservation will be created or modified.
+								<Validation>
+                                <Condition>Invalid value is provided.</Condition>
+                                <Error
+                                    Description="Invalid Application Action." ErrorCode="YFS10411"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>Operation</code> is <b>
+                                    <code>Delete</code>
+                                    </b>, but no existing record found.
+									</Condition>
+                                <Error Description="Record not found" ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CapacityConsumption">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL_CAPCTY_CONSMPTN">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+						If creating or modifying and <code>CapacityConsumption</code> is not provided.
+					</Condition>
+                        <Error Description="Missing mandatory element" ErrorCode="INV10009"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+									If creating or modifying and <code>ConsumptionDate</code>, <code>StartTime</code>, 
+									or <code>EndTime</code> is not passed except if the resource pool serves the 
+									<code>INVENTORY</code> purpose.
+								</Condition>
+                        <Error Description="Missing mandatory attribute" ErrorCode="INV10008"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						If <code>ManuallyCreatedReservation</code> is <code>
+                                <b>Y</b>
+                            </code> and <code>StartTime</code> is greater than or equal to <code>EndTime</code>.
+					</Condition>
+                        <Error
+                            Description="Start time must be before end time" ErrorCode="INV71_16"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						If creating or modifying and both <code>ResourcePool</code> and <code>ServiceResource</code> are not passed.
+					</Condition>
+                        <Error
+                            Description="ResourcePool or ServiceResource is required." ErrorCode="INV71_9"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						If creating or modifying, either <code>ResourcePool</code> or <code>ServiceResource</code> can be passed.  If both <code>ResourcePool</code> and <code>ServiceResource</code> are passed.
+					</Condition>
+                        <Error
+                            Description="Cannot pass both ResourcePool and ServiceResource." ErrorCode="INV73_007"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ServiceResource"/>
+            </xsd:all>
+            <xsd:attribute name="ConsumptionDate" type="yfctype:Date" use="required">
+                <xsd:annotation yfc:columnName="CONSUMPTION_DATE" yfc:tableName="YFS_RES_POOL_CAPCTY_CONSMPTN">
+                    <xsd:documentation>The date that this capacity consumption is specified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndTime" type="yfctype:Time" use="optional">
+                <xsd:annotation yfc:columnName="END_TIME" yfc:tableName="YFS_RES_POOL_CAPCTY_CONSMPTN">
+                    <xsd:documentation>The shift end time for which consumption is specified. For INVENTORY resource pools, this defaults to 23:59:59.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartTime" type="yfctype:Time" use="optional">
+                <xsd:annotation yfc:columnName="START_TIME" yfc:tableName="YFS_RES_POOL_CAPCTY_CONSMPTN">
+                    <xsd:documentation>The shift start time for which consumption is specified. For INVENTORY resource pools, this defaults to 00:00:00.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+						If creating or modifying and invalid resource pool information is provided.
+					</Condition>
+                        <Error Description="Invalid resource pool" ErrorCode="INV10014"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResource">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_RESOURCE">
+            <xsd:documentation>
+                <div>
+			Service resource information.  If resource pool does not maintain capacity at the resource level, service resource will be ignored if provided.
+			<Validation>
+                        <Condition>
+					If creating or modifying and invalid resource pool information is provided.
+				</Condition>
+                        <Error Description="Invalid resource pool" ErrorCode="INV10014"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+					If creating or modifying and invalid service resource information is provided.
+				</Condition>
+                        <Error Description="Invalid service resource" ErrorCode="INV71_6"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+					If creating or modifying and service resource is not provided and resource pool maintains capacity at the resource level. 
+				</Condition>
+                        <Error
+                            Description="Capacity is maintained at resource level, but no service resource is provided." ErrorCode="INV71_11"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                    <xsd:documentation>Resource pool that the service resource belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceResourceId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_RESOURCE_ID" yfc:tableName="YFS_SERVICE_RESOURCE">
+                    <xsd:documentation>The unique identifier of the service resource.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceResourceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_RESOURCE_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                    <xsd:documentation>Primary key attribute of YFS_SERVICE_RESOURCE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,1521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2020 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<OrderLine AllocationDate="" ApplyOnlyItemLevelPricingRules="" BOMXML=""
+    CarrierAccountNo="" CarrierServiceCode="" ConditionVariable1=""
+    ConditionVariable2="" ConfigurationKey="" CustomerLinePONo=""
+    CustomerPONo="" DeliveryCode="" DeliveryMethod="" DepartmentCode=""
+    DependencyShippingRule="" DistributionRuleId=""
+    DocumentType="Conditional" EnterpriseCode="Conditional"
+    FillQuantity="" FirstIterationSeqNo="" FreightTerms=""
+    FulfillmentType="" HoldFlag="" HoldReasonCode=""
+    ImportLicenseExpDate="" ImportLicenseNo="" InStorePaymentRequired=""
+    IsFirmPredefinedNode="" IsForwardingAllowed=""
+    IsProcurementAllowed="" ItemGroupCode="" KitCode=""
+    LastIterationSeqNo="" LevelOfService="" LineType="" MergeNode=""
+    MinShipByDate="" ModificationReasonCode="" ModificationReasonText=""
+    ModificationReference1="" ModificationReference2=""
+    ModificationReference3="" ModificationReference4=""
+    NotificationReference="" OrderHeaderKey="Conditional"
+    OrderLineKey="" OrderNo="Conditional" OrderedQty="" OrderingUOM=""
+    Override="" PackListType="" PersonalizeCode="" PickableFlag=""
+    PrimeLineNo="" PromisedApptEndDate="" PromisedApptStartDate=""
+    Purpose="" ReceivingNode="" ReqCancelDate="" ReqDeliveryDate=""
+    ReqShipDate="" ReservationID="" ReturnReason="" SCAC=""
+    ScacAndService="" ScacAndServiceKey="" ShipNode="" ShipToID=""
+    ShipToKey="" ShipTogetherNo="" SkipBOMValidations="N|Y" SubLineNo=""
+    TransactionalLineId="" ValidateItem="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/addLineToOrder/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+		Stores order line information, including item details and shipping information. To identify the <code>Order</code> 
+		to which to add an <code>OrderLine</code>, pass either the <code>OrderHeaderKey</code>, or  <code>EnterpriseCode</code> , <code>DocumentType</code> and <code>OrderNo</code>.
+		<Validation>
+                        <Condition>The <b>OrderHeaderKey</b> attribute OR the <b>EnterpriseCode</b>, <b>DocumentType</b> and <b>OrderNo</b> attributes must be passed and must be valid.
+			</Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Line is a bundle parent and child lines are automatically created based on the components of the bundle in the catalog, which contains a model item.</Condition>
+                        <Error
+                            Description="Cannot include a bundle item with a model item as a component." ErrorCode="OMP80_0040"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="String" Name="AllocationDate"/>
+            <Attribute DataType="Flag" Name="ApplyOnlyItemLevelPricingRules">
+                <Description>
+                    <div>
+			  	If <code>ApplyOnlyItemLevelPricingRules</code> is passed as <b>
+                            <code>Y</code>
+                        </b> then pricing rules that are applicable at the item level will be run. 
+				<ul>
+                            <li> Pricing rules with <code>IsItemRule</code> value as <b>
+                                    <code>'Y'</code>
+                                </b> are executed.</li>
+                            <li> Passed coupons with <code>IsItemRule</code> value as <b>
+                                    <code>'Y'</code>
+                                </b> are executed.</li>
+                            <li> Order total pricing rules are suppressed.</li>
+                            <li> Shipping charge calculation, shipping rules execution and shipping coupon execution are suppressed.</li>
+                        </ul>
+					Default value is <b>
+                            <code>N</code>
+                        </b>. 
+				  	</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="BOMXML">
+                <Description>
+                    <div>The BOM XML to be used to create the order line and its components.
+             		<Validation>
+                            <Condition>Both components and <code>BOMXML</code> are passed to create the line.</Condition>
+                            <Error
+                                Description="Both bundle components and a BOMXML cannot be passed for the order line." ErrorCode="OMP85_0059"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>BOMXML</code> is passed without passing Action as <code>REPLACE_BUNDLE</code>
+                            </Condition>
+                            <Error
+                                Description="Action REPLACE_BUNDLE required to when passing a new BOM XML." ErrorCode="OMP85_0060"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" EntityName="Order_Line"
+                Name="DeliveryMethod" NameInEntity="Delivery_Method">
+                <Description>
+                    <div>
+						Describes how product is delivered. <code>DeliveryMethod</code> is only valid for product lines.
+						<br/>Valid Values: <b>
+                            <code>DEL</code>
+                        </b> - Delivery, <b>
+                            <code>SHP</code>
+                        </b>-Ship, <b>
+                            <code>CARRY</code>
+                        </b>- Cash And Carry or <b>
+                            <code>PICK</code>
+                        </b>- Pickup by the user.
+						<br/>Orderlines having Cash And Carry delivery method are ignored while scheduling the order.
+  					    <br/>If a <code>DeliveryMethod</code> value is not passed, the value is set as follows:
+					    <br/>If the <code>ProductLine</code> has Delivery associations, set to <b>
+                            <code>DEL</code>
+                        </b>.
+					    <br/>If the <code>Item</code>'s <code>DefaultDeliveryMethod</code> has a value of <b>
+                            <code>Y</code>
+
+                        </b> in the catalog, then the <code>Item</code> is checked for shipping methods, as defined by the following fields in the Catalog: 
+						 <table
+                            border="0" cellpadding="0" cellspacing="0" class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="tablecolumn">
+                                    <b>Condition</b>
+                                    </td>
+                                    <td class="tablecolumn">DeliveryMethod value</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">
+                                    <code>IS_SHIPPING_ALLLOWED is <b>
+                                    <code>Y</code>
+                                    </b>
+                                    </code>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <code>SHP</code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">
+                                    <code>IS_DELIVERY_ALLLOWED is <b>
+                                    <code>Y</code>
+                                    </b>
+                                    </code>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <code>DEL</code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">
+                                    <code>IS_PICKUP_ALLLOWED is <b>
+                                    <code>Y</code>
+                                    </b>
+                                    </code>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <code>PICK</code>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <Validation>
+                            <Condition>If a value is passed, it must be a valid value.
+						   </Condition>
+                            <Error
+                                Description="Invalid Delivery Method Passed" ErrorCode="OMP10020"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-2" EntityName="Order_Line"
+                Name="DependencyShippingRule" NameInEntity="Dependency_Shipping_Rule">
+                <Description>
+                    <div>
+							Indicates how the <code>OrderLines</code> are dependent on the parent line. The <code>DependencyShippingRule</code> can only be specified for the parent line.
+							<br/> If <code>DependencyShippingRule</code> is specified on the parent line, it is defaulted to the same value on all the dependent lines. If <code>DependencyShippingRule</code> is passed on any of the dependent lines, the value passed is ignored.
+							<br/>Default: " "  (Null)
+							<br/>Valid values: <b>
+                            <code>01</code>
+                        </b> - Ship together,<b>
+                            <code>02</code>
+                        </b> - Deliver together 
+							<br/>
+                        <br/>If <code>DependencyShippingRule</code> value is <b>
+                            <code>02</code>
+                        </b>, a <code>MergeNode</code> must be specified. Order release created for these lines have a <code>MergeNode</code> value, so shipments are  first made to the <code>MergeNode</code>, where they are consolidated for final shipment. 
+							<br/>
+                        <br/>The <code>DependencyShippingRule</code> can only be specified for a product line (<code>ItemGroupCode</code> value is <b>
+                            <code>PROD</code>
+                        </b>). A product line associated with a delivery line cannot be a part of any dependency shipping rule. 
+							 <Validation>
+                            <Condition>If <code>DependencyShippingRule</code> is passed for delivery or provided service line or an associated product line.
+								 </Condition>
+                            <Error
+                                Description="A Product Line with Dependency Shipping Rule cannot be associated with Delivery Service Line." ErrorCode="OMP10041"/>
+                            <Error
+                                Description="Service Line cannot have Dependency Shipping Rule" ErrorCode="OMP10058"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>MergeNode</code> is not specified for parent line, and  <code>DependencyShippingRule</code> value is <b>
+                                    <code>02</code>
+                                </b>.
+								 </Condition>
+                            <Error
+                                Description="Merge node is required for shipping rule deliver together" ErrorCode="YFS10443"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Invalid value is passed.
+								 </Condition>
+                            <Error
+                                Description="Invalid dependency shipping rule" ErrorCode="YFS10450"/>
+                        </Validation>
+                        <br/>
+
+                        <br/>Based on the <code>DependencyShippingRule</code>, some of attributes on dependent lines are defaulted from the parent line.  For these attributes have any value other than what parent line has, the value is ignored.
+							 <div
+                            class="innerpanel" width="30%">
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <tbody>
+                                    <tr>
+                                    <td class="tablecolumn">
+                                    <b>Value</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>ShippingRule</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>ShipNode</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>ReceivingNode</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>ShipTo</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>MergeNode</b>
+                                    </td>
+                                    <td class="tablecolumn">
+                                    <b>RequiredShipDate<br/>RequiredDeliveryDate</b>
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">01</td>
+                                    <td class="tablecolumn">defaults</td>
+                                    <td class="tablecolumn"> - </td>
+                                    <td class="tablecolumn">- </td>
+                                    <td class="tablecolumn">- </td>
+                                    <td class="tablecolumn">defaults</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">02</td>
+                                    <td class="tablecolumn">- </td>
+                                    <td class="tablecolumn">defaults</td>
+                                    <td class="tablecolumn">defaults</td>
+                                    <td class="tablecolumn">defaults</td>
+                                    <td class="tablecolumn"> mandatory</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Line" Name="DistributionRuleId" NameInEntity="Distribution_Rule_Id">
+                <Description>
+                    <div>
+						If passed then supplies and demands are read applying the distribution rule filter for inventory availability.
+						<Validation>
+                            <Condition>Must be a valid <code>DistributionRuleID</code> for the seller organization passed.
+							</Condition>
+                            <Error
+                                Description="Distribution Rule not set up for seller" ErrorCode="YFS10495"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Header" Name="DocumentType" NameInEntity="Document_Type"/>
+            <Attribute DataType="OrgCode" EntityName="Order_Header"
+                Name="EnterpriseCode" NameInEntity="Enterprise_Key"/>
+            <Attribute DataType="Quantity" Name="FillQuantity">
+                <Description>
+                    <div>The minimum quantity of the <code>OrderedQty</code> that must be fulfilled in a single release.
+							<br/>Default: <b>
+                            <code>0</code>
+                        </b>
+                        <Validation>
+                            <Condition>Any positive number not greater than line ordered quantity.
+								</Condition>
+                            <Error Description="Invalid Fill Quantity." ErrorCode="YFS10498"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If invalid number is passed
+								</Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ItemGroupCode" EntityName="Order_Line"
+                Name="ItemGroupCode" NameInEntity="Item_Group_Code">
+                <Description>
+                    <div>
+						Specifies whether the <code>OrderLine</code> is a 
+						product,  delivery, or provided service Line.
+						<br/>Default: <b>
+                            <code>PROD</code>
+                        </b> - <i>Product</i>
+                        <br/>Valid Values: <b>
+                            <code>PROD</code>
+                        </b>, <b>
+                            <code>DS</code>
+                        </b> or <b>
+                            <code>PS</code>
+                        </b>. 
+						<br/>If the <code>ItemGroupCode</code> is not passed, the <code>Item</code> is looked up in the catalog or is assigned during the user exit <code>YCMGetItemDetailsUE</code>. If the <code>Item</code> is not found, the <code>ItemGroupCode</code> is defaulted to <b>
+                            <code>PROD</code>
+                        </b>.
+						<Validation>
+                            <Condition>If the value is passed, it must be a valid value.
+							</Condition>
+                            <Error
+                                Description="Invalid Item Group Code Passed" ErrorCode="OMP10019"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-20" EntityName="Order_Line"
+                Name="KitCode" NameInEntity="Kit_Code">
+                <Description>
+                    <div>
+                        <br/>Specifies a collection of items that form a unit. For example, a home theater system is a unit, or kit, consisting of components such as a VCR, a TV, a stereo, and other components.
+						 <br/>Valid values:  <b>
+                            <code>LK</code>
+                        </b> - <i>Logical kit</i>, <b>
+                            <code>PK</code>
+                        </b> - <i>Physical kit</i>
+                        <br/> If no KitCode is passed, the <code>createOrder</code> API searches the item in the Catalog. The following are the possible scenarios.  See Validation Conditions for possible error scenarios.
+						 <br/>
+                        <table border="0" cellpadding="0"
+                            cellspacing="0" class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="tablecolumn" width="20%">
+                                    <b>Kit definition passed</b>
+                                    </td>
+                                    <td class="tablecolumn" width="20%">
+                                    <b>Item in catalog</b>
+                                    </td>
+                                    <td class="tablecolumn" width="20%">
+                                    <b>KitItem</b>
+                                    </td>
+                                    <td class="tablecolumn" width="40%">
+                                    <b>Orderline based on</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" width="20%">Y</td>
+                                    <td class="tablecolumn" width="20%">Y </td>
+                                    <td class="tablecolumn" width="20%">Y</td>
+                                    <td class="tablecolumn" width="40%">Passed KitDefinition</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" width="20%">N</td>
+                                    <td class="tablecolumn" width="20%">Y </td>
+                                    <td class="tablecolumn" width="20%">Y</td>
+                                    <td class="tablecolumn" width="40%">Catalog definition</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <Validation>
+                            <Condition>Kit definition not passed, item exists in the catalog, it is a kit item, but there is no kit definition.
+							</Condition>
+                            <Error Description="YFS: No Kit Lines Found" ErrorCode="YFS10273"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Kit definition not passed, item does not exist in the catalog.
+							</Condition>
+                            <Error Description="YFS: No Kit Lines Found" ErrorCode="YFS10273"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Kit definition passed as the KitLines element, and the Item is not in catalog.
+							</Condition>
+                            <Error Description="Invalid kit code" ErrorCode="YFS10442"/>
+                        </Validation>
+                        <Validation>
+
+                            <Condition>Kit definition passed as the KitLines element, and the Item is not a KitItem.
+							<Error
+                                    Description="Invalid kit code" ErrorCode="YFS10442"/>
+                            </Condition>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ShipNode" EntityName="Order_Line"
+                Name="MergeNode" NameInEntity="Merge_Node">
+                <Description>
+                    <div>
+                        <br/>If two or more <code>OrderLines</code> are to be delivered together, this is the node where these lines are merged before final delivery. This field is required when the <code>DependencyShippingRule</code> is set to <b>
+                            <code>02</code>
+                        </b>. 
+						<Validation>
+                            <Condition>Must exist in table <code>YFS_SHIP_NODE</code>.
+							 </Condition>
+                            <Error Description="Invalid ship node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Line" Name="MinShipByDate" NameInEntity="Min_Ship_By_Date">
+                <Description>
+                    <div>
+                        The preferred minimum ship by date of the available supply that order line can allocate against.  Available supply with ship by date earlier than the minimum ship by date will not be considered.  This applies to the order line with a valid time-sensitive item.  The <code>MinShipByDate</code> of the order line will also be used by all kit lines with valid time-sensitive item.
+                        </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ReasonCode" EntityName="Order_Audit"
+                Name="ModificationReasonCode" NameInEntity="Reason_Code">
+                <Description>Reason Code for modification.</Description>
+            </Attribute>
+            <Attribute DataType="ReasonText" EntityName="Order_Audit"
+                Name="ModificationReasonText" NameInEntity="Reason_Text">
+                <Description>Reason details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference1" NameInEntity="Reference_1">
+                <Description>More details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference2" NameInEntity="Reference_2">
+                <Description>More details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference3" NameInEntity="Reference_3">
+                <Description>More details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference4" NameInEntity="Reference_4">
+                <Description>More details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Header"
+                Name="NotificationReference" NameInEntity="Notification_Reference">
+                <Description>More details for modification.</Description>
+            </Attribute>
+            <Attribute DataType="DocumentNo" EntityName="Order_Header"
+                Name="OrderNo" NameInEntity="Order_No"/>
+            <Attribute DataType="Quantity" Name="OrderedQty">
+                <Description>
+                    <div>
+						The quantity of the line item that is being ordered. This quantity is in Inventory UnitOfMeasure. If Quantity needs to be passed in a different UnitOfMeasure (only allowed for a Product line), then it should be passed in OrderLineTranQuantity node.
+						<br/> For a service line item which is used as a standalone service, <code>OrderedQty</code> is treated in the same manner as product lines and must be a non-zero positive number.
+						<br/>The <code>OrderedQty</code> value passed on the service line is ignored, if ordered quantity computaion is not based on entered quantity.
+						 <Validation>
+                            <Condition>Any non-zero positive number for a product Line or standalone service line.
+							 </Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If not passed for a product Line or standalone service line: 
+							  </Condition>
+                            <Error
+                                Description=" Blank Quantity to be added." ErrorCode="YFS10256"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-254" Name="Override">
+                <Description>Flag to Override status modification checks.</Description>
+            </Attribute>
+            <Attribute DataType="LineNo" EntityName="Order_Line"
+                Name="PrimeLineNo" NameInEntity="Prine_Line_No">
+                <Description>
+                    <div> 
+						The order line number. Part of an <code>OrderLine</code>'s unique key. 
+						If <code>PrimeLineNo</code> is not passed, it is generated. A starting number can be specified  in the configurator at each document type and enterprise level. If a starting number is specified the <code>PrimeLineNo</code> will be generated starting from that number. 
+						<Validation>
+                            <Condition>Any non-zero positive number.
+							</Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" EntityName="Order_Line"
+                Name="PromisedApptEndDate" NameInEntity="Promised_Appt_End_Date">
+                <Description>
+                    <div>
+						The date and time when the appointment ends for an <code>OrderLine</code>.
+						<Validation>
+                            <Condition>
+                                <code>PromisedApptEndDate</code> must be greater than or equal to <code>PromisedApptStartDate</code>.
+							</Condition>
+                            <Error
+                                Description="PromisedApptStartDate cannot be greater than PromisedApptEndDate" ErrorCode="OMP10056"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" EntityName="Order_Line"
+                Name="PromisedApptStartDate" NameInEntity="Promised_Appt_Start_Date">
+                <Description>
+                    <div>	The date and time when the appointment starts for an <code>OrderLine</code>.
+						<Validation>
+                            <Condition>
+                                <code>PromisedApptStartDate</code> cannot be after <code>PromisedApptEndDate</code>.
+							</Condition>
+                            <Error
+                                Description="PromisedApptStartDate cannot be greater than PromisedApptEndDate." ErrorCode="OMP10056"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ShipNode" EntityName="Order_Line"
+                Name="ReceivingNode" NameInEntity="Receiving_Node">
+                <Description>
+                    <div>
+						The node to which an <code>OrderLine</code> is to be shipped. 
+						<Validation>
+                            <Condition>Must exist in table <code>YFS_SHIP_NODE</code>.
+							</Condition>
+                            <Error Description="Invalid Ship node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="ScacAndService"/>
+            <Attribute DataType="Key" Name="ScacAndServiceKey"/>
+            <Attribute DataType="ShipNode" EntityName="Order_Line"
+                Name="ShipNode" NameInEntity="ShipNode">
+                <Description>
+                    <div>
+						Ship node at which this order was created. It is populated only if order was created at a node.
+						<Validation>
+                            <Condition>Must exist in table <code>YFS_SHIP_NODE</code>
+                            </Condition>
+                            <Error Description="Invalid ship node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="SkipBOMValidations">
+                <Description>
+                    <div>Determines whether BOM XML specific validations should be skipped. Default: N
+        		</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="TransactionalLineId">
+                <Description>
+                    <div>
+                        <code>TransactionalLineId</code> used to identify a line when creating associations of this line with other lines. This <code>TransactionalLineId</code> is not stored in the database and cannot be used after an order has been created. See <code>ProductServiceAssoc</code> entity for more information.
+						<Validation>
+                            <Condition>Must be unique for the <code>createOrder</code> transaction.
+							</Condition>
+                            <Error
+                                Description="Duplicate TransactionalLineId passed" ErrorCode="OMP10077"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ValidateItem">
+                <Description>
+                    <div>
+				  Indicates if item needs to be validated against catalog. If passed, the configuration rule for validating the item will be overridden. Must be set to <code>Y</code> to apply entitlement logic.
+				  <br/>Default: <b>
+                            <code>Null</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <OrderLineTranQuantity FillQuantity="" OrderedQty="" TransactionalUOM="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+			Describes the OrderLine Transaction Quantity in the TransactionalUOM. Should be passed only if OrderedQty has to be passed in a diferent UnitOfMeasure than Inventory UnitOfMeasure and hence is not passed as part of <code>OrderLine</code> element. 
+			</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Quantity" EntityName="Order_Line"
+                    Name="FillQuantity" NameInEntity="Fill_Quantity">
+                    <Description>The minimum order line quantity that must be fulfilled in an order release before it is shipped.
+				  </Description>
+                </Attribute>
+                <Attribute DataType="Quantity" EntityName="Order_Line"
+                    Name="OrderedQty" NameInEntity="Ordered_Qty">
+                    <Description>The quantity of the the line item that has been ordered. If part of line is cancelled, this number is reduced appropriately. If an order line is returned, this number is not reduced.
+				  </Description>
+                </Attribute>
+                <Attribute DataType="UOM" Name="TransactionalUOM">
+                    <Description>UOM on which all the transactional quantities are specified.
+				  </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </OrderLineTranQuantity>
+    <DerivedFrom DocumentType="Conditional" EnterpriseCode="Conditional"
+        OrderHeaderKey="Conditional" OrderLineKey="Conditional"
+        OrderNo="Conditional" OrderReleaseKey="Conditional"
+        PrimeLineNo="Conditional" ReleaseNo="Conditional" SubLineNo="Conditional">
+        <yfc:doc>
+            <Element EntityName="Order_Line">
+                <Description>
+                    <div>
+					Use this element to derive a new <code>OrderLine</code> from an existing <code>OrderLine</code>.
+					<br/>The existing <code>OrderLine</code> can be identified by using one of the following combinations:
+					<br/> -<code>OrderLineKey</code>
+                        <br/> -<code>OrderHeaderKey</code>, <code>PrimeLineNo</code>, and  <code>SubLineNo</code>
+                        <br/> -<code>OrderNo</code>, <code>EnterpriseCode</code>, <code>DocumentType</code>, <code>PrimeLineNo</code>,  and <code>SubLineNo</code>
+                        <br/>
+                        <br/>If the parent line cannot be identified, an error is thrown.
+					<br/>
+                        <br/>To select only the part of the existing <code>OrderLine</code> associated with a particular release, to 
+					derive a new  <code>OrderLine</code> from, additional data is needed. In addition to the information to identify the existing  <code>OrderLine</code>, supply either the <code>OrderReleaseKey</code> or the <code>ReleaseNo</code> that  identifies the release.
+					<br/>
+                        <br/>Information is taken from the parent line, based on the DerivedOrderDefaultTemplate, stored in the <code>YFS_DOCUMENT_TEMPLATE</code> table. The DerivedOrderDefaultTemplate is chosen on the basis of the DocumentType of the child order. 
+					<br/>
+                        <br/>If there are attributes passed in the  <code>createOrder</code> input xml,  the values in the passed attributes are used creating the new <code>OrderLine</code>. 
+					<br/>Schedule information is never propagated from the parent line to the child line. 
+					<br/>
+                        <br/>The <code>DerivedFromOrderLineKey</code>, <code>DerivedFromOrderHeaderKey</code> and, if applicable, <code>DerivedFromOrderReleaseKey</code> are set on the new <code>OrderLine</code>. The new <code>OrderLine</code>is validated, like all the other lines of the new order.
+					<br/> A transaction is triggered. The transaction is based on the existing order's ProcessType, and the document type of the new order. This IncludeInDerivedOrder transaction changes the status of that quantity of the existing line which is equal to the OrderedQty of the child line. If the parent line does not have sufficient quantity to derive from, error is thrown. 
+					</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Order_Header" Name="DocumentType" NameInEntity="Document_Type"/>
+                <Attribute DataType="OrgCode" EntityName="Order_Header"
+                    Name="EnterpriseCode" NameInEntity="Enterprise_Key"/>
+                <Attribute DataType="DocumentNo"
+                    EntityName="Order_Header" Name="OrderNo" NameInEntity="Order_No"/>
+                <Attribute DataType="Key" EntityName="Order_Release"
+                    Name="OrderReleaseKey" NameInEntity="Order_Release_Key"/>
+                <Attribute DataType="Count" EntityName="Order_Release"
+                    Name="ReleaseNo" NameInEntity="Release_No"/>
+            </Attributes>
+        </yfc:doc>
+    </DerivedFrom>
+    <!-- The DerivedFrom element is required if the orderline is to be derived from an existing orderline. OrderLineKey or OrderHeaderKey, PrimeLineNo, SubLineNo or OrderNo, EnterpriseCode, DocumentType, PrimeLineNo, SubLineNo are required to identify the orderline to derive from. The OrderReleaseKey or OrderHeaderKey, ReleaseNo or OrderNo, DocumentType, EnterpriseCode, ReleaseNo are required to identify the orderrelease to derive from-->
+    <Item AlternateItemID="" BundleFulfillmentMode="|00|01|02"
+        CostCurrency="" CountryOfOrigin="" CustomerItem=""
+        CustomerItemDesc="" ECCNNo="" HarmonizedCode="" ISBN=""
+        ItemDesc="" ItemID="Conditional" ItemShortDesc="" ItemWeight=""
+        ItemWeightUOM="" ManufacturerItem="" ManufacturerItemDesc=""
+        ManufacturerName="" NMFCClass="" NMFCCode="" NMFCDescription=""
+        ProductClass="" ProductLine="" ScheduleBCode="" SupplierItem=""
+        SupplierItemDesc="" TaxProductCode="" UPCCode="" UnitCost="" UnitOfMeasure="">
+        <yfc:doc>
+            <Element EntityName="Order_Line">
+                <Description>
+                    <div>
+					Either the <code>ItemID</code> or a valid <code>AlternateItemID</code> must be passed. If the <code>ItemID</code> is not passed, the catalog will be searched for an item which has the same alias as the <code>AlternateItemID</code>. If an item is still not found in the catalog, the <code>AlternateItemID</code> will be used as the <code>ItemID</code>.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </Item>
+    <OrderLineOptions>
+        <OrderLineOption OptionDescription="" OptionItemID="Required"
+            OptionUOM="" PricingUOM="" UnitPrice="">
+            <yfc:doc>
+                <Element EntityName="Order_Line_Option">
+                    <Description>
+                        <div>
+				Describes a Special Service or the Options attached to a Delivery or a Provided Service Line. Options can be a Special Service or specified for a Delivery or a Provided Service line.
+				<br/>
+				Same Special Service should not be present multiple times for an order line.
+				<br/>
+				Quantity of Special Service is calculated based on association with PROD item.
+				<Validation>
+                                <Condition>An <code>OrderLineOption</code> is passed for a Product <code>OrderLine</code>.
+					</Condition>
+                                <Error
+                                    Description="An Order Line with ItemGroupCode equalTo PROD cannot have Options" ErrorCode="OMP10029"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute Name="OptionItemID" NameInEntity="Option_Item_Id">
+                        <Description>
+                            <div>
+					The <code>ItemID</code> of the <code>Item</code> with an Option.
+					<Validation>
+                                    <Condition>Must be a valid <code>OptionItemID</code>.
+						</Condition>
+                                    <Error
+                                    Description="Invalid OptionItemId passed for the Line Item." ErrorCode="OMP10201"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <CustomAttributes>
+                <yfc:doc>
+                    <Element EntityName="Order_Line_Option_Extension"/>
+                </yfc:doc>
+            </CustomAttributes>
+        </OrderLineOption>
+    </OrderLineOptions>
+    <PersonInfoShipTo AddressID="" AddressLine1="" AddressLine2=""
+        AddressLine3="" AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" EveningFaxNo=""
+        EveningPhone="" FirstName="" IsCommercialAddress="" JobTitle=""
+        LastName="" MiddleName="" MobilePhone="" OtherPhone=""
+        PersonID="" State="" Suffix="" TaxGeoCode="" Title="" ZipCode="">
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+                    <div>
+			 Contains information regarding where to ship the <code>OrderLine</code>'s information.
+			 <br/> If this element is supplied, it overrides the <code>PersonInfoShipTo</code> at the <code>Order</code> level, for this <code>OrderLine</code>.
+			 <br/>If this element is not passed, then the  ShipTo <code>PersonInfoShipTo</code> is set based on existing data.
+			 The following steps are performed in the order listed, and when <code>PersonInfoShipTo</code> is found, it is used for this<code>OrderLine</code>. 
+			 <br/>
+                        <code>ReceivingNode</code>'s address
+				<br/>
+                        <code>ReceivingNode</code>'s owner's address
+				<br/>
+                        <code>Order</code>'s <code>PersonInfoShipTo</code>. In this case, the information is not copied to the <code>OrderLine</code>, but is used unless this <code>OrderLines</code>'s <code>PersonInfoShipTo</code> is explicitly set.
+				<br/>
+                        <code>BillTo</code>information. If no <code>PersonInfoShipTo</code> is set in the <code>Order</code>, the Bill
+				 ToKey is copied to the ShipToKey for the <code>Order</code>.
+			 <Validation>
+                            <Condition>If passed, at least one attribute must be passed. No other validations are performed.
+				</Condition>
+                            <Error Description="Blank Person Info" ErrorCode="YFS10391"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </PersonInfoShipTo>
+    <!--Optional-->
+    <PersonInfoMarkFor AddressID="" AddressLine1="" AddressLine2=""
+        AddressLine3="" AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" EveningFaxNo=""
+        EveningPhone="" FirstName="" IsCommercialAddress="" JobTitle=""
+        LastName="" MiddleName="" MobilePhone="" OtherPhone=""
+        PersonID="" State="" Suffix="" TaxGeoCode="" Title="" ZipCode=""/>
+    <!--Optional-->
+    <Instructions>
+        <Instruction InstructionText="Required" InstructionType=""
+            InstructionURL="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Instruction_Detail"/>
+                <Attributes>
+                    <Attribute EntityName="Instruction_Detail"
+                        Name="InstructionText" NameInEntity="Instruction_Text">
+                        <Description>
+                            <div>
+				Free-form text indicating any additional information related to the instruction type. For example, special 
+				gift wrapping instructions. 
+				<Validation>
+                                    <Condition>If <code>Instruction</code> is passed, then <code>InstructionText</code> must be passed.
+					</Condition>
+                                    <Error
+                                    Description="Blank Instruction Text." ErrorCode="YFS10386"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Instruction>
+        <NumberOfInstructions>PCDATA</NumberOfInstructions>
+    </Instructions>
+    <LinePriceInfo DiscountPercentage=""
+        IsEligibleForShippingDiscount=""
+        IsLinePriceForInformationOnly="" IsPriceLocked="" ListPrice=""
+        RetailPrice="" TaxExemptionCertificate="" TaxableFlag="" UnitPrice="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute Name="IsLinePriceForInformationOnly">
+                    <Description>
+                        <div>
+						This flag indicates whether price information passed on the line is for information only. If it is 'Y' then line total will not be considered in order total. If it is not passed or passed as 'N' then line total is considered in order total. 
+						If this flag is not passed for a static bundle (bundle defined in the catalog),
+						the the flag will be set on the parent and its components based on the
+						<code>BundlePricingStrategy</code> defined on the item.
+						<br/>
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <tr>
+                                    <th class="tablecolumn">BundlePricingStrategy</th>
+                                    <th class="tablecolumn">Bundle Parent Value</th>
+                                    <th class="tablecolumn">Components Value</th>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">COMP</td>
+                                    <td class="tablecolumn">Y</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">PARENT</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                    <td class="tablecolumn">Y</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">ALL</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </LinePriceInfo>
+    <Promotions Reset="N|Y">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="MasterPromotionInput.xml" IncludeXMLPath="/PromotionLines"/>
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        <div>Determines whether all Promotions, except those listed below, 
+					should be removed.</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Promotion Action="" DenialReason="" ExclusivityId=""
+            ExclusivityType="" IsExternal="" OverrideAdjustmentValue=""
+            OverrideMaxAdjustment="" Priority="" PromotionApplied=""
+            PromotionCategory="" PromotionId="" PromotionType=""
+            ValidateReferences="" yfc:DTDOccurrence="ZeroOrMany" yfc:GroupName="OrderLine:Promotion">
+            <yfc:doc>
+                <Element EntityName="Promotion">
+                    <Description>
+                        <div>
+						Promotions that are associated to an order or any of its lines. PromotionId must be passed to identify the promotion.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Action">
+                        <Description>
+                            <div>
+						Action to perform on this promotion.
+						<br/>Default: <code>Null</code> - if not passed, promotion will be added if it doesn't exist or modified if it does exist.
+						<br/>Valid Values: 
+							<br/>
+                                <b>
+                                    <code>CREATE</code>
+                                </b> - Add the specified promotion to the order.
+							<br/>
+                                <b>
+                                    <code>REMOVE</code>
+                                </b> - Removes the specified promotion from the order.
+						<Validation>
+                                    <Condition>If an award record is associated with this promotion, it may not be removed.</Condition>
+                                    <Error
+                                    Description="You are attempting to delete a Promotion associated with an award on the order." ErrorCode="OMP77_10004"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If a promotion already exists, can't add the same promotion twice.</Condition>
+                                    <Error
+                                    Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Money" Name="OverrideMaxAdjustment">
+                        <Description>
+                            <div> For Coupon promotions, the overridden maximum adjustment value for the coupon pricing rule. 
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="ValidateReferences">
+                        <Description>
+                            <div>For Coupon promotions, if <code>'Y"</code> the references will be validated and only valid references will be used</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Promotion>
+    </Promotions>
+    <LineCharges>
+        <LineCharge ChargeCategory="Required" ChargeName=""
+            ChargePerLine="" ChargePerUnit="" Reference="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </LineCharges>
+    <LineTaxes>
+        <LineTax ChargeCategory="" ChargeName="" Reference1=""
+            Reference2="" Reference3="" Tax="" TaxName="Required"
+            TaxPercentage="" TaxableFlag="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Tax_Breakup"/>
+            </yfc:doc>
+        </LineTax>
+    </LineTaxes>
+    <!--Optional-->
+    <References>
+        <Reference Name="Required" Value="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Reference_Table"/>
+                <Attributes>
+                    <Attribute DataType="Text-24"
+                        EntityName="Reference_Table" Name="Name" NameInEntity="Field_Name1">
+                        <Description>
+                            <div>
+						Name of Reference. The <code>Name</code> can be any text, with no white spaces, within, following or before the text.
+							<Validation>
+                                    <Condition>
+                                    <code>Name</code> not supplied when Reference element is supplied.
+							</Condition>
+                                    <Error
+                                    Description="Blank Reference Name." ErrorCode="YFS10389"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-40"
+                        EntityName="Reference_Table" Name="Value" NameInEntity="Field_Value1"/>
+                </Attributes>
+            </yfc:doc>
+        </Reference>
+    </References>
+    <!--Optional-->
+    <KitLines>
+        <KitLine CustomerItem="" CustomerItemDesc="" DepartmentCode=""
+            ItemDesc="" ItemID="Required" ItemShortDesc="" ItemWeight=""
+            ItemWeightUOM="" KitQty="Required" ProductClass=""
+            SupplierItem="" SupplierItemDesc="" UPCCode=""
+            UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <KitLineTranQuantity ItemID="" KitQty="" TransactionalUOM="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+					   Contains information for any <code>OrderLine</code> item that is part of a Kit. This occurs when multiple SKUs are grouped to make up one item.
+					   </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Order_Kit_Line"
+                            Name="ItemID" NameInEntity="Item_Id">
+                            <Description>
+                                <div>
+							The component item ID. 
+							<Validation>
+                                    <Condition>Must be passed if the <code>KitLine</code> is passed.
+								</Condition>
+                                    <Error
+                                    Description="Blank Kit Item Id." ErrorCode="YFS10381"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity"
+                            EntityName="Order_Kit_Line" Name="KitQty" NameInEntity="Kit_Qty">
+                            <Description>
+                                <div>
+							The number of components required to create one kit.
+							</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="UOM" Name="TransactionalUOM">
+                            <Description>UOM on which all the transactional quantities are specified.
+						  </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </KitLineTranQuantity>
+        </KitLine>
+    </KitLines>
+    <AdditionalAddresses>
+        <AdditionalAddress AddressType="Required" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Entity_Address">
+                    <Description>
+                        <div>
+				Multiple addresses can be associated with an <code>Order</code> and for individual <code>OrderLines</code>. The <code>AdditionalAddress</code> entity is passed through. The system does not have any application logic based on the <code>AdditionalAddress</code>.
+				</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <PersonInfo AddressID="" AddressLine1="" AddressLine2=""
+                AddressLine3="" AddressLine4="" AddressLine5=""
+                AddressLine6="" AlternateEmailID="" Beeper="" City=""
+                Company="" Country="" DayFaxNo="" DayPhone=""
+                Department="" EMailID="" EveningFaxNo="" EveningPhone=""
+                FirstName="" IsCommercialAddress="" JobTitle=""
+                LastName="" MiddleName="" MobilePhone="" OtherPhone=""
+                PersonID="" State="" Suffix="" TaxGeoCode="" Title="" ZipCode=""/>
+        </AdditionalAddress>
+    </AdditionalAddresses>
+    <Schedules>
+        <Schedule BatchNo="" ChangeInQuantity="Required" LotNumber=""
+            RevisionNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="PositiveQuantity" Name="ChangeInQuantity"/>
+                </Attributes>
+            </yfc:doc>
+            <ScheduleTranQuantity ChangeInQuantity="" TransactionalUOM="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Quantity" Name="ChangeInQuantity">
+                            <Description>Quantity.
+					  </Description>
+                        </Attribute>
+                        <Attribute DataType="UOM" Name="TransactionalUOM">
+                            <Description>UOM on which all the transactional quantities are specified.
+					  </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ScheduleTranQuantity>
+        </Schedule>
+    </Schedules>
+    <Dependency DependentOnPrimeLineNo="Conditional" DependentOnSubLineNo="Conditional">
+        <yfc:doc>
+            <Element EntityName="Order_Line">
+                <Description>
+                    <div>
+				 This element is  present only if the <code>OrderLine</code> depends on another <code>OrderLine</code>.
+				</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Order_Line"
+                    Name="DependentOnPrimeLineNo" NameInEntity="Dependent_On_Prime_Line_No">
+                    <Description>
+                        <div>
+					Both <code>DependentOnPrimeLineNo</code> and <code>DependentOnSubLineNo</code> must be passed for dependent <code>OrderLines</code>. 
+					<Validation>
+                                <Condition>The <code>DependentOnPrimeLineNo</code> and <code>DependentOnSubLineNo</code> combination passed does not match any other <code>OrderLine</code>.
+						</Condition>
+                                <Error
+                                    Description="Invalid dependent on line information passed" ErrorCode="YFS10444"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Order_Line"
+                    Name="DependentOnSubLineNo" NameInEntity="Dependent_On_Sub_Line_No">
+                    <Description>
+                        <div>
+					Both <code>DependentOnPrimeLineNo</code> and <code>DependentOnSubLineNo</code> must be passed for dependent <code>OrderLine</code>s. 
+					<Validation>
+                                <Condition>The <code>DependentOnPrimeLineNo</code> and <code>DependentOnSubLineNo</code> combination passed does not match any other <code>OrderLine</code>.
+						</Condition>
+                                <Error
+                                    Description="Invalid dependent on line information passed" ErrorCode="YFS10444"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Dependency>
+    <OrderDates>
+        <OrderDate ActualDate="" CommittedDate="" DateTypeId="Required"
+            ExpectedDate="" RequestedDate="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </OrderDates>
+    <OrderLineInvAttRequest BatchNo="" LotAttribute1="" LotAttribute2=""
+        LotAttribute3="" LotKeyReference="" LotNumber=""
+        ManufacturingDate="" RevisionNo="">
+        <yfc:doc>
+            <Element EntityName="Order_Line_Req_Tag"/>
+        </yfc:doc>
+    </OrderLineInvAttRequest>
+    <!-- Based on new line type one of these nodes should be included.
+	If new line is a product line only the <Serviceline> should be included.
+	If new line is a service line only the <Productline> should be included.-->
+    <ProductAssociations>
+        <ProductAssociation yfc:DTDOccurrence="ZeroOrMany">
+            <ProductLine OrderLineKey="Conditional"
+                PrimeLineNo="Conditional" SubLineNo="Conditional">
+                <yfc:doc>
+                    <Element EntityName="Order_Line">
+                        <Description>
+                            <div> 
+						Specifies the product and service lines being associated. When a new association is created by passing the <code>ProductServiceAssoc</code>, a number of validations are performed.
+						<Validation>
+                                    <Condition> A delivery or provided service <code>OrderLine</code> can only be associated with a product <code>OrderLine</code>
+                                    </Condition>
+                                    <Error Description="" ErrorCode=" "/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>A delivery <code>OrderLine</code>or a service  <code>OrderLine</code> which is not standalone must be associated with a product  <code>OrderLine</code>.
+							</Condition>
+                                    <Error
+                                    Description="Service Line does not have any Association with Product Line" ErrorCode="OMP10022:"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>One product  <code>OrderLine</code> cannot be associated with more than one delivery  <code>OrderLine</code>.
+							</Condition>
+                                    <Error
+                                    Description="One Product Line cannot be associated with Multiple Delivery Lines" ErrorCode="OMP10027"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>The <code>ItemID</code>s or product line and service line must have an association present.
+							</Condition>
+                                    <Error
+                                    Description="Missing association between Product and Service Line Items" ErrorCode="OMP10028"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>A stand-alone provided service <code>OrderLine</code> can not associated with any product  <code>OrderLine</code>.
+							</Condition>
+                                    <Error
+                                    Description=" A Standalone Service line cannot be associated with Product Lines" ErrorCode="OMP10054"/>
+                                </Validation>
+                                <br/>If multiple product <code>OrderLine</code>s are associated with one delivery <code>OrderLine</code>, there must be consistent information related to delivery. If the delivery line have no values for the following elements and attributes: <code>PersonInfoShipTo</code>, <code>ReqShipDate</code>,  <code>ReqDeliveryDate</code>,  <code>MergeNode</code>, <code>ReceivingNode</code>,  <code>ShipNode</code>
+                                <br/>
+						the multiple product <code>OrderLine</code>s must not have different values for any of those elements and attributes.
+						<br/>
+                                <br/>If the delivery multiple product <code>OrderLine</code> has any of these attributes present, the value is copied to all associated product <code>OrderLine</code>s,  even if different values already exist for the Product multiple product <code>OrderLine</code>s.
+					</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Order_Line"
+                            Name="OrderLineKey" NameInEntity="Order_Line_Key">
+                            <Description>
+                                <div>
+						Primary key generated by the system. May be passed to identify the <code>OrderLine</code>. Alternatively, the  <code>PrimeLineNo</code> and the <code>SubLineNo</code> can be passed.
+						<Validation>
+                                    <Condition>
+                                    <code>OrderLineKey</code> must identify an existing OrderLine.
+							</Condition>
+                                    <Error
+                                    Description="Invalid Product Line passed in Association" ErrorCode="OMP10023"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Order_Line"
+                            Name="PrimeLineNo" NameInEntity="Prime_Line_No">
+                            <Description>
+                                <div>
+						The order line number. Must be passed with the <code>SubLineNo</code> to identify the <code>OrderLine</code>. Alternatively, the <code>OrderLineKey</code> can be passed.
+						<Validation>
+                                    <Condition>Must pass one of the following:  
+							<br/>the <code>PrimeLineNo</code> and the <code>SubLineNo</code>
+                                    <br/>
+                                    <i>or</i> the <code>OrderLineKey</code>.
+							</Condition>
+                                    <Error Description="" ErrorCode=" "/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Order_Line"
+                            Name="SubLineNo" NameInEntity="Sub_Line_No">
+                            <Description>
+                                <div>
+						Must be passed with the <code>PrimeLineNo</code> to identify the <code>OrderLine</code>. Alternatively, the <code>OrderLineKey</code> can be passed.
+						<Validation>
+                                    <Condition>Must pass one of the following:  
+							<br/>the <code>PrimeLineNo</code> and the <code>SubLineNo</code>
+                                    <br/>
+                                    <i>or</i> the <code>OrderLineKey</code>.
+							</Condition>
+                                    <Error Description="" ErrorCode=" "/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ProductLine>
+        </ProductAssociation>
+    </ProductAssociations>
+    <DeliveryAssociations>
+        <DeliveryAssociation yfc:DTDOccurrence="ZeroOrMany">
+            <ServiceLine OrderLineKey="Conditional"
+                PrimeLineNo="Conditional" SubLineNo="Conditional">
+                <yfc:doc>
+                    <Element EntityName="Order_Line"/>
+                    <Attributes>
+                        <Attribute EntityName="Order_Line"
+                            Name="OrderLineKey" NameInEntity="Order_Line_Key">
+                            <Description>
+                                <div>
+				Primary key generated by the system. 
+				<Validation>
+                                    <Condition>
+                                    <code>OrderLineKey</code> must identify an existing <code>OrderLine</code>.
+					</Condition>
+                                    <Error
+                                    Description="Invalid Product Line passed in Association" ErrorCode="OMP10023"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Order_Line"
+                            Name="PrimeLineNo" NameInEntity="Prime_Line_No">
+                            <Description>
+                                <div>
+				The order line number. Part of an order line's unique key. 
+				<br/>Must pass one of the following :
+					<br/>The <code>PrimeLineNo</code>  and the <code>SubLineNo</code>
+                                    <i>or</i> the <code>OrderLineKey</code>.
+				</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Order_Line"
+                            Name="SubLineNo" NameInEntity="Sub_Line_No">
+                            <Description>
+                                <div>
+				Part of unique key of line. 
+					<br/>Must pass one of the following :
+					<br/>The <code>PrimeLineNo</code>  and the <code>SubLineNo</code>
+                                    <i>or</i> the <code>OrderLineKey</code>.
+					
+				</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ServiceLine>
+        </DeliveryAssociation>
+    </DeliveryAssociations>
+    <ProductItems>
+        <ProductItem ItemID="" Quantity="" UnitOfMeasure="">
+            <yfc:doc>
+                <Element EntityName="Order_Ser_Prod_Item">
+                    <Description>
+                        <div>
+                            <code>ProductItem</code> contains the definition of product items involved in a stand-alone service line. This definition is used to calculate the service line quantity and to identify the skills needed to provide the service. These product items will not be fulfilled as part of order fulfillment process.
+                <Validation>
+                                <Condition> Product item definition can be given only for a stand-alone provided service <code>OrderLine</code>.
+                    </Condition>
+                                <Error
+                                    Description="Product item definition can be given only for Standalone Provided Services" ErrorCode="OMP11048_55SP2"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>The <code>ItemID</code>s or product item and service line must have an association present.
+                    </Condition>
+                                <Error
+                                    Description="Missing association between Product and Service Line Items" ErrorCode="OMP10028"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </ProductItem>
+    </ProductItems>
+    <ChildOrderLineRelationships>
+        <OrderLineRelationship RelationshipType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Line_Relationship">
+                    <Description>
+                        <div>
+						Contains information about the child relationships of the order lines.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Order_Line_Relationship"
+                        Name="RelationshipType" NameInEntity="Relationship_Type"/>
+                </Attributes>
+            </yfc:doc>
+            <ChildLine OrderLineKey="" PrimeLineNo="" SubLineNo="">
+                <yfc:doc>
+                    <Element EntityName="Order_Line">
+                        <Description>
+                            <div>
+						Contains information about the child order line for the relationship.
+						</div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </ChildLine>
+        </OrderLineRelationship>
+    </ChildOrderLineRelationships>
+    <ParentOrderLineRelationships>
+        <OrderLineRelationship RelationshipType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Line_Relationship">
+                    <Description>
+                        <div>
+						Contains information about the parent relationships of the order lines.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Order_Line_Relationship"
+                        Name="RelationshipType" NameInEntity="Relationship_Type"/>
+                </Attributes>
+            </yfc:doc>
+            <ParentLine OrderLineKey="" PrimeLineNo="" SubLineNo="">
+                <yfc:doc>
+                    <Element EntityName="Order_Line">
+                        <Description>
+                            <div>
+						 Contains information about the parent order line for the relationship.
+						</div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </ParentLine>
+        </OrderLineRelationship>
+    </ParentOrderLineRelationships>
+    <OrderLineReservations>
+        <OrderLineReservation BatchNo="" DemandType="" ItemID="Required"
+            LotNumber="" Node="Required" ProductClass=""
+            Quantity="Required" RequestedReservationDate=""
+            ReservationID="" RevisionNo="" UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="Y"
+                IncludeXMLFileName="YFS_Order_Line_Reservation_tran.xml" IncludeXMLPath="/OrderLineReservations/OrderLineReservation"/>
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>Identifies a reservation to make for the order line.  Existing reservations cannot be modified directly; instead, if a new reservation is created with the same reservation attributes as an existing reservation, the new reservation will be consolidated into the existing reservation, and demand will be created for the new quantity.<br/>If new quantity is being added to the order line in the same call that a reservation is being added, and the reservation matches the order line's attributes, then the reservation will be rolled up in to the order line, and the matching quantity will move to "Reserved" status.</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute Name="DemandType">
+                        <Description>
+                            <div>
+                        The inventory demand type used by the reservation.  For all user-created reservations, this will be defaulted from the document params.
+                        When promising server is present and existing inventory reservation is used in order line reservation, pass same DemandType as inventory reservation</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Quantity">
+                        <Description>
+                            <div>The quantity to reserve.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Inventory_Reservation"
+                        Name="ReservationID" NameInEntity="Reservation_Id">
+                        <Description>
+                            <div>The reservation ID from an existing inventory reservation.  If the reservation exists, that quantity will be consumed first.  Any quantity that cannot be obtained from the reservation will be reserved on the fly.  If <code>ReservationID</code> is not passed, all quantity for this reservation will be reserved on the fly.</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </OrderLineReservation>
+    </OrderLineReservations>
+    <Notes>
+        <Note AuditTransactionId="" ContactReference="" ContactTime=""
+            ContactType="" ContactUser="" CustomerSatIndicator=""
+            NoteText="Required" Priority="" ReasonCode=""
+            VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Notes"/>
+            </yfc:doc>
+        </Note>
+    </Notes>
+    <OrderLineSourcingControls>
+        <OrderLineSourcingCntrl InventoryCheckCode="" Node=""
+            ReasonText="" SuppressNodeCapacity="N|Y"
+            SuppressProcurement="Y|N"
+            SuppressShipNodeCapacityForProc="N|Y" SuppressSourcing="Y|N" yfc:DTDOccurrence="ZeroOrMany"/>
+    </OrderLineSourcingControls>
+    <OrderHoldTypes>
+        <OrderHoldType HoldType="Required" ReasonText=""/>
+    </OrderHoldTypes>
+    <OrderOverride QuantityLimitOverridden=""/>
+    <AdditionalLinePrices>
+        <AdditionalLinePrice IsPriceLocked=""
+            IsPriceTypeForInformationOnly="" Operation="" Price=""
+            PriceTypeName="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="IsPriceLocked">
+                        <Description>
+		            		Flag to indicate if the AdditionalLinePrice is Price-Locked. If passed with a value of <code>Y</code>, internal logic will use the passed Price
+		            		from input for calculation instead of the Price generated by the Pricing Engine.
+		            	</Description>
+                    </Attribute>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div> Operation to perform
+								<br/>Valid Values: 
+								<br/>
+                                <b>
+                                    <code>Manage</code>
+                                </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+								<br/>
+                                <b>
+                                    <code>Create</code>
+                                </b> - Creates a new record. 
+								<br/>
+                                <b>
+                                    <code>Modify</code>
+                                </b> - Change values in an existing record.
+								<br/>
+                                <b>
+                                    <code>Delete</code>
+                                </b> - Deletes an existing record.
+								<br/>The default behavior is <b>
+                                    <code>Manage</code>
+                                </b>.
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Promotions Reset="N|Y">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterPromotionInput.xml" IncludeXMLPath="/PromotionLines"/>
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>
+                                <div>Determines whether all Promotions, except those listed below, 
+					should be removed.</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Promotion Action="" DenialReason="" ExclusivityId=""
+                    ExclusivityType="" IsExternal=""
+                    OverrideAdjustmentValue="" OverrideMaxAdjustment=""
+                    Priority="" PromotionApplied="" PromotionCategory=""
+                    PromotionId="" PromotionType=""
+                    ValidateReferences="" yfc:DTDOccurrence="ZeroOrMany" yfc:GroupName="AdditionalLinePrice:Promotion">
+                    <yfc:doc>
+                        <Element EntityName="Promotion">
+                            <Description>
+                                <div>
+						Promotions that are associated to an order or any of its lines. PromotionId must be passed to identify the promotion.
+						</div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Action">
+                                <Description>
+                                    <div>
+						Action to perform on this promotion.
+						<br/>Default: <code>Null</code> - if not passed, promotion will be added if it doesn't exist or modified if it does exist.
+						<br/>Valid Values: 
+							<br/>
+                                    <b>
+                                    <code>CREATE</code>
+                                    </b> - Add the specified promotion to the order.
+							<br/>
+                                    <b>
+                                    <code>REMOVE</code>
+                                    </b> - Removes the specified promotion from the order.
+						<Validation>
+                                    <Condition>If an award record is associated with this promotion, it may not be removed.</Condition>
+                                    <Error
+                                    Description="You are attempting to delete a Promotion associated with an award on the order." ErrorCode="OMP77_10004"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If a promotion already exists, can't add the same promotion twice.</Condition>
+                                    <Error
+                                    Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="Money" Name="OverrideMaxAdjustment">
+                                <Description>
+                                    <div> For Coupon promotions, the overridden maximum adjustment value for the coupon pricing rule. 
+						</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="Flag" Name="ValidateReferences">
+                                <Description>
+                                    <div>For Coupon promotions, if <code>'Y"</code> the references will be validated and only valid references will be used</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Promotion>
+            </Promotions>
+            <Awards>
+                <Award Action="" AwardAmount="" AwardApplied=""
+                    AwardId="" AwardQuantity="" AwardType=""
+                    ChargeCategory="" ChargeName="" DenialReason=""
+                    Description="" PosReasonCode="" PromotionId="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Promotion_Award">
+                            <Description>
+                                <div>
+								Awards that are created out of the promotions. A single promotion can result in to multiple awards. AwardId must be passed to identify the award.
+								<Validation>
+                                    <Condition>PromotionId must be passed and it must be a valid one to add the award</Condition>
+                                    <Error
+                                    Description="All awards must be associated to a promotion on the order" ErrorCode="OMP77_10003"/>
+                                    <Condition>Manual Line Charge generated by this Award must not conflict with non-manual Line Charge already on OrderLine</Condition>
+                                    <Error
+                                    Description="Manual Award charge and pricing charge are conflicting." ErrorCode="OMP85_0062"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Action">
+                                <Description>
+                                    <div>
+								Action to perform on this <code>Award</code>.
+								<br/>Default: <code>Null</code> - if not passed awards will be added if not exist or modified.
+								<br/>Valid Values: 
+									<br/>
+                                    <b>
+                                    <code>REMOVE</code>
+                                    </b> - Removes the award.
+								</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Award>
+            </Awards>
+        </AdditionalLinePrice>
+    </AdditionalLinePrices>
+    <CustomAttributes>
+        <yfc:doc>
+            <Element EntityName="Order_Line_Extension"/>
+        </yfc:doc>
+    </CustomAttributes>
+</OrderLine>

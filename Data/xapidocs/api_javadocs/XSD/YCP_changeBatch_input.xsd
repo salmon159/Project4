@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/changeBatch/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/changeBatch/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_changeBatch_input.xsd" yfc:rootElement="Batch">
+        <xsd:appinfo source="yfc:structure">
+            <Batch hasAttributes="Y">
+                <Tasks>
+                    <Task hasAttributes="Y"/>
+                </Tasks>
+            </Batch>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Batch" type="yfc:BatchXSDType">
+        <xsd:annotation yfc:tableName="YFS_BATCH">
+            <xsd:documentation>This table stores the batches of tasks.  A batch of tasks is typically sized such that it takes one user around 30 minutes to complete.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="BatchXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Tasks"/>
+        </xsd:all>
+        <xsd:attribute name="BatchKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>
+                    <div>
+				Pass the <code>BatchKey</code> or <code>BatchNo</code> to identify the Batch.
+				<Validation>
+                            <Condition>
+                                <code>BatchKey</code> passed does not exist in the YFS_BATCH table.
+					</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>
+                    <div>
+				Pass the <code>BatchKey</code> or <code>BatchNo</code> to identify the Batch.
+				<Validation>
+                            <Condition>
+                                <code>BatchNo</code> passed does not exist in the YFS_BATCH table.
+					</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BatchStatusDesc" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Batch Status Description</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_NO" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The identifier of the count request within the context of a document type and organization code of the node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EquipmentType" type="yfctype:EquipmentType" use="optional">
+            <xsd:annotation yfc:columnName="EQUIPMENT_TYPE" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The equipment type is used to move product within a warehouse. For exampe, cart.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManuallyCreated" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="MANUALLY_CREATED" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>This flag indicates whether the batch is created by the system or manually by the user.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_REQUEST_NO" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>This field identifies a move request for a organization code of the node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                <xsd:documentation>The unique identifier for the ship node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The node's organization code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RemainingMinutes" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicates the estimated time required to complete all the open tasks.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Count"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The shipment number associated with this batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:EnumStatus" use="optional">
+            <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The status of the Batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+            <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The type of the task. A batch can only contain tasks of the same task type.  This attribute marks task type for all tasks within this batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WaveNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="WAVE_NO" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The wave number associated with this batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Tasks">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:Task"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Task">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Indicates action to perform
+					<br/> Valid values are:
+					<br/>
+                            <b>
+                                <code>ADD</code>
+                            </b> - Adds the task to the batch
+					<br/>
+                            <b>
+                                <code>REMOVE</code>
+                            </b> - Removes the task from the batch 
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="TASK_ID"
+                    yfc:isConditional="Y" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The one up number that uniquely identifies the task.  This is system generated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="TASK_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>
+					Pass either <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+					<Validation>
+                                <Condition>
+                                    <code>TaskKey</code> passed does not exist in the YFS_TASK table.
+						</Condition>
+                                <Error Description="No record found" ErrorCode="YCP0045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

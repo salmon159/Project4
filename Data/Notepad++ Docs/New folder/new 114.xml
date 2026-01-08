@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:template match="/">
+		<Order>
+			<xsl:attribute name="DocumentType">
+				<xsl:text>0003</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="/Order/@EnterpriseCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="DraftOrderFlag">
+				<xsl:text>N</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="OrderType">
+				<xsl:text>Customer Return</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="EntryType">
+				<xsl:text>WCS</xsl:text>
+			</xsl:attribute>
+			<xsl:variable name="varRetReason">
+				<xsl:value-of select="/Order/OrderLines/OrderLine/@ReturnReason"/>
+			</xsl:variable>
+			<xsl:attribute name="ReturnReason">
+				<xsl:choose>
+					<xsl:when test="$varRetReason!=''">
+						<xsl:value-of select="$varRetReason"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="/Order/OrderLines/OrderLine/Item/@ReturnReason"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:variable name="vPaymentType">
+				<xsl:choose>
+					<xsl:when test="/Order/OrderLines/OrderLine/OrderLineList/OrderLine/Order/PaymentMethods//PaymentMethod/@PaymentType='COD'">
+						<xsl:text>Y</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>N</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:attribute name="ProcessPaymentOnReturnOrder">
+				<xsl:value-of select="$vPaymentType"/>
+			</xsl:attribute>
+			<xsl:attribute name="CustomerEMailID">
+				<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/@CustomerEMailID"/>
+			</xsl:attribute>
+			<xsl:attribute name="CustomerPhoneNo">
+				<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/@CustomerPhoneNo"/>
+			</xsl:attribute>
+			<CustomAttributes>
+				<xsl:attribute name="Decimal1">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/CustomAttributes/@Decimal1"/>
+				</xsl:attribute>
+				<xsl:attribute name="Text3">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/CustomAttributes/@Text3"/>
+				</xsl:attribute>
+				<xsl:attribute name="Text10">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/CustomAttributes/@Text10"/>
+				</xsl:attribute>
+				<xsl:attribute name="Text11">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/CustomAttributes/@Text11"/>
+				</xsl:attribute>
+				<xsl:attribute name="Text12">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/CustomAttributes/@Text12"/>
+				</xsl:attribute>
+			</CustomAttributes>
+			<Extn>
+				<xsl:attribute name="ExtnEncircleNo">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnEncircleNo"/>
+				</xsl:attribute>
+				<xsl:attribute name="ExtnEncirclePoints">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnEncirclePoints"/>
+				</xsl:attribute>
+				<xsl:attribute name="ExtnEncirclePointsToRefund">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnEncirclePointsToRefund"/>
+				</xsl:attribute>
+				<xsl:attribute name="ExtnCountryCode">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnCountryCode"/>
+				</xsl:attribute>
+				<xsl:attribute name="ExtnBrand">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnBrand"/>
+				</xsl:attribute>
+				<xsl:attribute name="ExtnTQDVCMNoVoucherNo">
+					<xsl:value-of select="/Order/OrderInvoiceList/OrderInvoice/Order/Extn/@ExtnTQDVCMNoVoucherNo"/>
+				</xsl:attribute>
+			</Extn>
+			<OrderLines>
+				<xsl:attribute name="TotalNumberOfRecords">
+					<xsl:value-of select="/Order/OrderLines/OrderLine/OrderLineList/@TotalNumberOfRecords"/>
+				</xsl:attribute>
+				<xsl:for-each select="Order/OrderLines/OrderLine/OrderLineList/OrderLine">
+					<xsl:variable name="Orderedqty" select="@OrderedQty"/>
+					<xsl:choose>
+						<xsl:when test="not(@Status='Cancelled')">
+							<OrderLine>
+								<xsl:attribute name="ShipNode">
+									<xsl:value-of select="@ShipNode"/>
+								</xsl:attribute>
+								<xsl:attribute name="FulfillmentType">
+									<xsl:value-of select="@FulfillmentType"/>
+								</xsl:attribute>
+								<xsl:attribute name="ShipTogetherNo">
+									<xsl:value-of select="@ShipTogetherNo"/>
+								</xsl:attribute>
+								<LineCharges>
+									<xsl:for-each select="LineCharges/LineCharge">
+										<xsl:if test="@ChargeCategory!='Shipping'">
+											<LineCharge>
+												<xsl:attribute name="ChargePerUnit">
+													<xsl:value-of select="@ChargePerUnit"/>
+												</xsl:attribute>
+												<xsl:attribute name="ChargePerLine">
+													<xsl:value-of select="@ChargePerLine"/>
+												</xsl:attribute>
+												<xsl:attribute name="ChargeCategory">
+													<xsl:value-of select="@ChargeCategory"/>
+												</xsl:attribute>
+												<xsl:attribute name="ChargeName">
+													<xsl:value-of select="@ChargeName"/>
+												</xsl:attribute>
+											</LineCharge>
+										</xsl:if>
+									</xsl:for-each>
+								</LineCharges>
+								<LineTaxes>
+									<xsl:for-each select="LineTaxes/LineTax">
+										<!--    <xsl:if test="@ChargeCategory!='Shipping'"> -->
+										<LineTax>
+											<xsl:attribute name="Reference1">
+												<xsl:value-of select="@Reference1"/>
+											</xsl:attribute>
+											<xsl:attribute name="TaxName">
+												<xsl:value-of select="@TaxName"/>
+											</xsl:attribute>
+											<xsl:attribute name="TaxPercentage">
+												<xsl:value-of select="@TaxPercentage"/>
+											</xsl:attribute>
+											<xsl:attribute name="Tax">
+												<xsl:value-of select="format-number(@Reference1 * $Orderedqty,'0.00')"/>
+											</xsl:attribute>
+											<xsl:attribute name="ChargeCategory">
+												<xsl:value-of select="@ChargeCategory"/>
+											</xsl:attribute>
+											<xsl:attribute name="ChargeName">
+												<xsl:value-of select="@ChargeName"/>
+											</xsl:attribute>
+										</LineTax>
+										<!--    </xsl:if> -->
+									</xsl:for-each>
+								</LineTaxes>
+								<xsl:variable name="varSOOrderLineKey" select="@OrderLineKey"/>
+								<xsl:attribute name="OrderedQty">
+									<xsl:value-of select="../../@Quantity"/>
+								</xsl:attribute>
+								<xsl:attribute name="GiftFlag">
+									<xsl:value-of select="@GiftFlag"/>
+								</xsl:attribute>
+								<Item>
+									<xsl:attribute name="ItemID">
+										<xsl:value-of select="Item/@ItemID"/>
+									</xsl:attribute>
+									<xsl:attribute name="ProductClass">
+										<xsl:text>FQ</xsl:text>
+									</xsl:attribute>
+									<xsl:attribute name="UnitOfMeasure">
+										<xsl:text>EACH</xsl:text>
+									</xsl:attribute>
+								</Item>
+								<DerivedFrom>
+									<xsl:attribute name="DocumentType">
+										<xsl:text>0001</xsl:text>
+									</xsl:attribute>
+									<xsl:attribute name="OrderHeaderKey">
+										<xsl:value-of select="@OrderHeaderKey"/>
+									</xsl:attribute>
+									<xsl:attribute name="OrderLineKey">
+										<xsl:value-of select="@OrderLineKey"/>
+									</xsl:attribute>
+								</DerivedFrom>
+								<Extn>
+									<xsl:attribute name="ExtnSOSellerLineNo">
+										<xsl:value-of select="Extn/@ExtnSellerLineNo"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnImageURL">
+										<xsl:value-of select="Extn/@ExtnImageURL"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnProductURL">
+										<xsl:value-of select="Extn/@ExtnProductURL"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnBrand">
+										<xsl:value-of select="Extn/@ExtnBrand"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnWebBrandCode">
+										<xsl:value-of select="Extn/@ExtnWebBrandCode"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnParentLineNo">
+										<xsl:value-of select="Extn/@ExtnParentLineNo"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnItemCode">
+										<xsl:value-of select="Extn/@ExtnItemCode"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnLotNo">
+										<xsl:value-of select="Extn/@ExtnLotNo"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnNetMetalWeight">
+										<xsl:value-of select="Extn/@ExtnNetMetalWeight"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnDeclaredValue">
+										<xsl:value-of select="Extn/@ExtnDeclaredValue"/>
+									</xsl:attribute>
+									<xsl:for-each select="/Order/OrderInvoiceList/OrderInvoice">
+										<xsl:variable name="varInvoiceNo" select="@InvoiceNo"/>
+										<xsl:variable name="varOrderLineKey" select="LineDetails/LineDetail/@OrderLineKey"/>
+										<xsl:choose>
+											<xsl:when test="$varOrderLineKey= $varSOOrderLineKey">
+												<xsl:attribute name="ExtnSOInvoiceNo">
+													<xsl:value-of select="$varInvoiceNo"/>
+												</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise/>
+										</xsl:choose>
+									</xsl:for-each>
+									<xsl:copy-of select="Extn/TitanPaymentDetailList"/>
+								</Extn>
+								<xsl:copy-of select="CustomAttributes"/>
+								<xsl:copy-of select="ItemDetails"/>
+								<xsl:copy-of select="Notes"/>
+							</OrderLine>
+						</xsl:when>
+						<xsl:otherwise/>
+					</xsl:choose>
+				</xsl:for-each>
+			</OrderLines>
+			<PersonInfoBillTo>
+				<xsl:copy-of select="/Order/OrderLines/OrderLine/OrderLineList/OrderLine/Order/PersonInfoBillTo/@*"/>
+			</PersonInfoBillTo>
+			<xsl:copy-of select="/Order/OrderInvoiceList/OrderInvoice/Order/PaymentMethods"/>
+		</Order>
+	</xsl:template>
+</xsl:stylesheet>

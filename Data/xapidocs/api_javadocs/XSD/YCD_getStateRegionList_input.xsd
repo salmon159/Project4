@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/getStateRegionList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/getStateRegionList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCD_getStateRegionList_input.xsd" yfc:rootElement="Region">
+        <xsd:appinfo source="yfc:structure">
+            <Region hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Region" type="yfc:RegionXSDType">
+        <xsd:annotation yfc:tableName="YFS_REGION">
+            <xsd:documentation>
+                <div>
+	    			In order to retrieve the list of states for a provided country, the following information is required.  Either the RegionSchemaKey to be used or the OrganizationCode for which the YCD_STATE_DROP_DOWN_REGION_SCHEMA rule is defined.  Also Either the ParentRegionKey or the Country to be used to derive the ParentRegionKey for the state. 
+	    			<Validation>
+                        <Condition>
+	    					Either the <code>RegionSchemaKey</code> or the <code>OrganizationCode</code> and <code>ParentRegionKey</code> or <code>Country</code> was not provided.
+	    				</Condition>
+                        <Error Description="Invalid Input" ErrorCode="?"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="RegionXSDType">
+        <xsd:attribute name="Country" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If provided and the <code>ParentRegionKey</code> is not provided, this is used to retrieve the RegionKey of the country in the RegionSchema provided to be used as the ParentRegionKey for determine the list of states.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						This is used to determine the <code>RegionSchemaKey</code> defined in <code>YCD_STATE_DROP_DOWN_REGION_SCHEMA</code> if the RegionSchemaKey is not provided.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ParentRegionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PARENT_REGION_KEY" yfc:tableName="YFS_REGION">
+                <xsd:documentation>
+                    <div>
+						This region key will be used to derive the list of region's (states or provided region type).
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RegionLevel" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						This attribute is used to define the RegionLevel the user wants to retrieve from the derived region schema.  If this is not provided, the default value is "State".
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RegionSchemaKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="REGION_SCHEMA_KEY" yfc:tableName="YFS_REGION">
+                <xsd:documentation>
+                    <div>
+						This <code>RegionSchemaKey</code> is used to retrieve back both the Country and the RegionLevel which are being requested by this api.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

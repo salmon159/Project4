@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<Items xmlns="http://www.sterlingcommerce.com/documentation/INV/transferInventoryOwnership/input">
+    <Item Availability=""
+        FromOrganizationCode="!OrganizationCode!|Required"
+        ItemID="Required" ProductClass="" Quantity="Required"
+        ReasonCode="" ReasonText="" Reference_1="" Reference_2=""
+        Reference_3="" Reference_4="" Reference_5="" Segment=""
+        SegmentType="" ShipByDate="" ShipNode="Required"
+        SupplyType="Required"
+        ToOrganizationCode="!OrganizationCode!|Required"
+        UnitOfMeasure="" UseHotSKUFeature="" ValidateTagInformation="" yfc:DTDOccurrence="ZeroOrMany">
+        <yfc:doc>
+            <Element EntityName="Inventory_Supply">
+                <Description>
+                    <div>
+		Information regarding inventory adjustment of an item.		
+			<Validation>
+                            <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                    <b>Y</b>
+                                </code> and the provided item does not exist in the catalog.
+				 </Condition>
+                            <Error Description="Invalid Item." ErrorCode="INV10007"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                    <b>Y</b>
+                                </code> and the provided item exists in the catalog, but is a logical kit item.
+				 </Condition>
+                            <Error
+                                Description="Cannot Adjust Inventory For A Logical Kit Item." ErrorCode="INV75_001"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="Availability" NameInEntity="Availability_Type">
+                    <Description>
+                        <div width="100%">
+				Defines whether the supply is infinite or tracked. 
+				<br/>Valid values: <b>
+                                <code>TRACK</code>
+                            </b> or <b>
+                                <code>INFINITE</code>
+                            </b>
+                            <br/>Default: If not passed then it defaults to Availabilty type of the shipnode. If ShipNode tracks inventory it will default to <code>TRACK</code> else it will default to <code>INFINITE</code>
+                            <br/>The behavior depends on the current configuration of the <code>ShipNode</code> and the value passed in <code>Availability</code>. 
+				<br/>
+                            <br/>
+                            <div class="innerpanel" width="30%">
+                                <table border="0" cellpadding="0"
+                                    cellspacing="0" class="table">
+                                    <thead>
+                                    <tr>
+                                    <td class="tablecolumnheader">ShipNode Configuration</td>
+                                    <td class="tablecolumnheader">Availability passed</td>
+                                    <td class="tablecolumnheader">API Behavior</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">Supply record stamped as infinite</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">No updates done</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <Validation>
+                                <Condition>
+						Input must either be <code>TRACK</code> or <code>INFINITE</code>.
+						 </Condition>
+                                <Error Description="Invalid Data." ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="OrgCode" Name="FromOrganizationCode">
+                    <Description>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>FromOrganizationCode not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+					If the organization is not valid.
+					<Validation>
+                                <Condition>Organization not found corresponding to input. 
+						</Condition>
+                                <Error
+                                    Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+					If the organization is valid but is not associated to an inventory organization.
+					<Validation>
+                                <Condition>Organization has no inventory organization. 
+						</Condition>
+                                <Error
+                                    Description="Inventory Organization not found for the organization." ErrorCode="YCP80_0007"/>
+                            </Validation>
+                            <code>FromOrganizationCode</code> is the organization whose inventory is getting transferrred.Inventory owned by <code>FromOrganizationCode</code> will be deducted by an amount equal to the <code>Quantity</code> passed as input.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="ItemID">
+                    <Description>
+                        <div>
+				(Required) The unique identifier for the item. 
+			<Validation>
+                                <Condition>Item ID is not passed. 
+					</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+
+			When item validation flag is enabled in the configurator, <code>ItemID</code> is validated against the organization catalog.  
+			Validation is made based on the input <code>OrganizationCode</code>; Exception will be thrown even if item exists 
+			in other organization catalogs. 
+			<Validation>
+                                <Condition>Item Id does not exist in organization catalog.	</Condition>
+                                <Error
+                                    Description="ItemId is void or not found in organization catalog." ErrorCode="INV80_046"/>
+                                <Condition>ItemID does not exist.</Condition>
+                                <Error Description="Invalid Item." ErrorCode="INV80_035"/>
+                            </Validation>
+                            <br>If validation flag is not set, the input <code>ItemID</code> will be used as is.</br>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="ProductClass">
+                    <Description>
+                        <div>
+						 It should be a valid <code>ProductClass</code> .This will be defaulted for the inventory in both the organization the same as in input xml.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="Quantity" NameInEntity="Quantity">
+                    <Description>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Quantity not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+				Indicates the quantity to be deducted from onhand inventory supply at source(Enterprise or Supplier) and added to the onhand inventory supply at target(Supplier or Enterprise),during transfer.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="ReasonCode" NameInEntity="Reason_Code"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="ReasonText" NameInEntity="Reason_Text"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_1" NameInEntity="Reference_1"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_2" NameInEntity="Reference_2"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_3" NameInEntity="Reference_3"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_4" NameInEntity="Reference_4"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_5" NameInEntity="Reference_5"/>
+                <Attribute EntityName="Inventory_Supply" Name="Segment" NameInEntity="Segment"/>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="SegmentType" NameInEntity="Segment_Type"/>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="ShipByDate" NameInEntity="Ship_By_Date">
+                    <Description>
+                        <div>
+				
+				If item is time sensitive, a <code>ShipByDate</code> may be provided for updates, otherwise if 
+				<code>SupplyType</code> is a "onhand" type, then the <code>ShipByDate</code> by default is equated from  
+				<br>"today + item's default expiration days".</br>
+                            <br>
+                                <code>ShipByDate</code> is needed to both the decrease and increase inventory.</br>
+                            <Validation>
+                                <Condition>Date format is checked. 
+					</Condition>
+                                <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>For a time sensitive item ship date is not provided and  system rule FEFO updates is turned off.
+					</Condition>
+                                <Error
+                                    Description="YFS:Either allow FEFO or pass ship by date" ErrorCode="YFSI10008"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="ShipNode" NameInEntity="Shipnode_Key">
+                    <Description>
+                        <div>
+				Indicates the node to adjust.
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Ship node not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Must be a valid node in the system.
+					</Condition>
+                                <Error Description="Invalid Node." ErrorCode="YFS10048"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Node with InterfaceType equals to <code>INTEGRATED_WMS</code> and <code>SupplyType</code> is of type on-hand.
+					</Condition>
+                                <Error
+                                    Description="Cannot adjust inventory for node with InterfaceType INTEGRATED_WMS." ErrorCode="INV10034"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="SupplyType" NameInEntity="Supply_type">
+                    <Description>
+                        <div>
+				Required. 
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Supply type not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>	
+				The value should be a valid <code>SupplyType</code> defined in <code>YFS_INVENTORY_SUPPLY_TYPE</code>.   Indicates the <code>SupplyType</code> with which inventory needs to be adjusted.
+					<Validation>
+                                <Condition>
+                                    <code>SupplyType</code> must be passed.
+						</Condition>
+                                <Error Description="No supply type." ErrorCode="YFSI10006"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>SupplyType</code> must be of onhand nature.
+						</Condition>
+                                <Error
+                                    Description="Supply Type is not of onhand nature." ErrorCode="INV80_047"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="OrgCode" Name="ToOrganizationCode">
+                    <Description>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>ToOrganizationCode not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+				If the organization is not valid.
+					<Validation>
+                                <Condition>Organization not found corresponding to input. 
+						</Condition>
+                                <Error
+                                    Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+				If the organization is valid but is not associated to an inventory organization.
+					<Validation>
+                                <Condition>Organization has no inventory organization. 
+						</Condition>
+                                <Error
+                                    Description="Inventory Organization not found for the organization." ErrorCode="YCP80_0007"/>
+                            </Validation>
+				 Inventory owned by <code>FromOrgnaizationCode</code> will be deducted where as inventory owned by <code>ToOrganizationCode</code> will be increased by an amount equal to the <code>Quantity</code> passed as input.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure">
+                    <Description>
+                        <div>
+				The value should be a valid <code>UnitOfMeasure</code>.It will be defaulted in the target organization as the same in source organization.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="UseHotSKUFeature">
+                    <Description>
+                        <div>
+				When this flag is turned on, hot sku feature is used depending upon the parameters passed in yfs.properties. The hot sku feature is not used if the availability type is passed as <code>INFINITE</code> or if no availability type is passed and node's inventory type is <code>INFINITE</code>.
+				<br/>Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="ValidateTagInformation">
+                    <Description>
+                        <div>Indicates if tag information should be validated for a tag controlled item. If passed as 'Y' or not passed tag details should be passed for always tag controlled item.
+				<br/>Default: <b>
+                                <code>Y</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Tag BatchNo="" LotAttribute1="" LotAttribute2=""
+            LotAttribute3="" LotKeyReference="" LotNumber=""
+            ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Inventory_Tag">
+                    <Description>
+                        <div>
+				Stores tag information for inventory. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.
+					<Validation>
+                                <Condition>
+						If Item is tag-controlled, all of the unique tag identifiers must be passed.
+						</Condition>
+                                <Error
+                                    Description="Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If Item is tag-controlled, and there is no tag number generated from the provided inventory identifier attributes.
+						</Condition>
+                                <Error Description="No Tag number" ErrorCode="YFSI10004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </Tag>
+    </Item>
+</Items>

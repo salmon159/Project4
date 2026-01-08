@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/deleteOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/deleteOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_deleteOrder_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <OrderLines>
+                    <OrderLine hasAttributes="Y"/>
+                </OrderLines>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+			Identify order to be deleted.  <code>OrderHeaderKey</code> or a combination of <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> attributes can be used to identify an order.
+			<Validation>
+                        <Condition>
+                            <code>OrderHeaderKey</code> or a combination of <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> attributes must be passed and must be valid.
+				</Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Delete a delivery line associated with a product line that has a child order.  The child order needs to be cancelled first before performing the deletion on delivery line.
+				</Condition>
+                        <Error
+                            Description="Cannot delete delivery line associated with a product line that has a child order." ErrorCode="OMP11034"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Identify that the whole order should be deleted.  Valid value is <b>
+                            <code>DELETE</code>
+                        </b>
+                        <Validation>
+                            <Condition>Action value is invalid
+						</Condition>
+                            <Error Description="Invalid Action." ErrorCode="YFS10423"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>
+                <div>
+				Identify an order line to be deleted.  <code>OrderLineKey</code> or a combination of  <code>PrimeLineNo</code> and <code>SubLineNo</code> attributes can be used to identify an order line.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Identify that the order line should be deleted.  Valid value is <b>
+                                <code>DELETE</code>
+                            </b>
+                            <Validation>
+                                <Condition>Action value is invalid
+							</Condition>
+                                <Error Description="Invalid Action." ErrorCode="YFS10423"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The sub line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

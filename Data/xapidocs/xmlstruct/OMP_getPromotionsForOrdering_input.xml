@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2014 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Promotion BuyerUserID="" BuyerUserId="" Currency="" CustomerID=""
+    DocumentType="" EnterpriseCode="" GetCoupons="" GetOrderRules=""
+    GetShippingRules="" MaximumRecords="" OrderHeaderKey="" OrderNo=""
+    PricingDate="" SellerOrganizationCode="" xmlns="http://www.sterlingcommerce.com/documentation/OMP/getPromotionsForOrdering/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="String" Name="BuyerUserID"/>
+            <Attribute DataType="ContactUserId" Name="BuyerUserId">
+                <Description>
+                    <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Currency" Name="Currency">
+                <Description>
+                    <div>Currency used for pricing data selection. Required unless order information is  passed.
+							<Validation>
+                            <Condition>
+                                <code>Currency</code> is not passed, and no order information provided.</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Currency</code> is not valid.</Condition>
+                            <Error Description="YFS: Invalid currency." ErrorCode="YFS10325"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Pricing_Rule_Assignment"
+                Name="CustomerID" NameInEntity="Customer_ID">
+                <Description>
+                    <div>The identifier for the customer.
+							<Validation>
+                            <Condition>If not void then <code>CustomerID</code> must be of one of the valid customer.</Condition>
+                            <Error Description="Invalid CustomerID." ErrorCode="YPM10028"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" EntityName="Order_Header"
+                Name="DocumentType" NameInEntity="Document_Type">
+                <Description>
+                    <div>
+						The document type used to describe the order. Part of the unique key for the order. Required if <code>OrderNo</code> is passed without <code>OrderHeaderKey</code>.
+						<Validation>
+                            <Condition>
+                                <code>DocumentType</code> is not passed and <code>OrderNo</code> is passed without <code>OrderHeaderKey</code>.</Condition>
+                            <Error
+                                Description="Mandatory Parameter not passed in the input." ErrorCode="YCP0235"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="EnterpriseCode">
+                <Description>
+                    <div>The <code>EnterpriseCode</code> on which behalf pricing inquiry is being made. Required unless <code>OrderHeaderKey</code> is passed.
+							<Validation>
+                            <Condition>
+                                <code>EnterpiseCode</code> is not passed, and <code>OrderHeaderKey</code> is not passed.</Condition>
+                            <Error
+                                Description="Mandatory Parameter not passed in the input." ErrorCode="YCP0235"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetCoupons">
+                <Description>
+                    <div>Valid Values are <code>Y</code> and <code>N</code>. If <code>Y</code> is passed then API returns coupon rules in addition to non-coupon rules.
+							</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetOrderRules">
+                <Description>
+                    <div>Valid Values are <code>Y</code> and <code>N</code>. If <code>Y</code> is passed then API returns pricing rules of type ORDER_TOTAL in addition to other rules.
+							</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetShippingRules">
+                <Description>
+                    <div>Valid Values are <code>Y</code> and <code>N</code>. If <code>Y</code> is passed then API returns shipping rules of type ORDER_TOTAL in addition to other rules.
+							</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Count" Name="MaximumRecords">
+                <Description>Specifies maximum number of records that must be fetched.</Description>
+            </Attribute>
+            <Attribute DataType="DocumentNo" EntityName="Order_Header"
+                Name="OrderNo" NameInEntity="Order_No">
+                <Description>
+                    <div>
+					Part of the unique key for the order. May be passed wih <code>EnterpriseCode</code> and <code>DocumentType</code> instead of <code>OrderHeaderKey</code> to get pricing rules in context of an order.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" Name="PricingDate">
+                <Description>
+                    <div>Date on which the pricing is requested.If void it is defaulted to current date and time.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="SellerOrganizationCode">
+                <Description>
+                    <div>Pricing data is either maintained or assigned to the organization specified by <code>SellerOrganizationCode</code>. Required unless order information is passed.
+						<Validation>
+                            <Condition>
+                                <code>SellerOrganizationCode</code> is not passed, and no order information provided.</Condition>
+                            <Error
+                                Description="Mandatory Parameter not passed in the input." ErrorCode="YCP0235"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <SelectionCriteria CustomerLevel="" CustomerType="" RegionKey=""
+        RelationshipType="" Vertical="">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YPM_Rule_Selection_Criteria_master.xml" IncludeXMLPath="/SelectionCriteria"/>
+        <yfc:doc>
+            <Element EntityName="Pricing_Rule_Assignment">
+                <Description>
+
+                    <div>Attributes of customer used for selecting the pricing entities. If this element is not passed and <code>CustomerID</code> is passed then the attributes of the customer are defaulted from the customer's profile. 
+				Defaulting of <code>PersonInfo</code> from the customer's profile for different customer type is as below:
+					<div
+                            class="portlet" style="width:90%">
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <tr>
+                                    <td class="tablecolumnheader" width="20%">Type of Customer</td>
+                                    <td class="tablecolumnheader">Default for PersonInfo</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Business</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">Default sold to address, if void then default bill to address.</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Consumer</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">Default bill to address.</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Anonymous</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">No defaults.</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Pricing_Rule_Assignment"
+                    Name="CustomerLevel" NameInEntity="Customer_Level">
+                    <Description>
+                        <div>The level of a customer with the enterprise.</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="EnumInputCustomerType"
+                    EntityName="Pricing_Rule_Assignment"
+                    Name="CustomerType" NameInEntity="Customer_Type">
+                    <Description>
+                        <div>Type of customer. If neither <code>CustomerID</code> nor <code>CustomerType</code> are passed then <code>CustomerType</code> is defaulted to <b>
+                                <code>03</code>
+                            </b>. 
+						<Validation>
+                                <Condition>If not void then <code>CustomerType</code> must be one of the allowed values.</Condition>
+                                <Error
+                                    Description="Invalid CustomerType." ErrorCode="YPM10027"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricing_Rule_Assignment"
+                    Name="RegionKey" NameInEntity="Region_Key">
+                    <Description>
+                        <div>The region of the customer. If <code>RegionKey</code> is void then <code>PersonInfo</code> element is used to determine region of the customer.
+					If both <code>RegionKey</code> and <code>PersonInfo</code> are not void then <code>RegionKey</code> takes precedence over <code>PersonInfo</code> to
+					determine region of the customer.
+						<Validation>
+                                <Condition>If not void then <code>RegionKey</code> should be a valid region within the region schema that is configured for purpose <b>
+                                    <code>SELLING</code>
+                                    </b>.</Condition>
+                                <Error
+                                    Description="Invalid region passed." ErrorCode="YCP0158"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricing_Rule_Assignment"
+                    Name="RelationshipType" NameInEntity="Relationship_Type">
+                    <Description>
+                        <div>The type of the relationship that exists between an organization and an enterprise.</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricing_Rule_Assignment"
+                    Name="Vertical" NameInEntity="Vertical">
+                    <Description>
+                        <div>Vertical of the customer.</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <PersonInfo AddressLine1="" AddressLine2="" AddressLine3=""
+            AddressLine4="" AddressLine5="" AddressLine6=""
+            AlternateEmailID="" Beeper="" City="" Company="" Country=""
+            DayFaxNo="" DayPhone="" Department="" EMailID=""
+            EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+            IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID=""
+            PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+            Title="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info">
+                    <Description>
+                        <div>Address of the customer.
+					</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </PersonInfo>
+    </SelectionCriteria>
+    <Item ItemID="Required" UnitOfMeasure="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="ItemID" Name="ItemID">
+                    <Description>
+                        <div>Item identifier.
+								<Validation>
+                                <Condition>
+                                    <code>ItemID</code> should not be void.</Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="UOM" Name="UnitOfMeasure">
+                    <Description>
+                        <div>The unit of measure of the item.</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Item>
+    <PaymentTypeList>
+        <PaymentType PaymentType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="[NONE]">
+                    <Description>
+                        <div>Pricing Rules with this Payment type will be considered. If an order with payment type information already present is passed, this information will not be used.</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Pricing_Rule"
+                        Name="PaymentType" NameInEntity="Payment_Type">
+                        <Description>
+                            <div>Payment type of Pricing Rule.</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </PaymentType>
+    </PaymentTypeList>
+</Promotion>

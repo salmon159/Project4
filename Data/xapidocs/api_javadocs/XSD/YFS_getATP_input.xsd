@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getATP/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getATP/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getATP_input.xsd" yfc:rootElement="GetATP">
+        <xsd:appinfo source="yfc:structure">
+            <GetATP hasAttributes="Y">
+                <ItemFilter hasAttributes="Y">
+                    <PrimaryInformation hasAttributes="Y"/>
+                    <ClassificationCodes hasAttributes="Y"/>
+                </ItemFilter>
+            </GetATP>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="GetATP" type="yfc:GetATPXSDType"/>
+    <xsd:complexType name="GetATPXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemFilter"/>
+        </xsd:all>
+        <xsd:attribute name="CalculateProjectedOnhandQty"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates whether to calculate projected OnhandQty. If <code>CalculateProjectedOnhandQty</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, projected OnhandQty  and accumulated Shortage will be calculated for each AvailableToPromiseInventory. When <code>CalculateProjectedOnhandQty</code> is passed as "Y" and the PeriodicalLength is passed as 0 - Daily, the AvailableToPromiseInventory periods will be broken down based on the date whenever there is any supply or demand.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderAllNodes" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				  If passed as <b>
+                            <code>N</code>
+                        </b>, then either the <code>DistributionRuleId</code> passed or the calling organization's default <code>DistributionRuleId</code> is used for availability calculations.
+				  <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/> If passed as <code>Y</code> the availability check is done without applying any distribution rule filter.
+				  No particular distribution rule is used and all supplies and demand (even unassigned demands) for the item passed are considered.  No distribution rule is used to match supplies and demands for availability calculations.
+				  <br/> If passed as <code>Y</code>,  <code>DistributionRuleId</code> is  ignored, and <code>ConsiderUnassignedDemand</code> cannot be passed as <code>Y</code> or <code>N</code>. 
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderAllSegments" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates whether all segment should be considered. If passed as Y, <code>SegmentType</code> and <code>Segment</code> are ignored.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderUnassignedDemand"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates whether to use unassigned demand in the availability calculation. If <code>ConsiderUnassignedDemand</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, unassigned demands (demands without ship nodes) are also used in availability calculations. Unassigned demands are matched to supplies using the demand owner's default <code>DistributionRuleID</code> and not the calling organization's <code>DistributionRuleID</code>.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If <code>ConsiderAllNodes</code> is passed then this flag is ignored. 
+		
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DemandType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Each demand can be fulfilled by certain supply types. Pass <code>DemandType</code> if <code>RequiredQty</code> is passed. <code>getATP</code> checks when the specified  <code>RequiredQty</code> for the specified <code>DemandType</code> can be satisfied.   The value should be a valid <code>DemandType</code> defined in <code>YFS_INVENTORY_DEMAND_TYPE</code>.
+			<br/>Default: <b>
+                            <code>OPEN_ORDER</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DistributionRuleId"
+            type="yfctype:DistributionRuleId" use="optional">
+            <xsd:annotation yfc:columnName="DISTRIBUTION_RULE_ID" yfc:tableName="YFS_ITEM_SHIP_NODE">
+                <xsd:documentation>
+                    <div>
+				If passed, supplies and demands are read applying the distribution rule filter identified by this <code>DistributionRuleID</code>.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EndDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Pass <code>EndDate</code> to specify the lastest date for which availability information is required.
+			<br/>Default: ATP horizon. 
+			<Validation>
+                            <Condition>Must be a valid date
+			</Condition>
+                            <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>
+                    <div>
+			The catalog organization for the product.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MinShipByDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                The preferred minimum ship by date of the available supply.  Available supply with ship by date earlier than the minimum ship by date will not be considered. 
+                </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Identifies an organization. Inventory rules are read for this organization's inventory consolidator.
+			<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be supplied, and must be a valid organizaton
+			</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PeriodicalLength" type="yfctype:Text-1" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Indicates how availablity for the required quantity should be returned. 
+				<br/>Default: <b>
+                            <code>0</code>
+                        </b>
+                        <br/>Valid values:
+				 <br/>
+                        <b>
+                            <code>0</code>
+                        </b> -  daily, whenever there is any supply
+				 <br/>
+                        <b>
+                            <code>1</code>
+                        </b> - weekly, supply for the week is consolidated 
+				 <br/>
+                        <b>
+                            <code>2</code>
+                        </b> - monthly, supply for the whole month is consolidated
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequiredQty" type="yfctype:Quantity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Quantity being requested.
+				<br/>Default: <b>
+                            <code>0</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Segment" type="yfctype:CommonCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Segment of inventory.   Supplies and Demands with matching <code>Segment</code> will be considered for availability calculations.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Segment type of inventory.   Supplies and Demands with matching <code>SegmentType</code> will be considered for availability calculations.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Not used.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Returns availability information for the <code>ShipNode</code> specified. If no <code>ShipNode</code> is passed, the <code>DistributionRuleId</code> passed is used for availability calculations (unless <code>ConsiderAllNodes</code> is set to <code>
+                            <b>Y</b>
+                        </code>)  or if the calling organization does not maintain sourcing then all nodes owned will be considered.
+				<Validation>
+                            <Condition>Must be a valid <code>ShipNode</code>
+                            </Condition>
+                            <Error Description="YFS:Invalid Ship Node." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ItemFilter">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>Determines the filtering attributes when determining availability of a model item.
+				This can be used to specify the correct style, size, or color of a model item and only include
+				model children inventory whose item definition meet the required input.
+				<br/>Note: Only extended attributes of the YFS_ITEM table are supported.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PrimaryInformation"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ClassificationCodes"/>
+            </xsd:all>
+            <xsd:attribute name="GetUnpublishedItems" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates if unpublished items needs to be considered.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="IgnoreInvalidItems" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					This flag indicates whether invalid items should be considered.
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+					Default value: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PrimaryInformation">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ColorCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="COLOR_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field describes color code for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_TYPE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The generic type of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturerItem"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="MANUFACTURER_ITEM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The identifier used by a manufacturer to identify an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturerName"
+                type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="MANUFACTURER_NAME" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The manufacturer of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductLine" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_LINE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The product line associated with the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SizeCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SIZE_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field describes the size code of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ClassificationCodes">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CommodityCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="COMMODITY_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The commodity code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ECCNNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ECCN_NO" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The ECCN number of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HarmonizedCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="HARMONIZED_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The harmonized code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NAICSCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="NAICS_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The NAICS code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NMFCCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="NMFC_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The NMFC code for an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StorageType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="STORAGE_TYPE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The storage type code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxProductCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="TAX_PRODUCT_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The tax product code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UNSPSC" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UNSPSC" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The UNSPSC code of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VelocityCode"
+                type="yfctype:VelocityCode" use="optional">
+                <xsd:annotation yfc:columnName="VELOCITY_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The velocity code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

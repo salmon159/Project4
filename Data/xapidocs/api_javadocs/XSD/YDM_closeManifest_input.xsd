@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/closeManifest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/closeManifest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_closeManifest_input.xsd" yfc:rootElement="Manifest">
+        <xsd:appinfo source="yfc:structure">
+            <Manifest hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Manifest" type="yfc:ManifestXSDType">
+        <xsd:annotation yfc:tableName="YFS_MANIFEST">
+            <xsd:documentation>
+                <div>
+				An existing <code>Manifest</code> is identified by using one of the following: 
+				<code>ManifestKey </code> or combination of
+				<code>ManifestNo</code>, <code>ShipNode</code> and <code>Scac </code>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ManifestXSDType">
+        <xsd:attribute name="ManifestClosedFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_CLOSED_FLAG" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition> Should not be 'Y'.</Condition>
+                            <Error Description="Manifest is closed." ErrorCode="YDM00096"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManifestDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_DATE" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>Manifest creation date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManifestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_KEY" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Either primary key (<code>ManifestKey</code>) or all 
+								attributes of unique key (<code>ManifestNo</code>, <code>Scac</code> and <code>ShipNode</code>) must be passed. Error if either of them not passed. 
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters are not passed." ErrorCode="YDM00163"/>
+                        </Validation>
+                        <Validation>
+                            <Condition> Should give a manifest record.</Condition>
+                            <Error Description="Invalid Manifest." ErrorCode="YDM00097"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManifestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_NO" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Either primary key (<code>ManifestKey</code>) or all 
+								attributes of unique key (<code>ManifestNo</code>, <code>Scac</code> and <code>ShipNode</code>) must be passed. Error if either of them not passed. 
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters are not passed." ErrorCode="YDM00163"/>
+                        </Validation>
+                        <Validation>
+                            <Condition> Should give unique record along with 
+								<code>ShipNode</code> and <code>Scac </code>
+                            </Condition>
+                            <Error Description="Invalid Manifest." ErrorCode="YDM00097"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManifestStatus" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_STATUS" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>Indicates the status of a manifest. Shipments may be added only to manifests that are in open state.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrintCount" type="yfctype:Count" use="optional">
+            <xsd:annotation yfc:columnName="PRINT_COUNT" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>Number of times the manifest has been printed. This is 0 at creation. This is incremented by 1 at every subsequent print.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Scac" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SCAC" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Either primary key (<code>ManifestKey</code>) or all 
+								attributes of unique key (<code>ManifestNo</code>, <code>Scac</code> and <code>ShipNode</code>) must be passed. Error if either of them not passed. 
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters are not passed." ErrorCode="YDM00163"/>
+                        </Validation>
+                        <Validation>
+                            <Condition> Must be a valid scac.</Condition>
+                            <Error
+                                Description="SCAC does not exist in the system." ErrorCode="YDM00087"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Either primary key (<code>ManifestKey</code>) or all 
+								attributes of unique key (<code>ManifestNo</code>, <code>Scac</code> and <code>ShipNode</code>) must be passed. Error if either of them not passed. 
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters are not passed." ErrorCode="YDM00163"/>
+                        </Validation>
+                        <Validation>
+                            <Condition> Must be a valid ShipNode.</Condition>
+                            <Error
+                                Description="ShipNode does not exist in the system." ErrorCode="YDM00085"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipperAccountNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPPER_ACCOUNT_NO" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>Gives the shippers account number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TrailerNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="TRAILER_NO" yfc:tableName="YFS_MANIFEST">
+                <xsd:documentation>Identifier of the trailer to which, this manifest belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

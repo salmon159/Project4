@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!--getPossibleSchedules Input XML-->
+<!-- Either OrderHeaderKey or OrderNo, DocumentType and EnterpriseCode is required -->
+<!-- Only multiple product lines can be selected. Inclusion of service line will be returned as an error -->
+<!-- When a delivery service line is passed as input, all assoicated product lines are automatically included -->
+<!-- When a parent line of dependency group is passed, all child lines are automatically selected -->
+<!-- If a line is passed that is awaiting a previosuly sequenced line to be shceduled, that part of the dependency is ignored -->
+<Promise AggregateSupplyOfNonRequestedTag="Y|N" AllocationRuleID=""
+    CheckInventory="Y|N" ConsiderSupplementalCapacity="Y|N"
+    DelayWindow="" DocumentType="" EnterpriseCode=""
+    IgnoreMinNotificationTime="Y|N" IgnoreServices=""
+    IgnoreUnpromised="Y|N" IncludeAllOrderLines="" InvLock="Y|N|"
+    MaximumRecords="" Mode="Inquire|Schedule" OptimizationType=""
+    OrderHeaderKey="" OrderLineKey="" OrderNo="" PrimeLineNo=""
+    ReturnMultipleSrvcSlots="Y|N" SubLineNo="" UseUnplannedInventory="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/getPossibleSchedules/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+		To identify the <code>Order</code>, pass either the <code>OrderHeaderKey</code> or  the <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>.
+		<Validation>
+                        <Condition>
+                            <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code> must be passed and must be valid.
+			</Condition>
+                        <Error Description="Invalid order." ErrorCode="YFS10126"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AggregateSupplyOfNonRequestedTag">
+                <Description>
+                    <div>
+				The <code>AggregateSupplyOfNonRequestedTag</code> flag indicates that system should aggregate the supplies that are returned by the API unless specific tag information is provided in the input. If the flag is set to Y, supplies are aggregated irrespective of the tag information and displayed in the output XML. If the flag is set to N, supplies are returned in the output XML with the tag information.
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ID-10" Name="AllocationRuleID">
+                <Description>
+                    <div>
+				An Enterprise can configure multiple allocation rule sets with different document types.
+				If an <code>AllocationRuleID</code> is  passed, the  allocation rules associated with the <code>AllocationRuleID</code> is used to select <code>Option</code>. 
+				<Validation>
+                            <Condition>The <code>AllocationRuleID</code> passed must be valid for both the Enterprise's rule set and document type of the order.
+					</Condition>
+                            <Error
+                                Description="Invalid Allocation Rule Id." ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="CheckInventory">
+                <Description>
+                    <div>
+				Indicates if inventory should to be checked.
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If  <b>
+                            <code>Y</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for supply and demand filtering for the availability calculations.
+				<br/>If  <b>
+                            <code>N</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code>  is used to obtain a distribution rule for inventory availability. No supply or demand is read. Distribution drives inventory availability calculations.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderSupplementalCapacity">
+                <Description>
+                    <div>
+				The <code>ConsiderSupplementalCapacity</code> flag indicates that supplemental capacity should also be considered when computing the availability of the resource pools which can serve the service lines.
+				<br/>If <code>ConsiderSupplementalCapacity</code> flag is not passed as <b>
+                            <code>Y</code>
+                        </b>, then the value of the <code>CanConsumeSupplementalCapacity</code> attribute of the customer (if existed) in the order will be used.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Number" Name="DelayWindow">
+                <Description>
+                    <div>
+			The number of days specified in <code>DelayWindow</code> is counted from the day on which the API is run. If this attribute is not passed, then <code>Allowed_Shipment_Delay_Days</code> and the <code>Service_Search_Window</code> (for delivery service lines) specified by the allocation rules are used to determine the delay window. 
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Header" Name="DocumentType" NameInEntity="Document_Type"/>
+            <Attribute EntityName="Order_Header" Name="EnterpriseCode" NameInEntity="Enterprise_Key"/>
+            <Attribute DataType="Flag" Name="IgnoreMinNotificationTime">
+                <Description>
+                    <div>
+				Indicates whether to ignore the minimum notification time associated with the item and node.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreServices">
+                <Description>
+                    <div>
+						If set to Y, check will be made only for product lines.  Service lines will be ignored.  If not passed, assumed N.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreUnpromised">
+                <Description>
+                    <div>If <code>IgnoreUnpromised</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, unpromised demands are not considered during inventory availability calculations.
+				<BR/>Default: <code>Y</code>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IncludeAllOrderLines">
+                <Description>
+                    <div>
+				The <code>IncludeAllOrderLines</code> flag indicates that all order lines of the order should be included as required lines.  System will only look at this flag when there is no order line information provided in the root element.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="InvLock">
+                <Description>
+                    <div>
+				Indicates if the API will lock inventory or not. If passed <code>
+                            <b>N</b>
+                        </code>, the api will not lock YFS_INVENTORY_ITEM table in <b>Inquire</b> Mode.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                         or 
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="MaximumRecords">
+                <Description>
+                    <div>
+				Determines the maximum number of possible solutions to find. Passing this attribute may improve best solution found, but may impact the performance of this api. 
+				<BR/>Default: <b>
+                            <code>1</code>
+                        </b>
+                        <Validation>
+                            <Condition>Valid positive integer.
+					</Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="Mode">
+                <Description>
+                    <div>The mode in which the API is run. Possible values are <code>
+                            <b>Inquire</b>
+                        </code> or <code>
+                            <b>Schedule</b>
+                        </code>. Schedule mode provides backward compatibility to look at schedulable quantity. However an appointment is needed.
+			<br/>In Inquire mode, no appointment is necessary on the order lines to obtain possible schedules. Further, if running in Inquire mode, a new Appointment can be obtained for a PS order line even after the order line has been scheduled.
+			<br/>Valid Values:  <b>
+                            <code>Inquire</code>
+                        </b> or <b>
+                            <code>Schedule</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Allocation_Rule" Name="OptimizationType">
+                <Description>
+                    <div>
+				This value determines the optimization rules to be applied to the scheduling process.
+				<br/>Default: <b>
+                            <code>01</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Header" Name="OrderHeaderKey" NameInEntity="Order_Header_Key"/>
+            <Attribute EntityName="Order_Line" Name="OrderLineKey" NameInEntity="Order_Line_Key"/>
+            <Attribute EntityName="Order_Header" Name="OrderNo" NameInEntity="Order_No"/>
+            <Attribute EntityName="Order_Line" Name="PrimeLineNo" NameInEntity="Prime_Line_No"/>
+            <Attribute DataType="Flag" Name="ReturnMultipleSrvcSlots">
+                <Description>
+                    <div>
+				Indicates if the API returns multiple service slots. If passed <code>
+                            <b>N</b>
+                        </code>, the <code>Slots</code> element and its child elements are not be returned.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b>Y or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Order_Line" Name="SubLineNo" NameInEntity="Sub_Line_No"/>
+            <Attribute DataType="Flag" Name="UseUnplannedInventory">
+                <Description>
+                    <div>
+				The <code>UseUnplannedInventory</code> flag indicates that system should assume that there is available unplanned inventory (inventory for which assumes to be available on current date + item's lead time) for any unavailable quantities.  If the <code>UseUnplannedInventory</code> flag is passed, it will override the <code>UseUnplannedInventory</code> attribute on the item in the catalog.  Otherwise, the <code>UseUnplannedInventory</code> attribute on the item will be used.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ShipToAddress Country="Required" ZipCode="">
+        <yfc:doc>
+            <Element EntityName="Person_Info"/>
+        </yfc:doc>
+    </ShipToAddress>
+    <Overrides CarrierServiceCode="" DistributionRuleId=""
+        ReqDeliveryDate="" ShipNode="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Text-40" Name="CarrierServiceCode">
+                    <Description>The carrier service code.
+		  </Description>
+                </Attribute>
+                <Attribute DataType="DistributionRuleId" Name="DistributionRuleId">
+                    <Description>The distribution rule ID to be used to determine the node(s) that will ship the order line. 
+		  </Description>
+                </Attribute>
+                <Attribute DataType="TimeStamp" Name="ReqDeliveryDate">
+                    <Description>The requested delivery date.
+		  </Description>
+                </Attribute>
+                <Attribute DataType="ShipNode" Name="ShipNode">
+                    <Description> The node to be used for sourcing.
+		  </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Overrides>
+    <OmittedLines>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+			Contains information on the lines which are not to be considered while finding possible schedules. 
+		</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <OrderLine OrderLineKey="" PrimeLineNo="" SubLineNo="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </OmittedLines>
+    <MultipleOrderLines>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+			Used only if possible schedules are needed for multiple lines of an order. Line information should not be passed in the <code>Promise</code> element if any information is to be passed in this node.
+		</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <OrderLine OrderLineKey="" PrimeLineNo="" SubLineNo="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </MultipleOrderLines>
+</Promise>

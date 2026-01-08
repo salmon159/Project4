@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/acceptVariance/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/acceptVariance/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_acceptVariance_input.xsd" yfc:rootElement="CountRequest">
+        <xsd:appinfo source="yfc:structure">
+            <CountRequest hasAttributes="Y">
+                <CountResultList>
+                    <CountResult hasAttributes="Y">
+                        <CountResultTag hasAttributes="Y"/>
+                    </CountResult>
+                </CountResultList>
+            </CountRequest>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CountRequest" type="yfc:CountRequestXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+            <xsd:documentation>Stores audit information for every single location inventory transaction.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CountRequestXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:CountResultList"/>
+        </xsd:all>
+        <xsd:attribute name="AcceptAllVariances" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Pass this flag as Y to accept all the variances for a given count request.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_KEY" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                <xsd:documentation>
+                    <div>
+						Specifies the count request for which count was created. The <code>CountRequestKey</code> and <code>SummaryTaskId</code> combination should be a valid combination.
+							<Validation>
+                            <Condition>The <code>CountRequestKey</code> and <code>SummaryTaskId</code> combination is invalid.
+								</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="Invalid Count Request Key." ErrorCode="WMS00108"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                <xsd:documentation>
+                    <div>
+						Indicates the node or warehouse where inventory variance is being accepted.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> not passed.
+								</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="required">
+            <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                <xsd:documentation>
+                    <div>
+						Gives the reason code for the inventory transaction. The business significance of this reason code is that inventory bins will be tied to this reason code, which will be used to adjust inventory (for inventory synchronization purposes) on host systems.
+							<Validation>
+                            <Condition>
+                                <code>ReasonCode</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Not a valid <code>ReasonCode</code> in the system.
+								</Condition>
+                            <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>ReasonCode</code> does not have a valid inventory bin.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>ReasonCode</code> is associated to a valid inventory bin and variance resolution is for a misplaced LPN.
+								</Condition>
+                            <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+            <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                <xsd:documentation>Gives the free form reason for the inventory transaction.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SummaryTaskId" type="yfctype:SequenceNo" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						A count request generates count tasks, one of which is the parent task for the remaining tasks. <code>SummaryTaskId</code> refers to the task id of such a parent task. A count request may have multiple summary tasks due to multiple count iterations. However from the perspective of accepting variance for a count request, the relevant summary task is the latest one.
+							<Validation>
+                            <Condition>
+                                <code>SummaryTaskId</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The <code>SummaryTaskId</code> and <code>CountRequestKey</code> combination is invalid.
+								</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>SummaryTaskId</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If the <code>SummaryTaskId</code> passed is not of the latest summary task.
+								</Condition>
+                            <Error
+                                Description="Summary Task is not the latest summary task." ErrorCode="WMS00144"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CountResultList">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT">
+            <xsd:documentation>
+                <div>Gives the list of count results to resolve variances.
+							<Validation>
+                        <Condition>If <code>AcceptAllVariances</code> is not Y then
+									<code>CountResultList</code> must be passed, if not passed 
+								</Condition>
+                        <Error Description="Invalid XML." ErrorCode="WMS00024"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:CountResult"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CountResult">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT">
+            <xsd:documentation>
+                <div> The Count Result being accepted for resolving variance.  
+						<Validation>
+                        <Condition>Either <code>CountResultKey</code> or Attributes to determine unique Count Result record needs to be passed. Error if a unique Count Result record is not obtained from the given parameters.
+							</Condition>
+                        <Error
+                            Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CountResultTag"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								A CaseId
+									<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+										</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_QUANTITY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Physical quantity of inventory existing in the warehouse as counted by the warehouse user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_KEY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Unique Key for the count result. If <code>CountResultKey</code> is passed, variance will be resolved for the inventory associated to this count result.
+									<Validation>
+                                <Condition>
+                                    <code>CountResultKey</code> not passed.
+										</Condition>
+                                <Error
+                                    Description="Invalid Count Result Key." ErrorCode="WMS00146"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Gives the status of the inventory.
+									<Validation>
+                                <Condition>If <code>InventoryStatus</code> passed is not a valid status.
+										</Condition>
+                                <Error
+                                    Description="Inventory Status not passed and transition is not specified for blank Status." ErrorCode="WMS00023"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Unique key for the tag associated with inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsResolvable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_RESOLVABLE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This flag indicates whether the variance can be resolved for the count result.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Item identity for the inventory.
+									<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>ItemID</code> along with <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Indicates the location where inventory variance is being accepted.
+									<Validation>
+                                <Condition>If <code>LocationId</code> is not a valid location.
+										</Condition>
+                                <Error
+                                    Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Indicates the inventory organization of the item whose variance is being accepted.
+									<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>OrganizationCode</code> along with <code>ItemID</code>, <code>ProductClass</code> and <code>UnitOfMeasure</code> become mandatory. 
+										</Condition>
+                                <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								A PalletId 
+									<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+										</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Item identity for the inventory.
+									<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>ProductClass</code> along with <code>UnitOfMeasure</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Segment for particular enterprise or organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>SegmentType for particular enterprise or organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Unique identity for each serial.
+									<Validation>
+                                <Condition>If passed, item details comprising <code>ItemID</code>, <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory. Validation if <code>SerialNo</code> is passed and Item details are not passed
+										</Condition>
+                                <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>The date by which the item must be shipped so that it is usable. This is also referred to as the expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SystemQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="SYSTEM_QUANTITY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Gives the system quantity for the inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="TASK_ID" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>The task id that is associated with this count result.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This field is a two-digit code that identifies the task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Item identity for the inventory.
+									<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>UnitOfMeasure</code> along with <code>ProductClass</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+										</Condition>
+                                <Error
+                                    Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VarianceAccepted" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_ACCEPTED" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This field indicates if the variance was accepted for the count result.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VariancePercentage" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_PERCENTAGE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This field specifies the variance percentage which is calculated as 100* VARIANCE_QUANTITY divided by SYSTEM_QUANTITY.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:BigPercentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="VarianceQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_QUANTITY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Variance quantity for the inventory. Inventory adjustment will not happen if VarianceQuantity is zero. The negative quantity specifies missing inventory and hence negative adjustment needs to be performed to resolve variance. The positive quantity specifies new inventory and hence positive adjustment needs to be performed to resolve variance 
+									<Validation>
+                                <Condition>Validation If <code>SerialNo</code> is passed, the quantity is not 0 or +/-1.
+										</Condition>
+                                <Error
+                                    Description="Invalid Serial Quantity." ErrorCode="WMS00145"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VarianceType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Gives the variance type. For items, it will be <i>New</i> if <code>VarianceQuantity</code> &gt; 0, <i>Missing</i> if <code>VarianceQuantity</code> &lt; 0, and <i>No Variance</i> otherwise. For License Plates however, this will not be computed based on <code>VarianceQuantity</code>. For License Plates, <code>VarianceType</code> will set to <i>New</i> if a Case/Pallet is found at a Location when it is not present in the system inventory at that Location, <i>Missing</i> if the Case/Pallet that is supposed to exist at a Location as per the system inventory is not found and <i>No Variance</i> for situations when there is no count discrepancy.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VarianceValue"
+                type="yfctype:VarianceValue" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_VALUE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+								Variance value for the inventory. <code>VarianceValue</code> for an item is the product of item's <code>VarianceQuantity</code> and Unit Cost of the item.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CountResultTag">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT_TAG">
+            <xsd:documentation>Gives the information about the tag to which inventory belongs. Attributes passed in this element will be used to identify a tag for the item in inventory based on attributes marked as unique tag attributes in the item catalog.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the batch number associated with the tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_KEY" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The count result key that is associated with this count result tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_TAG_KEY" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The primary key for the YFS_COUNT_RESULT_TAG table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number associated with the inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The date on which the lot was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the revision number associated with the tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

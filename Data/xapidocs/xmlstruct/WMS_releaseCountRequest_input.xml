@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Either CountRequestKey or (CountRequestNo, DocumentType and Node) must be passed. -->
+<ReleaseCountRequest CountRequestKey="Conditional"
+    CountRequestNo="Conditional"
+    CreateTasksForLocationsWithVarianceOnly="Conditional"
+    DocumentType="Conditional" Node="Conditional"
+    TaskGenerationLevel="Conditional" TaskGranularity="Conditional"
+    TransactionId="Conditional" xmlns="http://www.sterlingcommerce.com/documentation/WMS/releaseCountRequest/input">
+    <yfc:doc>
+        <Element EntityName="Count_Request">
+            <Description>
+                <div>
+                    <Validation>
+                        <Condition>If the status of the count request is not in the pick up status of the transaction.
+						</Condition>
+                        <Error
+                            Description="Status is not a valid pipeline pickup status for the transaction." ErrorCode="WMS00246"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Either primary key (<code>CountRequestKey</code>) or all 
+							attributes of unique key (<code>CountRequestNo</code>,
+							<code>DocumentType</code> and <code>Node</code>) must be passed. Error if either of them not passed. 
+						</Condition>
+                        <Error
+                            Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Key" EntityName="Count_Request"
+                Name="CountRequestKey" NameInEntity="Count_Request_Key">
+                <Description>
+                    <div>
+						Specifies the count request for which count was created.
+							<Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> passed but not valid.
+								</Condition>
+                            <Error
+                                Description="Invalid Count Request Key." ErrorCode="WMS00108"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="DocumentNo" Name="CountRequestNo">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>If <code>CountRequestKey</code> is not passed then <code>Node</code> and <code>CountRequestNo</code> becomes mandatory. If <code>CountRequestNo</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="CreateTasksForLocationsWithVarianceOnly">
+                <Description>
+                    <div>
+						Flag which determines Task Generation Level for <code>CREATE_RECOUNT_TASKS_79</code> transaction. Possible values are <b>
+                            <code>Y</code>
+                        </b> - Tasks will be generated only for the locations that have variance, <b>
+                            <code>N</code>
+                        </b> - Tasks will be generated for all locations satisfying the passed criteria.
+							<Validation>
+                            <Condition>If <code>CreateTasksForLocationsWithVarianceOnly</code> is not passed for <code>CREATE_RECOUNT_TASKS_79</code> transaction.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-24" EntityName="Count_Request"
+                Name="DocumentType" NameInEntity="Document_Type">
+                <Description>
+                    <div>
+						Indicates the purpose of the count request. If <code>DocumentType</code> is not passed, then it proceeds with <code>DocumentType</code> = 3001 i.e. count. 
+							<Validation>
+                            <Condition>If <code>DocumentType</code> passed but not valid.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs" ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" EntityName="Count_Request"
+                Name="Node" NameInEntity="Node_Key">
+                <Description>
+                    <div>
+						Indicates the node or warehouse where the count request was created.
+							<Validation>
+                            <Condition>If <code>CountRequestKey</code> is not passed then <code>Node</code> and <code>CountRequestNo</code> becomes mandatory. If <code>Node</code> is not passed.</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="Node passed does not exist" ErrorCode="WMS00042"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="TaskGenerationLevel">
+                <Description>
+                    <div>
+						Level at which the tasks are generated. Possible values are <b>
+                            <code>ALL_LOCATIONS</code>
+                        </b> - Tasks will be generated for all locations satisfying the passed criteria, <b>
+                            <code>LOCATIONS_WITH_VARIANCE</code>
+                        </b> - Tasks will be generated only for the locations that have variance.
+							<Validation>
+                            <Condition>For Recount Tasks, if <code>TaskGenerationLevel</code> is not passed and the flag <code>CreateTasksForLocationsWithVarianceOnly</code> is not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If invalid value of Task Generation Level is passed for Count/Variance tasks. 
+								</Condition>
+                            <Error
+                                Description="WMS:Invalid Task Generation Level For Count." ErrorCode="WMS00181"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>For Recount Tasks, if the flag <code>CreateTasksForLocationsWithVarianceOnly</code> is not passed and invalid value of Task Generation Level is passed. 
+								</Condition>
+                            <Error
+                                Description="WMS:Invalid Task Generation Level For Count." ErrorCode="WMS00181"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="TaskGranularity">
+                <Description>
+                    <div>
+						Granularity at which the tasks will be performed. Possible values are <b>
+                            <code>REQUEST</code>
+                        </b> - Tasks will be created from the attributes that are present in count request, <b>
+                            <code>VARIANCE</code>
+                        </b> - Tasks will be created at location and item level from the variance that resulted as part of the count.
+							<Validation>
+                            <Condition>Should be valid granularity for creating count tasks.
+								</Condition>
+                            <Error
+                                Description="WMS:Invalid Task Granularity For Count." ErrorCode="WMS00180"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TranId" Name="TransactionId">
+                <Description>
+                    <div>
+						Transaction for creating count tasks. Derived transaction of base abstract transaction <code>CREATE_COUNT_TASKS_79</code> or <code>CREATE_VARIANCE_TASKS_79</code> or <code>CREATE_RECOUNT_TASKS_79</code>. If not passed, the transaction is figured out from the pipeline. 
+							<Validation>
+                            <Condition>Should be a valid transaction for creating count tasks.
+								</Condition>
+                            <Error
+                                Description="Invalid transaction for creating count tasks" ErrorCode="WMS00245"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+</ReleaseCountRequest>

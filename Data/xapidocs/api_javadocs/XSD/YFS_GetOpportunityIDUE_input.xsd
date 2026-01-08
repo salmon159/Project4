@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/GetOpportunityIDUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/GetOpportunityIDUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_GetOpportunityIDUE_input.xsd" yfc:rootElement="Opportunity">
+        <xsd:appinfo source="yfc:structure">
+            <Opportunity hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Opportunity" type="yfc:OpportunityXSDType">
+        <xsd:annotation yfc:tableName="YFS_OPPORTUNITY">
+            <xsd:documentation>
+                <div>
+			This tables stores an opportunity. An opportunity is a sales opportunity that a sales representative foresees and is used to keep track of multiple quotes that will be presented to a specific buyer. Any of these quotes can be negotiated upon but only one of these quotes can be accepted by the buyer, thereby permanently rejecting all other quotes. The opportunity will be closed once an order is created from the buyer selected quote.
+			<Validation>
+                        <Condition>Input document is invalid.
+				</Condition>
+                        <Error
+                            Description="Input document is empty or contains invalid data." ErrorCode="YFS10363"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Mandated parameters missing.
+				</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Opportunity record already existed.
+				</Condition>
+                        <Error Description="Record Already Exists" ErrorCode="YCP0051"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Event template not found.
+				</Condition>
+                        <Error
+                            Description="Template xml for raising event not found" ErrorCode="YFS10429"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OpportunityXSDType">
+        <xsd:attribute name="BillToID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="BILL_TO_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The identifier of the bill to customer. If a customer definition representing the buyer organization exists within the system, the BillToID can represent the CustomerID of the customer. Otherwise, the BillToID can represent the PersonID of the bill to address or the BuyerOrganizationCode of the buyer organization.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BuyerContactAddressKey"
+            type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="BUYER_CONTACT_ADDRESS_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The buyer's contact address. For new records, the <code>BuyerContactAddressKey</code> is the bill to address key 
+			defaulted from the customer contact address. If customer contact is not available, the customer account address is
+			used, otherwise obtaining from the buyer organization default address.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BuyerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="BUYER_ORGANIZATION_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The buyer organization that is associated with this opportunity. This must be a valid organization defined in the system.
+			<Validation>
+                            <Condition>
+                                <code>BuyerOrganizationCode</code> must be valid in the configuration
+				</Condition>
+                            <Error
+                                Description="Invalid Buyer Organization" ErrorCode="YFS10368"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CoOwnerUserID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CO_OWNER_USER_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The co-owner user is a user who jointly owns this opportunity with the orginal owner user.
+			<Validation>
+                            <Condition>Invalid User identifiers passed.
+				</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CurrencyValue" use="optional">
+            <xsd:annotation yfc:columnName="CURRENCY_VALUE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The currency value or budget of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Amount"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerContactID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_CONTACT_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			This is the customer contact ID for the opportunity. This field maps to contact ID field of YFS_Customer_Contact.
+			<Validation>
+                            <Condition>Invalid Contact Identifier.
+				</Condition>
+                            <Error
+                                Description="YFS: Invalid Customer Id" ErrorCode="YFS10319"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The detailed description of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The document type that is associated with this opportunity. For example, Opportunity document (0020). OpportunityID, DocumentType, EnterpriseCode are required attributes to uniquely identify an opportunity.
+			<Validation>
+                            <Condition>
+                                <code>DocumentType</code> must be defined in the configuration
+				</Condition>
+                            <Error Description="Invalid Document Type" ErrorCode="YFS10367"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Opportunity record does not exist.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The enterprise code. This field is a part of an opportunity's unique key. The EnterpriseCode, DocumentType and OpportunityID together uniquely identify an opportunity. <br/>Default value: <code>DEFAULT</code>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be valid in the configuration
+				</Condition>
+                            <Error
+                                Description="YFS:Invalid Enterprise Code" ErrorCode="YFS10113"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Opportunity record does not exist.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ExpectedCloseDate" use="optional">
+            <xsd:annotation yfc:columnName="EXPECTED_CLOSE_DATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The anticipated close date for the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="LeadOrigin" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="LEAD_ORIGIN" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The original lead to creation of this opportunity. E.g. Trade Shows, Call Center, Existing Customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LostReasonCode" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="LOST_REASON_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>If the opportunity is lost, this specifies the reason for losing this opportunity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityDate" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_DATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The date that the opportunity was created.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The identification number of the opportunity, which is required during opportunity creation. If not passed the <code>OpportunityID</code> generates based on a system rule setting or from the user exit implementation. Whenever modification is required, <code>OpportunityID</code> is mandatory. OpportunityID, DocumentType, EnterpriseCode are required attributes to uniquely identify an opportunity.
+			<Validation>
+                            <Condition>Mandatory parameter missing.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The primary key of the YFS_OPPORTUNITY table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityName" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_NAME" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>A custom name given to this opportunity to help identify the record uniquely.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerUserID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_USER_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The user in which this opportunity is assigned to.
+			<Validation>
+                            <Condition>Invalid User identifiers passed.
+				</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PipelineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PIPELINE_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>Pipeline this opportunity belongs to. The pipeline key is determined based on the input attribute passed and the pipeline conditions in the system configuration.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimaryQuoteKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRIMARY_QUOTE_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The primary quote for this opportunity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProbableSuccessRate" use="optional">
+            <xsd:annotation yfc:columnName="PROBABLE_SUCCESS_RATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The probability of success of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Percentage"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TeamCode"
+            type="yfctype:CodeLongDescription" use="optional">
+            <xsd:annotation yfc:columnName="TEAM_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>Indicates a team that can manage this opportunity.  Default is Null.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

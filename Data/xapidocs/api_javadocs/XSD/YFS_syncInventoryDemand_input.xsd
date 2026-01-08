@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/syncInventoryDemand/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/syncInventoryDemand/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_syncInventoryDemand_input.xsd" yfc:rootElement="SyncInventoryDemand">
+        <xsd:appinfo source="yfc:structure">
+            <SyncInventoryDemand>
+                <ShipNodes>
+                    <ShipNode hasAttributes="Y"/>
+                </ShipNodes>
+                <DemandTypes>
+                    <DemandType hasAttributes="Y"/>
+                </DemandTypes>
+                <Items>
+                    <Item hasAttributes="Y">
+                        <Demand hasAttributes="Y">
+                            <Tag hasAttributes="Y"/>
+                        </Demand>
+                    </Item>
+                </Items>
+            </SyncInventoryDemand>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="SyncInventoryDemand" type="yfc:SyncInventoryDemandXSDType"/>
+    <xsd:complexType name="SyncInventoryDemandXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipNodes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DemandTypes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Items"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="ShipNodes">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipNode"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipNode">
+        <xsd:annotation yfc:tableName="YFS_SHIP_NODE">
+            <xsd:documentation>This table stores receiving node, ship node, and distribution centers in the system for various organizations.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="required">
+                <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>
+                        <div>
+			The ship node associated with this inventory demand, if demand is raised for a particular node.
+			<Validation>
+                                <Condition>
+                                    <code>ShipNode</code> must be a passed.</Condition>
+                                <Error
+                                    Description="No Ship Node is passed." ErrorCode="INV80_003"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ShipNode</code> must be a valid existing <code>ShipNode.</code>
+                                </Condition>
+                                <Error Description="Invalid shipnode." ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DemandTypes">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DemandType"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DemandType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_DEMAND_TYPE">
+            <xsd:documentation>This table stores valid demand types for the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DemandType" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="DEMAND_TYPE" yfc:tableName="YFS_INVENTORY_DEMAND_TYPE">
+                    <xsd:documentation>
+                        <div>
+			The type of demand.
+			<Validation>
+                                <Condition>
+                                    <code>DemandType</code> must be passed.</Condition>
+                                <Error
+                                    Description="No demand type is passed." ErrorCode="INV80_004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>DemandType</code> must be a valid existing <code>DemandType.</code>
+                                </Condition>
+                                <Error
+                                    Description="Invalid demand type." ErrorCode="INV80_008"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Items">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Item"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>This table stores definitions for all inventory items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Demand"/>
+            </xsd:sequence>
+            <xsd:attribute name="InventoryOrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+			The identifer for this inventory item.
+			<Validation>
+                                <Condition>
+                                    <code>ItemID</code> must be passed.</Condition>
+                                <Error
+                                    Description="Required fields are not passed." ErrorCode="INV80_005"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Demand">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_DEMAND">
+            <xsd:documentation>Stores inventory demands.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tag"/>
+            </xsd:all>
+            <xsd:attribute name="DemandCancelDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="DEMAND_CANCEL_DATE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The cancel date on this inventory demand.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandReference"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="DEMAND_REFERENCE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandReferenceType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DEMAND_REFERENCE_TYPE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandShipDate" type="yfctype:Date" use="required">
+                <xsd:annotation yfc:columnName="DEMAND_SHIP_DATE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>
+                        <div>
+			The ship date on this inventory demand.
+			<Validation>
+                                <Condition>
+                                    <code>DemandShipDate</code> must be passed.</Condition>
+                                <Error
+                                    Description="Required fields are not passed." ErrorCode="INV80_005"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DEMAND_TYPE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>
+                        <div>
+			The type of demand.
+			<Validation>
+                                <Condition>
+                                    <code>DemandType</code> must be consistent. DemandType passed for new demand must be consistent with the DemandType for the existing demand.</Condition>
+                                <Error
+                                    Description="There is inconsistency in input. DemandType under demand node should be consistent." ErrorCode="INV80_007"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinShipByDate" use="optional">
+                <xsd:annotation yfc:columnName="MIN_SHIP_BY_DATE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The minimum ship by date of the demand.  The demand can only consume from supplies with ship by dates, which are greater than or equal to its minimum ship by date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The owner associated with this inventory demand. The owner organization responsible for fulfilling the demand.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The quantity on this inventory demand.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The segment on this inventory demand.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>The segment type on this inventory demand.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>
+                        <div>
+			The ship node associated with this inventory demand, if demand is raised for a particular node.
+			<Validation>
+                                <Condition>
+                                    <code>ShipNode</code> must be consistent. ShipNode passed for new demand must be consistent with the shipNode for the existing demand.</Condition>
+                                <Error
+                                    Description="There is inconsistency in input. ShipNode under demand node should be consistent." ErrorCode="INV80_006"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Tag">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>
+                <div>
+			Tag information is stored only if the Node tracks tag information in inventory.
+			<Validation>
+                        <Condition>The <code>Item</code> is Tag controlled and <code>Tag</code> is not passed.
+				</Condition>
+                        <Error Description="No Tag information found" ErrorCode="INV79_002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The <code>Item</code> is Tag controlled and all <code>Tag</code> identifiers are not passed.
+				</Condition>
+                        <Error
+                            Description="INV: Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

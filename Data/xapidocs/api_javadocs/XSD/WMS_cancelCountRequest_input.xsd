@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/cancelCountRequest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/cancelCountRequest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_cancelCountRequest_input.xsd" yfc:rootElement="CancelCountRequest">
+        <xsd:appinfo source="yfc:structure">
+            <CancelCountRequest hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CancelCountRequest" type="yfc:CancelCountRequestXSDType">
+        <xsd:annotation yfc:tableName="YFS_COUNT_REQUEST">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>If Status modification is not allowed for count request or if count request is already cancelled, then status modification cannot be performed on count request.
+						</Condition>
+                        <Error
+                            Description="WMS: Count request status change is not allowed." ErrorCode="WMS00109"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Either primary key (<code>CountRequestKey</code>) or all 
+							attributes of unique key (<code>CountRequestNo</code>,
+							<code>DocumentType</code> and <code>Node</code>) must be passed. Error if either of them not passed. 
+						</Condition>
+                        <Error
+                            Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CancelCountRequestXSDType">
+        <xsd:attribute name="CancellationReasonCode"
+            type="yfctype:CommonCode" use="required">
+            <xsd:annotation yfc:columnName="CANCELLATION_REASON_CODE" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>CancellationReasonCode</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If passed, should be a valid cancellation reason code defined in <code>YFS_Common_Code</code> entity for CodeType <code>COUNT_REQ_CANCEL_RSN</code>. 
+								</Condition>
+                            <Error
+                                Description="Invalid Cancellation reason code." ErrorCode="WMS00110"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Specifies the count request for which count was created.
+							<Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> passed but not valid.
+								</Condition>
+                            <Error
+                                Description="Invalid Count Request Key." ErrorCode="WMS00108"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_NO" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>If <code>CountRequestNo</code> is passed then <code>DocumentType</code> and <code>Node</code> becomes mandatory.
+								</Condition>
+                            <Condition>If <code>CountRequestNo</code> not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the purpose of the count request.
+							<Validation>
+                            <Condition>If <code>DocumentType</code> is passed then <code>CountRequestNo</code> and <code>Node</code> becomes mandatory.
+								If <code>DocumentType</code> is not passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>DocumentType</code> passed but not valid.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs" ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the node or warehouse where the count request was created.
+							<Validation>
+                            <Condition>If <code>Node</code> is passed then <code>CountRequestNo</code> and <code>DocumentType</code> become mandatory. If <code>Node</code> is not passed.					</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="Node passed does not exist" ErrorCode="WMS00042"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OverrideModificationRules"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Pass as  <b>
+                            <code> Y </code>
+                        </b> to  override the status of count request that can be considered for various modifications.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+            <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>Free form reason text for the count request cancellation.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

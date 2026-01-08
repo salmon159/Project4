@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<getPutawayLocations ConsiderCurrentInventory=""
+    EnterpriseCode="Required" ForActivityCode="" FromActivityGroup=""
+    Node="Required" xmlns="http://www.sterlingcommerce.com/documentation/WMS/getPutawayLocations/input">
+    <yfc:doc>
+        <Element EntityName="Activity_Constraint"/>
+        <Attributes>
+            <Attribute DataType="Flag" Name="ConsiderCurrentInventory">
+                <Description> Putaway location suggestion API may be invoked for 
+						product even though product is not currently in inventory. This flag is used to determine whether
+						to consider the current inventory for put away or to simulate put away for the passed input criteria(loose sku / License Plate)
+						without going to the database for querying inventory details.
+					</Description>
+            </Attribute>
+            <Attribute EntityName="Activity_Constraint"
+                Name="EnterpriseCode" NameInEntity="Enterprise_Code">
+                <Description>
+                    <div>
+						An audit reference indicating that this inventory transaction was for an order whose enterprise code is detailed here. This is the Enterprise for which put away is being invoked.
+							<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Activity_Constraint"
+                Name="ForActivityCode" NameInEntity="For_Activity_Code">
+                <Description>
+                    <div>
+						Uniquely identifies an activity for which the constraint is defined. Valid values - <code>QC</code>, <code>X-DOCK</code>.
+							<Validation>
+                            <Condition>Either<code>FromActivityGroup</code> or <code>ForActivityCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="Either FromActivityGroup or ForActivityCode must be given." ErrorCode="WMS00173"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Activity_Constraint"
+                Name="FromActivityGroup" NameInEntity="From_Activity_Group">
+                <Description>
+                    <div>
+						Activity demands created for a purpose can be grouped under a set. Valid values - <code>RECEIPT</code>, <code>VAS</code>, <code>PACK_AND_HOLD</code>, <code>ADHOC_MOVE</code>, <code>PICK</code> and <code>REPLENISHMENT</code>.
+							<Validation>
+                            <Condition>Either<code>FromActivityGroup</code> or <code>ForActivityCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="Either FromActivityGroup or ForActivityCode must be given." ErrorCode="WMS00173"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Activity_Constraint" Name="Node" NameInEntity="Node_Key">
+                <Description>
+                    <div>
+						Primary key attribute of <code>YFS_SHIP_NODE</code> table. Required to uniquely identify a location within the ship node.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> should be passed.
+								</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <PutawayReferences ShipmentKey="" WaveKey="" WorkOrderKey="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="String" Name="ShipmentKey"/>
+                <Attribute DataType="String" Name="WaveKey"/>
+                <Attribute DataType="String" Name="WorkOrderKey"/>
+            </Attributes>
+        </yfc:doc>
+        <Wave Node="" WaveNo=""/>
+        <Shipment SellerOrganizationCode="" ShipNode="" ShipmentNo=""/>
+        <WorkOrder EnterpriseCode="" NodeKey="" WorkOrderNo=""/>
+    </PutawayReferences>
+    <Source CaseId="" LocationId="" PalletId="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="LPN_Location"/>
+            <Attributes>
+                <Attribute DataType="LPNNo" Name="CaseId">
+                    <Description>
+                        <div>
+						A Case for which put away is to be done. A <code>CaseId</code> gives the container number.
+							<Validation>
+                                <Condition>Only one of <code>CaseId</code> or <code>PalletId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>CaseId</code> should be a valid license plate.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="LPN_Location" Name="LocationId" NameInEntity="Location_Id">
+                    <Description>
+                        <div>
+						Location Identifier. This in conjunction with <code>NODE_KEY</code> identifies a unique location in the node. Required, if <code>CaseId</code>/<code>PalletId</code> not passed.
+							<Validation>
+                                <Condition>
+                                    <code>LocationId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Either CaseId/PalletId or location information is not passed in the input." ErrorCode="WMS00015"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>LocationId</code> passed should be a valid location in the given <code>Node</code>.
+								</Condition>
+                                <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LPNNo" Name="PalletId">
+                    <Description>
+                        <div>
+						A Pallet for which put away is to be done. A <code>PalletId</code> gives the container number.
+							<Validation>
+                                <Condition>Only one of <code>CaseId</code> or <code>PalletId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>PalletId</code> should be a valid license plate.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Inventory CountryOfOrigin="" FifoNo="" InventoryItemKey=""
+            InventoryStatus="" InventoryTagKey="" Quantity="Required"
+            ReceiptHeaderKey="" Segment="" SegmentType="" ShipByDate="">
+            <yfc:includeInParent IncludeXMLChildNodes="N"
+                IncludeXMLFileName="WMS_Inventory_master.xml" IncludeXMLPath="/Inventory"/>
+            <yfc:doc>
+                <Element EntityName="Location_Inventory"/>
+                <Attributes>
+                    <Attribute DataType="Quantity" Name="Quantity">
+                        <Description>
+                            <div> Number of units of the item available at this location.
+							<Validation>
+                                    <Condition>If putaway is to be done for loose SKU with <Code>ConsiderCurrentInventory</Code> is 'N', then positive quantity should be passed.
+								</Condition>
+                                    <Error
+                                    Description="WMS:Quantity not passed in the input." ErrorCode="WMS00021"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Receipt ReceiptNo="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="WMS_Inventory_master.xml" IncludeXMLPath="/Inventory/Receipt"/>
+                <yfc:doc>
+                    <Element EntityName="Receipt_Header"/>
+                </yfc:doc>
+            </Receipt>
+            <InventoryItem ItemID="Required" ProductClass="Required" UnitOfMeasure="Required">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="WMS_Inventory_master.xml" IncludeXMLPath="/Inventory/InventoryItem"/>
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute EntityName="Inventory_Item" Name="ItemID"/>
+                        <Attribute EntityName="Inventory_Item" Name="ProductClass"/>
+                        <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure"/>
+                    </Attributes>
+                </yfc:doc>
+            </InventoryItem>
+            <TagDetail BatchNo="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" RevisionNo="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="WMS_Inventory_master.xml" IncludeXMLPath="/Inventory/TagDetail"/>
+                <yfc:doc>
+                    <Element EntityName="Inventory_Tag"/>
+                </yfc:doc>
+            </TagDetail>
+        </Inventory>
+    </Source>
+</getPutawayLocations>

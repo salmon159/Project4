@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageDevice/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageDevice/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageDevice_input.xsd" yfc:rootElement="Devices">
+        <xsd:appinfo source="yfc:structure">
+            <Devices>
+                <Device hasAttributes="Y">
+                    <Attributes>
+                        <Attribute hasAttributes="Y"/>
+                    </Attributes>
+                </Device>
+            </Devices>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Devices" type="yfc:DevicesXSDType"/>
+    <xsd:complexType name="DevicesXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Device"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Device">
+        <xsd:annotation yfc:tableName="YFS_DEVICE">
+            <xsd:documentation>All instances of devices in the warehouse such as RF scanners, printers, weighing scale etc. of the warehouse are defined in this table. One of more devices can be associated with equipment.
+				<div>
+                    <Validation>
+                        <Condition>If action is other than <b>
+                                <code>CREATE</code>
+                            </b>, then the <code>DeviceKey</code> attribute OR the <code>DeviceID</code>,<code>DeviceSubType</code>,<code>DeviceType</code> and <code>OrganizationCode</code> attributes must be passed and must be valid. 
+						</Condition>
+                        <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Attributes"/>
+            </xsd:all>
+            <xsd:attribute name="Action" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Action to perform on this <code>Device</code>.
+						<br/>
+                            <b>
+                                <code>DELETE</code>
+                            </b> - Deletes the <code>Device</code>.
+						<br/>
+                            <b>
+                                <code>CREATE</code>
+                            </b> - Creates a new device.  If action is CREATE, DeviceKey passed to this api will be ignored.
+						<br/>
+                            <b>
+                                <code>MODIFY</code>
+                            </b> - Replaces the existing additional device attributes with the attributes passed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeviceId" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="DEVICE_ID" yfc:tableName="YFS_DEVICE">
+                    <xsd:documentation>Device Identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeviceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="DEVICE_KEY" yfc:tableName="YFS_DEVICE">
+                    <xsd:documentation>Primay Key for the YFS_DEVICE table.Can be passed in input for actions <b>
+                            <code>MODIFY</code>
+                        </b> and <b>
+                            <code>DELETE</code>
+                        </b> instead of <code>DeviceID</code>,<code>DeviceSubType</code>,<code>DeviceType</code> and <code>OrganizationCode</code>.
+					<div>
+                            <Validation>
+                                <Condition>If action is other than <b>
+                                    <code>CREATE</code>
+                                    </b>, then the <code>DeviceKey</code> attribute OR the <code>DeviceID</code>,<code>DeviceSubType</code>,<code>DeviceType</code> and <code>OrganizationCode</code> attributes must be passed and must be valid.
+						</Condition>
+                                <Error
+                                    Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeviceSubType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DEVICE_SUB_TYPE" yfc:tableName="YFS_DEVICE">
+                    <xsd:documentation>Device Sub Type Name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeviceType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DEVICE_TYPE" yfc:tableName="YFS_DEVICE">
+                    <xsd:documentation>Device Type name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_DEVICE">
+                    <xsd:documentation>Node to which the equipment type belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Attributes">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Attribute"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Attribute">
+        <xsd:annotation yfc:tableName="YFS_ATTRIBUTE">
+            <xsd:documentation>Used to specify device attributes as a name value pair.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Name of the device specific parameter; example <b>
+                            <code>DropDirectory</code>
+                        </b> for a printer deviceType.
+						</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Value of the device specific parameter; example <b>
+                            <code>E:/</code>
+                        </b> for DropDirectory in a printer deviceType.
+						</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

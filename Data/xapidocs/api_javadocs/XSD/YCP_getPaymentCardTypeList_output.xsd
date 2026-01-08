@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getPaymentCardTypeList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getPaymentCardTypeList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getPaymentCardTypeList_output.xsd" yfc:rootElement="PaymentCardTypeList">
+        <xsd:appinfo source="yfc:structure">
+            <PaymentCardTypeList hasAttributes="Y">
+                <PaymentCardType hasAttributes="Y">
+                    <PaymentConfiguration hasAttributes="Y"/>
+                </PaymentCardType>
+            </PaymentCardTypeList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PaymentCardTypeList" type="yfc:PaymentCardTypeListXSDType"/>
+    <xsd:complexType name="PaymentCardTypeListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:PaymentCardType"/>
+        </xsd:sequence>
+        <xsd:attribute name="TotalNumberOfRecords" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The total number of payment card types returned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PaymentCardType">
+        <xsd:annotation yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+            <xsd:documentation>This element contains the identifying information for a Payment Card Type.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PaymentConfiguration"/>
+            </xsd:all>
+            <xsd:attribute name="LongDescription"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="LONG_DESCRIPTION" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The long description for the payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The organization that is associated with this payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentCardType"
+                type="yfctype:CommonCode" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_CARD_TYPE" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The unique identifier for the payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentCardTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_CARD_TYPE_KEY" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The primary key of the YFS_PAYMENT_CARD_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_TYPE" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The unique identifier for the payment type of this payment card type. Currently, the system only supports payment types of payment type group CREDIT_CARD, DEBIT_CARD,STORED_VALUE_CARD and OTHER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:CodeShortDescription" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The short description of the payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PaymentConfiguration">
+        <xsd:annotation yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+            <xsd:documentation>This element contains the configuration of payment rules that impact how payment processing will use authorizations and charges.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute
+                name="AllowAuthorizationsToExceedSettlementRequest"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ALLOW_AUTH_TO_EXCEED_SETTLE_RQ" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This rule determines whether authorizations larger than the settlement amount are able to be used for settlement for this card type.  If IS_MULTIPLE_REQ_ALLOWED or CHARGE_CONSOL_ALLOWED are Y, this is implicitly Y.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizationExpirationHours" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_EXPIRATION_HOURS" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>Number of hours an authorization is valid before expiring for this payment card type.  This value is not used internally by the system, but may be referenced for the computation of the AuthorizationExpirationDate when processing payment transactions.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfHours-7"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizationReversalHours" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_REVERSAL_HOURS" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>Number of hours an authorization is valid for reversal for this payment card type. This value is not used internally by the system and serves as an informational field.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfHours-7"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizationReversalStrategy"
+                type="yfctype:AuthReversalStrategy" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_REVERSAL_STRATEGY" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This field controls when reverse authorization requests will be created for this payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CashBackLimit" use="optional">
+                <xsd:annotation yfc:columnName="CASH_BACK_LIMIT" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The maximum amount that can be given back as cash for payment methods associated with this payment card type.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Money"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeConsolAllowed"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_CONSOL_ALLOWED" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This flag indicates whether charge consolidation is allowed for this payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeUpToAvailable"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_UP_TO_AVAILABLE" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This flag indicates whether the user exit getFundsAvailable should be invoked to determine the funds available on this payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinWaitTimeForConsol" use="optional">
+                <xsd:annotation
+                    yfc:columnName="MIN_WAIT_TIME_FOR_CONSOL" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>The minimum time to wait for utilizing the opportunity to consolidate charges for this payment card type.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Number"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="NoProcessingRequired"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="NO_PROCESSING_REQUIRED" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This flag indicates that when the Payment Type is added on the Order, it is already processed. Examples of this Payment Type are checks/cash. A pre processed Charge Transaction record of type CHARGE is created for this Payment Type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PartialReversalSupported"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PARTIAL_REVERSAL_SUPPORT" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This rule determines whether reverse authorization requests support partial reversal for this payment card type.  If Y, partial reversal is supported. If N, only full reversal is supported.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UseSameAuthorizationMutlipleTimes"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_MULTIPLE_REQ_ALLOWED" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>Use Same Authorization Multiple Times. This flag controls whether the same authorization request can be allowed multiple times for this payment card type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Voidable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="VOIDABLE" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This flag indicates that the Payment Type allows a void operation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZeroAmountAuthorizationSupported"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ZERO_AMOUNT_AUTH_SUPPORTED" yfc:tableName="YFS_PAYMENT_CARD_TYPE">
+                    <xsd:documentation>This flag indicates whether or not the system will attempt a zero authorization when this Payment Type is added on the Order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

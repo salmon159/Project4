@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2014 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Shipment AddReasonCodeAsNoteAudit="" MarkInventoryShort=""
+    SellerOrganizationCode="" ShipNode="" ShipmentKey="Required"
+    ShipmentNo="" ShortageReason="" xmlns="http://www.sterlingcommerce.com/documentation/YCD/recordShortageForPack/input">
+    <yfc:doc>
+        <Element EntityName="Shipment">
+            <Description>
+                <div>
+	  				To identify the <code>Shipment</code>, pass either <code>ShipmentKey</code> or <code>ShipmentNo</code>, <code>SellerOrganizationCode</code> and <code>ShipNode</code>
+                    <Validation>
+                        <Condition>Unique keys of Shipment are not passed.
+						</Condition>
+                        <Error
+                            Description="Either ShipmentKey or ShipmentNo, ShipNode and SellerOrganizationCode is mandatory." ErrorCode="YDM00065"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AddReasonCodeAsNoteAudit">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will persist the shortage reason code in order line notes <code>AuditTransactionId</code> column<br/>
+							Default Value is N.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="MarkInventoryShort">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will cancel the <code>ShortageQty</code> on shipment line and backordered the same units on order line.<br/>
+							If N, and the <code>ShortageReason</code> is not <code>inventoryShortage</code>, then the API will not update shipment line but just add a note recording shortage on corresponding orderline.<br/>
+							Default Value is N.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment"
+                Name="SellerOrganizationCode" NameInEntity="Seller_Organization_Code"/>
+            <Attribute EntityName="Shipment" Name="ShipNode" NameInEntity="Shipnode_key"/>
+            <Attribute EntityName="Shipment" Name="ShipmentKey" NameInEntity="Shipment_Key"/>
+            <Attribute EntityName="Shipment" Name="ShipmentNo" NameInEntity="Shipment_No"/>
+            <Attribute EntityName="Common_Code" Name="ShortageReason" NameInEntity="Code_Value"/>
+        </Attributes>
+    </yfc:doc>
+    <ShipmentLines>
+        <ShipmentLine ShipmentLineKey="Required"
+            ShortageReason="Required" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Shipment_Line">
+                    <Description>
+                        <div>
+	  				To record shortage at ShipmentLine level, pass  <code>ShipmentLineKey</code>,<code>ShortageReason</code>
+                            <Validation>
+                                <Condition>Unique keys of ShipmentLine are not passed.
+						</Condition>
+                                <Error
+                                    Description="ShipmentLine key is mandatory." ErrorCode="YCD00069"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>ShortageReason is not passed
+						</Condition>
+                                <Error
+                                    Description="ShortageReason is mandatory either at Shipment or Shipment Line level" ErrorCode="YCD00070"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="String" Name="ShortageReason"/>
+                </Attributes>
+            </yfc:doc>
+        </ShipmentLine>
+    </ShipmentLines>
+</Shipment>

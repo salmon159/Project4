@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Order AuditTransactionId="" AutoCancelDate="" DocumentType=""
+    EnterpriseCode="" ModificationReasonCode=""
+    ModificationReasonText="" ModificationReference1=""
+    ModificationReference2="" ModificationReference3=""
+    ModificationReference4="" OrderHeaderKey="" OrderNo="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/postVoidSale/input">
+    <yfc:doc>
+        <Element EntityName="Order_Header">
+            <Description>
+		The order entity which contains the description of the order.
+		<Validation>
+                    <Condition>The <b>OrderHeaderKey</b> attribute OR the <b>EnterpriseCode</b>, <b>DocumentType</b> and <b>OrderNo</b> attributes must be passed and must be valid.
+			</Condition>
+                    <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                </Validation>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="TransactionID"
+                EntityName="Charge_Transaction"
+                Name="AuditTransactionId" NameInEntity="Audit_Transaction_Id">
+                <Description>Change audit Transaction Identifier.</Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" EntityName="Order_Header"
+                Name="AutoCancelDate" NameInEntity="Auto_Cancel_Date">
+                <Description>
+                    <div>
+			Date on which order will automatically cancelled. If not provided, it will be calculated based on the system rule 'Mark Post Voided Sale for Auto Cancellation Time Window'.
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" EntityName="Order_Audit"
+                Name="ModificationReasonCode" NameInEntity="Reason_Code">
+                <Description>Reason Code for the modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-100" EntityName="Order_Audit"
+                Name="ModificationReasonText" NameInEntity="Reason_Text">
+                <Description>Reason Description for the modification.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference1" NameInEntity="Reference_1">
+                <Description>Reference field for the modification details.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference2" NameInEntity="Reference_2">
+                <Description>Reference field for the modification details.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference3" NameInEntity="Reference_3">
+                <Description>Reference field for the modification details.</Description>
+            </Attribute>
+            <Attribute DataType="Text-254" EntityName="Order_Audit"
+                Name="ModificationReference4" NameInEntity="Reference_4">
+                <Description>Reference field for the modification details.</Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <PaymentMethods>
+        <PaymentMethod Action="" ChargeSequence="" CheckNo=""
+            CheckReference="" CreditCardExpDate="" CreditCardName=""
+            CreditCardNo="" CreditCardType="" CustomerAccountNo=""
+            CustomerPONo="" DebitCardNo="" FirstName="" LastName=""
+            MaxChargeLimit="" MiddleName="" PaymentKey=""
+            PaymentReference1="" PaymentReference2=""
+            PaymentReference3="" PaymentType="" SuspendAnyMoreChanges="" UnlimitedCharges="">
+            <yfc:doc>
+                <Element EntityName="Payment">
+                    <Description>
+                        <div>
+                            <code>PaymentMethod</code> can be added, modified or removed to an <code>OrderLine</code> by <code>ChangeOrder</code>. 
+			<br/>If payment processing is not required for the order, any payment method passed in the input xml is still subject to validations. 
+			<br/>Only the <code>PaymentMethod</code> attributes specified in the input xml can be changed. Attempting to change other attributes
+			on <code>PaymentMethod</code>, such as <code>TotalAuthorized</code> or <code>TotalCharged</code> results in an error.
+			<Validation>
+                                <Condition>Pass changed value for attributes not specfied in input xml.
+				</Condition>
+                                <Error
+                                    Description="Payment attributes cannot be modified." ErrorCode="YFS10458"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Action">
+                        <Description>
+                            <div>
+				Indicates the action to take on the <code>PaymentMethod</code>.
+				Valid Value: Only valid value is <b>
+                                    <code>REMOVE</code>
+                                </b>. 
+				<br/>For the addition or modification of <code>PaymentMethod</code>, <code>Action</code> does not have to be passed; if passed, its value should be Null or any value other than <b>
+                                    <code>REMOVE</code>
+                                </b>.  When a <code>PaymentMethod</code> is removed, its associated <code>ChargeTransaction</code> records 
+				and <code>CreditCardTransaction</code> records are also removed.
+				<Validation>
+                                    <Condition>
+                                    <code>Action</code> is <b>
+                                    <code>REMOVE</code>
+                                    </b>, and any of the following is not zero: <code>PendingAuthAmount</code>, <code>PendingChargeAmount</code>, <code>TotalAuthorized</code>, <code>TotalCharged</code>,<code>RequestedAuthAmount</code> or <code>RequestedChargeAmount</code>.
+					</Condition>
+                                    <Error
+                                    Description="PaymentMethod cannot be removed" ErrorCode="YFS10490"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Key" EntityName="Payment"
+                        Name="PaymentKey" NameInEntity="Payment_Key">
+                        <Description>
+                            <div>
+				To identify the <code>PaymentMethod</code> to be modified, pass the <code>PaymentKey</code>.
+				</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Payment" Name="PaymentType" NameInEntity="Payment_Type">
+                        <Description>
+                            <div>
+				Type of payment. 
+				<br/>The <code>PaymentType</code> must be a value that is already configured for the Seller Organization.  <br/>If a   <code>PaymentMethod</code> element is passed, the <code>PaymentType</code> is validated, even if payment processing is not required for the order.
+				<Validation>
+                                    <Condition>Must be a value defined for the Seller Organization.
+					</Condition>
+                                    <Error
+                                    Description="Payment Type not set up for seller." ErrorCode="YFS10491"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>PaymentType</code> must be passed.
+					</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" EntityName="Payment"
+                        Name="SuspendAnyMoreChanges" NameInEntity="Suspend_Any_More_Charges">
+                        <Description>
+                            <div>If passed as Y, the <code>PaymentMethod</code>
+				is suspended for both charge and refund and no further charging or refund is done against it.
+				<br/>All the open charge transaction records of this payment method with the <code>ChargeType</code> value is
+				<b>
+                                    <code>AUTHORIZATION</code>
+                                </b> or <b>
+                                    <code>CHARGE</code>
+                                </b> are closed. Refunds can still be made to this  <code>PaymentMethod</code>.
+				<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <PaymentDetails AuditTransactionId="" AuthAVS="" AuthCode=""
+                AuthReturnCode="" AuthReturnFlag="" AuthReturnMessage=""
+                AuthTime="" AuthorizationExpirationDate=""
+                AuthorizationID="" CVVAuthCode="" ChargeType=""
+                HoldAgainstBook="" InternalReturnCode=""
+                InternalReturnFlag="" InternalReturnMessage=""
+                ProcessedAmount="" Reference1="" Reference2=""
+                RequestID="" RequestProcessed="" RequestedAmount=""
+                TranRequestTime="" TranReturnCode="" TranReturnFlag=""
+                TranReturnMessage="" TranType="">
+                <yfc:doc>
+                    <Element EntityName="Credit_Card_Transaction"/>
+                    <Attributes>
+                        <Attribute EntityName="Charge_Transaction"
+                            Name="AuditTransactionId" NameInEntity="Audit_Transaction_Id">
+                            <Description>
+                                <div>
+								AuditTransactionID is a user defined data. This data will be stored on YFS_ORDER_AUDIT table. Also in case of APIs that cause the creation of a CHARGE_REQUEST, the same field will be stored on YFS_CHARGE_TRANSACTION table.
+							</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Text-20"
+                            EntityName="Credit_Card_Transaction"
+                            Name="AuthAVS" NameInEntity="Auth_Avs">
+                            <Description>Authorization AVS.</Description>
+                        </Attribute>
+                        <Attribute EntityName="Charge_Transaction"
+                            Name="AuthorizationExpirationDate" NameInEntity="Authorization_Expiration_Date"/>
+                        <Attribute EntityName="Charge_Transaction"
+                            Name="AuthorizationID" NameInEntity="Authorization_Id"/>
+                        <Attribute EntityName="Charge_Transaction"
+                            Name="ChargeType" NameInEntity="Charge_Type">
+                            <Description>
+                                <div>
+					The type of charge that is being applied to the order. 
+					<br/>Valid Values: <b>
+                                    <code>AUTHORIZATION</code>
+                                    </b> or <b>
+                                    <code>CHARGE</code>
+                                    </b>
+                                    <Validation>
+                                    <Condition> Invalid value passed.
+						</Condition>
+                                    <Error
+                                    Description="YFS:Invalid Transaction Type." ErrorCode="YFS10156"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Flag"
+                            EntityName="Charge_Transaction"
+                            Name="HoldAgainstBook" NameInEntity="Hold_Against_Book">
+                            <Description>Flag indicating whether amount has to be held against book.</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="ProcessedAmount">
+                            <Description>
+                                <div>
+						If  <code>ProcessedAmount</code> is passed as a value greater than zero, the <code>STATUS</code> in the  <code>CHARGE_TRANSACTION</code> table is set to <b>
+                                    <code>CLOSED</code>
+                                    </b>. 
+						<br/>The <code>ProcessedAmount</code> is used to update  <code>CHARGE_TRANSACTION</code> table, depending on the charge type.  If the <code>ChargeType</code> value is
+						<br/>
+                                    <b>
+                                    <code>AUTHORIZATION</code>
+                                    </b> - the <code>OpenAuthorizedAmount</code> is updated with the <code>ProcessedAmount</code>.
+						<br/>
+                                    <b>
+                                    <code>CHARGE</code>
+                                    </b> - the <code>CreditAmount</code> is updated with the <code>ProcessedAmount</code>.
+						</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Text-255"
+                            EntityName="Credit_Card_Transaction"
+                            Name="RequestID" NameInEntity="Request_Id">
+                            <Description>Request Id.</Description>
+                        </Attribute>
+                        <Attribute DataType="Flag" Name="RequestProcessed">
+                            <Description>If the value of this is <b>
+                                    <code>Y</code>
+                                </b>, the payment details record will be treated as already processed. This flag is considered only when <code>ProcessedAmount</code> is <b>
+                                    <code>0</code>
+                                </b>. Request with <code>ProcessedAmount</code> greater than <b>
+                                    <code>0</code>
+                                </b> is always considered as processed.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="RequestedAmount">
+                            <Description>
+                                <div>
+						If <code>RequestAmount</code> is passed, the value is used to update the <code>RequestAmount</code> of the  <code>CHARGE_TRANSACTION</code> table, and the <code>TRAN_AMOUNT</code> of the <code>CREDIT_CARD_TRANSACTION</code> table.
+						</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </PaymentDetails>
+        </PaymentMethod>
+    </PaymentMethods>
+</Order>

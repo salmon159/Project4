@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageStatusMilestone/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageStatusMilestone/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageStatusMilestone_input.xsd" yfc:rootElement="StatusMilestone">
+        <xsd:appinfo source="yfc:structure">
+            <StatusMilestone hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="StatusMilestone" type="yfc:StatusMilestoneXSDType">
+        <xsd:annotation yfc:tableName="YFS_STATUS_MILESTONE">
+            <xsd:documentation>
+                <div>
+				Stores milestones attached to a status. <code>StatusMilestoneKey</code> or a unique combination of <code>ProcessTypeKey</code>, <code>Status</code>, <code>DateTypeId</code> and <code>MilestoneLevel</code> can be specified to identify a StatusMilestone.
+				<Validation>
+                        <Condition>If ProcessTypeKey, Status, DateTypeId or MilestoneLevel is not passed in Create mode.</Condition>
+                        <Error
+                            Description="ProcessTypeKey, Status, MilestoneLevel and DateTypeId are mandatory." ErrorCode="YCP0296"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If existing StatusMilestoneKey or a unique combination of ProcessTypeKey, Status, DateTypeId and MilestoneLevel is passed in Create mode</Condition>
+                        <Error
+                            Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If record does not exist in the database</Condition>
+                        <Error
+                            Description="Record does not exist in the database." ErrorCode="YFC0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If an invalid combination of Status and ProcessTypeKey is passed</Condition>
+                        <Error
+                            Description="Combination of Status and ProcessTypeKey does not exist in YFS_Status table." ErrorCode="YCP0298"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If an invalid combination of DateTypeId, ProcessTypeKey and OwnerKey is passed</Condition>
+                        <Error
+                            Description="Combination of DateTypeId, ProcessTypeKey and OwnerKey does not exist in YFS_Date_Type table." ErrorCode="YCP0299"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="StatusMilestoneXSDType">
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				If CallingOrganizationCode is passed, then it will
+				be used as the context organization. This, combined
+				with the configuration data setup for status milestones,
+				will result in data filtered for access by the given organization.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DateTypeId" type="yfctype:DateTypeId" use="optional">
+            <xsd:annotation yfc:columnName="DATE_TYPE_ID" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>Identifies a date type for which additional dates are stored</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MilestoneLevel"
+            type="yfctype:MilestoneLevel" use="optional">
+            <xsd:annotation yfc:columnName="MILESTONE_LEVEL" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>
+                    <div>
+				Possible values are '01' for Order,'02' for Order Line, '03' for Order Release.
+				<Validation>
+                            <Condition>If an Invalid MilestoneLevel is passed.</Condition>
+                            <Error Description="Invalid MilestoneLevel." ErrorCode="YCP0297"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>The owner organization for this status milestone.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessTypeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PROCESS_TYPE_KEY" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>
+                    <div>
+				Primary key of the process type associated with a status milestone.
+				<Validation>
+                            <Condition>If an Invalid ProcessTypeKey is passed.</Condition>
+                            <Error Description="Invalid ProcessTypeKey." ErrorCode="YCP0280"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QuantityType" type="yfctype:QuantityType" use="optional">
+            <xsd:annotation yfc:columnName="QUANTITY_TYPE" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>Possible values are '01' for Some Quantity,'02' for All</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:ShortStatus" use="optional">
+            <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>Pick up status</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StatusMilestoneKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="STATUS_MILESTONE_KEY" yfc:tableName="YFS_STATUS_MILESTONE">
+                <xsd:documentation>Primary Key.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

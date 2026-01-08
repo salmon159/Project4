@@ -1,0 +1,250 @@
+<PUBLIC:COMPONENT TAGNAME="menu" LIGHTWEIGHT="true"> 
+	<PUBLIC:ATTACH EVENT="oncontentready" ONEVENT="initMenu();" />
+    <PUBLIC:ATTACH EVENT="onclick" ONEVENT="menuClick();" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="menuItemOver();" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="menuItemOut();" />
+    <PUBLIC:DEFAULTS style="cursor:hand" />
+</PUBLIC:COMPONENT>
+<script language="jscript">
+
+////////////////////////////////////////////////////////////////////////////////////
+// Global Variables
+////////////////////////////////////////////////////////////////////////////////////
+var MENU_NODE_NAME = "menu";
+var MENU_DESC_ATTR = "desc";
+var MENU_URL_ATTR = "menuUrl";
+var MENU_BAR_CLASS_NAME = "menubar";
+var MENU_IMAGE_ATTR = "icon";
+
+var srcElem = null;             // Object to the source element which generated the click event
+var ix = "";                    // Left position of the pop-up window
+var iy = "";                    // Top position of the pop-up window
+var iHeight = "";               // Height of the pop-up window
+var iWidth = "";                // Width of the pop-up window
+var popUp;                      // The pop-up window object
+
+// styles initialized from the CSS - see initStyles method
+var mMenuHeight = 16;           // Default height of 1 menu item
+var mMenuWidth = 50;            // Default minimum width for the children of the popUp
+var mPadding = 5;               // Default menu padding
+var mBackColor;                 // Menu backgroundColor
+var mHoverBackColor;            // Menu hover background
+var mColor;                     // Menu text color
+var mFont;                      // Menu font
+var mBorder;                    // Menu border
+var mnuStyle;
+var mnuHoverStyle;
+var rootDoc;
+
+////////////////////////////////////////////////////////////////////////////////////
+function initMenu(){
+    rootDoc = element.document.parentWindow.top.document;
+    initStyles();
+    element.style.backgroundColor = mBackColor;
+    element.style.color = mColor;
+    element.style.font = mFont;
+    element.style.height = mMenuHeight;
+    element.style.paddingLeft = mPadding;
+    element.style.paddingRight = mPadding;
+
+    // Hide all the first-level children for the Behavior
+	if(element.children.length > 0){
+		for(var i = 0; i < element.children.length; i++){
+            element.children[i].style.display = "none";
+            element.children[i].style.height = mMenuHeight;
+		}
+	}
+    element.appendChild(rootDoc.createTextNode(element.getAttribute(MENU_DESC_ATTR)));
+    if (isRoot()) {
+        var img = element.getAttribute(MENU_IMAGE_ATTR);
+        if (img)
+            element.appendChild(rootDoc.createElement("<img src=\""+img+"\" border=\"0\" />"));
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getStyle(stylename,styleSheet) {
+  for ( j = 0; j < styleSheet.rules.length; j++ )    {
+    if (styleSheet.rules.item(j).selectorText == stylename)  {
+        return styleSheet.rules.item(j).style;
+    }
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getStyleSheet() {
+    return rootDoc.styleSheets[0];
+}
+////////////////////////////////////////////////////////////////////////////////////
+function initStyles(){
+    var styleSheet = getStyleSheet();
+    mnuStyle = getStyle(".menuItem",styleSheet);
+    mnuHoverStyle = getStyle(".menuItemHover",styleSheet);
+    if (mnuStyle) {
+        mColor = mnuStyle.color;
+        mBackColor = mnuStyle.backgroundColor;
+        mFont = mnuStyle.font;
+        mBorder = mnuStyle.border;
+        mPadding = parseInt(mnuStyle.padding);
+        mMenuWidth = parseInt(mnuStyle.width);
+        mMenuHeight = parseInt(mnuStyle.height);
+    }
+    if (mnuHoverStyle) {
+        mHoverBackColor = mnuHoverStyle.backgroundColor;
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+function menuClick(){
+    ix = 0;
+	iy = 0;
+	iHeight = 0;
+	iWidth = 0;
+    // Retrieve the source element which fired the event
+	srcElem = event.srcElement;
+
+    // Create the pop-up window for the current parent menu item
+	popUp = window.createPopup();
+    var oPopBody = popUp.document.body;
+    // Does the custom element have any children?
+    if(srcElem.children.length > 0){
+        ix = 0;
+        iy = srcElem.offsetHeight;
+        // Get pop-up window Height and Width
+        iHeight = getPopUpHeight(srcElem);
+        // Empty string to store the innerText of the current element's child
+        iWidth = getPopUpWidth(srcElem);
+        if(iWidth < mMenuWidth)
+            iWidth = mMenuWidth;
+        
+        // Create an opening string of a SPAN Tag
+        var popupHTML = "<SPAN style='position:absolute;" + "top:0px;" + "left:0px; height:" + iHeight + "px; width:" + iWidth + "px'>";
+        // Go through all the first-level children elements and get their outerHTML and append it to the DIV Element as children 
+        for(j = 0; j < element.children.length; j++){
+            if (element.children[j].nodeName == MENU_NODE_NAME) {
+                // Assign the ID of the current child element to its innerText 
+                element.children[j].id = element.children[j].id;
+                popupHTML += element.children[j].outerHTML + "\n";
+                element.children[j].style.width = iWidth + "px";
+            }
+        }
+        // Add the closing SPAN Tag to the popupHTML string variable
+        popupHTML += "</" + "SPAN>";
+        // Assign the HTML from above into the body of the pop-up window
+        oPopBody.innerHTML = popupHTML;
+        // Assign events to each of the children in the pop-up window, then show the custom elements in the pop-up window
+        for(j = 0; j < oPopBody.children[0].children.length; j++){
+            if (element.children[j].nodeName == MENU_NODE_NAME) {
+                // Attach events to the children of the menu which are not submenus
+                if (oPopBody.children[0].children[j].getAttribute(MENU_URL_ATTR) != MENU_NODE_NAME) {
+                    oPopBody.children[0].children[j].onclick = menuChildClick;
+                }
+                // Define the current child's style to display
+                oPopBody.children[0].children[j].style.display = "block";
+                oPopBody.children[0].children[j].style.visibility = "visible";
+                oPopBody.children[0].children[j].style.paddingLeft = mPadding;
+                oPopBody.children[0].children[j].style.paddingRight = mPadding;
+            }
+        }
+        // Define the popUp's style
+        oPopBody.style.position = "absolute";
+        oPopBody.style.backgroundColor = mBackColor;
+        oPopBody.style.border = mBorder;
+        
+        // Show the popUp using the show method
+        popUp.show(ix+getPopUpOffsetX(srcElem), iy+getPopUpOffsetY(srcElem), iWidth, iHeight, srcElem);  
+    }       
+}
+////////////////////////////////////////////////////////////////////////////////////
+function menuChildClick(){
+    if (popUp) {
+        // Cancel the event so that it does not bubble up to its parent
+        popUp.document.parentWindow.event.cancelBubble = true;
+        // Retrieve the source element from the pop-up window which fired the event
+    	srcElem = popUp.document.parentWindow.event.srcElement;
+        if (srcElem.getAttribute(MENU_URL_ATTR) != '') {
+            var code = "document.parentWindow.top.location.href='"+srcElem.getAttribute(MENU_URL_ATTR)+"'";
+            popUp.document.parentWindow.execScript(code,"JavaScript");
+        }
+    }
+    else {
+        srcElem = event.srcElement;
+        if (srcElem.getAttribute(MENU_URL_ATTR) != '') {
+            var code = "window.location.href='"+srcElem.getAttribute(MENU_URL_ATTR)+"'";
+            window.execScript(code,"JavaScript");
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+function menuItemOver(){
+    //alert("mHoverBackColor:"+mHoverBackColor);
+    // Retrieve the source element
+	srcElem = event.srcElement;
+    // Set the element's style
+    srcElem.style.backgroundColor = mHoverBackColor;
+}
+////////////////////////////////////////////////////////////////////////////////////
+function menuItemOut(){
+    // Retrieve the source element
+	srcElem = event.srcElement;
+    // Set the element's style
+    srcElem.style.backgroundColor = mBackColor;
+}
+////////////////////////////////////////////////////////////////////////////////////
+function innerText(szText){
+    var startTag = szText.indexOf("<");
+	if(szText.substr(0, startTag) == "")
+		return szText;
+	else
+		return szText.substr(0,startTag);
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getPopUpOffsetX(ele) {
+    var parent = ele.parentNode;
+    var sz = 0;
+    if (parent && !isRoot()) {
+        sz = parseInt(parent.style.width) - mPadding;
+    }
+    return sz;
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getPopUpOffsetY(ele) {
+    var parent = ele.parentNode;
+    var sz = 0;
+    if (parent && !isRoot()) {
+        sz = (mMenuHeight * -1)+mPadding;
+    }
+    return sz;
+}
+////////////////////////////////////////////////////////////////////////////////////
+function isRoot() {
+    if (element.parentNode.className == MENU_BAR_CLASS_NAME)
+        return true;
+    else
+        return false;
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getPopUpWidth(obj) {
+    var desc = "";
+    var maxMenuWidth = 0;
+    var menuWidth = 0;
+    for(var j = 0; j < obj.children.length; j++){
+        if (obj.children[j].nodeName == MENU_NODE_NAME) {
+            desc = obj.children[j].getAttribute(MENU_DESC_ATTR);
+            menuWidth = desc.length;
+            if(menuWidth > maxMenuWidth)
+                maxMenuWidth = menuWidth;
+        }
+    }
+    return maxMenuWidth * 8; // why 8, I have no idea!! May be it's the average font width.
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getPopUpHeight(obj) {
+    var count = 0;
+    for (var i=0; i<obj.children.length; i++) {
+        if (obj.children[i].nodeName == MENU_NODE_NAME)
+            count++;
+    }
+    return (mMenuHeight * count)+mPadding;
+}
+</script>
+<BODY>
+</BODY>
+</HTML>

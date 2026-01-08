@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/createStoreBatch/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/createStoreBatch/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCD_createStoreBatch_input.xsd" yfc:rootElement="StoreBatch">
+        <xsd:appinfo source="yfc:structure">
+            <StoreBatch hasAttributes="Y">
+                <ShipmentLines>
+                    <ShipmentLine hasAttributes="Y"/>
+                </ShipmentLines>
+            </StoreBatch>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="StoreBatch" type="yfc:StoreBatchXSDType">
+        <xsd:annotation yfc:tableName="YFS_STORE_BATCH">
+            <xsd:documentation>This table stores the batches for Web Store. A batch consists of multiple shipment lines which can be picked together.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="StoreBatchXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentLines"/>
+        </xsd:all>
+        <xsd:attribute name="ApplicationName" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+							The identifier of the application for which the state is being used for creating batches.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AssignedToUserId" type="yfctype:LoginId" use="optional">
+            <xsd:annotation yfc:columnName="ASSIGNED_TO_USER_ID" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>
+                    <div>
+							The user to which this batch will be assigned. 
+							 <Validation>
+                            <Condition>
+                                <code>AssignedToUserId</code> should be a valid user.
+								</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>The unique batch number to identify this batch in this store.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BatchType" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_TYPE" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>
+                    <div>
+							The sort method for the batch. This could be <code>SORT_WHILE_PICK</code> or <code>SORT_AFTER_PICK</code>.
+							If not passed, then this value is obtained from <code>Definition</code> column of <code>PLT_USER_UI_STATE</code> table with 
+							<code>ApplicationName=WSC,ComponentName=BATCH_SORT_METHOD,ScreenName=ALL and LoginId=AssignedToUserId</code>
+							If no record is found in <code>PLT_USER_UI_STATE</code> table, then <code>BatchType</code> is defaulted to <code>SORT_WHILE_PICK</code>. 
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreInvalidLines" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will create a batch and return invalid shipment lines as part of the <code>DiscardedShipmentLines</code> element in the output.<br/>
+							If N, the API will not create a batch. It will also not throw any error. The input document will be returned back as the output with <code>FailureMessage</code> attribute.
+							Default Value is Y.<br/>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>
+                    <div>
+							The ship node's organization code to which this batch belongs.
+							<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is mandatory.
+								</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory." ErrorCode="YDM000162"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> should be a valid ship node.
+								</Condition>
+                            <Error Description="YFS:Invalid Node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ShipmentLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ShipmentLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLine">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+            <xsd:documentation>
+                <div>
+								If no shipment lines are passed, then an error is thrown.
+								 <Validation>
+                        <Condition>
+										Valid shipment lines should be passed to create a batch
+									</Condition>
+                        <Error
+                            Description="No shipment lines found to create batch." ErrorCode="YCD00080"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The shipment key that is associated with this shipment line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>A part of the primary key . The shipment line number is unique for a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentSubLineNo"
+                type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_SUB_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>This is a part of the unique key. ShipmentSubLineNo along with the ShipmentLineNo is used to identify the logical kit component shipment line. The value of this field is zero - for kit parent shipment lines and shipment lines with items that are not kit components, and greater than zero if the the shipment line corresponds to a logical kit component item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

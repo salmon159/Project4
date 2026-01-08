@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getApplicablePricingRulesForOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getApplicablePricingRulesForOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YFS_getApplicablePricingRulesForOrder_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <OrderLines>
+                    <OrderLine hasAttributes="Y"/>
+                </OrderLines>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+			The <code>OrderHeaderKey</code>, or  the <code>EnterpriseCode</code>, <code>DocumentType</code> and the <code>OrderNo</code> must be passed to identify the <code>Order</code>.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+        </xsd:all>
+        <xsd:attribute name="ApplyManualPricingRules"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values:
+						<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Suggest applicable manual pricing rules for the order configuration
+						
+                        
+                        
+                        <!-- <br/>
+						<b><code>N</code></b> - Do not suggest applicable manual pricing rules for the order configuration -->
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Date on which the pricing is requested. If void it is defaulted to current date and time.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RunCatalogOnlyRules" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			  			If <code>RunCatalogOnlyRules</code> is passed as <b>
+                            <code>Y</code>
+                        </b> then rules that are applicable in item listing, i.e. 
+						<ul>
+                            <li> pricing rules with <code>RuleType</code> as <b>
+                                    <code>ITEM_QUANTITY</code>
+                                </b> are executed.</li>
+                            <li> manual rules with <code>RuleType</code> as <b>
+                                    <code>ITEM_QUANTITY</code>
+                                </b> are executed for suggestion.</li>
+                            <li> combination and order total pricing rules are suppressed.</li>
+                            <li> shipping charge calculation, shipping rules execution and shipping coupon execution are suppressed.</li>
+                        </ul>
+						Default value is <b>
+                            <code>N</code>
+                        </b>. 
+				  	</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryMethod" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DELIVERY_METHOD" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The delivery method for the product line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The identifier for the item. The ITEM_ID, UOM, and PRODUCT_CLASS form the unique inventory identifier for an order line. The ITEM_ID, UOM and ORGANIZATION_CODE form the unique item identifier for the Product Management module.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The sub line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

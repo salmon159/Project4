@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/manageInventoryNodeControl/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/manageInventoryNodeControl/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_manageInventoryNodeControl_input.xsd" yfc:rootElement="InventoryNodeControl">
+        <xsd:appinfo source="yfc:structure">
+            <InventoryNodeControl hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="InventoryNodeControl" type="yfc:InventoryNodeControlXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+            <xsd:documentation>
+                <div>
+			A combination of OrganizationCode, Node, ItemID, UOM, and ProductClass can be used to indentify an inventory node control.  If the inventory node control specified does not exist, it will be created.  If it exists, it will be modified.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InventoryNodeControlXSDType">
+        <xsd:attribute name="AddControlForNode" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates Node Control to be created for given Node and inventory organization.  Default value is "N".  If <code>AddControlForNode</code> is set to "Y", the inventory node control will be created.
+				   <Validation>
+                            <Condition>
+                                Both <code>AddControlForNode</code> and <code>RemoveControlForNode</code> are passed as <b>
+                                    <code>Y</code>
+                                </b>. </Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_002"/>
+                            <Condition>
+                                <code>AddControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also passed.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_003"/>
+                            <Condition>
+                                <code>AddControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>InventoryPictureCorrect</code> is also passed as <b>Y</b>.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					 The Organization Code for which this API is being called. If <code>OrganizationCode</code> attribute is passed, 
+					 then it will used instead of <code>CallingOrganizationCode</code>.
+			        </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InvPictureIncorrectTillDate"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="INV_PIC_INCORRECT_TILL_DATE" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					Timestamp for which the inventory picture for an item at a node is incorrect until. If Timestamp is a past, then no corresponding Inventory Activity will be created.
+					<Validation>
+                            <Condition>
+                                <code>InvPictureIncorrectTillDate</code> is not passed and <code>InventoryPictureCorrect</code> is set to "N".</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryPictureCorrect" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates whether the inventory picture of the item is correct at the node.  Default value is "N".  If <code>InventoryPictureCorrect</code> is set to "Y", the inventory node control will be deleted.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryPictureCorrectForAllItemsAtNode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates whether the inventory picture of all items at the node are correct.  Default value is "N".  If <code>InventoryPictureCorrectForAllItemsAtNode</code> is set to "Y", all inventory node control records for the node and node control type will be deleted.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_ID"
+                yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					Item for which inventory control is being setup.
+					<Validation>
+                            <Condition>
+                                <code>InventoryPictureCorrectForAllItemsAtNode</code> is passed as <b>
+                                    <code>N</code>
+                                </b> and <code>ItemID</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                            <Condition>
+                                 Either <code>AddControlForNode</code> or <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also provided.</Condition>
+                            <Error
+                                Description="Invalid Input : {AddControlForNode} and {RemoveControlForNode} can not be passed with Item data in the input." ErrorCode="INV95_003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					Node for which inventory control is being setup.
+					<Validation>
+                            <Condition>
+                                <code>Node</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> is not valid.</Condition>
+                            <Error Description="Invalid ShipNode." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NodeControlType"
+            type="yfctype:EnumNodeControlType" use="optional">
+            <xsd:annotation yfc:columnName="NODE_CONTROL_TYPE" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+						The type of inventory node control represented by this record.  Valid values include:
+						<ul>
+                            <li>
+                                <code>
+                                    <b>ON_HOLD</b>
+                                </code> - Inventory is on hold for sourcing for this item/node combination.</li>
+                            <li>
+                                <code>
+                                    <b>IDLE_ASSET</b>
+                                </code> - Inventory is idle for this item/node combination.</li>
+                        </ul>
+						If not passed, <code>
+                            <b>ON_HOLD</b>
+                        </code> is assumed.
+						<Validation>
+                            <Condition>The value passed for <code>NodeControlType</code> is not a valid value.</Condition>
+                            <Error
+                                Description="Invalid node control type." ErrorCode="INV77_001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>NodeControlType</code> is either optional or accept <b>ON_HOLD</b> when {AddControlForNode} or {RemoveControlForNode} flag is provided.</Condition>
+                            <Error
+                                Description="Invalid node control type." ErrorCode="INV95_005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					Inventory Organization Code.
+					<Validation>
+                            <Condition>
+                                <code>InventoryPictureCorrectForAllItemsAtNode</code> is passed as <b>
+                                    <code>N</code>
+                                </b> and <code>OrganizationCode</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid or not an inventory organization.</Condition>
+                            <Error
+                                Description="Invalid OrganizationCode." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>Product Class of the item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RemoveControlForNode" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates Node Control to be removed or not for given invetory organization.  Default value is "N".  If <code>RemoveControlForNode</code> is set to "Y", the inventory node control will be deleted.
+				<Validation>
+                            <Condition>
+                                Both <code>AddControlForNode</code> and <code>RemoveControlForNode</code> are passed as <b>
+                                    <code>Y</code>
+                                </b>. </Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_002"/>
+                            <Condition>
+                                <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also passed.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_003"/>
+                            <Condition>
+                                <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>InventoryPictureCorrect</code> is also passed as <b>Y</b>.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="START_DATE" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>
+                    <div>
+					The timestamp after which to apply this inventory node control record.  If this timestamp is the current time or occurs in the past, then the node control record will be applied.  If the timestamp is in the future, this record will have no effect until that time and no corresponding Inventory Actitivy will be created.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_NODE_CONTROL">
+                <xsd:documentation>Unit of Measure of the item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

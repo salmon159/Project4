@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed Materials - Property of IBM
+  IBM Sterling Order Management (5725-D10), IBM Order Management (5737-D18)
+  (C) Copyright IBM Corp. 2001, 2018  All Rights Reserved.
+  US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<RegisterProcessCompletionInput KeepTaskOpen="Required" NewTaskDate="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/registerProcessCompletion/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				This node must be passed as the root node of the input XML.
+				</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="KeepTaskOpen">
+                <Description>
+                    <div>
+					Indicates if task needs to be kept open. This attribute must be passed.
+						<Validation>
+                            <Condition> If <code>KeepTaskOpen</code> is void:</Condition>
+                            <Error
+                                Description="Input document is empty or contains invalid data" ErrorCode="YFS10363"/>
+                            <Error
+                                Description="Mandatory parameters for the operation are missing" ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Date" Name="NewTaskDate">
+                <Description>
+                    <div>
+					Specifies the date until when this task need not be reprocessed.
+						<br/>Default: current system date
+						<br/>Valid Values: date in the XML valid date format
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <CurrentTask AvailableDate="" DataKey="" DataType=""
+        TaskQKey="Required" TransactionKey="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="Task_Queue">
+                <Description>
+                    <div>
+				Stores tasks that need to be performed by various time-triggered transactions. These tasks are created as a result of documents reaching a certain status within a process model. This node should be passed with a non-void <code>TaskQKey</code> attribute.
+				</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Task_Queue" Name="TaskQKey">
+                    <Description>
+                        <div>
+					The primary key attribute of YFS_TASK_Q.
+						<br/>Valid Values: the <code>TaskQKey</code> of the relevant record
+					</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </CurrentTask>
+    <WorkFlowMessageData EntityKey="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+					This element can also be passed if new tasks have to be created for transactions that work off the YFS_TASK_Q
+					table, and also if messages need to be passed to other pipelines if pipeline listeners are configured.
+					If <code>WorkFlowMessageData</code> and its children nodes are passed, the <code>MapKeys</code> node must have at least one attribute with Entity Table Key Name and Key Value (that is, ShipmentKey="ShipmentKeyValue".
+					<code>MapKeys</code> can, however, have any number of additional name-value pairs.
+					</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Key" Name="EntityKey">
+                    <Description>
+                        <div>
+							A Key to some entity.
+							<br/> Valid Values: The PrimaryKey of the relevant entity. For example, the Shipment_Key value for the Order_Delivery pipeline.
+						</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <WorkFlowMessageLineList>
+            <WorkFlowMessageLine DropStatus="" FromStatus=""
+                PipelineKey="" Quantity="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+						This node can also be passed if new tasks have to be created for transactions that work off the YFS_TASK_Q
+						table, and also if messages need to be passed to other pipelines if pipeline listeners are configured.
+						If <code>WorkFlowMessageLine</code> is passed, then it should have at least the following attributes filled: <code>PipelineKey</code>, <code>DropStatus</code>, <code>Quantity</code>.
+						</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute
+                            EntityName="Pipeline_Drop_Status_Condition"
+                            Name="DropStatus" NameInEntity="Extended_Drop_Status">
+                            <Description>
+                                <div>
+									Occasionally, transactions may drop to various statuses based on the conditions configured. This field provides the status to which a transaction really drops.
+									<br/> Valid Values: Drop Status to which the line is being moved.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Pipeline_Pickup_Tran"
+                            Name="FromStatus" NameInEntity="Status">
+                            <Description>
+                                <div>
+									Pick up status.
+									<br/> Valid Values: Status from which the line is being moved.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Pipeline" Name="PipelineKey">
+                            <Description>
+                                <div>
+									Primary key attribute of YFS_PIPELINE.
+									<br/> Valid Values: Pipeline_Key of the process_type for which the transaction attempts to register completion.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="Quantity">
+                            <Description>
+                                <div>
+								The quantity moved between the two statuses.
+								<br/> Valid Values: Quantity of the line being moved.
+							</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <MapKeys>
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+							This node contains name-value pairs for information related to the main entity used at the time of updating other listening pipelines. At the very least, this element should have a name-value pair corresponding to the primary entity table. For example, ShipmentKey="" if for the ORDER_DELIVERY process_type.
+							If <code>WorkFlowMessageData</code> and its children nodes are passed, the <code>MapKeys</code> node must have at least one attribute with Entity Table Key Name and Key Value (that is, ShipmentKey="ShipmentKeyValue".
+							<code>MapKeys</code> can, however, have any number of additional name-value pairs.
+							</div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                </MapKeys>
+            </WorkFlowMessageLine>
+        </WorkFlowMessageLineList>
+    </WorkFlowMessageData>
+</RegisterProcessCompletionInput>

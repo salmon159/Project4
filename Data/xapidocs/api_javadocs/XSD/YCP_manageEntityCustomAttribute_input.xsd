@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageEntityCustomAttribute/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageEntityCustomAttribute/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_manageEntityCustomAttribute_input.xsd" yfc:rootElement="EntityCustomAttributeList">
+        <xsd:appinfo source="yfc:structure">
+            <EntityCustomAttributeList>
+                <EntityCustomAttribute hasAttributes="Y"/>
+            </EntityCustomAttributeList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="EntityCustomAttributeList" type="yfc:EntityCustomAttributeListXSDType"/>
+    <xsd:complexType name="EntityCustomAttributeListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EntityCustomAttribute"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="EntityCustomAttribute">
+        <xsd:annotation yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+            <xsd:documentation>
+                <div>
+					This table stores the extended attributes to be used by an Entity.
+					<Validation>
+                        <Condition>
+						The <code>EntityAttributeDomain</code> record does not exist for the given <code>EntityAttributeDomainKey</code>.
+					 </Condition>
+                        <Error
+                            Description="Entity Attribute Domain Not Found" ErrorCode="YSC91A_003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The <code>Attribute</code> record does not exist for the given input of AttributeID/AttributeGroupID/AttributeDomainID/OrganizationCode.
+					 </Condition>
+                        <Error Description="Attribute Record Not Found" ErrorCode="YSC91A_004"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Extension entity does not have any available Column of the required <code>DataType</code> to map extension attribute.
+					 </Condition>
+                        <Error
+                            Description="No Column Available For Mapping Extension Attribute." ErrorCode="YSC91A_005"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Action to perform
+						<br/>Valid Values: 
+						<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record and Maps this <code>Attribute</code> to an available <code>Column</code> in the extension hang-off entity. The <code>Status</code> is marked as PENDING. 
+						<br/>
+                            <b>
+                                <code>Activate</code>
+                            </b> - Marks the <code>Status</code> as ACTIVE. The mapped column is now ready to be used to store transaction data. 
+						<br/>
+                            <b>
+                                <code>Deactivate</code>
+                            </b> - If the current status is ACTIVE, the API marks the <code>Status</code> as INACTIVE. If the current status is PENDING, it marks the <code>Status</code> as DELETED.
+						<Validation>
+                                <Condition>
+							The <code>Action</code> must be one of Create, Activate or Deactivate. 
+						 </Condition>
+                                <Error Description="Invalid Action" ErrorCode="YSC91A_001"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+							The <code>Status</code> must be PENDING if the <code>Action</code> is Activate. The <code>Status</code> must be PENDING or ACTIVE if the <code>Action</code> is Deactivate.
+						 </Condition>
+                                <Error
+                                    Description="Invalid Action For Status" ErrorCode="YSC91A_002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Action">
+                        <xsd:enumeration value="Create"/>
+                        <xsd:enumeration value="Activate"/>
+                        <xsd:enumeration value="Deactivate"/>
+                        <xsd:enumeration value=""/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeDomainID"
+                type="yfctype:GroupName" use="required">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The unique identifier of the attribute domain.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeGroupID"
+                type="yfctype:GroupName" use="required">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_GROUP_ID" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The unique identifier of the attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeID" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_ID" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The unique identifier of the attribute. This attribute will be used as an extended column for the TableName/DocumentType defined in the corresponding  YFS_ENTITY_ATTRIBUTE_DOMAIN table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityAttributeDomainKey"
+                type="yfctype:Key" use="required">
+                <xsd:annotation
+                    yfc:columnName="ENTITY_ATTRIBUTE_DOMAIN_KEY" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The primary key for the YFS_ENTITY_ATTRIBUTE_DOMAIN table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityCustomAttributeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ENTITY_CUSTOM_ATTRIBUTE_KEY" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The primary key for the YFS_ENTITY_CUSTOM_ATTRIBUTE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>The organization that maintains the attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Searchable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="SEARCHABLE" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>This flag indicates whether the extended attribute is an indexed column in the hang-off.  Default value: "N".</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status" type="yfctype:AttributeStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_ENTITY_CUSTOM_ATTRIBUTE">
+                    <xsd:documentation>This represents the Status of the extended attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

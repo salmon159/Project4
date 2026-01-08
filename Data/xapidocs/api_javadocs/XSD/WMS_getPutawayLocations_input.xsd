@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/getPutawayLocations/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/getPutawayLocations/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_getPutawayLocations_input.xsd" yfc:rootElement="getPutawayLocations">
+        <xsd:appinfo source="yfc:structure">
+            <getPutawayLocations hasAttributes="Y">
+                <PutawayReferences hasAttributes="Y">
+                    <Wave hasAttributes="Y"/>
+                    <Shipment hasAttributes="Y"/>
+                    <WorkOrder hasAttributes="Y"/>
+                </PutawayReferences>
+                <Source hasAttributes="Y">
+                    <Inventory hasAttributes="Y">
+                        <Receipt hasAttributes="Y"/>
+                        <InventoryItem hasAttributes="Y"/>
+                        <TagDetail hasAttributes="Y"/>
+                    </Inventory>
+                </Source>
+            </getPutawayLocations>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="getPutawayLocations" type="yfc:getPutawayLocationsXSDType">
+        <xsd:annotation yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+            <xsd:documentation>Stores attributes values based on whose values locations where the activity may be perfomed is configured. Allows setup at Item classification level, by inventory status (quality status), UOM etc. The Location selection algorithm uses the best matched configuration for determining locations.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="getPutawayLocationsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PutawayReferences"/>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Source"/>
+        </xsd:all>
+        <xsd:attribute name="ConsiderCurrentInventory"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Putaway location suggestion API may be invoked for 
+						product even though product is not currently in inventory. This flag is used to determine whether
+						to consider the current inventory for put away or to simulate put away for the passed input criteria(loose sku / License Plate)
+						without going to the database for querying inventory details.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>
+                    <div>
+						An audit reference indicating that this inventory transaction was for an order whose enterprise code is detailed here. This is the Enterprise for which put away is being invoked.
+							<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ForActivityCode" type="yfctype:Activity" use="optional">
+            <xsd:annotation yfc:columnName="FOR_ACTIVITY_CODE" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>
+                    <div>
+						Uniquely identifies an activity for which the constraint is defined. Valid values - <code>QC</code>, <code>X-DOCK</code>.
+							<Validation>
+                            <Condition>Either<code>FromActivityGroup</code> or <code>ForActivityCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="Either FromActivityGroup or ForActivityCode must be given." ErrorCode="WMS00173"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromActivityGroup"
+            type="yfctype:ActivityGroup" use="optional">
+            <xsd:annotation yfc:columnName="FROM_ACTIVITY_GROUP" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>
+                    <div>
+						Activity demands created for a purpose can be grouped under a set. Valid values - <code>RECEIPT</code>, <code>VAS</code>, <code>PACK_AND_HOLD</code>, <code>ADHOC_MOVE</code>, <code>PICK</code> and <code>REPLENISHMENT</code>.
+							<Validation>
+                            <Condition>Either<code>FromActivityGroup</code> or <code>ForActivityCode</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="Either FromActivityGroup or ForActivityCode must be given." ErrorCode="WMS00173"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_SHIP_NODE</code> table. Required to uniquely identify a location within the ship node.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> should be passed.
+								</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PutawayReferences">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Wave"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrder"/>
+            </xsd:all>
+            <xsd:attribute name="ShipmentKey" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="WaveKey" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="WorkOrderKey" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Wave">
+        <xsd:annotation yfc:tableName="YFS_WAVE">
+            <xsd:documentation>This table stores wave definitions.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WAVE">
+                    <xsd:documentation>The primary key for the YFS_WAVE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WaveNo" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="WAVE_NO" yfc:tableName="YFS_WAVE">
+                    <xsd:documentation>The wave number is a one up number that system generates to uniquely identify the wave in a node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrder">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>This table stores the information about the work orders to be done at a node on an inventory item or a license plate.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Source">
+        <xsd:annotation yfc:tableName="YFS_LPN_LOCATION">
+            <xsd:documentation>Stores location of the LPN that directly sits on the location. In other words, it stores only the outermost LPN.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Inventory"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A Case for which put away is to be done. A <code>CaseId</code> gives the container number.
+							<Validation>
+                                <Condition>Only one of <code>CaseId</code> or <code>PalletId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>CaseId</code> should be a valid license plate.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LPN_LOCATION">
+                    <xsd:documentation>
+                        <div>
+						Location Identifier. This in conjunction with <code>NODE_KEY</code> identifies a unique location in the node. Required, if <code>CaseId</code>/<code>PalletId</code> not passed.
+							<Validation>
+                                <Condition>
+                                    <code>LocationId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Either CaseId/PalletId or location information is not passed in the input." ErrorCode="WMS00015"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>LocationId</code> passed should be a valid location in the given <code>Node</code>.
+								</Condition>
+                                <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A Pallet for which put away is to be done. A <code>PalletId</code> gives the container number.
+							<Validation>
+                                <Condition>Only one of <code>CaseId</code> or <code>PalletId</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>PalletId</code> should be a valid license plate.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Inventory">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_INVENTORY">
+            <xsd:documentation>Non-license plated inventory is tracked using this table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryItem"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TagDetail"/>
+            </xsd:all>
+            <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The country in which the item was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FifoNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="FIFO_NO" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>A date based inventory attribute that helps understand the order in which stock arrived at the node. This is used to send out items that arrived earlier than the ones that arrived later.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory item key that is associated with this location inventory.  This points to a SKU that comprises the Inventory Organization, Item ID, Product Class and Unit of Measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory status that is associated with this location inventory.  This refers to an inventory sub classification based on the results of the inventory control processes within the warehouse.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory tag key that is associated with this location inventory. This points to lot and related attributes (revision etc) for the item whose inventory is tracked here.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="required">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>
+                        <div> Number of units of the item available at this location.
+							<Validation>
+                                <Condition>If putaway is to be done for loose SKU with <Code>ConsiderCurrentInventory</Code> is 'N', then positive quantity should be passed.
+								</Condition>
+                                <Error
+                                    Description="WMS:Quantity not passed in the input." ErrorCode="WMS00021"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The receipt header key that is associated with this LPN header. &#xd;
+This helps identify all stocks attached to a receipt. This number is of significance until the sample from the receipt has been certified as having passed or failed QC. This number is used to pull out all stocks based on the receipt. This is usually flled in situations where the LPN does not have contents.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment to which the inventory belongs. This helps to track inventory separately when the inventory is customized for a specific order so that the inventory can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment type of the inventory. This field indicates the buyer or buyer category for whom the inventory is customized.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The date by which the item must be shipped so that it is usable. This is also referred to as the expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>The unique key or business key, which by itself identifies a receipt along with ReceivingNode.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>This table stores definitions for all inventory items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="required">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TagDetail">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>This table stores tag information for inventory.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/modifyChargeTransactionRequestMappingUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/modifyChargeTransactionRequestMappingUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_modifyChargeTransactionRequestMappingUE_output.xsd" yfc:rootElement="Mapping">
+        <xsd:appinfo source="yfc:structure">
+            <Mapping hasAttributes="Y">
+                <InvoiceList>
+                    <OrderInvoice hasAttributes="Y">
+                        <ChargeTransactionRequest hasAttributes="Y"/>
+                        <ChargeTransactionList>
+                            <ChargeTransaction hasAttributes="Y"/>
+                        </ChargeTransactionList>
+                    </OrderInvoice>
+                </InvoiceList>
+                <NegativeInvoiceList>
+                    <OrderInvoice hasAttributes="Y">
+                        <ChargeTransactionList>
+                            <ChargeTransaction hasAttributes="Y"/>
+                        </ChargeTransactionList>
+                    </OrderInvoice>
+                </NegativeInvoiceList>
+                <PresettledAmount hasAttributes="Y">
+                    <ChargeTransactionList>
+                        <ChargeTransaction hasAttributes="Y"/>
+                    </ChargeTransactionList>
+                    <ChargeTransactionRequestList>
+                        <ChargeTransactionRequest hasAttributes="Y"/>
+                    </ChargeTransactionRequestList>
+                </PresettledAmount>
+                <ChargeTransactionRequestList>
+                    <ChargeTransactionRequest hasAttributes="Y">
+                        <ChargeTransactionList>
+                            <ChargeTransaction hasAttributes="Y"/>
+                        </ChargeTransactionList>
+                    </ChargeTransactionRequest>
+                </ChargeTransactionRequestList>
+                <OrderRemainder hasAttributes="Y">
+                    <ChargeTransactionList>
+                        <ChargeTransaction hasAttributes="Y"/>
+                    </ChargeTransactionList>
+                </OrderRemainder>
+            </Mapping>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Mapping" type="yfc:MappingXSDType"/>
+    <xsd:complexType name="MappingXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InvoiceList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:NegativeInvoiceList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PresettledAmount"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionRequestList">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					In this list, exclude - 
+						(1) all ChargeTransactionRequests in the InvoiceList element, 
+						(2) the ChargeTransactionRequests that are completely mapped in the PresettledAmount element.
+					NOTE: The ChargeTransactionRequests that are not completely mapped in PresettledAmount element, can be mapped here for the RemainingAmount.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionRequest">
+                            <xsd:annotation yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                <xsd:documentation>This table holds the ORDER_HEADER_KEY and the request id which make a set of unique groups for payment processing on the order.  Authorizations will be split such that each authorization is for only one request.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="ChargeTransactionList">
+                                    <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element
+                                    maxOccurs="1"
+                                    minOccurs="0" name="ChargeTransaction">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionKey"
+                                    type="yfctype:Key" use="optional">
+
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="MappedAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>The amount that is mapped.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                </xsd:all>
+                                <xsd:attribute
+                                    name="BlindCreationAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>BlindCreationAmount is the amount that new authorization will be attempted for.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute
+                                    name="ChargeTransactionRequestKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRAN_REQUEST_KEY" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRAN_REQUEST table.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderRemainder"/>
+        </xsd:all>
+        <xsd:attribute name="KeepExistingMapping" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>If KeepExistingMapping="Y", then system defined mapping is used. Passing root element and this attribute will be sufficient to use system defined mapping.
+	            	Default value is "N".</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="InvoiceList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="OrderInvoice">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_INVOICE">
+                        <xsd:documentation>Stores order invoices raised against an order.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionRequest">
+                                <xsd:annotation yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                    <xsd:documentation>This table holds the ORDER_HEADER_KEY and the request id which make a set of unique groups for payment processing on the order.  Authorizations will be split such that each authorization is for only one request.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionRequestKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRAN_REQUEST_KEY" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRAN_REQUEST table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionList">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="ChargeTransaction">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="MappedAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>The amount that is mapped.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="BlindCreationAmount"
+                            type="yfctype:Money" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>BlindCreationAmount is the amount that settlement will be attempted for without authorization.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderInvoiceKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_INVOICE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                                <xsd:documentation>Primary key attribute of YFS_ORDER_INVOICE.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="NegativeInvoiceList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="OrderInvoice">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_INVOICE">
+                        <xsd:documentation>Stores order invoices raised against an order.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionList">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="ChargeTransaction">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="MappedAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>The amount that is mapped.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="BlindCreationAmount"
+                            type="yfctype:Money" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>BlindCreationAmount is the amount that refund will be attempted for.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderInvoiceKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_INVOICE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                                <xsd:documentation>Primary key attribute of YFS_ORDER_INVOICE.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PresettledAmount">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionList">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransaction">
+                                <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="MappedAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>The amount that is mapped.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionRequestList">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionRequest">
+                                <xsd:annotation yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                    <xsd:documentation>This table holds the ORDER_HEADER_KEY and the request id which make a set of unique groups for payment processing on the order.  Authorizations will be split such that each authorization is for only one request.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionRequestKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRAN_REQUEST_KEY" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRAN_REQUEST table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="PresettledMappedTotal"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>PresettledMappedTotal is how much is mapped to Presettled.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="BlindCreationAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>BlindCreationAmount is the amount that settlement will be attempted for.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderRemainder">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransactionList">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeTransaction">
+                                <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ChargeTransactionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                                    <xsd:documentation>The primary key for the YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="MappedAmount"
+                                    type="yfctype:Money" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>The amount that is mapped.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="BlindCreationAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>BlindCreationAmount is the amount that new authorization will be attempted for.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

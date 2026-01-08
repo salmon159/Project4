@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getLineConstraints/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getLineConstraints/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getLineConstraints_output.xsd" yfc:rootElement="OrderLine">
+        <xsd:appinfo source="yfc:structure">
+            <OrderLine hasAttributes="Y">
+                <Item hasAttributes="Y"/>
+                <Constraints>
+                    <CannotScheduleBeforeConstraints>
+                        <Constraint hasAttributes="Y">
+                            <OrderLine hasAttributes="Y">
+                                <Item hasAttributes="Y"/>
+                            </OrderLine>
+                        </Constraint>
+                    </CannotScheduleBeforeConstraints>
+                    <CannotScheduleAfterConstraints>
+                        <Constraint hasAttributes="Y">
+                            <OrderLine hasAttributes="Y">
+                                <Item hasAttributes="Y"/>
+                            </OrderLine>
+                        </Constraint>
+                    </CannotScheduleAfterConstraints>
+                    <CannotScheduleConstraints>
+                        <Constraint hasAttributes="Y">
+                            <OrderLine hasAttributes="Y">
+                                <Item hasAttributes="Y"/>
+                            </OrderLine>
+                        </Constraint>
+                    </CannotScheduleConstraints>
+                </Constraints>
+            </OrderLine>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderLine" type="yfc:OrderLineXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderLineXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Item">
+                <xsd:annotation yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The table stores product information.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="ItemDesc"
+                        type="yfctype:ItemDesc" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>Item Description</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                        <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                            <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="UnitOfMeasure"
+                        type="yfctype:UOM" use="optional">
+                        <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                            <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Constraints"/>
+        </xsd:all>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Enterprise Code</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The order header that this order line is associated with.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Order Number</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The order line number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The sub line number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Constraints">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CannotScheduleBeforeConstraints"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CannotScheduleAfterConstraints"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CannotScheduleConstraints"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CannotScheduleBeforeConstraints">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Constraint">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="OrderLine">
+                                <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="Item">
+                                    <xsd:annotation yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The table stores product information.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ItemDesc"
+                                    type="yfctype:ItemDesc" use="optional"/>
+                                    <xsd:attribute
+                                    name="ItemID"
+                                    type="yfctype:ItemID" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="UnitOfMeasure"
+                                    type="yfctype:UOM" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    <xsd:attribute name="ItemGroupCode"
+                                    type="yfctype:EnumItemGroupCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This field indicates what kind of item is on the order line.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderLineKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PrimeLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The order line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="SubLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The sub line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="ConstrainingDate"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Date which is causing the constraint</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConstrainingOrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Primary Key of the Order Line which has the Constraining Date</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConstraintDate"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Date on which a constraint has been created. For ex: If Delivery Date is Today but delivery cannot be made before tomorrow, then Constraining Date is tomorrow's date and constraint date is today's date.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConstraintReason"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Reason due to which constraint has been created.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CannotScheduleAfterConstraints">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Constraint">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="OrderLine">
+                                <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="Item">
+                                    <xsd:annotation yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The table stores product information.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ItemDesc"
+                                    type="yfctype:ItemDesc" use="optional"/>
+                                    <xsd:attribute
+                                    name="ItemID"
+                                    type="yfctype:ItemID" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="UnitOfMeasure"
+                                    type="yfctype:UOM" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    <xsd:attribute name="ItemGroupCode"
+                                    type="yfctype:EnumItemGroupCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This field indicates what kind of item is on the order line.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderLineKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PrimeLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The order line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="SubLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The sub line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="ConstrainingDate"
+                            type="yfctype:TimeStamp" use="optional"/>
+                        <xsd:attribute name="ConstrainingOrderLineKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="ConstraintDate"
+                            type="yfctype:TimeStamp" use="optional"/>
+                        <xsd:attribute name="ConstraintReason"
+                            type="yfctype:Text-40" use="optional"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CannotScheduleConstraints">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Constraint">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="OrderLine">
+                                <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="Item">
+                                    <xsd:annotation yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The table stores product information.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ItemDesc"
+                                    type="yfctype:ItemDesc" use="optional"/>
+                                    <xsd:attribute
+                                    name="ItemID"
+                                    type="yfctype:ItemID" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="UnitOfMeasure"
+                                    type="yfctype:UOM" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    <xsd:attribute name="ItemGroupCode"
+                                    type="yfctype:EnumItemGroupCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>This field indicates what kind of item is on the order line.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderLineKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PrimeLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The order line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="SubLineNo"
+                                    type="yfctype:LineNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                    <xsd:documentation>The sub line number.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="ConstrainingDate"
+                            type="yfctype:TimeStamp" use="optional"/>
+                        <xsd:attribute name="ConstrainingOrderLineKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="ConstraintDate"
+                            type="yfctype:TimeStamp" use="optional"/>
+                        <xsd:attribute name="ConstraintReason"
+                            type="yfctype:Text-40" use="optional"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/manageServiceResource/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/manageServiceResource/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="INV_manageServiceResource_input.xsd" yfc:rootElement="ServiceResource">
+        <xsd:appinfo source="yfc:structure">
+            <ServiceResource hasAttributes="Y">
+                <ResourcePool hasAttributes="Y"/>
+                <ServiceResourceCalendar hasAttributes="Y"/>
+                <ServiceResourceContactAddress hasAttributes="Y"/>
+                <ServiceResourceUsers>
+                    <ServiceResourceUser hasAttributes="Y"/>
+                </ServiceResourceUsers>
+            </ServiceResource>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ServiceResource" type="yfc:ServiceResourceXSDType">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_RESOURCE">
+            <xsd:documentation>
+                <div>
+				This element has information to uniquely identify a service resource. A service resource is used to define one or more people that work as a team, and is represented as a single entity that performs certain work. Pass either <code>ServiceResourceKey</code> or {<code>ServiceResourceId</code> and <code>Node</code>} to identify an existing service resource. 
+					<Validation>
+                        <Condition> 
+						The root node must be ServiceResource. If not:
+						</Condition>
+                        <Error Description="Invalid Root Node" ErrorCode="INV10003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						To idenfity a service resource uniquely pass either of <code>ServiceResourceKey</code> or {<code>ServiceResourceId</code> and <code>Node</code>}, else :
+						</Condition>
+                        <Error
+                            Description="Either ServiceResourceKey or ServiceResourceId and Node should be passed to uniquely identify a service resource." ErrorCode="INV80_015"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The service resource is being created and <code>ResourcePool</code> element is not passed.
+						</Condition>
+                        <Error
+                            Description="Default resource pool not specified for the service resource." ErrorCode="INV80_016"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ServiceResourceXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ServiceResourceCalendar"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ServiceResourceContactAddress"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ServiceResourceUsers"/>
+        </xsd:all>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>The node that is associated with this resource.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Notes" type="yfctype:Text-4000" use="optional">
+            <xsd:annotation yfc:columnName="NOTES" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>Additional information about the service resource.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Valid value is <b>
+                            <code>Delete</code>
+                        </b>.  Set <code>Operation</code> = "<b>
+                            <code>Delete</code>
+                        </b>" to delete the service resource.
+						<Validation>
+                            <Condition> If there is capacity consumption for the service resource and <code>Operation</code> is <code>
+                                    <b>Delete</b>
+                                </code>:
+							</Condition>
+                            <Error
+                                Description="Deletion of service resource is not allowed as the service resource has capacity consumptions." ErrorCode="INV80_018"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ServiceResourceId" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="SERVICE_RESOURCE_ID" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>
+                    <div>
+						Service Resource Identifier. It needs to unique within a node for the API to function.
+						<Validation>
+                            <Condition> If a service resource already exists with same <code>ServiceResourceId</code>, <code>Node</code> combination and a service resource is getting created in this API call then:
+							</Condition>
+                            <Error
+                                Description="The service resource id with which the service resource is being created already exists in the node." ErrorCode="INV80_024"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If there exists more than one service resource for the passed <code>ServiceResourceId</code>, <code>Node</code> combination:
+							</Condition>
+                            <Error
+                                Description="Service resource identifier is not unique within the node." ErrorCode="INV80_025"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ServiceResourceKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SERVICE_RESOURCE_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>Primary key attribute of YFS_SERVICE_RESOURCE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>
+                <div>
+					This default resource pool to which the service resource belongs. A service resource is always associated with a default resource pool. Either <code>ResourcePoolKey</code> or {<code>ResourcePoolId</code> and <code>CapacityOrganizationCode</code>} can be used to identify a Resource Pool.
+						<Validation>
+                        <Condition>
+							The Resource Pool must already be present in the system. If not present:
+							</Condition>
+                        <Error
+                            Description="Resource Pool for given criteria not found" ErrorCode="INV10014"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CapacityOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CAPACITY_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the catalog organization. A resource pool is always created wihin the context of a capacity organization. An organization can source services from any resource pool within the same capacity organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResourceCalendar">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR">
+            <xsd:documentation>
+                <div>
+					This element has information related to a calendar. A calendar can be created for an organization or for a ship node. A calendar is created using the <code>createCalendar</code> API and managed using the  <code>changeCalendar</code> API. 
+						<Validation>
+                        <Condition>
+							If provided, the calendar should be available and must belong to the node of service resource or its primary enterprise. Either <code>CalendarKey</code> or {<code>OrganizationCode</code>  and <code>CalendarId</code>} must be passed.
+							</Condition>
+                        <Error Description="Invalid Calendar" ErrorCode="INV10001"/>
+                        <Error
+                            Description="Node or its primary enterprise does not own the Calendar" ErrorCode="INV10032"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CalendarId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_ID" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>Unique key to identify a Calendar.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CalendarKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_KEY" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>Primary key attribute of YFS_CALENDAR table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>Organization which owns the Calendar.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResourceContactAddress">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorTxt" type="yfctype:ErrorText" use="optional">
+                <xsd:annotation yfc:columnName="ERROR_TXT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The URL of the person or organization referred to in this contact information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreferredShipAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PREFERRED_SHIP_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The preferred ship address over and above the address in this record. Pointer to another record of this type in this table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UseCount" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="USE_COUNT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VerificationStatus"
+                type="yfctype:ShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="VERIFICATION_STATUS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResourceUsers">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ServiceResourceUser"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResourceUser">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_RESOURCE_USER">
+            <xsd:documentation>This table stores the node users who are defined for a service resource.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="UserId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="USER_ID" yfc:tableName="YFS_SERVICE_RESOURCE_USER">
+                    <xsd:documentation>User Id of the resource member.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

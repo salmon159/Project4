@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/recordCountResult/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/recordCountResult/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_recordCountResult_input.xsd" yfc:rootElement="RecordCountResult">
+        <xsd:appinfo source="yfc:structure">
+            <RecordCountResult hasAttributes="Y">
+                <CountResult hasAttributes="Y">
+                    <SerialRangeList>
+                        <SerialRange hasAttributes="Y"/>
+                    </SerialRangeList>
+                    <CountResultTag hasAttributes="Y"/>
+                </CountResult>
+            </RecordCountResult>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="RecordCountResult" type="yfc:RecordCountResultXSDType">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT">
+            <xsd:documentation>This transaction table stores results of the count requests.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="RecordCountResultXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:CountResult"/>
+        </xsd:sequence>
+        <xsd:attribute name="CountRequestKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+					Specifies the count request for which result is being recorded. The <code>CountRequestKey</code>, <code>TaskId</code> and <code>SummaryTaskId</code> combination should be a valid combination.
+						<Validation>
+                            <Condition>The <code>CountRequestKey</code>, <code>TaskId</code> and <code>SummaryTaskId</code> combination is invalid.
+							</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> not passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CountRequestKey</code> passed but does not exist.
+							</Condition>
+                            <Error
+                                Description="Invalid Count Request Key." ErrorCode="WMS00108"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="required">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_COUNT_RESULT">
+                <xsd:documentation>A Location in the node where count was performed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+					Indicates the node where count result is being recorded.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> not passed.
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PersistRecords" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The flag specifies if count result records to be persisted in the DB.
+					If <code>PersistRecords</code> is not passed, then it is defaulted to value <code>
+                            <b>Y</b>
+                        </code>.
+					<br/>Valid values - <code>
+                            <b>Y</b>
+                        </code>, <code>
+                            <b>N</b>
+                        </code>
+                        <Validation>
+                            <Condition>If passed, checks for valid value.
+							</Condition>
+                            <Error Description="Invalid Input Value." ErrorCode="WMS00211"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SummaryTaskId" type="yfctype:SequenceNo" use="required">
+            <xsd:annotation yfc:columnName="SUMMARY_TASK_ID" yfc:tableName="YFS_COUNT_RESULT">
+                <xsd:documentation>
+                    <div>
+					Summary Task id.
+						<Validation>
+                            <Condition>The <code>SummaryTaskId</code>, <code>TaskId</code> and <code>CountRequestKey</code> combination is invalid.
+							</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="required">
+            <xsd:annotation yfc:columnName="TASK_ID" yfc:tableName="YFS_COUNT_RESULT">
+                <xsd:documentation>
+                    <div>
+					Foreign Key from YFS_TASK table.
+						<Validation>
+                            <Condition>The <code>TaskId</code>, <code>SummaryTaskId</code> and <code>CountRequestKey</code> combination is invalid.
+							</Condition>
+                            <Error
+                                Description="Invalid Task-Request combination." ErrorCode="WMS00111"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CountResult">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT">
+            <xsd:documentation>This transaction table stores results of the count requests.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialRangeList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CountResultTag"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A CaseId 
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_QUANTITY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Physical quantity of inventory existing in the warehouse as counted by the warehouse user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_KEY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>The primary key for the YFS_COUNT_RESULT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Gives the status of the inventory.
+							<Validation>
+                                <Condition>If <code>InventoryStatus</code> passed is not a valid status.
+								</Condition>
+                                <Error
+                                    Description="Inventory Status not passed and transition is not specified for blank Status." ErrorCode="WMS00023"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Unique key for the tag associated with inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsResolvable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_RESOLVABLE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This flag indicates whether the variance can be resolved for the count result.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Item identity for the inventory.
+							<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>ItemID</code> along with <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory.
+								</Condition>
+                                <Error
+                                    Description="Item details are not passed in input" ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Indicates the location where inventory variance is being accepted.
+							<Validation>
+                                <Condition>If <code>LocationId</code> is not a valid location.
+									</Condition>
+                                <Error
+                                    Description="Invalid Node and LocationId combination" ErrorCode="WMS00037"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+							Indicates the inventory organization of the item whose variance is being accepted. If <code>SerialNo</code> is passed, <code>OrganizationCode</code> along with <code>ItemID</code>, <code>ProductClass</code> and <code>UnitOfMeasure</code> become mandatory.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A PalletId 
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Item identity for the inventory.
+							<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>ProductClass</code> along with <code>UnitOfMeasure</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+								</Condition>
+                                <Error
+                                    Description="Item details are not passed in input" ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial1"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_1" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial2"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_2" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial3"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_3" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial4"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_4" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial5"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_5" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial6"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_6" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial7"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_7" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial8"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_8" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial9"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_9" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each secondary serial within the serial.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>Segment for particular enterprise or organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>SegmentType for particular enterprise or organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Unique identity for each serial.
+							<Validation>
+                                <Condition>If passed, item details comprising <code>ItemID</code>, <code>ProductClass</code>, <code>UnitOfMeasure</code> and <code>OrganizationCode</code> become mandatory. Validation if <code>SerialNo</code> is passed and Item details are not passed
+								</Condition>
+                                <Error
+                                    Description="Item details are not passed in input" ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>The date by which the item must be shipped so that it is usable. This is also referred to as the expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This field is a two-digit code that identifies the task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>
+                        <div>
+						Item identity for the inventory.
+							<Validation>
+                                <Condition>If <code>SerialNo</code> is passed, <code>UnitOfMeasure</code> along with <code>ProductClass</code>, <code>ItemID</code> and <code>OrganizationCode</code> become mandatory.
+								</Condition>
+                                <Error
+                                    Description="Item details are not passed in input" ErrorCode="WMS00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VarianceType"
+                type="yfctype:EnumVarianceType" use="optional">
+                <xsd:annotation yfc:columnName="VARIANCE_TYPE" yfc:tableName="YFS_COUNT_RESULT">
+                    <xsd:documentation>This field determines the variance type based on the count results. If the Variance Quantity &gt; 0, the Variance Type for the items will be 'New', 'Missing' if the Variance Quantity &lt; 0, and 'No Variance' if the Variance Quantity = 0. However, for License Plates the Variance Type will not be computed based on the Variance Quantity. Instead, the Variance Type will be set to 'New' if a Case/Pallet is found in the location, but does not exist in the system inventory of the location, 'Missing' if the Case/Pallet is not found in the location, but  exists in the system inventory of the location, 'No Variance' in situations when there is no count discrepancy.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRangeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:SerialRange"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRange">
+        <xsd:complexType>
+            <xsd:attribute name="FromSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Staring serial number of a range for item. 
+								<Validation>
+                                <Condition> If item has secondary serials, serial range entry is not supported.
+									</Condition>
+                                <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> From Serial Number is blank.
+									</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+									</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+									</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+									</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Default implementation is given only for numeric serial numbers.
+									</Condition>
+                                <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+									</Condition>
+                                <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Ending serial number of a range for item. 
+								<Validation>
+                                <Condition> If item has secondary serials, serial range entry is not supported.
+									</Condition>
+                                <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> From Serial Number is blank.
+									</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+									</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+									</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+									</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Default implementation is given only for numeric serial numbers.
+									</Condition>
+                                <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+									</Condition>
+                                <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CountResultTag">
+        <xsd:annotation yfc:tableName="YFS_COUNT_RESULT_TAG">
+            <xsd:documentation>Gives the information about the tag to which inventory belongs. Attributes passed in this element will be used to identify a tag for the item in inventory based on attributes marked as unique tag attributes in the item catalog. If a tag is present, it will be used and the existing tag will be updated with the other non-unique tag attributes passed in the <code>CountResultTag</code> element (if different from the existing tag record).Tag information is stored only if the Node tracks tag information in inventory operations.
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the batch number associated with the tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_KEY" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The count result key that is associated with this count result tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountResultTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_RESULT_TAG_KEY" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The primary key for the YFS_COUNT_RESULT_TAG table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the lot number associated with the inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>The date on which the lot was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_COUNT_RESULT_TAG">
+                    <xsd:documentation>This field indicates the revision number associated with the tag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Coupon BuyerUserId="" CouponID="Required" Currency="Required"
+    CustomerContactID="" CustomerID="" EnterpriseCode=""
+    OrganizationCode="Required" PricingDate="" SellerOrganizationCode=""
+    ValidateReferences="|N|Y" xmlns="http://www.sterlingcommerce.com/documentation/YPM/validateCoupon/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="ContactUserId" Name="BuyerUserId">
+                <Description>
+                    <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Coupon" Name="CouponID" NameInEntity="Coupon_ID">
+                <Description>
+                    <div>Unique identifier of a coupon. (optional if <code>ValidateReferences</code>="Y")
+						<Validation>
+                            <Condition>
+                                <code>CouponID</code> is not passed and <code>ValidateReferences</code>="N"
+                             </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Pricing_Rule" Name="Currency" NameInEntity="Currency">
+                <Description>
+                    <div>Currency in which the coupon should be applicable.
+						<Validation>
+                            <Condition>
+                                <code>Currency</code> is not passed. </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Currency</code> is not valid.</Condition>
+                            <Error Description="YFS: Invalid currency." ErrorCode="YFS10325"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ID-40" Name="CustomerContactID">
+                <Description>
+                    <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Pricing_Rule_Assignment"
+                Name="CustomerID" NameInEntity="Customer_ID">
+                <Description>
+                    <div>The identifier for the customer to which the coupon should be assigned.
+						<Validation>
+                            <Condition>For the passed <code>CustomerID</code>, customer does not exists.</Condition>
+                            <Error Description="Invalid CustomerID." ErrorCode="YPM10028"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Pricing_Rule_Assignment"
+                Name="EnterpriseCode" NameInEntity="Enterprise_Code">
+                <Description>
+                    <div>The <code>EnterpriseCode</code> on behalf of which this inquiry is made. If not passed <code>OrganizationCode </code>primary enterprise will be used.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Coupon" Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>Pricing data is read on behalf of the organization specified by <code>OrganizationCode</code>.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not passed. </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid. </Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" Name="PricingDate">
+                <Description>
+                    <div>Date on which the coupon should be active. If void it is defaulted to current date and time.
+                    If <code>SellerOrganizationCode</code> is found and enterprise level rule <code>"ENABLE_SELLER_TIMEZONE_FOR_PRICE_CALCULATION"</code> is set then <code>PricingDate</code> passed in the input will be converted in to time zone of the Seller organization.
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="SellerOrganizationCode">
+                <Description>
+                    <div>Coupon is either maintained or assigned to the organization specified by <code>SellerOrganizationCode</code>.				
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ValidateReferences">
+                <Description>
+                    <div> If '<code>Y</code>' the references will be validated.  When value is '<code>Y</code>' <code>CouponID</code> is optional.
+            		 Default value is '<code>N</code>'.
+            		</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <SelectionCriteria CustomerLevel="" CustomerType="" RegionKey=""
+        RelationshipType="" Vertical="">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YPM_Selection_Criteria_master.xml" IncludeXMLPath="/SelectionCriteria"/>
+        <yfc:doc>
+            <Element EntityName="Pricelist_Assignment">
+                <Description>
+
+                    <div>Attributes of customer used for selecting the pricing entities. If this element is not passed and <code>CustomerID</code> is passed then the attributes of the customer are defaulted from the customer's profile. 
+				Defaulting of <code>PersonInfo</code> from the customer's profile for different customer type is as below:
+					<div
+                            class="portlet" style="width:90%">
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <tr>
+                                    <td class="tablecolumnheader" width="20%">Type of Customer</td>
+                                    <td class="tablecolumnheader">Default for PersonInfo</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Business</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">Default sold to address, if void then default bill to address.</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Consumer</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">Default bill to address.</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn" style="border-bottom:1px solid #8C92C6">Anonymous</td>
+                                    <td align="center"
+                                    class="tablecolumn"
+                                    style="border-bottom:1px solid #8C92C6" valign="top">No defaults.</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Pricelist_Assignment"
+                    Name="CustomerLevel" NameInEntity="Customer_Level">
+                    <Description>
+                        <div>The level of a customer with the enterprise.</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="EnumInputCustomerType" Name="CustomerType">
+                    <Description>
+                        <div>Type of customer. If neither <code>CustomerID</code> nor <code>CustomerType</code> are passed then <code>CustomerType</code> is defaulted to <b>
+                                <code>03</code>
+                            </b>. 
+						<Validation>
+                                <Condition>If not void then <code>CustomerType</code> must be one of the allowed values.</Condition>
+                                <Error
+                                    Description="Invalid CustomerType." ErrorCode="YPM10027"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricelist_Assignment"
+                    Name="RegionKey" NameInEntity="Region_Key">
+                    <Description>
+                        <div>The region of the customer. If <code>RegionKey</code> is void then <code>PersonInfo</code> element is used to determine region of the customer.
+					If both <code>RegionKey</code> and <code>PersonInfo</code> are not void then <code>RegionKey</code> takes precedence over <code>PersonInfo</code> to
+					determine region of the customer.
+						<Validation>
+                                <Condition>If not void then <code>RegionKey</code> should be a valid region within the region schema that is configured for purpose <b>
+                                    <code>SELLING</code>
+                                    </b>.</Condition>
+                                <Error
+                                    Description="Invalid region passed." ErrorCode="YCP0158"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricelist_Assignment"
+                    Name="RelationshipType" NameInEntity="Relationship_Type">
+                    <Description>
+                        <div>The type of the relationship that exists between an organization and an enterprise.</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Pricelist_Assignment"
+                    Name="Vertical" NameInEntity="Vertical">
+                    <Description>
+                        <div>Vertical of the customer.</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <PersonInfo AddressLine1="" AddressLine2="" AddressLine3=""
+            AddressLine4="" AddressLine5="" AddressLine6=""
+            AlternateEmailID="" Beeper="" City="" Company="" Country=""
+            DayFaxNo="" DayPhone="" Department="" EMailID=""
+            EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+            IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID=""
+            PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+            Title="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info">
+                    <Description>
+                        <div>Address of the customer.
+					</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </PersonInfo>
+    </SelectionCriteria>
+    <Shipping CarrierServiceCode="" MinimizeNumberOfShipments="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute EntityName="Pricing_Rule"
+                    Name="CarrierServiceCode" NameInEntity="Carrier_Service_Code"/>
+                <Attribute EntityName="Pricing_Rule"
+                    Name="MinimizeNumberOfShipments" NameInEntity="Minimize_Number_Of_Shipments"/>
+            </Attributes>
+        </yfc:doc>
+    </Shipping>
+    <PaymentTypeList>
+        <PaymentType PaymentType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="[NONE]">
+                    <Description>
+                        <div>Pricing Rule with this Payment type is associated with the Coupon.</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Pricing_Rule"
+                        Name="PaymentType" NameInEntity="Payment_Type">
+                        <Description>
+                            <div>Payment type of Pricing Rule.</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </PaymentType>
+    </PaymentTypeList>
+    <References>
+        <Reference ReferenceId="" ReferenceSequence="">
+            <yfc:doc>
+                <Element EntityName="Promotion_Reference"/>
+            </yfc:doc>
+        </Reference>
+    </References>
+</Coupon>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getEntitlementRuleList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getEntitlementRuleList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getEntitlementRuleList_input.xsd" yfc:rootElement="EntitlementRule">
+        <xsd:appinfo source="yfc:structure">
+            <EntitlementRule hasAttributes="Y">
+                <EntitlementRuleDetailList>
+                    <EntitlementRuleDetail hasAttributes="Y">
+                        <Category hasAttributes="Y"/>
+                        <AttributeValue hasAttributes="Y"/>
+                        <EntitlementRuleDetailItemList>
+                            <EntitlementRuleDetailItem hasAttributes="Y"/>
+                        </EntitlementRuleDetailItemList>
+                    </EntitlementRuleDetail>
+                </EntitlementRuleDetailList>
+                <EntitlementRuleAssignmentList>
+                    <EntitlementRuleAssignment hasAttributes="Y"/>
+                </EntitlementRuleAssignmentList>
+            </EntitlementRule>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="EntitlementRule" type="yfc:EntitlementRuleXSDType">
+        <xsd:annotation yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+    		Either <code>OrganizationCode</code> or <code>CallingOrganizationCode</code> must be passed. 
+        </Condition>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="EntitlementRuleXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EntitlementRuleDetailList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EntitlementRuleAssignmentList"/>
+        </xsd:all>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ORGANIZATION">
+                <xsd:documentation>Calling Organization used to determine enterprise that manages the entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>The description of the entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveFromDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_FROM_DATE" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>The effective from date of the entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveToDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_TO_DATE" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>The effective to date of the entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EntitlementRuleID" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="ENTITLEMENT_RULE_HDR_ID" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>The unique identification of entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>The organization that maintains the entitlement rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Purpose" type="yfctype:Text-10" use="required">
+            <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>
+                    <div> This field indicates whether the entitlement rule is used for selling entitlement or buying entitlement. 
+					<br/>Valid Values:
+					<br/>SELLING - Selling Entitlement
+					<br/>BUYING - Buying Entitlement
+					<Validation>
+                            <Condition>The value of <code>Purpose</code> does not match valid values.
+						</Condition>
+                            <Error
+                                Description="Invalid Entitlement Purpose." ErrorCode="YCM83_006"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartWithAllCatalogItems"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation
+                yfc:columnName="START_WITH_ALL_CATALOG_ITEMS" yfc:tableName="YFS_ENTITLEMENT_RULE_HDR">
+                <xsd:documentation>This flag indicates whether entitlement rule starts by including or excluding all items in a catalog.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="EntitlementRuleDetailList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EntitlementRuleDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EntitlementRuleDetail">
+        <xsd:annotation yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+            <xsd:documentation>This table stores details definition of an item entitlement rule.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Category"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AttributeValue"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EntitlementRuleDetailItemList"/>
+            </xsd:all>
+            <xsd:attribute name="InclusionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INCLUSION_FLAG" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>This flag indicates whether this is an inclusive or exclusive rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The sequence of the details within the entitlement rule header.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceType" type="yfctype:Text-2" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_TYPE" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The source table for which the entitlement rule detail is based of.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Category">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY">
+            <xsd:documentation>This table stores item category master information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The path for the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AttributeValue">
+        <xsd:annotation yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+            <xsd:documentation>This table stores details definition of an item entitlement rule.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AttributeDomainID"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The unique identification of the attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeGroupID"
+                type="yfctype:GroupName" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_GROUP_ID" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The attribute name of the attribute that represents the entitlement rule detail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_ID" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The attribute name of the attribute that represents the entitlement rule detail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DoubleValue" use="optional">
+                <xsd:annotation yfc:columnName="DOUBLE_VALUE" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The double value of the attribute that represents the entitlement rule detail.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Number"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="IntegerValue" use="optional">
+                <xsd:annotation yfc:columnName="INTEGER_VALUE" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The integer value of the attribute that represents the entitlement rule detail.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Number20"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="VALUE" yfc:tableName="YFS_ENTITLEMENT_RULE_DTL">
+                    <xsd:documentation>The text value of the attribute that represents the entitlement rule detail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EntitlementRuleDetailItemList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EntitlementRuleDetailItem"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EntitlementRuleDetailItem">
+        <xsd:annotation yfc:tableName="YFS_ENTITLE_RULE_DTL_ITEM">
+            <xsd:documentation>This table stores information of an item for an item entitlement rule detail that represents a set of items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ENTITLE_RULE_DTL_ITEM">
+                    <xsd:documentation>The identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ENTITLE_RULE_DTL_ITEM">
+                    <xsd:documentation>The unit of measure of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EntitlementRuleAssignmentList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EntitlementRuleAssignment"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EntitlementRuleAssignment">
+        <xsd:annotation yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+            <xsd:documentation>This table stores information on the assignments of selling entitlement rules to organizations and the assignments of buying entitlement rules to customers.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AssignedToOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ASSIGN_TO_ORGANIZATION_CODE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>This field indicates the organization for which the selling entitlement rule is assigned to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerID" type="yfctype:CustomerId" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The identifier of the customer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerLevel" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_LEVEL" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>Level of customer membership (Gold, Tin, Platinum, etc.).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerType" type="yfctype:Text-2" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_TYPE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The type of customer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>It refers to either the organization that maintains the entitlement rule or a customer organization whose customers are assigned to this rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Purpose" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>This field indicates whether the entitlement rule is used for selling entitlement or buying entitlement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Region" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REGION_KEY" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>Region to which entitlement rule is assigned.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RelationshipType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="RELATIONSHIP_TYPE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The type of the relationship that exists between an organization and an enterprise (distributor, retailer, reseller, etc.).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Vertical" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="VERTICAL" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The vertical customer belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

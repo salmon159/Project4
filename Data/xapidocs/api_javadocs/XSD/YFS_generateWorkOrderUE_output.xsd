@@ -1,0 +1,1714 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/generateWorkOrderUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/generateWorkOrderUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_generateWorkOrderUE_output.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <WorkOrders hasAttributes="Y">
+                    <WorkOrder hasAttributes="Y">
+                        <WorkOrderServiceLines>
+                            <WorkOrderServiceLine hasAttributes="Y">
+                                <OrderLine hasAttributes="Y">
+                                    <Order hasAttributes="Y"/>
+                                </OrderLine>
+                            </WorkOrderServiceLine>
+                        </WorkOrderServiceLines>
+                        <WorkOrderProdDeliveries>
+                            <WorkOrderProdDelivery hasAttributes="Y">
+                                <OrderLine hasAttributes="Y">
+                                    <Order hasAttributes="Y"/>
+                                </OrderLine>
+                            </WorkOrderProdDelivery>
+                        </WorkOrderProdDeliveries>
+                    </WorkOrder>
+                </WorkOrders>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrders"/>
+        </xsd:all>
+        <xsd:attribute name="AllocationRuleID" type="yfctype:ID-10" use="optional">
+            <xsd:annotation yfc:columnName="ALLOCATION_RULE_ID" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+						An Enterprise can configure multiple allocation rule sets with different document types.
+						If an <code>AllocationRuleID</code> is  passed, the  allocation rules associated with the <code>AllocationRuleID</code> is used to select <code>Option</code>.
+						<Validation>
+                            <Condition>The <code>AllocationRuleID</code> passed must be valid for both the Enterprise's rule set and document type of the order.
+							</Condition>
+                            <Error
+                                Description="Invalid Allocation Rule Id." ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckCapacity" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to N, resource pool capacity will be ignored during availability check.  If not passed, assumed Y.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates if inventory should to be checked.
+						<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b>Y or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If  <b>
+                            <code>Y</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for supply and demand filtering for the availability calculations.
+						<br/>If  <b>
+                            <code>N</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for inventory availability. No supply or demand is read. Distribution drives inventory availability calculations.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderChangingShippingToDelivery"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Indicates that the API should inspect lines that have <code>DeliveryMethod</code> set to <code>
+                        <b>SHP</b>
+                    </code> in addition to <code>
+                        <b>DEL</b>
+                    </code>, and consider placing those lines on work orders if the corresponding catalog item has <code>IsDeliveryAllowed</code> set to <code>
+                        <b>M</b>
+                    </code>.
+					<br/>Default: <b>
+                        <code>N</code>
+                    </b>
+                    <br/>Valid Values: <b>
+                        <code>Y</code>
+                    </b>, or <b>
+                        <code>N</code>
+                    </b>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderSupplementalCapacity"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>ConsiderSupplementalCapacity</code> flag indicates that supplemental capacity should also be considered when computing the availability of the resource pools which can serve the service lines.
+						<br/>If <code>ConsiderSupplementalCapacity</code> flag is not passed as <b>
+                            <code>Y</code>
+                        </b>, then the value of the <code>CanConsumeSupplementalCapacity</code> attribute of the customer (if existed) in the order will be used.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsolidateToExistingWorkOrder"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Indicates that consolidating lines on the order to already existing work orders should be considered.
+					If this flag is passed as <code>
+                        <b>Y</b>
+                    </code>, consolidating to an existing work order if the item can be associated with a delivery service on the work order will be considered before creating a new work order to deliver that item.
+					<br/>The default value for this flag is <code>
+                        <b>N</b>
+                    </code>.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DelayWindow" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The number of days specified in <code>DelayWindow</code> is counted from the day on which the API is run. If this attribute is not passed, then <code>Allowed_Shipment_Delay_Days</code> and the <code>Service_Search_Window</code> (for delivery sevice lines) specified by the allocation rules are used to determine the delay window.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreMinNotificationTime"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, minimum notification time will be ignored for product and services.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreProductLines" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for service lines.  Constraints with product lines will be ignored.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreServices" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for products being included on the work order.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="WorkOrders">
+        <xsd:annotation>
+            <xsd:documentation>A list of all work orders associated with the order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrder"/>
+            </xsd:all>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The total number of work orders associated with the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrder">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>This table stores the information about the work orders to be done at a node on an inventory item or a license plate.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderServiceLines"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderProdDeliveries"/>
+            </xsd:all>
+            <xsd:attribute name="CreatedOrModified"
+                type="yfctype:Text-10" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+							Indicates that the work order was created or modified by this call to <code>generateWorkOrder</code>.  Possible values:
+							<ul>
+                            <li>
+                                <code>
+                                    <b>Created</b>
+                                </code>- This work order was created by this call to <code>generateWorkOrder</code>.</li>
+                            <li>
+                                <code>
+                                    <b>Modified</b>
+                                </code>- This work order was modified by this call to <code>generateWorkOrder</code>.</li>
+                            <li>
+                                <code>
+                                    <b>N</b>
+                                </code>- This work order was not directly changed by this call to <code>generateWorkOrder</code>.</li>
+                        </ul>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FinishNoLaterThan"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="FINISH_NO_LATER_THAN" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The date a task should not finish later than. Pass through fields to be stamped on each task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsMultiApptRequired"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_MULTI_APPT_REQUIRED" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>This flag indicates whether the work order can have multiple appointments.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsPlanningComplete" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PLANNING_COMPLETE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>This flag indicates whether work order planning has been completed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsQuantityRequestedOverridden"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_QTY_REQUESTED_OVERRIDDEN" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>This flag indicates whether the requested quantity is overridden.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OverrideModificationRules"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Pass as <b>
+                                <code>Y</code>
+                            </b> to override the check for statuses of work order that can be considered for various modifications.
+								<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreCallStatus" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="PRE_CALL_STATUS" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>This field indicates the status of the pre-call process.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Priority" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>An integer priority. Requests will be processed in the order of this priority.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityRequested"
+                type="yfctype:Capacity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_REQUESTED" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The quantity for which the work order is created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartNoEarlierThan"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="START_NO_EARLIER_THAN" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The date a task should not start earlier than. Pass through fields to be stamped on each task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_KEY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The primary key of the YFS_WORK_ORDER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderServiceLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLine">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+            <xsd:documentation>This table stores information about service lines included in the work order. Used only for PS/DS work orders.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="OrderLine">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                        <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Order">
+                                <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="DocumentType"
+                                    type="yfctype:Text-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="EnterpriseCode"
+                                    type="yfctype:OrgCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderHeaderKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderNo"
+                                    type="yfctype:VarcharDocumentNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Action" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+								Only applicable for published data of Delete Order event, which
+								can be raised by the deleteOrder API.
+								<code>Action</code>
+								=
+								<b>
+                                    <code>DELETE</code>
+                                    </b>
+								will be published to indicate that the order line will be
+								deleted.
+							</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AllocationDate"
+                            type="yfctype:Date" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                            The date when this line will be allocated. This is calculated at order creation time, based on the node processing time. This field is not used from version 50 onwards. The <code>ALLOCATION_LEAD_TIME</code> field is used instead.
+                        </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AllocationLeadTime"
+                            type="yfctype:NumberOfDays" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                            The number of days it will take any node to ship the item after a ship advice is sent. It is defaulted from the Rule Set Field Name (<code>YFS_RULES.LEAD_TIME</code>). The release process will this value, or the scheduled node's lead time (setup at ship node level), whichever is greater.
+                        </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ApptStatus"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="APPT_STATUS" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is not currently used.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ApptWarning"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+							Displays a warning message if
+							<code>CannotScheduleBeforeDate</code>
+							or
+							<code>CannotScheduleAfterDate</code>
+							fields have a Non-Null value.
+						</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute
+                            name="AvailableQtyForStopDelivery"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>The quantity available through modification rules for
+							making a stop delivery request for this line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AwaitingDeliveryRequest"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>A flag to indicate if the order line is awaiting for
+							a Delivery service association.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="BackorderNotificationQty" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="BACKORDER_NOTIFICATION_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The backordered quantity for which the last customer notification was sent.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Quantity"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="BuyerMarkForNodeId"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="BUYER_MARK_FOR_NODE_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Mark For Node as identified by the buyer for eg: it could be a person,store,DC.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="BuyerReceivingNodeId"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="BUYER_RECEIVING_NODE_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Receiving node as identified by the buyer for eg:Store,DC Number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CanAddServiceLines"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CAN_ADD_SERVICE_LINES" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>this flag indicates whether the product line can be associated with service lines.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CarrierAccountNo"
+                            type="yfctype:AccountNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CARRIER_ACCOUNT_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The customers carrier account number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CarrierServiceCode"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CARRIER_SERVICE_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The carrier service code for this order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ChainedFromOrderHeaderKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CHAINED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order header that is associated with this chained order line. If this line is chained from another order line, this key will point to the parent order line's header record.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ChainedFromOrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CHAINED_FROM_ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line that is associated with this chained order line. If this line is chained from another order line, this key will point to the parent order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CommittedQuantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="COMMITTED_QUANTITY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>It is a data attribute to store the quantity that is committed by supplier.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Number"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConditionVariable1"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CONDITION_VARIABLE_1" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>A user defined variable that can be used for condition building in process modeling.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConditionVariable2"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CONDITION_VARIABLE_2" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>A user defined variable that can be used for condition building in process modeling.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ConfigurationKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="BOM_CONFIG_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is used by Sterling Multi-Channel Selling Solution so that Visual Modeler can be opened with existing options.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CustomerLinePONo"
+                            type="yfctype:Text-10" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CUSTOMER_PO_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The buyer PO line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="CustomerPONo"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CUSTOMER_PO_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The buyer's PO number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DeliveryCode"
+                            type="yfctype:DeliveryCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DELIVERY_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field indicates who will pay the freight. Application understands values such as SUPPLIER, ENTERPRISE and MARKETPLACE to mean that each of these organizations will pay for the freight. You could however pass any other value which is a valid shipment charge type as understood by the carrier by which the shipment is transported. See YFS_SHIPMENT_CONTAINER.carrier_payment_type for additional information.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DeliveryMethod"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DELIVERY_METHOD" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The delivery method for the product line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DepartmentCode"
+                            type="yfctype:Text-20" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DEPARTMENT_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field can be used for line classification and reporting purposes.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DependencyShippingRule"
+                            type="yfctype:EnumDependencyShippingRule" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DEPENDENCY_SHIPPING_RULE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field indicates whether any order lines are dependant on the parent order line. This field can only be specified for the parent line. If this field is specified, it is defaulted on all of the dependant lines. This field is ignored if it is specified on a dependant line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DependentOnLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DEPENDENT_ON_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line key that this order line is associated with. This field will indicate which order line is the parent of the the order line for line dependencies.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DerivedFromOrderHeaderKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DERIVED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order header that is associated with this derived order line. If this line was derived from another order line, this key will point to the parent order line's header record.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DerivedFromOrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DERIVED_FROM_ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line that is associated with this derived order line. If this line was derived from another order line, this key will point to the parent order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DerivedFromOrderReleaseKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DERIVED_FROM_ORDER_RELEASE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order release that this derived order line is associated with. If this line was derived from another order line, this key will point to the parent order release record.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DispositionCode"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DISPOSITION_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The disposition code for the return line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DistributionRuleId"
+                            type="yfctype:DistributionRuleId" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DISTRIBUTION_RULE_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>the identifier of the distribution group that is used to determine the ship node(s) that will ship the order line. If not proviFded, the seller organization's default distribution rule ID is used. If provided, it must be a valid ID for the Seller organization.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="FillQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FILL_QUANTITY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The minimum order line quantity that must be fulfilled in an order release before it is shipped.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="FirstIterationSeqNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FIRST_ITER_SEQ_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The first iteration sequence for which this line is applicable. If Null, it is assumed that the line applies to all sequences before LastIterationSeqNo. Default is Null.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:LongSequence"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="FreightTerms"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="FOB" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Indicates Freight Terms for the line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="FulfillmentType"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FULFILLMENT_TYPE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The method of fulfilling the order line during scheduling. This field can be matched with the corresponding field in the YFS_SOURCING_RULE_HDR table and the appropriate sourcing rule can be selected.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="FutureAvailabilityDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FUTURE_AVAIL_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Thie field indicates when inventory for the product line will be available.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="GiftFlag"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation yfc:columnName="GIFT_FLAG" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates whether the order line is a gift item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="GiftWrap"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IS_GIFT_WRAP" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field indicates if the order line has to be gift wrapped.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="GroupSequenceNumber" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="GROUP_SEQUENCE_NUM" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is used to assign a decimal value to each line for the purpose of sorting them in a specific sequence.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:ConversionRate"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="HasChainedLines"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+								Indicates if this order has chained or related lines.
+								<br/>
+								Default:
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>
+								Valid Values:
+								<b>
+                                    <code>Y</code>
+                                    </b>
+								or
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HasDeliveryLines"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Indicates if the line has associated delivery lines.
+							Valid only for product lines.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HasDerivedChild"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+								Indicates if order line has lines derived from it.
+								<br/>
+								Default:
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>
+								Valid Values:
+								<b>
+                                    <code>Y</code>
+                                    </b>
+								or
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HasServiceLines"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Indicates if the line has associated service lines.
+							Valid only for product lines.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoldFlag"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation yfc:columnName="HOLD_FLAG" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag determines whether a hold has been placed on the order when certain hold type criteria are met. If order is on hold, default configuration will stop the shceduling and release process for the order. The flag is reset to 'N' when all the hold types have been resolved on the order and all of its order lines. Based on hold type configuration, certain transactions may not be allowed to process. Note that there is no validation made on the hold applied but this flag can be reset by the application based on hold types existed on the order. Default: N Valid Values: Y or N</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoldReasonCode"
+                            type="yfctype:HoldReasonCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOLD_REASON_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is not currently used.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ImportLicenseExpDate"
+                            type="yfctype:Date" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IMPORT_LICENSE_EXP_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The expiration date of the import license number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ImportLicenseNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IMPORT_LICENSE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The import license number to be used.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="InStorePaymentRequired"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IN_STORE_PAYMENT_REQUIRED" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates if this order line will have its payment processed later. When set, the line's total will be added to the postponed amount. This will override tha value on the order header.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IntentionalBackorder"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="INTENTIONAL_BACKORDER" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>A flag to indicate if the order line should be
+							backordered upon creation. If passed as 'Y', the line will be
+							backordered even if inventory is available. This flag is ignored
+							if reservation is mandatory.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="InvoicedExtendedPrice"
+                            type="yfctype:Money" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="INVOICED_EXTENDED_PRICE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The total extended price which has already been invoiced.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="InvoicedQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <b>Deprecated as Sterling Selling And Fulfillment Suite 9.2.1</b>.
+						Invoiced quantity on the order line.
+						</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="InvoicedQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="INVOICED_QUANTITY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Invoiced quantity on the order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsBlindLine" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Indicates if the line is blind line or not.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="N"/>
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value=""/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsBundleParent"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+							Indicates if Order line is bundle parent line or not.
+							<div>
+                                    <br/>
+								Valid Values:
+								<b>
+                                    <code>Y</code>
+                                    </b>
+								or
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsFirmPredefinedNode"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IS_FIRM_PREDEFINED_NODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates whether the pre-defined node on the line is firm.  If IsFirmPredefinedNode is marked as N, then the node on the line is ignored during scheduling. If not passed, the value defaults to Y.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsPickUpNow"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IS_PICK_UP_NOW" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag determines whether the item is picked up now.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsPriceMatched"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="IS_PRICE_MATCHED" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag determines whether price match was performed for the item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ItemGroupCode"
+                            type="yfctype:EnumItemGroupCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field indicates what kind of item is on the order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ItemIsInHand"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ITEM_IS_IN_HAND" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag determines whether the item was in hand when the return order was created.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ItemNotExist"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ITEM_NOT_EXIST" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field defines approval condition when item not in file is found.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="KitCode"
+                            type="yfctype:EnumKitCode" use="optional">
+                            <xsd:annotation yfc:columnName="KIT_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The collection of items that form a unit. For example, a home theatre system is a unit consisting of kit components, such as a DVD player, TV, CD player, etc.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="KitQty" use="optional">
+                            <xsd:annotation yfc:columnName="KIT_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The quantity that is used to compute ordered quantity for bundle component line. It can be specified only for bundle components. If specified ordered quantity will be set to KitQty*OrderedQty of the bundle parent.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Quantity"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="LastIterationSeqNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LAST_ITER_SEQ_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The last iteration sequence for which this line is applicable. If Null, it is assumed to go on indefinitely. Default is Null.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:LongSequence"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="LevelOfService"
+                            type="yfctype:LevelOfService" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LEVEL_OF_SERVICE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>Indicates the level of service required for this order line.  Default is Null.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LineSeqNo"
+                            type="yfctype:SequenceNo" use="optional">
+                            <xsd:annotation yfc:columnName="LINE_SEQ_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line sequence number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LineType"
+                            type="yfctype:LineType" use="optional">
+                            <xsd:annotation yfc:columnName="LINE_TYPE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The line type. This field can be used in process modeling for pipeline determination, or for doing conditional processing for this line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaxLineStatus"
+                            type="yfctype:Status" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Maximum order line status among all records that
+							belong to an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaxLineStatusDesc"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Description of maximum order line status among all
+							records that belong to an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MergeNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation yfc:columnName="MERGE_NODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The node where two or more order lines that are to be delivered together should be merged before the final delivery. This field is required when the DependancyShippingRule is set to '02'.  Additionally this field will indicate forwarding location for zone skipping.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MinLineStatus"
+                            type="yfctype:Status" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Minimum order line status among all records that
+							belong to an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MinLineStatusDesc"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Description of minimum order line status among all
+							records that belong to an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MinShipByDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MIN_SHIP_BY_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The preferred minimum ship by date of the available supply that order line can allocate against.  This only applies to the order line or kit line with time-sensitive item.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="MultipleStatusesExist"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>If order line is in more than one status then this
+							flag will be returned as "Y".</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OpenQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Total quantity that can be cancelled from the line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderHeaderKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order header that this order line is associated with.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderedQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation yfc:columnName="ORDERED_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The quantity of the line item that has been ordered. If part of the line is cancelled, this number is reduced appropriately. If an order line is returned, this number is not reduced.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrigOrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORIG_ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The line from which this line was created (split process).</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OriginalOrderedQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORIGINAL_ORDERED_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The quantity which was ordered at order creation. This is not modified after order confirmation.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OtherCharges"
+                            type="yfctype:ComputedMoney" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="OTHER_CHARGES" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The sum of all the line level charges.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OverallStatus"
+                            type="yfctype:String" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                            A description of the order line's overall status determined by the <code>YFSGetOverallStatusUE</code>.
+                        </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PackListType"
+                            type="yfctype:Text-20" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PACKLIST_TYPE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The code indicating the type of packlist to be used for the line. Lines requiring different pack lists are not mixed in a single order release.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ParentOfDependentGroup"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PARENT_OF_DEPENDENT_GROUP" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates whether this line is a parent of a dependency group.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PersonalizeCode"
+                            type="yfctype:Text-20" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PERSONALIZE_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The code for personalization.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PersonalizeFlag"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PERSONALIZE_FLAG" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates whether this line needs personalization.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PickableFlag"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PICKABLE_FLAG" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is used internally.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PipelineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PIPELINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The pipeline that this order line belongs to.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PrimeLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ProcureFromNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROCURE_FROM_NODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The procurement node that is associated with this order line. The order line should be procured from that node if the products or services cannot be sourced from the shipnode specified on the order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromisedApptEndDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMISED_APPT_END_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The promised end date of the appointment.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromisedApptStartDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMISED_APPT_START_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The promised start date of the appointment.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Purpose"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is passed out in the Tax calculation user exits.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReceivingNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RECEIVING_NODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The receiving node that is associated with this order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="RemainingQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Remaining quantity.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReqCancelDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="REQ_CANCEL_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The requested cancel date. If not provided, this field is defaulted from the order header during order creation. Refer to the YFS_ORDER_HEADER table for more details.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReqDeliveryDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="REQ_DELIVERY_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The requested delivery date. If not provided, this field is defaulted from the order header during order creation. Refer to the YFS_ORDER_HEADER table for more details.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReqShipDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="REQ_SHIP_DATE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The requested ship date. If not provided, this field is defaulted from the order header during order creation. Refer to the YFS_ORDER_HEADER table for more details.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:TimeStamp"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReservationID"
+                            type="yfctype:ID-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RESERVATION_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The reservation ID. If this item was reserved before order creation, pass an ID to associate the line with the reservation.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReservationMandatory"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RESERVATION_MANDATORY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This flag indicates whether this line can be created without a reservation. If set to Y, creation of this line or any quantity addition to this line will be allowed only if the quantity can be reserved. If a ProcureFromNode is also present on the line, then the reservation will be carried out on the procure from node.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReservationPool"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RESERVATION_POOL" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The reservation identifier. If this item was reserved before order creation, pass an ID to associate the line with the reservation.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReshipParentLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RESHIP_PARENT_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line key of the parent line that this line was created as a reshipment of.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReturnReason"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="RETURN_REASON" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The reason for returning the order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReturnReasonLongDesc"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Long description of the return reason code.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReturnReasonShortDesc"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Short description of the return reason code.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReturnableQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Quantity of item that could be returned from this line at its current status.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SCAC"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="SCAC" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The carrier to be used for this line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ScacAndService"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SCAC_AND_SERVICE" yfc:tableName="YFS_SCAC_AND_SERVICE">
+                                <xsd:documentation>Value of SCAC and Service code.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ScacAndServiceKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SCAC_AND_SERVICE_KEY" yfc:tableName="YFS_SCAC_AND_SERVICE">
+                                <xsd:documentation>Link to YFS_SCAC_AND_SERVICE table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SchedFailureReasonCode"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SCHED_FAILURE_REASON_CODE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The reason for which schedule has failed on this order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Segment"
+                            type="yfctype:Segment" use="optional">
+                            <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The segment of the inventory.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SegmentType"
+                            type="yfctype:SegmentType" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The segment type of the inventory.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SerialNo"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The serial number of the item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The ship node that is associated with this order line. If provided, all releases will be made against this node.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipToID"
+                            type="yfctype:ID-40" use="optional">
+                            <xsd:annotation yfc:columnName="SHIP_TO_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The ship to identifier.  If a customer definition representing the buyer organization exists within the system, the ShipToID can represent the CustomerID of the customer.  Otherwise, the ShipToID can represent the PersonID of the ship to address or the receiving node of the order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipToKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation yfc:columnName="SHIP_TO_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The ship to address that is associated with this order line. If not provided, it is defaulted from order header.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipTogetherNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIP_TOGETHER_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is not currently used.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute
+                            name="ShipmentConsolidationGroupId"
+                            type="yfctype:VarcharShipNode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIPMENT_CONSOL_GROUP_ID" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>It is a consolidation group id  that is used as a standard do not mix constraint.Releases belonging to same shipment consolidation group may consolidate to same shipment.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SourceFromOrganization"
+                            type="yfctype:OrgCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SOURCE_FROM_ORGANIZATION" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>This field is not currently used.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SplitQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation yfc:columnName="SPLIT_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The quantity which has been split from this line due to substitutions, price negotiations etc.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Status"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Status description of the order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="StatusQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="STATUS_QUANTITY" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+                                <xsd:documentation>Quantity on the order line in the current status.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The sub line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubstituteItemID"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Substituted ItemID. This field is only populated if
+							the item on the Order line is substituted. This field is
+							deprecated, see OverrideItemID on the OrderStatus/Details
+							element.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubstituteItemUOM"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Substituted Item UOM. This field is only populated if
+							the item on the Order line is substituted. This field is
+							deprecated, see OverrideItemID on the OrderStatus/Details
+							element.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Timezone"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="TIMEZONE" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The timezone in which the promised appointment has been recorded.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="TranDiscrepancyQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="TRAN_DISCREPANCY_QTY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The transaction discrepancy quantity.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="isHistory"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+								Indicates if data is fetched from the history table rather than
+								the regular table.
+								<br/>
+								Default:
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>
+								Valid Values:
+								<b>
+                                    <code>Y</code>
+                                    </b>
+								or
+								<b>
+                                    <code>N</code>
+                                    </b>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+										Indicates the action that can be perfomed. If action is Create or blank, Order Line element needs to be passed. Line No is generated if not passed. If action is Delete, LineNo is mandatory.
+										<br/>Default: <b>
+                                <code>Create</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Create</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CauseAppointmentChange"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CAUSE_APPT_CHANGE" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>Indicates that the addition or modification to this line requires the current work order appointment to be changed. If the flag is maintained internally, it will be set to Y when a new work order is created, this line is added to a work order without appointments, or an appointment is no longer available due to addition of this line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsComplete" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMPLETE" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>This flag indicates whether the service line is complete.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemDescription" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemGroupCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>This field indicates the item group code. Valid values are: - PS : Provided Service - DS : Delivery Service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The identifier of the service item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemShortDescription"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The service line sequence number. Part of unique key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityRequired"
+                type="yfctype:Capacity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_REQUIRED" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The required capacity of the associated service line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Uom" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The unit of measure for the service item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderServiceLineKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="WORK_ORDER_SERVICE_LINE_KEY" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The primary key for the YFS_WORK_ORDER_SERVICE_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDeliveries">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderProdDelivery"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDelivery">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+            <xsd:documentation>This table stores information about service lines included in the work order. Used only for PS/DS work orders.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="OrderLine">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                        <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Order">
+                                <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="DocumentType"
+                                    type="yfctype:Text-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="EnterpriseCode"
+                                    type="yfctype:OrgCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderHeaderKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="OrderNo"
+                                    type="yfctype:VarcharDocumentNo" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="OrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PrimeLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The sub line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+										Indicates the action that can be perfomed. If action is Create or blank, Order Line element needs to be passed. Line No is generated if not passed. If action is Delete, LineNo is mandatory.
+										<br/>Default: <b>
+                                <code>Create</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Create</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CauseAppointmentChange"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CAUSE_APPT_CHANGE" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>Indicates that the addition or modification to this line requires the current work order appointment to be changed. If the flag is maintained internally, it will be set to Y when a new work order is created, this line is added to a work order without appointments, or an appointment is no longer available due to addition of this line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemDescription" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product item identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemShortDescription"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product delivery sequence number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product class for the product item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityDelivered"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_DELIVERED" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product quantity that was actually delivered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityRequired"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_REQUIRED" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product quantity to be delivered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Uom" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The unit of measure for the product item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderProdDeliveryKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_PROD_DEL_KEY" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The primary key for the YFS_WORK_ORDER_PROD_DEL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getPriceProgramDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getPriceProgramDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getPriceProgramDetails_input.xsd" yfc:rootElement="PriceProgram">
+        <xsd:appinfo source="yfc:structure">
+            <PriceProgram hasAttributes="Y">
+                <PriceProgramDefnList>
+                    <PriceProgramDefn hasAttributes="Y"/>
+                </PriceProgramDefnList>
+            </PriceProgram>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PriceProgram" type="yfc:PriceProgramXSDType">
+        <xsd:annotation yfc:tableName="YFS_PRICE_PROGRAM">
+            <xsd:documentation>
+                <div>
+				A buying organization can be assigned a price program by a selling organization. Price programs are always defined by selling organizations. This table stores valid price programs, as defined by the selling organization.
+					<Validation>
+                        <Condition>
+                            <code>PriceProgram</code> must be the root node. If not the root node:
+						</Condition>
+                        <Error
+                            Description="Input document is empty or contains invalid data" ErrorCode="YFS10363"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Either <code>PriceProgramKey</code> or {<code>OrganizationCode</code> and <code>PriceProgramName</code>} must be passed. If not passed:
+						</Condition>
+                        <Error
+                            Description="Mandatory parameters for the operation are missing" ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The passed input criteria should retrieve a price program. If not passed or invalid:
+						</Condition>
+                        <Error Description="Price program not set up" ErrorCode="YFS10496"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The output template must exist and be passed. If it does not exist or is not passed:
+						</Condition>
+                        <Error Description="Template not found" ErrorCode="YFS10379"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PriceProgramXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PriceProgramDefnList"/>
+        </xsd:all>
+        <xsd:attribute name="OrganizationCode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_PROGRAM">
+                <xsd:documentation>Link to YFS_Organization.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceProgramKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICE_PROGRAM_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_PROGRAM">
+                <xsd:documentation>Primary key that identifies a price program.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceProgramName" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="PRICE_PROGRAM_NAME"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_PROGRAM">
+                <xsd:documentation>The price program used for pricing the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PriceProgramDefnList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PriceProgramDefn"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PriceProgramDefn">
+        <xsd:annotation yfc:tableName="YFS_PRICE_PROGRAM_DEFN">
+            <xsd:documentation>
+                <div>
+						The definition of a price program is stored in this table. A price program definition identifies the price list to be used for a given currency and date. Attributes passed in this element are used only to filter the <code>PriceProgramDefn</code> records returned as part of the output. The retrieved price program is returned even if the matching <code>PriceProgramDefn</code> record is not found, based on the criteria passed in this element.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_PRICE_PROGRAM_DEFN">
+                    <xsd:documentation>Currency in which pricing needs to be done.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CurrencyQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="EndDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="END_DATE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_PRICE_PROGRAM_DEFN">
+                    <xsd:documentation>Date this price program stops taking effect.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndDateQryType"
+                type="yfctype:DateQryType" use="optional"/>
+            <xsd:attribute name="FromCurrency" type="yfctype:Currency" use="optional"/>
+            <xsd:attribute name="FromEndDate" type="yfctype:Date" use="optional"/>
+            <xsd:attribute name="FromStartDate" type="yfctype:Date" use="optional"/>
+            <xsd:attribute name="StartDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="START_DATE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_PRICE_PROGRAM_DEFN">
+                    <xsd:documentation>Date this price program starts to take effect.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartDateQryType"
+                type="yfctype:DateQryType" use="optional"/>
+            <xsd:attribute name="ToCurrency" type="yfctype:Currency" use="optional"/>
+            <xsd:attribute name="ToEndDate" type="yfctype:Date" use="optional"/>
+            <xsd:attribute name="ToStartDate" type="yfctype:Date" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

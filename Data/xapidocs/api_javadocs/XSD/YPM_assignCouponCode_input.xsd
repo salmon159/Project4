@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/assignCouponCode/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/assignCouponCode/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_assignCouponCode_input.xsd" yfc:rootElement="Coupon">
+        <xsd:appinfo source="yfc:structure">
+            <Coupon hasAttributes="Y">
+                <CouponCodeList>
+                    <CouponCode hasAttributes="Y"/>
+                </CouponCodeList>
+            </Coupon>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Coupon" type="yfc:CouponXSDType">
+        <xsd:annotation yfc:tableName="YPM_COUPON">
+            <xsd:documentation>This table stores information about the coupon. The coupon behavior is defined by the pricing rule associated with it.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CouponXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:CouponCodeList"/>
+        </xsd:all>
+        <xsd:attribute name="CouponID" type="yfctype:CouponId" use="required">
+            <xsd:annotation yfc:columnName="COUPON_ID" yfc:tableName="YPM_COUPON">
+                <xsd:documentation>
+                    <div>Unique identifier of a coupon.
+						<Validation>
+                            <Condition>
+                                <code>CouponID</code> must be passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                if <code>CouponID</code> does not matching any existing coupons.
+							</Condition>
+                            <Error Description="Coupon not found" ErrorCode="YPM10169"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YPM_COUPON">
+                <xsd:documentation>
+                    <div>Pricing organization the <code>CouponID</code> belongs to.
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be passed.
+                            </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid.
+                            </Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CouponCodeList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CouponCode"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CouponCode">
+        <xsd:annotation yfc:tableName="YPM_COUPON_CODE">
+            <xsd:documentation>this table maintains imported coupon codes or customer assigned coupon codes, associated with a coupon definition from external system</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CouponCode" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="COUPON_CODE" yfc:tableName="YPM_COUPON_CODE">
+                    <xsd:documentation>
+                        <div>Unique coupon code.
+						<Validation>
+                                <Condition>
+                                    <code>CouponCode</code> must be passed.
+							</Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerContactID"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_CONTACT_ID" yfc:tableName="YPM_COUPON_CODE">
+                    <xsd:documentation>An identifier of the customer</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YPM_COUPON_CODE">
+                    <xsd:documentation>Identifies the customer associated with this record. Usually BillToID of the associated Order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

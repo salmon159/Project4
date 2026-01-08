@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/reprintCarrierLabel/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/reprintCarrierLabel/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_reprintCarrierLabel_input.xsd" yfc:rootElement="Container">
+        <xsd:appinfo source="yfc:structure">
+            <Container hasAttributes="Y">
+                <Manifest hasAttributes="Y"/>
+                <Shipment hasAttributes="Y"/>
+                <Load hasAttributes="Y"/>
+                <PrinterPreference hasAttributes="Y"/>
+                <ContainerReturnTrackingList>
+                    <ContainerReturnTracking hasAttributes="Y"/>
+                </ContainerReturnTrackingList>
+            </Container>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Container" type="yfc:ContainerXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_CONTAINER">
+            <xsd:documentation>
+                <div>
+				Stores container header information. Specifies the container for which label is to be reprinted.
+				<Validation>
+                        <Condition>Container can be identified by using <code>ShipmentContainerKey</code> or <code>ContainerNo</code> and <code>ShipmentKey</code> or <code>ContainerNo</code> and <code>LoadKey</code>.
+				</Condition>
+                        <Error
+                            Description="Either ContainerNo or ShipmentContainerKey is mandatory." ErrorCode="YDM00066"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If neither <code>ShipmentKey</code> nor <code>LoadKey</code> is passed or identifiable from the <code>Shipment</code> or <code>Load</code> element passed.
+				</Condition>
+                        <Error
+                            Description="Either shipment or load details must be passed in input." ErrorCode="YDM00267"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If the carrier label was not generated before for the container.
+				</Condition>
+                        <Error
+                            Description="Container does not have any Tracking#." ErrorCode="YDM00244"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ContainerXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Manifest"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Load"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PrinterPreference"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ContainerReturnTrackingList"/>
+        </xsd:all>
+        <xsd:attribute name="ContainerNo" type="yfctype:ContainerNo" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>
+                    <div>Unique key or business key, which by itself identifies a delivery plan. 
+				<Validation>
+                            <Condition> It should give unique shipment container.
+				</Condition>
+                            <Error
+                                Description="Container does not exist in the system." ErrorCode="YDM000157"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerScm" type="yfctype:UCC128" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_SCM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>
+                    <div>An unique number which helps identify the conatiner along with ShipmentKey. 
+				<Validation>
+                            <Condition> It should give unique shipment container.
+				</Condition>
+                            <Error
+                                Description="Container does not exist in the system." ErrorCode="YDM000157"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>
+                    <div>Specifies the load to which the container belongs.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NoOfCopies" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Specify the number of copies you want to print, it should be a positive integer, default value of this attribute is 1</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReprintLabelLevel" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Valid values for this attribute are : FORWARD, RETURN, BOTH_FWD_AND_RET, PICKUP_SUMARY. If left blank, FORWARD is understood as the value of this attribute.
+					If value FORWARD is given for a container, only Forward carrier label will be re-printed.
+					If value RETURN is given for a container, only all the Return carrier labels will be re-printed. 
+					If value BOTH_FWD_AND_RET is given for a container, both the forward carrier label as well as all the return carrier labels will be re-printed.
+					If value PICKUP_SUMARY is given, the manifest details should be passed in the input, and the manifest should be closed. Pickup Summary Label will be printed. This is applicable only for Pierbridge Integration.
+					
+					Although, if some specific Return Tracking numbers are selected to re-print their return labels, then irrespective of the value in the attribute, only those return labels will be printed.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentContainerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_CONTAINER_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>
+                    <div>Primary key attribute of YFS_SHIPMENT_CONTAINER table. 
+				<Validation>
+                            <Condition> Must be a valid ShipmentContainerKey.
+				</Condition>
+                            <Error
+                                Description="Specified Container does not exist." ErrorCode="YDM000157"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>
+                    <div>Specifies the shipment to which the container belongs.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Manifest">
+        <xsd:annotation yfc:tableName="YFS_MANIFEST">
+            <xsd:documentation>Stores carrier manifest created during the manifesting process. A manifest is a carrier specific document that comprises of shipments. A manifest is created for a ship node and carrier. At any point in time, there is only one open manifest for a ship node and carrier. Every parcel shipment that is containerized is included in a manifest. Containerization is done using the packShipment and changeShipment API. All shipments included in the manifest are ship confirmed using the closeManifest API. All parcel related carrier services for a carrier are part of a single manifest.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ManifestKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="MANIFEST_KEY" yfc:tableName="YFS_MANIFEST">
+                    <xsd:documentation>Primary key attribute of YFS_MANIFEST table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManifestNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="MANIFEST_NO" yfc:tableName="YFS_MANIFEST">
+                    <xsd:documentation>One of the elements of the unique key or business key, that identifies a manifest. ManifestNo, ShipnodeKey and Scac in unison uniquely identify a manifest.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Load">
+        <xsd:annotation yfc:tableName="YFS_LOAD">
+            <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LoadNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PrinterPreference">
+        <xsd:annotation yfc:tableName="YFS_USER_PRINTER_PREFERENCE">
+            <xsd:documentation>This entity defines the printers to be used for different documents based on attributes such as User, UserGroup etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PrinterId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> Unique identifier of Printer.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserId" type="yfctype:LoginId" use="optional">
+                <xsd:annotation yfc:columnName="USER_ID" yfc:tableName="YFS_USER_PRINTER_PREFERENCE">
+                    <xsd:documentation>Unique key of YFS_USER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UsergroupId" type="yfctype:UserGroup" use="optional">
+                <xsd:annotation yfc:columnName="USERGROUP_ID" yfc:tableName="YFS_USER_PRINTER_PREFERENCE">
+                    <xsd:documentation>Unique key of YFS_USER_GROUP.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkStationId"
+                type="yfctype:EquipmentId" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_ID" yfc:tableName="YFS_EQUIPMENT">
+                    <xsd:documentation>The Work Station with which the printer is associated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ContainerReturnTrackingList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ContainerReturnTracking"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ContainerReturnTracking">
+        <xsd:annotation yfc:tableName="YFS_CNTR_RET_TRACK">
+            <xsd:documentation>Stores all the return tracking number associated with a container.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReturnTrackingNumber"
+                type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="RETURN_TRACKING_NUMBER" yfc:tableName="YFS_CNTR_RET_TRACK">
+                    <xsd:documentation>Tracking number of the return label that is required to be re-printed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

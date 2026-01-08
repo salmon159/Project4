@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Order DocumentType="" EnterpriseCode="" OrderHeaderKey="" OrderNo="" xmlns="http://www.sterlingcommerce.com/documentation/OMP/confirmRefundDistributionUE/output">
+    <RefundPaymentMethods>
+        <RefundPaymentMethod BillToKey="" CashBackAmount=""
+            ChargeSequence="" CheckNo="" CheckReference=""
+            CreditCardExpDate="" CreditCardName="" CreditCardNo=""
+            CreditCardType="" CustomerAccountNo="" CustomerPONo=""
+            DebitCardNo="" DisplayCreditCardNo=""
+            DisplayCustomerAccountNo="" DisplayDebitCardNo=""
+            DisplayPaymentReference1="" DisplaySvcNo="" EntryType=""
+            FirstName="" LastName="" MiddleName=""
+            PaymentKey="Conditional" PaymentReference1=""
+            PaymentReference2="" PaymentReference3=""
+            PaymentReference4="" PaymentReference5=""
+            PaymentReference6="" PaymentReference7=""
+            PaymentReference8="" PaymentReference9=""
+            PaymentType="Required" PlannedRefundAmount="" ReasonCode=""
+            RefundAmount="" SuspendExpiredAuthReversal="" SvcNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="Y"
+                IncludeXMLFileName="MasterPaymentMethod.xml" IncludeXMLPath="/PaymentRelated/InputForManage/PaymentMethodCommon"/>
+            <yfc:doc>
+                <Element EntityName="Payment">
+                    <Description>
+                        <div>
+                            <code>PaymentMethod</code>
+							can be added, modified or removed .
+							<br/>
+							If payment processing is not required for the order, any payment
+							method passed in the input xml is still subject to validations.
+							<br/>
+							Only the
+							<code>PaymentMethod</code>
+							attributes specified in the input xml can be changed. Attempting
+							to change other attributes
+							on
+							<code>PaymentMethod</code>
+							, such as
+							<code>TotalAuthorized</code>
+							or
+							<code>TotalCharged</code>
+							results in an error.
+							<Validation>
+                                <Condition>Pass changed value for attributes not specfied in
+									input xml.
+				</Condition>
+                                <Error
+                                    Description="Payment attributes cannot be modified." ErrorCode="YFS10458"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Payment"
+                        Name="ChargeSequence" NameInEntity="charge_sequence">
+                        <Description>
+                            <div>
+								Used to identify the order to which charges are applied.
+								<br/>
+								The Seller Organization can configure the payment types so that
+								they are charged and refunded in a particular sequence. The
+								charge sequence and refund sequence are independent of each
+								other. A
+								<code>PaymentType</code>
+								with a
+								<code>ChargeSequence</code>
+								set to
+								<b>
+                                    <code>0</code>
+                                </b>
+								is charged before another
+								<code>PaymentType</code>
+								with
+								<code>ChargeSequence</code>
+								set to
+								<b>
+                                    <code>1</code>
+                                </b>
+								.
+								<br/>
+								The Buyer can also specify the
+								<code>ChargeSequence</code>
+								of the
+								<code>PaymentMethod</code>
+								in the
+								<code>createOrder</code>
+								input xml. If a charge sequence is not specified by the Buyer,
+								the Seller's
+								<code>ChargeSequence</code>
+								is followed.
+								<br/>
+                                <br/>
+								If both the Buyer and the Seller supply
+								<code>ChargeSequence</code>
+								, charges are made in the order
+								that the Seller specifies, but
+								within a particular charge type, such
+								as CreditCard, the Buyer's
+								sequence is honored.
+								<br/>
+                                <br/>
+								For example:
+								<br/>
+								A seller specifies the
+								<code>ChargeSequence</code>
+								as 0 for CUSTOMER_ACCOUNT, 1 for CREDIT_CARD, 2 for OTHER.
+								<br/>
+								A buyer specifies the
+								<code>ChargeSequence</code>
+								as 1 for MyBank-CreditCard, 2 for CUSTOMER_ACCOUNT, and 3 for
+								MyOther-CreditCard.
+								<br/>
+								The payment methods are charged in the following sequence:
+								<br/>
+								CUSTOMER_ACCOUNT, MyBank-CreditCard, MyOther-CreditCard.
+								<br/>
+								The Customer account is charged because that is the seller's
+								preferred method, and the two credit cards are charged based on
+								the order that the buyer specified.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-100" Name="EntryType">
+                        <Description>
+                            <div>The Entry Type used to enter payment information into the
+								system.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Payment" Name="PaymentType" NameInEntity="Payment_Type">
+                        <Description>
+                            <div>
+								Type of payment.
+								<br/>
+								The
+								<code>PaymentType</code>
+								must be a value that is already configured for the Seller
+								Organization.
+								<br/>
+								If a
+								<code>PaymentMethod</code>
+								element is passed, the
+								<code>PaymentType</code>
+								is validated, even if payment processing is not required for the
+								order.
+								<Validation>
+                                    <Condition>Must be a value defined for the Seller Organization.
+					</Condition>
+                                    <Error
+                                    Description="Payment Type not set up for seller." ErrorCode="YFS10491"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>PaymentType</code>
+										must be passed.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Money" Name="RefundAmount">
+                        <Description>
+							Amount to be refunded to this payment.
+						</Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <RefundForPaymentMethods>
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="OMP_confirmRefundDistributionUE_input.xml" IncludeXMLPath="/Order/RefundPaymentMethods/RefundPaymentMethod/RefundForPaymentMethods"/>
+                <RefundForPaymentMethod PaymentKey="" RefundAmount="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Payment">
+                            <Description>The PaymentMethod that the above RefundPaymentMethod is created for.</Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Money" Name="RefundAmount">
+                                <Description>The amount from this payment method that is being refunded.</Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </RefundForPaymentMethod>
+            </RefundForPaymentMethods>
+            <RefundFulfillmentDetails ItemID="" UnitOfMeasure="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="OMP_confirmRefundDistributionUE_input.xml" IncludeXMLPath="/Order/RefundPaymentMethods/RefundPaymentMethod/RefundFulfillmentDetails"/>
+                <yfc:doc>
+                    <Element>
+                        <Description>The fulfillment details for this refund payment method. This will be presented
+							when the refund payment requires refund fulfillment.</Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Item" Name="ItemID"/>
+                        <Attribute EntityName="Item" Name="UnitOfMeasure"/>
+                    </Attributes>
+                </yfc:doc>
+            </RefundFulfillmentDetails>
+            <PersonInfoBillTo AddressID="" AddressLine1=""
+                AddressLine2="" AddressLine3="" AddressLine4=""
+                AddressLine5="" AddressLine6="" AlternateEmailID=""
+                Beeper="" City="" Company="" Country="" DayFaxNo=""
+                DayPhone="" Department="" EMailID="" EveningFaxNo=""
+                EveningPhone="" FirstName="" IsAddressVerified=""
+                IsCommercialAddress="" JobTitle="" LastName=""
+                Latitude="" Longitude="" MiddleName="" MobilePhone=""
+                OtherPhone="" PersonID="" PersonInfoKey="" State=""
+                Suffix="" TaxGeoCode="" Title="" ZipCode="">
+                <yfc:includeInParent
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/PersonInfoShipTo"/>
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterPersonInfo.xml" IncludeXMLPath="/PersonInfo"/>
+            </PersonInfoBillTo>
+        </RefundPaymentMethod>
+    </RefundPaymentMethods>
+    <RefundFulfillmentOrderOverride>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+						Pass this element to override PersonInfoBillTo and PersonInfoShipTo on Refund Fulfillment Order.
+					</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <PersonInfoBillTo AddressID="" AddressLine1="" AddressLine2=""
+            AddressLine3="" AddressLine4="" AddressLine5=""
+            AddressLine6="" AlternateEmailID="" Beeper="" City=""
+            Company="" Country="" DayFaxNo="" DayPhone="" Department=""
+            EMailID="" EveningFaxNo="" EveningPhone="" FirstName=""
+            IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID="" State="" Suffix=""
+            TaxGeoCode="" Title="" ZipCode="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Text-256" Name="AddressID"/>
+                    <Attribute DataType="Address" Name="AddressLine1"/>
+                    <Attribute DataType="Address" Name="AddressLine2"/>
+                    <Attribute DataType="Address" Name="AddressLine3"/>
+                    <Attribute DataType="Address" Name="AddressLine4"/>
+                    <Attribute DataType="Address" Name="AddressLine5"/>
+                    <Attribute DataType="Address" Name="AddressLine6"/>
+                    <Attribute DataType="EMailID" Name="AlternateEmailID"/>
+                    <Attribute DataType="PhoneNo" Name="Beeper"/>
+                    <Attribute DataType="City" Name="City"/>
+                    <Attribute DataType="Company" Name="Company"/>
+                    <Attribute DataType="Country" Name="Country"/>
+                    <Attribute DataType="PhoneNo" Name="DayFaxNo"/>
+                    <Attribute DataType="PhoneNo" Name="DayPhone"/>
+                    <Attribute DataType="Department" Name="Department"/>
+                    <Attribute DataType="EMailID" Name="EMailID"/>
+                    <Attribute DataType="PhoneNo" Name="EveningFaxNo"/>
+                    <Attribute DataType="PhoneNo" Name="EveningPhone"/>
+                    <Attribute DataType="PersonName" Name="FirstName"/>
+                    <Attribute DataType="Flag" Name="IsCommercialAddress"/>
+                    <Attribute DataType="Title-40" Name="JobTitle"/>
+                    <Attribute DataType="PersonName" Name="LastName"/>
+                    <Attribute DataType="MiddleName" Name="MiddleName"/>
+                    <Attribute DataType="PhoneNo" Name="MobilePhone"/>
+                    <Attribute DataType="PhoneNo" Name="OtherPhone"/>
+                    <Attribute DataType="PersonId" Name="PersonID"/>
+                    <Attribute DataType="State" Name="State"/>
+                    <Attribute DataType="Suffix" Name="Suffix"/>
+                    <Attribute DataType="GeoCode" Name="TaxGeoCode"/>
+                    <Attribute DataType="Title-10" Name="Title"/>
+                    <Attribute DataType="ZipCode" Name="ZipCode"/>
+                </Attributes>
+            </yfc:doc>
+        </PersonInfoBillTo>
+    </RefundFulfillmentOrderOverride>
+</Order>

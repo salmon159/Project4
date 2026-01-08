@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<!--This behavior is used to dynamically change listbox to a custom listbox with flat look & feel-->
+<public:component lightWeight="true" >
+<public:attach event="oncontentready" onevent="initList();" />
+
+
+<script language="jscript">
+
+////////////////////////////////////////////////////////////////////////////////////
+// Global Variables
+////////////////////////////////////////////////////////////////////////////////////
+var popUp = null;
+var iWidth = 50;
+var iHeight = 50;
+var iLeft = 0;
+var iTop = 0;
+var displayObj = null;
+var displayObjWidth = 100;
+var root = null;
+var lstIcon = null;
+var selValue = "";
+//styles variables
+var lstStyle = null;
+var lstPopupStyle = null;
+var lstOptionStyle = null;
+var curIndex = 0;
+var curIndexTypedText = 0;
+
+////////////////////////////////////////////////////////////////////////////////////
+function initList(){
+    var doc = element.document;    
+    initStyles();
+    if (lstStyle && lstPopupStyle && lstOptionStyle) {
+        if (element.children.length == 0) {
+            element.appendChild(doc.createElement("<option value=\"\">"));
+        }
+        setPopUpPos();
+        popUp = window.createPopup();
+        popUp.document.body.innerHTML = makePopUpBody();
+        element.style.display = "none";
+    
+        root = popUp.document.body.children[0];
+        root.style.height = iHeight;
+        if (element.children.length <= 1) {
+            root.style.overflow = "hidden";
+        }
+        for(var i=0; i<root.children.length; i++){
+            //Attach events to the options
+            root.children[i].onclick = selectOption;
+            root.children[i].style.backgroundColor = lstStyle.backgroundColor;
+        }
+    
+        var spn = doc.createElement("<span>");
+        var newHtml = "<table cellspacing=\"0\" cellpadding=\"0\"><tr>";
+        newHtml += "<td style='padding-left:2px;'><input id=\"tmp:"+element.id+"\" value=\""+selValue+"\" title=\""+selValue+"\" /></td>";
+        if (!element.disabled) { // if combobox is disabled show the data like protected text box
+            newHtml += "<td valign='middle'><img src=\""+contextPath+"/console/icons/comboboxicon.gif\" style=\";cursor:hand\"/></td></tr></table>";
+        }
+        spn.innerHTML = newHtml;
+        spn.children[0].children[0].children[0].children[1].style.backgroundColor = lstStyle.color;
+        displayObj = spn.children[0].children[0].children[0].children[0].children[0];
+        if (element.readOnly || element.disabled) { // if combobox is not typable or disabled, then make this readonly
+            displayObj.readOnly = true;
+        }
+        if (!element.disabled) {
+            lstIcon = spn.children[0].children[0].children[0].children[1].children[0];
+            spn.children[0].style.border = lstPopupStyle.border;
+            displayObj.style.cssText = lstStyle.cssText;
+            lstIcon.onclick = showList;
+        }
+        displayObj.style.color = "black";
+        displayObj.style.width = displayObjWidth;
+        displayObj.onblur = validateEntry; // validate keyboard entry
+        displayObj.onkeydown = browseOptions;
+        displayObj.onkeyup = autoComplete;
+        // now add the new element just after the original combobox
+        element.insertAdjacentElement("afterEnd", spn);
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+function getStyle(stylename,styleSheet) {
+  for ( j = 0; j < styleSheet.rules.length; j++ )    {
+    if (styleSheet.rules.item(j).selectorText == stylename)  {
+        return styleSheet.rules.item(j).style;
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function getStyleSheet() {
+    return element.document.styleSheets[0];
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function initStyles() {
+    var styleSheet = getStyleSheet();
+    lstStyle = getStyle(".flatcombobox",styleSheet);
+    lstPopupStyle = getStyle(".flatcomboboxpopup",styleSheet);
+    lstOptionStyle = getStyle(".flatcomboboxoption",styleSheet);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function setPopUpPos(){
+    iWidth;
+    var maxWidth = 0;
+    for (var i=0; i<element.children.length; i++) {
+        iWidth = element.children[i].innerText.length * 6;
+        if (iWidth > maxWidth)
+            maxWidth = iWidth;
+    }
+    iWidth = maxWidth;
+    iHeight = element.children.length*18;
+    var ht = parseInt(lstPopupStyle.height);
+    if (iHeight > ht)
+        iHeight = ht;
+    iLeft = element.clientLeft-3;
+    iTop = element.clientTop+16;
+
+    if (element.yfcStyleWidth)
+        displayObjWidth = parseInt(element.yfcStyleWidth);
+        
+    if (displayObjWidth > iWidth) {
+        iWidth = displayObjWidth;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function makePopUpBody(){
+    var popBody = "<div style=\""+lstPopupStyle.cssText+"\">";
+    for (var i=0; i<element.children.length; i++) {
+        popBody += "<div title=\""+element.children[i].value+"\" style=\""+lstOptionStyle.cssText+"\" ";
+        popBody += " onmouseover=\"this.style.backgroundColor='"+lstStyle.color+"';this.style.color='"+lstStyle.backgroundColor+"';\"";
+        popBody += " onmouseout=\"this.style.backgroundColor='"+lstOptionStyle.backgroundColor+"';this.style.color='"+lstOptionStyle.color+"';\" ";
+        popBody += " key=\""+element.children[i].getAttribute("value")+"\">";
+        popBody += element.children[i].innerHTML;
+        popBody += "</div>";
+        if (element.children[i].selected) {
+            selValue = element.children[i].innerHTML;
+        }
+    }
+    popBody += "</div>";
+    return popBody;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function showList(){
+    popUp.show(iLeft,iTop,iWidth+20,iHeight,displayObj);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function browseOptions() {
+    var downArrow = false;
+    var upArrow = false;
+    if (event.keyCode==40)
+        downArrow = true;
+    else if (event.keyCode==38)
+        upArrow = true;
+        
+    if (downArrow && !popUp.isOpen) {
+        showList();
+        root.children[curIndex].style.backgroundColor = lstStyle.color;
+        root.children[curIndex].style.color = lstStyle.backgroundColor;
+        root.children[curIndex].scrollIntoView(true);
+    }
+    else if (popUp.isOpen) {
+        if (event.keyCode == 13) { // ENTER key
+            makeSelection(root.children[curIndex].innerHTML);
+            return;
+        }
+        var prevIndex = curIndex;
+        if (downArrow) {
+            curIndex++;
+            if (curIndex > root.children.length-1) {
+                curIndex = 0;
+                root.children[curIndex].scrollIntoView(true);
+            }
+            else if ((curIndex+1)*16 >= iHeight) {
+                root.children[curIndex].scrollIntoView(false);
+            }
+        }
+        else if (upArrow) {
+            curIndex--;
+            if (curIndex < 0) {
+                curIndex = root.children.length-1;
+                root.children[curIndex].scrollIntoView(false);
+            }
+            else if ((curIndex-2)*16 <= iHeight) {
+                root.children[curIndex].scrollIntoView(true);
+            }
+        }
+        // reset previous selection
+        root.children[prevIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+        root.children[prevIndex].style.color = lstOptionStyle.color;        
+        // set current selection
+        root.children[curIndex].style.backgroundColor = lstStyle.color;
+        root.children[curIndex].style.color = lstStyle.backgroundColor;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function autoComplete(){
+	var browsing = false;
+	var foundMatch = false;
+	var prevIndex = curIndex;
+	if (event.keyCode==40 || event.keyCode==38 || event.keyCode == 13) { //Don't do anything if we are navigating with arrow keys or making a selection
+        browsing = true;
+    } else if(event.keyCode==8 || event.keyCode==46) { //Special handling for delete/backspace
+    	browsing = true;
+    	if(displayObj.value.length >= 2) {
+    		//Find the first entry that matches the input we've provided so far
+    		for (var i=0; i<element.children.length; i++) {
+        		if (element.children[i].innerHTML == displayObj.value || (element.children[i].innerHTML.length > displayObj.value.length
+            		  && element.children[i].innerHTML.substring(0, displayObj.value.length) == displayObj.value)) {
+            		foundMatch = true;
+            		curIndex = i;
+			curIndexTypedText = i;
+            		break;
+            	}
+            }
+       		if(foundMatch) { //If we have a match open the popUp and make the selection in the dropdown
+        		if (!popUp.isOpen) {
+       				showList();
+       			}
+       			
+       			root.children[curIndex].scrollIntoView(true);
+ 			   
+        		// reset previous selection
+        		root.children[prevIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+        		root.children[prevIndex].style.color = lstOptionStyle.color;        
+        		// set current selection
+        		root.children[curIndex].style.backgroundColor = lstStyle.color;
+        		root.children[curIndex].style.color = lstStyle.backgroundColor;
+        	} else { //Otherwise there's no match so clear our selection
+        	    element.children[curIndex].removeAttribute("selected");
+        		root.children[curIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+      			root.children[curIndex].style.color = lstOptionStyle.color;
+        		hidePopUp();
+        	}
+        } else {//If we've deleted to under 2 characters clear the selection
+        	element.children[curIndex].removeAttribute("selected");
+        	root.children[curIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+      		root.children[curIndex].style.color = lstOptionStyle.color;
+        	hidePopUp();
+		curIndexTypedText = 0;	// start searching from the start of the sorted list
+        }
+    }
+
+	if (!browsing && displayObj.value.length >= 2) { //Only search for a match if we've provided more than 2 characters
+    	for (var i=curIndexTypedText; i<element.children.length; i++) {
+        	if (element.children[i].innerHTML == displayObj.value) { //If we have a direct match select it
+            	curIndex = i;
+		curIndexTypedText = i;
+            	foundMatch = true;
+            	break;
+            } else if (element.children[i].innerHTML.length > displayObj.value.length
+            		  && element.children[i].innerHTML.substring(0, displayObj.value.length) == displayObj.value) {
+                curIndex = i;
+		curIndexTypedText = i;
+            	foundMatch = true;
+            	    
+            	//Used to auto-complete the input with a selection 	
+            	var selectionStart = displayObj.value.length;
+            	var selectionEnd = element.children[i].innerHTML.length;
+            	displayObj.value = element.children[i].innerHTML;
+            	selectRange(selectionStart, selectionEnd);
+            	
+            	break;
+        	}
+        }
+        
+        if(!foundMatch) { //If no match clear our selection
+        	element.children[curIndex].removeAttribute("selected");
+        	root.children[curIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+      		root.children[curIndex].style.color = lstOptionStyle.color;
+        	hidePopUp();
+        } else {
+        	if (!popUp.isOpen) {
+       			showList();
+       		}
+ 
+ 			root.children[curIndex].scrollIntoView(true);
+ 			   
+        	// reset previous selection
+        	root.children[prevIndex].style.backgroundColor = lstOptionStyle.backgroundColor;
+        	root.children[prevIndex].style.color = lstOptionStyle.color;        
+        	// set current selection
+        	root.children[curIndex].style.backgroundColor = lstStyle.color;
+        	root.children[curIndex].style.color = lstStyle.backgroundColor;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function selectRange(start, end) {
+	if(displayObj.createTextRange) { //IE's method of creating a text range
+		var range = displayObj.createTextRange();
+			range.moveStart("character", start);
+			range.moveEnd("character", end);
+			range.select();
+	} else if (displayObj.setSelectionRange) { //Firefox's method of creating a text range
+		displayObj.setSelectionRange(start,end);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function selectOption(){
+    var srcEle = popUp.document.parentWindow.event.srcElement;
+    makeSelection(srcEle.innerHTML);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function validateEntry(){
+    // clear any error indication
+    displayObj.style.backgroundColor = lstStyle.backgroundColor;
+    // if empty text box, it's valid.
+    if (displayObj.value == "")
+        return true;
+        
+    var valid = false;
+    // check to see if entered value is same as any of the list box options texts (descriptions)
+    for (var i=0; i<element.children.length; i++) {
+        if (element.children[i].innerHTML == displayObj.value) {
+            makeSelection(displayObj.value);
+            valid = true;
+        }
+    }
+    // if fails, check to see if entered value is same as any of the list box options values (codes)
+    if (!valid) {
+        for (var i=0; i<element.children.length; i++) {
+            if (element.children[i].value == displayObj.value) {
+                makeSelection(element.children[i].innerHTML);
+                valid = true;
+            }
+        }
+    }
+    // if not valid, flag error.
+    if (!valid) {
+        makeSelection("");
+        displayObj.errorDescription = "Invalid data";
+        displayObj.style.backgroundColor = "green";
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function makeSelection(sel){
+    // change the text box value to the selected
+    displayObj.value = sel;
+    displayObj.title = sel;
+    // change the original list box selection to the clicked one
+    for (var i=0; i<element.children.length; i++) {
+        if (element.children[i].innerHTML == sel) {
+            element.children[i].selected = true;
+            break;
+        }
+        else {
+            element.children[i].removeAttribute("selected");
+        }
+    }
+    // reset style for all children
+    for(var i=0; i<root.children.length; i++){
+        root.children[i].style.backgroundColor = lstOptionStyle.backgroundColor;
+        root.children[i].style.color = lstOptionStyle.color;
+    }
+    // clear any error indication
+    displayObj.style.backgroundColor = lstStyle.backgroundColor;
+    hidePopUp();
+    curIndexTypedText = 0;	// if any value is selected or the text box value is cleared change the current index of typed text to 0
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function hidePopUp() {
+    if (popUp) {
+        popUp.hide();
+    }
+}
+
+</script>
+</public:component>

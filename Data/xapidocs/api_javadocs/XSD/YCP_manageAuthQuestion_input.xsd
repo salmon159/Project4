@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageAuthQuestion/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageAuthQuestion/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageAuthQuestion_input.xsd" yfc:rootElement="AuthQuestion">
+        <xsd:appinfo source="yfc:structure">
+            <AuthQuestion hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AuthQuestion" type="yfc:AuthQuestionXSDType">
+        <xsd:annotation yfc:tableName="PLT_AUTH_QUESTION">
+            <xsd:documentation>
+                <div>
+			To identify the <code>AuthQuestion</code>, pass <code>AuthQuestionKey</code>.
+			   <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b> and no record matches the criteria.
+					</Condition>
+                        <Error
+                            Description="Record does not exist in the database." ErrorCode="YFC0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> and <code>AuthQuestionKey</code> already exists in the database.
+					</Condition>
+                        <Error
+                            Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> and <code>QuestionText</code> or <code>OrganizatinCode</code> is not passed. 
+					</Condition>
+                        <Error
+                            Description="QuestionText and OrganizationCode are Mandatory fields." ErrorCode="YCP0046"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> and AuthQuestionKey is blank.
+					</Condition>
+                        <Error
+                            Description="Primary Key cannot be blanked out." ErrorCode="YFC0013"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Delete</code>
+                            </b> and the AuthQuestion has an associated AuthAnswer.
+					</Condition>
+                        <Error
+                            Description="Cannot delete Question that is associated with some Answer." ErrorCode="YDB100197"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="AuthQuestionXSDType">
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AuthQuestionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="AUTH_QUESTION_KEY" yfc:tableName="PLT_AUTH_QUESTION">
+                <xsd:documentation>Primary key attribute of PLT_AUTH_QUESTION.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="PLT_AUTH_QUESTION">
+                <xsd:documentation>The Organization to which the question belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QuestionText" type="yfctype:Question" use="optional">
+            <xsd:annotation yfc:columnName="QUESTION_TEXT" yfc:tableName="PLT_AUTH_QUESTION">
+                <xsd:documentation>Question</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Sequence" type="yfctype:Count" use="optional">
+            <xsd:annotation yfc:columnName="SEQUENCE" yfc:tableName="PLT_AUTH_QUESTION">
+                <xsd:documentation>The sequence in which questions are returned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

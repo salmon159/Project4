@@ -1,0 +1,68 @@
+In Order Processing
+
+Tax Engine - Avalara
+commit and uncommit
+
+SF - uncommit.
+
+OMS - Avalara - commit - Record of tax for that order or sale.
+
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraCommitReq' and EXPORT_KEY > '20250201' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraCommitRes' and EXPORT_KEY > '20250201' order by createts desc;
+
+cancel / Return - Commit. Record of tax for that order or sale is void.
+
+select message,createts from  yfs_export where EXPORT_KEY > '20250206' and Flow_name='IBD_AvalaraRefundReq' order by createts desc;
+select message,createts from  yfs_export where EXPORT_KEY > '20250206' and Flow_name='IBD_AvalaraRefundRes' order by createts desc;
+
+
+
+Courier partner - UPS for US. and FarEye for UAE.
+US:
+Sales
+select message,createts from  yfs_export where Flow_name='IBD_UPSAWBReqDB' and EXPORT_KEY > '20250221' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_UPSAWBResDB' and EXPORT_KEY > '20250221' order by createts desc;
+Return
+select message,createts from  yfs_export where Flow_name='IBD_UPSRetReqDB' and EXPORT_KEY > '20250210' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_UPSRetResDB' and EXPORT_KEY > '20250210'  order by createts desc;
+
+UPS Tracking:
+Fetch
+select SCAC,order_no,shipment_no,SHIPNODE_KEY,AIRWAY_BILL_NO,order_no,createts from yfs_shipment where order_no in ('00011096');
+
+select MESSAGE,CREATETS from yfs_export where export_key>'20250123'  and flow_name like '%UPS_TrackShipmentDB%' 
+and message like '%1ZE4B3944214527847%' order by modifyts desc ;
+
+
+UAE:
+Sales:
+select *  from yfs_export where export_key>'20250120' and flow_name like '%TransguardCreateOrder%'  order by createts desc;
+
+Return
+select *  from yfs_export where export_key>'20250120' and flow_name like '%TransguardReturnOrder%'  order by createts desc;
+
+UAE:
+select * from yfs_export where export_key>'20250115' and flow_name='TransguardStatusUpdates'  
+and message like '%100007248%' order by createts desc;
+
+
+Payment engine  - Jpmorgan US and Ngenius for UAE
+
+US:
+select EXPORT_KEY,message,createts from  yfs_export where Flow_name='IBD_JPMorganReq' and EXPORT_KEY > '20250221' order by createts desc;
+select EXPORT_KEY,message,createts from  yfs_export where Flow_name='IBD_JPMorganResponse' and EXPORT_KEY > '20250221' order by createts desc;
+
+
+UAE:
+//NGenius
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusReq' and EXPORT_KEY > '20250204' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusResponse' and EXPORT_KEY > '20250204' order by createts desc;
+ 
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusRefReq' and EXPORT_KEY > '20250204' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_RefResponse'   and EXPORT_KEY > '20250204' order by createts desc;
+//NGenius
+
+
+Email we drop message to queue - SFMC. 
+OMS drop message to queue and IIB picks and sends to SFMC.
+

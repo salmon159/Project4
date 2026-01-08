@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getInventoryAlertsList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getInventoryAlertsList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getInventoryAlertsList_input.xsd" yfc:rootElement="InventoryAlerts">
+        <xsd:appinfo source="yfc:structure">
+            <InventoryAlerts hasAttributes="Y">
+                <InventoryItems>
+                    <InventoryItem hasAttributes="Y"/>
+                </InventoryItems>
+            </InventoryAlerts>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="InventoryAlerts" type="yfc:InventoryAlertsXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ALERTS">
+            <xsd:documentation>Stores information on inventory alerts raised by the system.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InventoryAlertsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryItems"/>
+        </xsd:all>
+        <xsd:attribute name="AlertLevel" type="yfctype:Text-20" use="optional">
+            <xsd:annotation yfc:columnName="ALERT_LEVEL" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>Level of alert raised. 3 for low, 2 for medium, 1 for high, and 0 for thresholds greater.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AlertType" type="yfctype:AlertType" use="optional">
+            <xsd:annotation yfc:columnName="ALERT_TYPE" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>Type of alert.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DistributionRuleId"
+            type="yfctype:DistributionRuleId" use="optional">
+            <xsd:annotation yfc:columnName="DISTRIBUTION_RULE_ID" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>
+                    <div>
+				If Node is specified in input, value of DistributionRuleId is ignored.
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EstimatedCost" use="optional">
+            <xsd:annotation yfc:columnName="ESTIMATED_COST" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>The estimated cost of the item to be fulfilled by the ShipNode. Includes item cost and outbound handling cost.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:UnitPrice"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>
+				Identifies the inventory organization. Either OrganizationCode or InventoryOrganizationCode must be passed in the input XML.
+				<Validation>
+                            <Condition>Must be a existing <code>OrganizationCode</code>.
+					</Condition>
+                            <Error
+                                Description="Invalid Organization Code" ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>One of these must be passed: <code>OrganizationCode</code> or <code>InventoryOrganizationCode</code>.
+					</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory" ErrorCode="YFS10435"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Latitude" use="optional">
+            <xsd:annotation yfc:columnName="LATITUDE" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>The latitude of the node for which this alert. If the alert is for a distribution group, then this will be null.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:DecimalWithNegative"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Longitude" use="optional">
+            <xsd:annotation yfc:columnName="LONGITUDE" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>The longitude of the node for which this alert. If the alert is for a distribution group, then this will be null.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:DecimalWithNegative"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Count" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Specifies the Maximum Number of records to be returned. Default is 500.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>Ship node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_ALERTS">
+                <xsd:documentation>
+                    <div>
+				Identifies the organization. Either OrganizationCode or InventoryOrganizationCode must be passed in the input XML.
+				<Validation>
+                            <Condition>Must be a existing <code>OrganizationCode</code>.
+					</Condition>
+                            <Error
+                                Description="Invalid Organization Code" ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>One of these must be passed: <code>OrganizationCode</code> or <code>InventoryOrganizationCode</code>.
+					</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory" ErrorCode="YFS10435"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UseDefaultDistributionRuleId"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				DefaultDistributionRuleId belonging to organization is used when Node and DistributionRuleId is blank in input.
+				<br/>Default value: N. Valid values: Y or N.                        
+               	</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="InventoryItems">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Pass this element only if list of inventory item is required in input. 
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:InventoryItem"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>
+                <div>
+				Either InventoryItemKey or ItemID must be passed for InventoryItem.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+						Identifies the inventory item. Either InventoryItemKey or ItemID must be passed in the input XML.
+						The primary key for the YFS_INVENTORY_ITEM table.
+						This attribute corresponds to the PrimaryKey Fact.
+				    <Validation>
+                                <Condition>One of these must be passed: <code>InventoryItemKey</code> or <code>ItemID</code>.
+							</Condition>
+                                <Error
+                                    Description="Missing attribute in input" ErrorCode="YFS10460"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID"
+                    yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+						Identifies the inventory item. Either InventoryItemKey or ItemID must be passed in the input XML.
+				    <Validation>
+                                <Condition>One of these must be passed: <code>InventoryItemKey</code> or <code>ItemID</code>.
+							</Condition>
+                                <Error
+                                    Description="Missing attribute in input" ErrorCode="YFS10460"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

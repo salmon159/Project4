@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet exclude-result-prefixes="java" version="1.0" xmlns:java="http://xml.apache.org/xslt/java" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:template match="/">
+		<xsl:variable name="varSumOfBillDiscount" select="sum(/ReturnOrderHeader/ReturnLineDetails/ReturnLineDetail/@TotalLineBillDiscount)"/>
+		<ReturnOrderHeader>
+			<xsl:attribute name="LocationCode">
+				<xsl:value-of select="/ReturnOrderHeader/@LocationCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="ProductLine">
+				<xsl:value-of select="/ReturnOrderHeader/@ProductLine"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnOrderNo">
+				<xsl:value-of select="/ReturnOrderHeader/@ReturnOrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnDate">
+				<xsl:value-of select="/ReturnOrderHeader/@ReturnDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="/ReturnOrderHeader/@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderDate">
+				<xsl:value-of select="/ReturnOrderHeader/@OrderDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnShipmentNo">
+				<xsl:value-of select="/ReturnOrderHeader/@ReturnShipmentNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="TotalReturnQty">
+				<xsl:value-of select="/ReturnOrderHeader/@TotalReturnQty"/>
+			</xsl:attribute>
+			<xsl:attribute name="GRNValue">
+				<xsl:value-of select="/ReturnOrderHeader/@GRNValue"/>
+			</xsl:attribute>
+			<xsl:attribute name="TotalReturnWeight">
+				<xsl:value-of select="/ReturnOrderHeader/@TotalReturnWeight"/>
+			</xsl:attribute>
+			<xsl:if test="(/ReturnOrderHeader/@EnterpriseCode='TITAN_US')">
+				<xsl:attribute name="ReturnReason">
+					<xsl:value-of select="/ReturnOrderHeader/ReturnLineDetails/ReturnLineDetail/@ReturnReason"/>
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="/ReturnOrderHeader/@OtherCharges!=''">
+					<xsl:attribute name="OtherCharges">
+						<xsl:value-of select="format-number(/ReturnOrderHeader/@OtherCharges,'0.00')"/>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="OtherCharges">0.00</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="/ReturnOrderHeader/@EnterpriseCode='TITAN_GCC'">
+					<xsl:attribute name="OtherChargesTax1">
+						<xsl:value-of select="/ReturnOrderHeader/ReturnLineDetails/ReturnLineDetail/@ReturnReasonCode"/>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="OtherChargesTax1"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="@OtherChargesTax2!=''">
+					<xsl:attribute name="OtherChargesTax2">
+						<xsl:value-of select="format-number(@OtherChargesTax2,'0.00')"/>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="OtherChargesTax2">0.00</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="@TotalDiscount!=''">
+					<xsl:attribute name="TotalDiscount">
+						<xsl:value-of select="format-number(@TotalDiscount,'0.00')"/>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="TotalDiscount">0.00</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="@TotalBillableDiscount!=''">
+					<xsl:attribute name="TotalBillableDiscount">
+						<xsl:value-of select="format-number(@TotalBillableDiscount,'0.00')"/>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="TotalBillableDiscount">0.00</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<ReturnLineDetails>
+				<xsl:for-each select="/ReturnOrderHeader/ReturnLineDetails/ReturnLineDetail">
+					<ReturnLineDetail>
+						<xsl:variable name="varSumOfBillLineDiscount" select="sum(LineCharges/LineCharge/@BillDiscount)"/>
+						<xsl:attribute name="TotalLineBillDiscount">
+							<xsl:value-of select="$varSumOfBillLineDiscount"/>
+						</xsl:attribute>
+						<xsl:attribute name="TotalLineSkuDiscount">
+							<xsl:value-of select="@TotalLineSkuDiscount"/>
+						</xsl:attribute>
+						<xsl:attribute name="EnterpriseCode">
+							<xsl:value-of select="/ReturnOrderHeader/@EnterpriseCode"/>
+						</xsl:attribute>
+						<xsl:attribute name="SalesOrderNo">
+							<xsl:value-of select="@SalesOrderNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnOrderLineNo">
+							<xsl:value-of select="@ReturnOrderLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnQty">
+							<xsl:value-of select="@ReturnQty"/>
+						</xsl:attribute>
+						<xsl:variable name="varQuantity" select="@ReturnQty"/>
+						<xsl:attribute name="LineTotal">
+							<xsl:value-of select="@LineTotal"/>
+						</xsl:attribute>
+						<xsl:attribute name="ItemCode">
+							<xsl:value-of select="@ItemCode"/>
+						</xsl:attribute>
+						<xsl:attribute name="LotNumber">
+							<xsl:value-of select="@LotNumber"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnGrossWt">
+							<xsl:value-of select="@ReturnGrossWt"/>
+						</xsl:attribute>
+						<xsl:choose>
+							<xsl:when test="/ReturnOrderHeader/@EnterpriseCode='TITAN_GCC'">
+								<xsl:attribute name="ReturnReasonCode">
+									<xsl:value-of select="@ReturnReasonCode"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="ReturnReasonCode"/>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:attribute name="ReturnReason">
+							<xsl:value-of select="@ReturnReason"/>
+						</xsl:attribute>
+						<xsl:attribute name="SOOrderLineKey">
+							<xsl:value-of select="@SOOrderLineKey"/>
+						</xsl:attribute>
+						<xsl:attribute name="isFOC">
+							<xsl:value-of select="@IsFOC"/>
+						</xsl:attribute>
+						<xsl:attribute name="TotalLinePriceTax">
+							<xsl:value-of select="@TotalLinePriceTax"/>
+						</xsl:attribute>
+						<xsl:attribute name="TotalLineOtherCharges">
+							<xsl:value-of select="@TotalLineOtherCharges"/>
+						</xsl:attribute>
+						<xsl:choose>
+							<xsl:when test="@Tax2">
+								<xsl:attribute name="Tax2">
+									<xsl:value-of select="format-number(@Tax2, '0.00')"/>
+								</xsl:attribute>
+								<xsl:attribute name="OtherChargesTax2">
+									<xsl:value-of select="format-number(@OtherChargesTax2, '0.00')"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="@Tax1">
+								<xsl:attribute name="Tax1">
+									<xsl:value-of select="format-number(@Tax1, '0.00')"/>
+								</xsl:attribute>
+								<xsl:attribute name="OtherChargesTax1">
+									<xsl:value-of select="format-number(@OtherChargesTax1, '0.00')"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise/>
+						</xsl:choose>
+						<xsl:variable name="varTax1" select="@Tax1"/>
+						<xsl:variable name="varTax2" select="@Tax2"/>
+						<xsl:if test="$varTax1 and $varTax2">
+							<xsl:attribute name="Tax1">
+								<xsl:value-of select="format-number(@Tax1, '0.00')"/>
+							</xsl:attribute>
+							<xsl:attribute name="OtherChargesTax1">
+								<xsl:value-of select="format-number(@OtherChargesTax1, '0.00')"/>
+							</xsl:attribute>
+							<xsl:attribute name="Tax2">
+								<xsl:value-of select="format-number(@Tax2, '0.00')"/>
+							</xsl:attribute>
+							<xsl:attribute name="OtherChargesTax2">
+								<xsl:value-of select="format-number(@OtherChargesTax2, '0.00')"/>
+							</xsl:attribute>
+						</xsl:if>
+						<xsl:choose>
+							<xsl:when test="@TotalTax!=''">
+								<xsl:attribute name="TotalTax">
+									<xsl:value-of select="format-number(@TotalTax,'0.00')"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="TotalTax">0.00</xsl:attribute>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="(/ReturnOrderHeader/@EnterpriseCode='TITAN_US')">
+							<LineTaxes>
+								<xsl:for-each select="LineTaxes/LineTax">
+									<LineTax>
+										<xsl:attribute name="ChargeCategory">
+											<xsl:value-of select="@ChargeCategory"/>
+										</xsl:attribute>
+										<xsl:attribute name="ChargeName">
+											<xsl:value-of select="@ChargeName"/>
+										</xsl:attribute>
+										<xsl:attribute name="ChargeNameKey">
+											<xsl:value-of select="@ChargeNameKey"/>
+										</xsl:attribute>
+										<xsl:attribute name="InvoicedTax">
+											<xsl:value-of select="@InvoicedTax"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference1">
+											<xsl:value-of select="@Reference1"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference2">
+											<xsl:value-of select="@Reference2"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference3">
+											<xsl:value-of select="@Reference3"/>
+										</xsl:attribute>
+										<xsl:attribute name="RemainingTax">
+											<xsl:value-of select="@RemainingTax"/>
+										</xsl:attribute>
+										<xsl:attribute name="Tax">
+											<xsl:value-of select="@Tax"/>
+										</xsl:attribute>
+										<xsl:attribute name="TaxName">
+											<xsl:value-of select="@TaxName"/>
+										</xsl:attribute>
+										<xsl:attribute name="TaxPercentage">
+											<xsl:value-of select="@TaxPercentage"/>
+										</xsl:attribute>
+									</LineTax>
+								</xsl:for-each>
+							</LineTaxes>
+						</xsl:if>
+						<xsl:if test="(/ReturnOrderHeader/@EnterpriseCode='TITAN_US')">
+							<TitanPaymentDetailList>
+								<TitanPaymentDetail>
+									<xsl:for-each select="Extn/TitanPaymentDetailList/TitanPaymentDetail">
+										<xsl:attribute name="Amount">
+											<xsl:value-of select="@AmountPerUnit"/>
+										</xsl:attribute>
+										<xsl:attribute name="PaymentCode">
+											<xsl:value-of select="@PaymentType"/>
+										</xsl:attribute>
+									</xsl:for-each>
+								</TitanPaymentDetail>
+							</TitanPaymentDetailList>
+						</xsl:if>
+					</ReturnLineDetail>
+				</xsl:for-each>
+			</ReturnLineDetails>
+		</ReturnOrderHeader>
+	</xsl:template>
+</xsl:stylesheet>
+

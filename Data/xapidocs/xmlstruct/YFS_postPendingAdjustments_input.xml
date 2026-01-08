@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<Adjustments xmlns="http://www.sterlingcommerce.com/documentation/YFS/postPendingAdjustments/input">
+    <ShipNode ShipNode="Required" yfc:DTDOccurrence="OneOrMany">
+        <yfc:doc>
+            <Attributes>
+                <Attribute EntityName="Inventory_Pending_Adj"
+                    Name="ShipNode" NameInEntity="Shipnode_Key">
+                    <Description>
+                        <div>
+						Business key or unique identifier for a ship node. Adjustments pending only on this ship node are considered. Inventory rules are read for the ship node's owner organization's inventory consolidator.
+							<Validation>
+                                <Condition> If <code>ShipNode</code> is not passed:</Condition>
+                                <Error Description="Invalid shipnode" ErrorCode="YFS10048"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> If <code>ShipNode</code> is not a valid ship node:</Condition>
+                                <Error Description="Invalid shipnode" ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Item AccountNo="" Currency="" ItemID="Required" PostType=""
+            ProductClass="" Reference_1="" Reference_2="" UnitCost=""
+            UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Inventory_Pending_Adj">
+                    <Description>
+                        <div>
+					Inventory costing related table. Picked up by the API to post adjustments. Stores adjustments that have not been posted yet for costing purposes.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute Name="AccountNo">
+                        <Description>
+                            <div>
+							Used only if <code>PostType</code> is <b>
+                                    <code>02</code>
+                                </b>;  otherwise used from adjustment element.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Inventory_Item" Name="ItemID"/>
+                    <Attribute DataType="Text-2" Name="PostType">
+                        <Description>
+                            <div>
+                                <b>
+                                    <code>01</code>
+                                </b> for Individual; <b>
+                                    <code>02</code>
+                                </b> for summed up. If <code>PostType</code> is not <b>
+                                    <code>02</code>
+                                </b>, is not valid, or is not passed, it is defaulted to <b>
+                                    <code>01</code>
+                                </b>.	
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Inventory_Item" Name="ProductClass"/>
+                    <Attribute EntityName="Inventory_Pending_Adj"
+                        Name="Reference_1" NameInEntity="Reference_1">
+                        <Description>
+                            <div>
+							Used only if <code>PostType</code> is <b>
+                                    <code>02</code>
+                                </b>;  otherwise used from adjustment element.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Inventory_Pending_Adj"
+                        Name="Reference_2" NameInEntity="Reference_2">
+                        <Description>
+                            <div>
+							Used only if <code>PostType</code> is <b>
+                                    <code>02</code>
+                                </b>;  otherwise used from adjustment element.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="UnitCost">
+                        <Description>
+                            <div>
+							Used only if <code>PostType</code> is <b>
+                                    <code>02</code>
+                                </b>;  otherwise used from adjustment element.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure"/>
+                </Attributes>
+            </yfc:doc>
+            <Adjustment AccountNo="" AdjustmentKey="Required"
+                Currency="" Date="" Quantity="" Reference_1=""
+                Reference_2="" SupplyReference="" SupplyReferenceType=""
+                UnitCost="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Pending_Adj">
+                        <Description>
+                            <div>
+								Inventory costing related table. Stores adjustments that have not been posted yet for costing purposes. Details for the items picked for adjustments. 
+                            The attributes <code>UnitCost</code>, <code>AccountNo</code>, <code>Reference_1</code>, and <code>Reference_2</code> are used only if PostType is <b>
+                                    <code>02</code>
+                                </b>; otherwise, the individual record's fields are used. PostTypes: <b>
+                                    <code>01</code>
+                                </b> for Individual and <b>
+                                    <code>02</code>
+                                </b> for summed up. <b>
+                                    <code>01</code>
+                                </b> is the default.
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute Name="AccountNo">
+                            <Description>
+                                <div>
+								Used only if <code>PostType</code> is <b>
+                                    <code>01</code>
+                                    </b>; otherwise used from item element.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Pending_Adj"
+                            Name="AdjustmentKey" NameInEntity="Inventory_Pending_Adj_Key">
+                            <Description>
+                                <div>
+                                    <code>AdjustmentKey</code> is the primary key of for the YFS_INVENTORY_PENDING_ADJ table. Adjustments are posted for this record. If <code>AdjustmentKey</code> is passed, it should exist in the YFS_INVENTORY_PENDING_ADJ table and the status should not be <b>
+                                    <code>02</code>
+                                    </b>. If <code>AdjustmentKey</code> is not passed, the status is defaulted to <b>
+                                    <code>01</code>
+                                    </b>. 
+									<Validation>
+                                    <Condition> If no record is found for the key:</Condition>
+                                    <Error
+                                    Description="No Record Found" ErrorCode="YFS10001"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> If status for the record is 02:</Condition>
+                                    <Error
+                                    Description="Already Posted" ErrorCode="YFS10401"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Pending_Adj"
+                            Name="Date" NameInEntity="Adjustment_Date"/>
+                        <Attribute EntityName="Inventory_Pending_Adj"
+                            Name="Reference_1" NameInEntity="Reference_1">
+                            <Description>
+                                <div>
+								Used only if <code>PostType</code> is <b>
+                                    <code>01</code>
+                                    </b>; otherwise used from item element.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Pending_Adj"
+                            Name="Reference_2" NameInEntity="Reference_2">
+                            <Description>
+                                <div>
+								Used only if <code>PostType</code> is <b>
+                                    <code>01</code>
+                                    </b>; otherwise used from item element.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute Name="UnitCost">
+                            <Description>
+                                <div>
+								Used only if <code>PostType</code> is <b>
+                                    <code>01</code>
+                                    </b>; otherwise used from item element.
+								</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </Adjustment>
+        </Item>
+    </ShipNode>
+</Adjustments>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/generateWorkOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/generateWorkOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_generateWorkOrder_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:attribute name="AllocationRuleID" type="yfctype:ID-10" use="optional">
+            <xsd:annotation yfc:columnName="ALLOCATION_RULE_ID" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+						An Enterprise can configure multiple allocation rule sets with different document types.
+						If an <code>AllocationRuleID</code> is  passed, the  allocation rules associated with the <code>AllocationRuleID</code> is used to select <code>Option</code>.
+						<Validation>
+                            <Condition>The <code>AllocationRuleID</code> passed must be valid for both the Enterprise's rule set and document type of the order.
+							</Condition>
+                            <Error
+                                Description="Invalid Allocation Rule Id." ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckCapacity" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to N, resource pool capacity will be ignored during availability check.  If not passed, assumed Y.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates if inventory should to be checked.
+						<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b>Y or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If  <b>
+                            <code>Y</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for supply and demand filtering for the availability calculations.
+						<br/>If  <b>
+                            <code>N</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for inventory availability. No supply or demand is read. Distribution drives inventory availability calculations.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderChangingShippingToDelivery"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Indicates that the API should inspect lines that have <code>DeliveryMethod</code> set to <code>
+                        <b>SHP</b>
+                    </code> in addition to <code>
+                        <b>DEL</b>
+                    </code>, and consider placing those lines on work orders if the corresponding catalog item has <code>IsDeliveryAllowed</code> set to <code>
+                        <b>M</b>
+                    </code>.
+					<br/>Default: <b>
+                        <code>N</code>
+                    </b>
+                    <br/>Valid Values: <b>
+                        <code>Y</code>
+                    </b> or <b>
+                        <code>N</code>
+                    </b>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderSupplementalCapacity"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>ConsiderSupplementalCapacity</code> flag indicates that supplemental capacity should also be considered when computing the availability of the resource pools which can serve the service lines.
+						<br/>If <code>ConsiderSupplementalCapacity</code> flag is not passed as <b>
+                            <code>Y</code>
+                        </b>, then the value of the <code>CanConsumeSupplementalCapacity</code> attribute of the customer (if existed) in the order will be used.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsolidatePSLinesWithSameAddress"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Indicates that consolidating service lines on the order to existing work orders should be considered before creating new work orders.
+					If this flag is passed as <code>
+                        <b>Y</b>
+                    </code>, consolidating service lines to the same work order will be considered before creating new work orders.
+					<br/>The default value for this flag is <code>
+                        <b>N</b>
+                    </code>.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsolidateToExistingWorkOrder"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Indicates that consolidating lines on the order to already existing work orders should be considered.
+					If this flag is passed as <code>
+                        <b>Y</b>
+                    </code>, consolidating to an existing work order if the item can be associated with a delivery service on the work order will be considered before creating a new work order to deliver that item.
+					<br/>The default value for this flag is <code>
+                        <b>N</b>
+                    </code>.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DelayWindow" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The number of days specified in <code>DelayWindow</code> is counted from the day on which the API is run. If this attribute is not passed, then <code>Allowed_Shipment_Delay_Days</code> and the <code>Service_Search_Window</code> (for delivery sevice lines) specified by the allocation rules are used to determine the delay window.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreMinNotificationTime"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, minimum notification time will be ignored for product and services.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreProductLines" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for service lines.  Constraints with product lines will be ignored.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreServices" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for products being included on the work order.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Count" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Determines the maximum number of possible solutions to find. Passing this attribute might improve best solution found, but might impact the performance of this api.
+						<BR/>Default: <b>
+                            <code>10</code>
+                        </b>
+                        <Validation>
+                            <Condition>Valid positive integer.</Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/changeCalendar/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/changeCalendar/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_changeCalendar_output.xsd" yfc:rootElement="Calendar">
+        <xsd:appinfo source="yfc:structure">
+            <Calendar hasAttributes="Y">
+                <InheritFromCalendar hasAttributes="Y"/>
+                <EffectivePeriods>
+                    <EffectivePeriod hasAttributes="Y">
+                        <Shifts>
+                            <Shift hasAttributes="Y"/>
+                        </Shifts>
+                    </EffectivePeriod>
+                </EffectivePeriods>
+                <CalendarDayExceptions>
+                    <CalendarDayException hasAttributes="Y">
+                        <ExceptionShifts>
+                            <ExceptionShift hasAttributes="Y">
+                                <Shift hasAttributes="Y"/>
+                            </ExceptionShift>
+                        </ExceptionShifts>
+                    </CalendarDayException>
+                </CalendarDayExceptions>
+            </Calendar>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Calendar" type="yfc:CalendarXSDType">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR">
+            <xsd:documentation>Stores information related to a Calendar. Calendar can be created for an organization or for a ship node.  Calendar is created by the createCalendar API and managed by changeCalendar API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CalendarXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InheritFromCalendar"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EffectivePeriods"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CalendarDayExceptions"/>
+        </xsd:all>
+        <xsd:attribute name="AllowShiftOverride" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="ALLOW_SHIFT_OVERRIDE" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Indicates whether shifts are overriden for an inherited Calendar.Valid values are 'Y', 'N' and null. Default value is null.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CalendarDescription"
+            type="yfctype:Description" use="optional">
+            <xsd:annotation yfc:columnName="CALENDAR_DESCRIPTION" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Description of the Calendar.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CalendarId" type="yfctype:Identifier" use="required">
+            <xsd:annotation yfc:columnName="CALENDAR_ID" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Unique key to identify a Calendar.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CalendarKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CALENDAR_KEY" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Primary key attribute of YFS_CALENDAR table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CALENDAR">
+                <xsd:documentation>Organization which owns the Calendar.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="InheritFromCalendar">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR">
+            <xsd:documentation>
+                <div>
+				The parent calendar for which this calendar inherites its definition from.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CalendarId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_ID" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>CalendarId</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InheritCalendarKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_KEY" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>CalendarKey</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CALENDAR">
+                    <xsd:documentation>
+                        <div>
+					The <code>OrganizationCode</code> of the parent calendar.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EffectivePeriods">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EffectivePeriod"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EffectivePeriod">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+            <xsd:documentation>Stores information about the Shift Effective Periods for a Calendar. Shift Effective Periods can be created for a date range. Shift Effective Periods can be created or managed by createCalendar API or changeCalendar API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shifts"/>
+            </xsd:all>
+            <xsd:attribute name="EffectiveFromDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="EFFECTIVE_FROM_DATE" yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+                    <xsd:documentation>Date from which shift is effective.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EffectiveToDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="EFFECTIVE_TO_DATE" yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+                    <xsd:documentation>Date on which shift expires.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShiftEffectivePeriodKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CALENDAR_SHIFT_EFF_PERD_KEY" yfc:tableName="YFS_CALENDAR_SHIFT_EFF_PERD">
+                    <xsd:documentation>Primary key attribute of YFS_CALENDAR_SHIFT_EFF_PERD table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shifts">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Shift">
+                    <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT">
+                        <xsd:documentation>Stores information related to a Shift. Shifts can be defined for a given effective period. A Shift is created or managed by the createCalendar API or changeCalendar API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="FridayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="FRIDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Friday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MondayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MONDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Monday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SaturdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SATURDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Saturday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftEndTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_END_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift ends.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CALENDAR_SHIFT_KEY" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Primary key attribute of YFS_CALENDAR_SHIFT table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftName"
+                            type="yfctype:ShiftName" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_NAME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Name for shift.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftStartTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_START_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift starts.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftType"
+                            type="yfctype:ShiftType" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_TYPE" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Future considerations.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SundayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SUNDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Sunday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ThursdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="THURSDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Thursday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="TuesdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="TUESDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Tuesday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="WednesdayValid"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="WEDNESDAY_VALID" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Indicates if shift is applicable on a Wednesday.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CalendarDayExceptions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:CalendarDayException"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CalendarDayException">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+            <xsd:documentation>Stores information about the Calendar Day Exceptions for a Calendar. Exceptions can be created with Types: 0 - Non-Standard Off Day or 1 - Non-Standard Working Day. Calendar Day Exceptions are created or managed by createCalendar or changeCalendar API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ExceptionShifts"/>
+            </xsd:all>
+            <xsd:attribute name="CalendarDayExceptionKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_DAY_EXCP_KEY" yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+                    <xsd:documentation>Primary key attribute of YFS_CALENDAR_DAY_EXCP table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Date" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="EXCEPTION_DATE" yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+                    <xsd:documentation>Date for which exception has been specified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExceptionType" type="yfctype:Text-1" use="optional">
+                <xsd:annotation yfc:columnName="EXCEPTION_TYPE" yfc:tableName="YFS_CALENDAR_DAY_EXCP">
+                    <xsd:documentation>ExceptionType  = 1 for Working day, 0 for Off day.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ExceptionShifts">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ExceptionShift"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ExceptionShift">
+        <xsd:annotation yfc:tableName="YFS_CALENDAR_EXCP_SHIFT">
+            <xsd:documentation>Stores information about the Exception Shift of Calendar Day Exceptions for a Calendar. Exception shifts can be created or managed by createCalendar API or changeCalendar API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Shift">
+                    <xsd:annotation yfc:tableName="YFS_CALENDAR_SHIFT">
+                        <xsd:documentation>Stores information related to a Shift. Shifts can be defined for a given effective period. A Shift is created or managed by the createCalendar API or changeCalendar API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="ShiftEndTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_END_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift ends.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="CALENDAR_SHIFT_KEY" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Primary key attribute of YFS_CALENDAR_SHIFT table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftName"
+                            type="yfctype:ShiftName" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_NAME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Name for shift.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftStartTime"
+                            type="yfctype:Time" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIFT_START_TIME" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Time when the shift starts.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShiftType"
+                            type="yfctype:ShiftType" use="optional">
+                            <xsd:annotation yfc:columnName="SHIFT_TYPE" yfc:tableName="YFS_CALENDAR_SHIFT">
+                                <xsd:documentation>Future considerations.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ExceptionShiftKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_EXCP_SHIFT_KEY" yfc:tableName="YFS_CALENDAR_EXCP_SHIFT">
+                    <xsd:documentation>Primary key attribute of YFS_CALENDAR_EXCP_SHIFT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShiftKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CALENDAR_SHIFT_KEY" yfc:tableName="YFS_CALENDAR_EXCP_SHIFT">
+                    <xsd:documentation>Link to YFS_CALENDAR_SHIFT.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

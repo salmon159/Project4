@@ -1,0 +1,1356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/RecalculateHeaderTaxUE_Input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/RecalculateHeaderTaxUE_Input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_RecalculateHeaderTaxUE_Input.xsd" yfc:rootElement="YFSRecalculateHeaderTaxUEInput">
+        <xsd:appinfo source="yfc:structure">
+            <YFSRecalculateHeaderTaxUEInput>
+                <eMemo>
+                    <OrderInvoice hasAttributes="Y">
+                        <Order hasAttributes="Y">
+                            <PriceInfo hasAttributes="Y"/>
+                            <PersonInfoBillTo hasAttributes="Y"/>
+                            <AdditionalAddresses>
+                                <AdditionalAddress hasAttributes="Y">
+                                    <PersonInfo hasAttributes="Y"/>
+                                </AdditionalAddress>
+                            </AdditionalAddresses>
+                            <References>
+                                <Reference hasAttributes="Y"/>
+                            </References>
+                        </Order>
+                        <Shipment hasAttributes="Y">
+                            <ToAddress hasAttributes="Y"/>
+                            <ShipNode hasAttributes="Y">
+                                <ShipNodePersonInfo hasAttributes="Y"/>
+                            </ShipNode>
+                        </Shipment>
+                        <LineDetails hasAttributes="Y">
+                            <LineDetail hasAttributes="Y">
+                                <LineDetailTranQuantity hasAttributes="Y"/>
+                                <LineChargeList hasAttributes="Y">
+                                    <LineCharge hasAttributes="Y"/>
+                                </LineChargeList>
+                            </LineDetail>
+                        </LineDetails>
+                        <HeaderChargeList hasAttributes="Y">
+                            <HeaderCharge hasAttributes="Y"/>
+                        </HeaderChargeList>
+                    </OrderInvoice>
+                </eMemo>
+            </YFSRecalculateHeaderTaxUEInput>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="YFSRecalculateHeaderTaxUEInput" type="yfc:YFSRecalculateHeaderTaxUEInputXSDType"/>
+    <xsd:complexType name="YFSRecalculateHeaderTaxUEInputXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:eMemo"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="eMemo">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderInvoice"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderInvoice">
+        <xsd:annotation yfc:tableName="YFS_ORDER_INVOICE">
+            <xsd:documentation>Stores order invoices raised against an order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineDetails"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderChargeList"/>
+            </xsd:all>
+            <xsd:attribute name="ActualFreightCharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_FREIGHT_CHARGE" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Actual freight charge or the charge for transporting the shipment from the origin  node to the destination node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AmountCollected"
+                type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="AMOUNT_COLLECTED" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Total amount which has been paid against this invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeTransactionKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Link to charge transaction record for which this invoice was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargedActualFreight"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="CHARGED_ACTUAL_FREIGHT" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>If shipping charges were charged on actual, this is set to 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CollectedExternally"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="COLLECTED_EXTERNALLY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Flag to indicate if invoice collection is happening externally in A/R system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CollectedThroughAR"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="AMOUNT_PASSED_TO_AR" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Amount which was passed to A/R system for collection. This would typically be same as total amount unless there was some pre-payment on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The currency code in which this invoice is being processed. All price fields are assumed to be in this currency.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DateInvoiced" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Timestamp when the record was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DerivedFromOrderHeaderKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="DERIVED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Link to order header from which this Invoice's Order is derived.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The document type. This field is a part of an order's unique key. The enterprise code and order number together uniquely identify an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The enterprise code. This field is a part of an order's unique key. The enterprise code and order number together uniquely identify an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HeaderTax" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="TAX" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Tax for header charges.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoiceNo" type="yfctype:InvoiceNo" use="optional">
+                <xsd:annotation yfc:columnName="INVOICE_NO" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Invoice number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoiceType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="INVOICE_TYPE" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Classifies an invoice. For example, Orders, Returns, Debit Memo, Credit Memo, Info etc.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineSubTotal"
+                type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="LINE_SUBTOTAL" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Total of extended price for all the lines. This only includes the price * quantity information and excludes line charges and taxes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MasterInvoiceNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="MASTER_INVOICE_NO" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Not used internally. Can be updated externally by custom logic to group invoices together.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Link to order header.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderInvoiceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_INVOICE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Primary key attribute of YFS_ORDER_INVOICE.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The order number. This field is a part of an order's unique key. The enterprise code and order number together uniquely identify an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherCharges"
+                type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_CHARGES" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Total of all header level charges for the invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The reference 1 of this order invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReturnReleaseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RETURN_RELEASE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Link to a return release if invoice is created for a return.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The seller organization. This is a part of a shipment's unique key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The ship node. This is a part of a shipment's unique key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Link to a shipment if invoice was created for a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>The shipment number. This is a part of a shipment's unique key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status"
+                type="yfctype:EnumInvoiceStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Invoice status. Used for publishing invoice at appropriate time.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalAmount"
+                type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="TOTAL_AMOUNT" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Grand total for the invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalTax" type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="TOTAL_TAX" yfc:tableName="YFS_ORDER_INVOICE">
+                    <xsd:documentation>Total of all taxes across header and lines.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PriceInfo"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfoBillTo"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAddresses"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:References"/>
+            </xsd:all>
+            <xsd:attribute name="BuyerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="BUYER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The buyer organization that is associated with this order. This must be a valid organization defined in the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeliveryCode"
+                type="yfctype:DeliveryCode" use="optional">
+                <xsd:annotation yfc:columnName="DELIVERY_CODE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The organization that pays the freight charges. For example, SUPPLIER, ENTERPRISE, and MARKETPLACE. However, you could pass any other value which is a valid shipment charge type as understood by the carrier by which the shipment is transported. See YFS_SHIPMENT_CONTAINER.carrier_payment_type for additional information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnteredBy" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="ENTERED_BY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The system or sales person who created the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntryType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="ENTRY_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The channel through which this order was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The seller organization that is associated with this order. This must be a valid organization defined in the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="TermsCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="TERMS_CODE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The terms code of the order. This is passed on to the invoice and published with the invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PriceInfo">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The currency code in which this order is being processed. All price fields are assumed to be in this currency.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PersonInfoBillTo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary key for the YFS_PERSON_INFO table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAddresses">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAddress"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAddress">
+        <xsd:annotation yfc:tableName="YFS_ENTITY_ADDRESS">
+            <xsd:documentation>Generic table to store addresses attached with another entity</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfo"/>
+            </xsd:all>
+            <xsd:attribute name="AddressType" type="yfctype:AddressType" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_TYPE" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Identifies the type of address. Part of unique key</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityAddressKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_ADDRESS_KEY" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Primary key attribute of YFS_ENTITY_ADDRESS.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_KEY" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Link to the entity table</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityParentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_PARENT_KEY" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Link to the entity's parent table. Denormalized data to allow faster access of records for all addresses attached with the parent. In case of an order line address, this would store order header key</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityType" type="yfctype:EntityType" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_TYPE" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Identifies the entity to  which this address is attached to</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_ENTITY_ADDRESS">
+                    <xsd:documentation>Link to YFS_PERSON_INFO table that stores the actual address</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PersonInfo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="References">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Reference"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Reference">
+        <xsd:annotation yfc:tableName="YFS_REFERENCE_TABLE">
+            <xsd:documentation>This table stores dynamic order references that can be passed to the createOrder API and returned by the getOrderDetails API. Database extensibility of the order tables should be used instead of this table to store implementation specific order fields.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="optional"/>
+            <xsd:attribute name="Value" type="yfctype:Text-40" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ToAddress"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipNode"/>
+            </xsd:all>
+            <xsd:attribute name="ManifestNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="MANIFEST_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>An attribute used to store manifest number assigned by carrier server. ManifestKey on shipment is where the actual manifesting related information is stored for the manifesting process in the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceivingNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="RECEIVING_NODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The node that receives the shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SCAC" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="SCAC" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The carrier by which this shipment will be transported.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_DATE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ToAddress">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The URL of the person or organization referred to in this contact information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipNode">
+        <xsd:annotation yfc:tableName="YFS_SHIP_NODE">
+            <xsd:documentation>This table stores receiving node, ship node, and distribution centers in the system for various organizations.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipNodePersonInfo"/>
+            </xsd:all>
+            <xsd:attribute name="ShipnodeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>The primary key for the YFS_SHIP_NODE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipNodePersonInfo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The URL of the person or organization referred to in this contact information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineDetails">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineDetail"/>
+            </xsd:all>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineDetail">
+        <xsd:annotation yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+            <xsd:documentation>Stores line details for an invoice.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineDetailTranQuantity"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineChargeList"/>
+            </xsd:all>
+            <xsd:attribute name="Charges" type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_CHARGES" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Total of all charges for the line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendedPrice" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDED_PRICE" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Quantity * Unit price.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>The unique identifier for the item of this invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineTotal" type="yfctype:ComputedMoney" use="optional">
+                <xsd:annotation yfc:columnName="FINAL_LINE_CHARGES" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Total of all charges for the line including taxes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderInvoiceDetailKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ORDER_INVOICE_DETAIL_KEY" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Primary key attribute of YFS_ORDER_INVOICE_DETAIL.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderInvoiceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_INVOICE_KEY" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Link to the order invoice.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Link to order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Prime line no of the order line.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LineNo"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>The product class for the item of this invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShippedQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_SHIPPED" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Quantity being invoiced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Sub line no of the order line.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LineNo"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Tax" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="TAX" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Total of all taxes for the line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>The unit of measure for the item of this invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitPrice" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_PRICE" yfc:tableName="YFS_ORDER_INVOICE_DETAIL">
+                    <xsd:documentation>Unit Price for invoice line item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineDetailTranQuantity">
+        <xsd:complexType>
+            <xsd:attribute name="ShippedQty" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="TransactionalUOM" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineChargeList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineCharge"/>
+            </xsd:all>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineCharge">
+        <xsd:annotation yfc:tableName="YFS_LINE_CHARGES">
+            <xsd:documentation>This table stores any additional charges or discounts that can be added to an  order line.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeAmount"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEAMOUNT" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Total charge for this line taking into account the quantity on order and charge per unit of the line and the charge per line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_CATEGORY.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_NAME.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerLine"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERLINE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Fixed charge amount for this order/invoice line. When the line charge is associated with an order line, this amount will be invoiced on the first invoice for this order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerUnit" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERUNIT" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Charge per unit for the item on this order/invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="HEADER_KEY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to the header entity associated with this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoicedChargePerLine"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation
+                    yfc:columnName="INVOICED_CHARGE_PER_LINE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Applicable only to charges for an Order line. This is the charge per line which has already been invoiced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoicedExtendedCharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation
+                    yfc:columnName="INVOICED_EXTENDED_CHARGE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Applicable only to charges for an Order line. Total extended charge across all invoices for this line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsBillable" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="IsBillalbe" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="IsDiscount" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="LineChargesKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LINE_CHARGES_KEY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>The primary key of the YFS_LINE_CHARGES table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LINE_KEY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to the entity associated with this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RecordType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="RECORD_TYPE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Identifies the entity attached with this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Any additional reference related to this line charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderChargeList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderCharge"/>
+            </xsd:all>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderCharge">
+        <xsd:annotation yfc:tableName="YFS_HEADER_CHARGES">
+            <xsd:documentation>This table stores charges that are applied at the header level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeAmount"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The amount of the charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The charge category. For example, Labeling or Handling.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The name of the charge. For example, Price Ticket.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HeaderChargesKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="HEADER_CHARGES_KEY" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The primary key of the YFS_HEADER_CHARGES table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="HEADER_KEY" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Link to the entity for which this charge is recorded.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoicedChargeAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="INVOICED_CHARGE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Applicable only to charges for an Order. This is the amount which has already been invoiced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsBillable" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="IsDiscount" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="RecordType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="RECORD_TYPE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Defines the entity for which this charge is recorded.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Reference information about this charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

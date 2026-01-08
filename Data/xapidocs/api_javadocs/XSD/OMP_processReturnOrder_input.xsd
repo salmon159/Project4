@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/processReturnOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/processReturnOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="OMP_processReturnOrder_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+			The <code>OrderHeaderKey</code>, or  the <code>EnterpriseCode</code>, <code>DocumentType</code> and the <code>OrderNo</code> must be passed to identify the <code>Order</code>.
+			<Validation>
+                        <Condition>
+                            <code>DocumentType</code> should be a valid return <code>DocumentType</code>.
+				</Condition>
+                        <Error Description="Invalid Document Type." ErrorCode="YFS10367"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:attribute name="DetermineOrdersForReturn" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>Determines whether the API should search for sales orders for associating to the return order.</p>
+					Default: <b>
+                        <code>Y</code>
+                    </b>
+                    <br/>
+                    <u>Valid Values</u>
+                    <br/>
+                    <b>
+                        <code>Y</code>
+                    </b> - Search for sales order for associating to the return order.
+					<br/>
+                    <b>
+                        <code>N</code>
+                    </b> - Skip the search for sales orders. Any charges on the return order line or header 
+					containing charge breakup record(s) will be reset to zero while also deleting all the charge breakup records 
+					so that they are recomputed. 
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ExecuteReturnPolicy" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>Determines whether the return policies should be executed as part of this API call.</p>
+					Default: <b>
+                        <code>Y</code>
+                    </b>
+                    <br/>
+                    <u>Valid Values</u>
+                    <br/>
+                    <b>
+                        <code>Y</code>
+                    </b> - Execute each configured return policy.
+					<br/>
+                    <b>
+                        <code>N</code>
+                    </b> - Skip return policy execution.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="IsInquiry" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values:
+					<br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Process the return order and save the changes.
+					<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Process the return order but do not save the changes. Used to get information on refund amount.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="N"/>
+                    <xsd:enumeration value="Y"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SegregateBlindRefund" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>Determines whether the API should consider blind order lines separately for refunding.</p>
+					Default: <b>
+                        <code>N</code>
+                    </b>
+                    <br/>
+                    <u>Valid Values</u>
+                    <br/>
+                    <b>
+                        <code>Y</code>
+                    </b> - Refund blind order line total to default refund payment method configured in the system.
+					<br/>
+                    <b>
+                        <code>N</code>
+                    </b> - Do not differenciate blind order lines and associated order lines for refund. 
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

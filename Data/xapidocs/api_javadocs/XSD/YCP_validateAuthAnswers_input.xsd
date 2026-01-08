@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/validateAuthAnswers/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/validateAuthAnswers/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_validateAuthAnswers_input.xsd" yfc:rootElement="AuthAnswerList">
+        <xsd:appinfo source="yfc:structure">
+            <AuthAnswerList hasAttributes="Y">
+                <User hasAttributes="Y"/>
+                <AuthAnswer hasAttributes="Y"/>
+            </AuthAnswerList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AuthAnswerList" type="yfc:AuthAnswerListXSDType">
+        <xsd:annotation yfc:tableName="PLT_AUTH_ANSWER">
+            <xsd:documentation>The table is used for storing answers.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="AuthAnswerListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:User"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AuthAnswer"/>
+        </xsd:all>
+        <xsd:attribute name="UserKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="USER_KEY" yfc:tableName="PLT_AUTH_ANSWER">
+                <xsd:documentation>User key</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="User">
+        <xsd:annotation yfc:tableName="YFS_USER">
+            <xsd:documentation> This table stores information on users in the system.
+		<div>
+                    <Validation>
+                        <Condition>If invalid user identifiers - <code>Loginid</code> or <code>UserKey</code> are passed.</Condition>
+                        <Error
+                            Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Loginid" type="yfctype:LoginId" use="optional">
+                <xsd:annotation yfc:columnName="LOGINID" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The login ID for the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AuthAnswer">
+        <xsd:annotation yfc:tableName="PLT_AUTH_ANSWER">
+            <xsd:documentation>
+                <div> The table is used for storing answers.
+			<Validation>
+                        <Condition>If invalid authorization question is answered</Condition>
+                        <Error
+                            Description="Incorrect question being answered." ErrorCode="YCP0459"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If blank authorization answer is provided</Condition>
+                        <Error Description="Blank authorization answer." ErrorCode="YCP0460"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If incorrect authorization answer is provided</Condition>
+                        <Error
+                            Description="Incorrect authorization answer." ErrorCode="YCP0461"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If blank authorization question key and question text are provided</Condition>
+                        <Error
+                            Description="Both authorization question key and question text are blank." ErrorCode="PLT0508"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If there is no authorization question set up for the user.</Condition>
+                        <Error
+                            Description="No authorization question associated with the user." ErrorCode="PLT0509"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Answer" type="yfctype:Answer" use="optional">
+                <xsd:annotation yfc:columnName="ANSWER" yfc:tableName="PLT_AUTH_ANSWER">
+                    <xsd:documentation>Answer for the question.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthAnswerKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_ANSWER_KEY" yfc:tableName="PLT_AUTH_ANSWER">
+                    <xsd:documentation>Primary key attribute of PLT_AUTH_ANSWER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthQuestionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_QUESTION_KEY" yfc:tableName="PLT_AUTH_ANSWER">
+                    <xsd:documentation>Question Key</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuestionText" type="yfctype:Question" use="optional">
+                <xsd:annotation yfc:columnName="QUESTION_TEXT" yfc:tableName="PLT_AUTH_ANSWER">
+                    <xsd:documentation>Custom question for an user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

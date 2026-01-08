@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/copyPricelistAssignment/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/copyPricelistAssignment/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_copyPricelistAssignment_input.xsd" yfc:rootElement="PricelistHeader">
+        <xsd:appinfo source="yfc:structure">
+            <PricelistHeader hasAttributes="Y">
+                <CopyFromPricelistHeader hasAttributes="Y"/>
+                <PricelistAssignmentList hasAttributes="Y"/>
+            </PricelistHeader>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PricelistHeader" type="yfc:PricelistHeaderXSDType">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_HDR">
+            <xsd:documentation>
+                <div>
+					Specify the price list to copy assignments to.  <code>PricelistHeaderKey</code> or <code>PricelistName</code> can be specified to identify a price list.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PricelistHeaderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:CopyFromPricelistHeader"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricelistAssignmentList"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YPM_PRICELIST_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>Enterprise for which the assignments are to be copied.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> is void.
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode cannot be void." ErrorCode="YPM10030"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricelistHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Primary key attribute of YPM_PRICELIST_HDR table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricelistName" type="yfctype:PricelistName" use="optional">
+            <xsd:annotation yfc:columnName="PRICELIST_NAME" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Name of the price list.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CopyFromPricelistHeader">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_HDR">
+            <xsd:documentation>
+                <div>The price list to copy assignments from. The price list should belong to the enterprise passed in the input.
+						<Validation>
+                        <Condition>Not able to find a price list for the passed price list identifiers.
+							</Condition>
+                        <Error
+                            Description="Invalid price list identifiers." ErrorCode="YPM10016"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PricelistHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Primary key attribute of YPM_PRICELIST_HDR table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricelistName"
+                type="yfctype:PricelistName" use="optional">
+                <xsd:annotation yfc:columnName="PRICELIST_NAME" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Name of the price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistAssignmentList">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>The price list to copy assignments from. Default <code>Mode</code> is <b>
+                        <code>Copy</code>
+                    </b> if this element is not passed.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Mode" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> Mode of copy operation.
+							<br/>Valid Values: 
+							<br/>
+                            <b>
+                                <code>Copy</code>
+                            </b> - Copies price list assignments from one price list to another.
+							<br/>
+                            <b>
+                                <code>Replace</code>
+                            </b> - Deletes the existing price list assignments and copies assignments from another price list. 
+							<br/>
+                            <b>
+                                <code>Merge</code>
+                            </b> - Copies assignments from another price list only if it does not exist. A non Shareable customer assignment is made Shareable if the copy from price list has that assignment shared.
+							<br/>The default behavior is <b>
+                                <code>Copy</code>
+                            </b>.
+							<Validation>
+                                <Condition>If the <code>Mode</code> is <b>
+                                    <code>Copy</code>
+                                    </b> and the price list to copy to and the price list to copy from has price list lines.
+								</Condition>
+                                <Error
+                                    Description="Cannot copy assignments as price list already has assignments defined for the enterprise." ErrorCode="YPM10073"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If the <code>Mode</code> is <b>
+                                    <code>Merge</code>
+                                    </b> then after merge price list can not have both global or specific seller assignments for an enterprise</Condition>
+                                <Error
+                                    Description="Pricelist can not have both global and specific seller assignments for an enterprise." ErrorCode="YPM10107"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

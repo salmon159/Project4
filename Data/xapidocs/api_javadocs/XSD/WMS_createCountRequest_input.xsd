@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/createCountRequest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/createCountRequest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_createCountRequest_input.xsd" yfc:rootElement="CreateCountRequest">
+        <xsd:appinfo source="yfc:structure">
+            <CreateCountRequest hasAttributes="Y">
+                <Receipt hasAttributes="Y"/>
+            </CreateCountRequest>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CreateCountRequest" type="yfc:CreateCountRequestXSDType">
+        <xsd:annotation yfc:tableName="YFS_COUNT_REQUEST">
+            <xsd:documentation>This transaction table stores count requests to perform inventory count in a warehouse. The count process in a warehouse begins with the count request.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CreateCountRequestXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+        </xsd:all>
+        <xsd:attribute name="AisleNumber" use="optional">
+            <xsd:annotation yfc:columnName="AISLE_NUMBER" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the Aisle Number of the location that the user wants to count.
+							<Validation>
+                            <Condition>If passed <code>AisleNumber</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Integer"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="BayNumber" use="optional">
+            <xsd:annotation yfc:columnName="BAY_NUMBER" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the Bay Number of the location that the user wants to count.
+							<Validation>
+                            <Condition>If passed <code>BayNumber</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Integer"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>A CaseId
+						<Validation>
+                            <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+							</Condition>
+                            <Error
+                                Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Along with <code>CaseId,</code>
+                                <code>EnterpriseCode</code> should also be passed. Error if <code>EnterpriseCode</code> not passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The <code>CaseId</code> should exist and belong to the given <code>EnterpriseCode</code>. 
+							</Condition>
+                            <Error
+                                Description="WMS:CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountProgramName" type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_PROGRAM_NAME" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>The count program name for which the count request is created.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of count request entity. Generated by system if not passed by the user.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CountRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="COUNT_REQUEST_NO" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Identifier of the count request within the context of document type and node. If not passed, it is generated by the system. If passed it should not be duplicate of already available CountReqestNo. This is to avoid unique key violation.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the purpose of the count request. If not passed, defaulted to count.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates enterprise for which the count request is being created.
+							<Validation>
+                            <Condition>If <code>EnterpriseCode</code> is not a valid enterprise.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>EnterpriseCode</code> is passed, the <code>Node</code> and <code>EnterpriseCode</code> combination must exist.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FinishNoLaterThan" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="FINISH_NO_LATER_THAN" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates <code>FinishNoLaterThan</code> time stamp of the count request. It is a pass through field to be stamped on each count task generated for the count request. It indicates that the task has to be completed before this date. If not passed, it is defaulted to High date (25000101T00:00:00).
+							<Validation>
+                            <Condition>If passed, <code>FinishNoLaterThan</code> should not be before the System date. Error if passed before System date.
+								</Condition>
+                            <Error
+                                Description="Count cannot be requested before the system date." ErrorCode="WMS00112"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>StartNoEarlierThan</code> should not be after <code>FinishNoLaterThan</code>. Validation if <code>StartNoEarlierThan</code> after <code>FinishNoLaterThan</code>.
+								</Condition>
+                            <Error
+                                Description="Count request finish date cannot be earlier than start date." ErrorCode="WMS00113"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromLocation" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="FROM_LOCATION" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the starting location of the range of locations that the user wants to count.
+							<Validation>
+                            <Condition>If passed <code>LocationId</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemClassification1"
+            type="yfctype:CommonCode" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_CLASSIFICATION1" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						The first item classification for the count request.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemClassification2"
+            type="yfctype:CommonCode" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_CLASSIFICATION2" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						The second item classification for the count request.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemClassification3"
+            type="yfctype:CommonCode" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_CLASSIFICATION3" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						The third item classification for the count request.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						ItemID along with EnterpriseCode determines the SKU for which the count request is being created.
+							<Validation>
+                            <Condition>Along with <code>ItemID</code>, <code>EnterpriseCode</code> should also be passed.
+								</Condition>
+                            <Error
+                                Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LevelNumber" use="optional">
+            <xsd:annotation yfc:columnName="LEVEL_NUMBER" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the Level Number of the location that the user wants to count.
+							<Validation>
+                            <Condition>If passed <code>LevelNumber</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Integer"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the location for which the count request is being created.
+							<Validation>
+                            <Condition>If passed <code>LocationId</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the node or warehouse where the count request was created.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> not passed.
+								</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist.
+								</Condition>
+                            <Error
+                                Description="Node passed does not exist." ErrorCode="WMS00042"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>A PalletId 
+						<Validation>
+                            <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+							</Condition>
+                            <Error
+                                Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Along with <code>PalletId</code>, <code>EnterpriseCode</code> should also be passed. Error if <code>EnterpriseCode</code> not passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed" ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The <code>PalletId</code> should exist and belong to the given <code>EnterpriseCode</code>. 
+							</Condition>
+                            <Error
+                                Description="WMS:CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Priority" type="yfctype:Priority" use="optional">
+            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Determines the urgency of completing a count request. 
+						System defined Common Code with CodeType <code>PRIORITY</code>.
+						If priority is not passed, then it is defaulted to value <code>
+                            <b>3</b>
+                        </code> i.e. <code>Normal</code>
+                        <br/>Valid values - <code>
+                            <b>1</b>
+                        </code>, <code>
+                            <b>2</b>
+                        </code>, <code>
+                            <b>3</b>
+                        </code>, <code>
+                            <b>4</b>
+                        </code>. These values correspond to <code>Urgent</code>, <code>High</code>, <code>Normal</code> and <code>Low</code> values respectively.
+							<Validation>
+                            <Condition>If passed, checks for valid <code>Priority</code>.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						ProductClass is always associated to an Item.
+							<Validation>
+                            <Condition>Along with <code>ProductClass</code>, <code>ItemID and EnterpriseCode</code> should also be passed.
+								</Condition>
+                            <Error
+                                Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the receipt for which the count request is being created.
+							<Validation>
+                            <Condition>If passed, checks for valid <code>ReceiptHeaderKey</code>.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestType" type="yfctype:RequestType" use="optional">
+            <xsd:annotation yfc:columnName="REQUEST_TYPE" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>RequestType</code> passed but not valid.
+								</Condition>
+                            <Error Description="Invalid Request Type." ErrorCode="WMS00226"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestingUserId" type="yfctype:UserId" use="optional">
+            <xsd:annotation yfc:columnName="REQUESTING_USER_ID" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						User that makes a request for performing a count operation. Such a user may exist outside of the warehouse management system.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartNoEarlierThan"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="START_NO_EARLIER_THAN" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates <code>StartNoEarlierThan</code> time stamp of the count request. It is a pass through field to be stamped on each count task generated for the count request. It indicates that the task is not to be suggested to the user for execution before this date. If not passed, it is defaulted to the System date.
+							<Validation>
+                            <Condition>If passed, <code>StartNoEarlierThan</code> should not be before the System date. Error if passed before System date.
+								</Condition>
+                            <Error
+                                Description="Count cannot be requested before the system date." ErrorCode="WMS00112"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToLocation" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="TO_LOCATION" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the end location of the range of locations that the user wants to count.
+							<Validation>
+                            <Condition>If passed <code>LocationId</code> should be valid. 
+								</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						UnitOfMeasure is always associated to an Item.
+							<Validation>
+                            <Condition>Along with <code>UnitOfMeasure</code>, <code>ItemID and EnterpriseCode</code> should also be passed.
+								</Condition>
+                            <Error
+                                Description="Item details are not passed in input." ErrorCode="WMS00020"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_COUNT_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Indicates the zone for which the count request is being created.
+							<Validation>
+                            <Condition>If passed <code>ZoneId</code> should be valid.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and ZoneId combination." ErrorCode="WMS00035"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>
+                        <div>Indicates the receipt to which inventory belongs.
+								<Validation>
+                                <Condition>If passed, should be a valid receipt number.
+									</Condition>
+                                <Error
+                                    Description="No record found  for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Sterling Order Management (5725-D10), IBM Order Management (5737-D18)
+ * (C) Copyright IBM Corp. 2005, 2018  All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of its trade secrets, irrespective of what has been deposited with the U.S. Copyright Office.
+-->
+<InventoryNodeControl AddControlForNode="" CallingOrganizationCode=""
+    InvPictureIncorrectTillDate="" InventoryPictureCorrect="Y|N"
+    InventoryPictureCorrectForAllItemsAtNode="Y|N" ItemID="Conditional"
+    Node="Required" NodeControlType="" OrganizationCode="Conditional"
+    ProductClass="" RemoveControlForNode="" StartDate=""
+    UnitOfMeasure="" xmlns="http://www.sterlingcommerce.com/documentation/INV/manageInventoryNodeControl/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+			A combination of OrganizationCode, Node, ItemID, UOM, and ProductClass can be used to indentify an inventory node control.  If the inventory node control specified does not exist, it will be created.  If it exists, it will be modified.
+			</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AddControlForNode">
+                <Description>
+                    <div>
+					Indicates Node Control to be created for given Node and inventory organization.  Default value is "N".  If <code>AddControlForNode</code> is set to "Y", the inventory node control will be created.
+				   <Validation>
+                            <Condition>
+                                Both <code>AddControlForNode</code> and <code>RemoveControlForNode</code> are passed as <b>
+                                    <code>Y</code>
+                                </b>. </Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_002"/>
+                            <Condition>
+                                <code>AddControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also passed.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_003"/>
+                            <Condition>
+                                <code>AddControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>InventoryPictureCorrect</code> is also passed as <b>Y</b>.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control"
+                Name="CallingOrganizationCode" NameInEntity="organization_code">
+                <Description>
+                    <div>
+					 The Organization Code for which this API is being called. If <code>OrganizationCode</code> attribute is passed, 
+					 then it will used instead of <code>CallingOrganizationCode</code>.
+			        </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control"
+                Name="InvPictureIncorrectTillDate" NameInEntity="Inv_Picture_Incorrect_Till_Date">
+                <Description>
+                    <div>
+					Timestamp for which the inventory picture for an item at a node is incorrect until. If Timestamp is a past, then no corresponding Inventory Activity will be created.
+					<Validation>
+                            <Condition>
+                                <code>InvPictureIncorrectTillDate</code> is not passed and <code>InventoryPictureCorrect</code> is set to "N".</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="InventoryPictureCorrect">
+                <Description>
+                    <div>
+					Indicates whether the inventory picture of the item is correct at the node.  Default value is "N".  If <code>InventoryPictureCorrect</code> is set to "Y", the inventory node control will be deleted.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="InventoryPictureCorrectForAllItemsAtNode">
+                <Description>
+                    <div>
+					Indicates whether the inventory picture of all items at the node are correct.  Default value is "N".  If <code>InventoryPictureCorrectForAllItemsAtNode</code> is set to "Y", all inventory node control records for the node and node control type will be deleted.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control" Name="ItemID" NameInEntity="Item_Id">
+                <Description>
+                    <div>
+					Item for which inventory control is being setup.
+					<Validation>
+                            <Condition>
+                                <code>InventoryPictureCorrectForAllItemsAtNode</code> is passed as <b>
+                                    <code>N</code>
+                                </b> and <code>ItemID</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                            <Condition>
+                                 Either <code>AddControlForNode</code> or <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also provided.</Condition>
+                            <Error
+                                Description="Invalid Input : {AddControlForNode} and {RemoveControlForNode} can not be passed with Item data in the input." ErrorCode="INV95_003"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control" Name="Node" NameInEntity="Node_Key">
+                <Description>
+                    <div>
+					Node for which inventory control is being setup.
+					<Validation>
+                            <Condition>
+                                <code>Node</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> is not valid.</Condition>
+                            <Error Description="Invalid ShipNode." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="NodeControlType">
+                <Description>
+                    <div>
+						The type of inventory node control represented by this record.  Valid values include:
+						<ul>
+                            <li>
+                                <code>
+                                    <b>ON_HOLD</b>
+                                </code> - Inventory is on hold for sourcing for this item/node combination.</li>
+                            <li>
+                                <code>
+                                    <b>IDLE_ASSET</b>
+                                </code> - Inventory is idle for this item/node combination.</li>
+                        </ul>
+						If not passed, <code>
+                            <b>ON_HOLD</b>
+                        </code> is assumed.
+						<Validation>
+                            <Condition>The value passed for <code>NodeControlType</code> is not a valid value.</Condition>
+                            <Error
+                                Description="Invalid node control type." ErrorCode="INV77_001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>NodeControlType</code> is either optional or accept <b>ON_HOLD</b> when {AddControlForNode} or {RemoveControlForNode} flag is provided.</Condition>
+                            <Error
+                                Description="Invalid node control type." ErrorCode="INV95_005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control"
+                Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					Inventory Organization Code.
+					<Validation>
+                            <Condition>
+                                <code>InventoryPictureCorrectForAllItemsAtNode</code> is passed as <b>
+                                    <code>N</code>
+                                </b> and <code>OrganizationCode</code> is not passed.</Condition>
+                            <Error
+                                Description="Missing mandatory attribute." ErrorCode="INV10008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid or not an inventory organization.</Condition>
+                            <Error
+                                Description="Invalid OrganizationCode." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="RemoveControlForNode">
+                <Description>
+                    <div>
+					Indicates Node Control to be removed or not for given invetory organization.  Default value is "N".  If <code>RemoveControlForNode</code> is set to "Y", the inventory node control will be deleted.
+				<Validation>
+                            <Condition>
+                                Both <code>AddControlForNode</code> and <code>RemoveControlForNode</code> are passed as <b>
+                                    <code>Y</code>
+                                </b>. </Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_002"/>
+                            <Condition>
+                                <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>ItemID</code> is also passed.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_003"/>
+                            <Condition>
+                                <code>RemoveControlForNode</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> and <code>InventoryPictureCorrect</code> is also passed as <b>Y</b>.</Condition>
+                            <Error Description="Invalid Criteria." ErrorCode="INV95_004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Node_Control"
+                Name="StartDate" NameInEntity="Start_Date">
+                <Description>
+                    <div>
+					The timestamp after which to apply this inventory node control record.  If this timestamp is the current time or occurs in the past, then the node control record will be applied.  If the timestamp is in the future, this record will have no effect until that time and no corresponding Inventory Actitivy will be created.
+				</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+</InventoryNodeControl>

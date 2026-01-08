@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INVENTORY/CHANGE/ON_INV_MISMATCH_LIST"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INVENTORY/CHANGE/ON_INV_MISMATCH_LIST" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INVENTORY_CHANGE.ON_INV_MISMATCH_LIST.xsd" yfc:rootElement="Items">
+        <xsd:appinfo source="yfc:structure">
+            <Items>
+                <Item hasAttributes="Y">
+                    <Tag hasAttributes="Y"/>
+                </Item>
+            </Items>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Items" type="yfc:ItemsXSDType"/>
+    <xsd:complexType name="ItemsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Item"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>
+                <div>
+					Inventory item whose supplies at the shipnode is different from supplies store within the system.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tag"/>
+            </xsd:all>
+            <xsd:attribute name="AdjustmentType" type="yfctype:ID-15" use="optional">
+                <xsd:annotation yfc:columnName="TRANSACTION_TYPE" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>
+                        <div>
+						The type of adjustment. 
+						<br/>Valid Values: <b>
+                                <code>ADJUSTMENT</code>
+                            </b> - indicates manual inventory adjustment or <b>
+                                <code>RECEIPT</code> - indicates a receipt of a PO or ASN.</b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				 If <code>OrganizationCode</code> passed, the adjustment is made for the organization. 
+				 If it is not passed, the adjustment is made for the node owner's inventory organization.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity"
+                type="yfctype:QuantityPositiveAndNegative" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				If the <code>AdjustmentType</code> is <b>
+                                <code>ADJUSTMENT</code>
+                            </b>, and the <code>Quantity</code> is negative, the quantity for the <code>SupplyType</code> indicated is reduced.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The code of the reason for this inventory audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The description of the reason for this inventory audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RemoveInventoryNodeControl"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Indicates if inventory node controls of the item at the node should be removed if exists.
+							<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>The segment for this inventory supply.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>The segment type for this inventory supply.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				If item is time sensitive then a <code>ShipByDate</code> may be provided.If provided, it is used for updates. 
+				<br/>If <code>ShipByDate</code> is not provided, then if 
+				  <ul>
+                                <li>
+                                    <code>SupplyType</code> is of the type onhand the <code>ShipByDate</code> is calculated as "today + item's default expiration days".</li>
+                                <li>
+                                    <code>SupplyType</code> is not of the type onhand the <code>ShipByDate</code> is calculated as "<code>ETA</code>  + item's default expiration days".</li>
+                            </ul>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+					Node where inventory is located.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplyType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SUPPLY_TYPE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+						Required.  The value should be a valid <code>SupplyType</code> defined in <code>YFS_INVENTORY_SUPPLY_TYPE</code>.   Indicates the <code>SupplyType</code> with which inventory needs to be adjusted.
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Tag">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>
+                <div>
+				Stores tag information for inventory. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.
+                        </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

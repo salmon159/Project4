@@ -1,0 +1,1541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/manageCategory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/manageCategory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_manageCategory_input.xsd" yfc:rootElement="CategoryList">
+        <xsd:appinfo source="yfc:structure">
+            <CategoryList>
+                <Category hasAttributes="Y">
+                    <AdditionalAttributeList>
+                        <AdditionalAttribute hasAttributes="Y"/>
+                    </AdditionalAttributeList>
+                    <ItemServiceAssocList hasAttributes="Y">
+                        <ItemServiceAssoc hasAttributes="Y">
+                            <ItemServiceAssocSkillList hasAttributes="Y">
+                                <ItemServiceAssocSkill hasAttributes="Y"/>
+                            </ItemServiceAssocSkillList>
+                        </ItemServiceAssoc>
+                    </ItemServiceAssocList>
+                    <ClassificationItemAttribute hasAttributes="Y">
+                        <SafetyFactorDefinitions hasAttributes="Y">
+                            <SafetyFactorDefinition hasAttributes="Y"/>
+                        </SafetyFactorDefinitions>
+                    </ClassificationItemAttribute>
+                    <AssetList hasAttributes="Y">
+                        <Asset hasAttributes="Y">
+                            <AssetLocaleList hasAttributes="Y">
+                                <AssetLocale hasAttributes="Y"/>
+                            </AssetLocaleList>
+                        </Asset>
+                    </AssetList>
+                    <ItemAttributeList hasAttributes="Y">
+                        <ItemAttribute hasAttributes="Y">
+                            <ItemAttrGroupType hasAttributes="Y">
+                                <ItemAttrGrpTypeLocaleList hasAttributes="Y">
+                                    <ItemAttrGrpTypeLocale hasAttributes="Y"/>
+                                </ItemAttrGrpTypeLocaleList>
+                            </ItemAttrGroupType>
+                        </ItemAttribute>
+                    </ItemAttributeList>
+                    <InsertBefore hasAttributes="Y"/>
+                    <CategoryLocaleList hasAttributes="Y">
+                        <CategoryLocale hasAttributes="Y"/>
+                    </CategoryLocaleList>
+                </Category>
+            </CategoryList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CategoryList" type="yfc:CategoryListXSDType"/>
+    <xsd:complexType name="CategoryListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Category"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Category">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY">
+            <xsd:documentation>
+                <div>
+                    The item category master table.
+                        <Validation>
+                        <Condition>
+                            Either the <code>CategoryKey</code> attribute or both the <code>OrganizationCode</code> and <code>CategoryPath</code> attributes must be passed and must be valid.
+                            </Condition>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            If not passed:
+                            </Condition>
+                        <Error
+                            Description="Mandatory parameters for the operation are missing" ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            If not valid, and <code>Action</code> is <code>
+                                <b>Modify</b>
+                            </code> or <code>
+                                <b>Delete</b>
+                            </code>:
+                            </Condition>
+                        <Error Description="Category Not Found" ErrorCode="YCM0034"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            If <code>CategoryDomainKey</code> or both the <code>CategoryDomain</code> and <code>IsClassification</code> attributes are not valid and category path is not unique:
+                            </Condition>
+                        <Error Description="Multiple Records Found" ErrorCode="YFS10002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						   If <code>SubCatalogOrganizationCode</code> or <code>AuthorizedSubCatalogOrganizationCode</code> is not of a valid sub-catalog organization of the catalog organization specified in <code>OrganziationCode</code> field:
+						</Condition>
+                        <Error
+                            Description="Invalid sub-catalog organization" ErrorCode="YCM83_007"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+							When a child category is created by a sub-catalog organization, that same sub-catalog organization must be the authorized sub-catalog organization or the owner of the parent category or category domain</Condition>
+                        <Error Description="Invalid Category Owner" ErrorCode="YCM83_011"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						   If both <code>SubCatalogOrganizationCode</code> and <code>AuthorizedSubCatalogOrganizationCode</code> are passed in:
+						</Condition>
+                        <Error
+                            Description="Sub-catalog org cannot own and be authorized to a cateogry at the same time" ErrorCode="YCM83_015"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						   If <code>AuthorizedSubCatalogOrganizationCode</code> is modified for a category with child categories:
+						</Condition>
+                        <Error
+                            Description="Authorized sub-catalog organization cannot be modified for category with children" ErrorCode="YCM83_018"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttributeList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemServiceAssocList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ClassificationItemAttribute"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AssetList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttributeList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InsertBefore"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CategoryLocaleList"/>
+            </xsd:all>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                            <b>
+                                <code>Manage</code>
+                            </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+					<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record. 
+					<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+					<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Deletes an existing category.
+					<br/>The default behavior is <b>
+                                <code>Manage</code>
+                            </b>.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizedSubCatalogOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_SUB_CAT_ORG_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>This field indicates the sub-catalog organization that the catalog organization authorizes to maintain the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryDomain" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_DOMAIN" yfc:tableName="YFS_CATEGORY_DOMAIN">
+                    <xsd:documentation>The identifier for a category domain defined by an organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryDomainKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_DOMAIN_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The category domain associated with this category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_ID" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+                        The new ID of the category being modified, or ID of category being created. This attribute must not contain space as search index build will treat <code>CategoryID</code> with space as separate phrases.
+                            <Validation>
+                                <Condition>
+                                No other category can exist with the same ID at the same hierarchical level in the category structure.    If a category with the same ID exists: 
+                                </Condition>
+                                <Error
+                                    Description="Category ID already exists within this category level" ErrorCode="YCM0020"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                CategoryID, while creating a new Category must have a non-void value. 
+                                </Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+                        The path of the category. Path can be passed to create the category. Any categories in the path that do not already exist will be created with default values. If <code>Category1 </code> needs to be created in category domain <code>CATEGORY_DOMAIN</code>, path should be passed as <code>/CATEGORY_DOMAIN/Category1. </code>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description"
+                type="yfctype:FreeText-2000" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsClassification" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_CLASSIFICATION" yfc:tableName="YFS_CATEGORY_DOMAIN">
+                    <xsd:documentation>This flag indicates whether the category is an item classfication.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Keywords" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="KEYWORDS" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>A field used to specify keywords to be associated with the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The code for the organization this category is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentCategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The parent category associated with this category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The display sequence of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The short description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status" type="yfctype:EnumShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+                        Status of a category description.
+						<br/>
+                            <br/>Default Value: <b>
+                                <code>2000</code>
+                            </b> (HELD Status)
+						<br/>Valid Values: <i>See all defined statuses in the status configurator.</i>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubCatalogOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="SUB_CAT_ORG_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The sub-catalog organization that maintains the category definition.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttributeList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:AdditionalAttribute"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttribute">
+        <xsd:annotation yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+            <xsd:documentation>
+                <div>
+	This entity is used to store values for an attribute assigned to a category or item. This entity is also used to store dynamic attributes attached with an entity. Currently used to store additional attributes for item and category entities.
+	<Validation>
+                        <Condition>If this element is passed, <code>Name</code> attribute cannot be blank.</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If this element is passed, either <code>Value</code> or  <code>IntegerValue</code>  or <code>DoubleValue</code> must be passed.</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>An <code>AdditionalAttribute</code> record is not allowed for an <code>Attribute</code> record that has an <code>AttributeReference</code> associated to it.</Condition>
+                        <Error
+                            Description="Cannot Assign Value To Reference Attribute." ErrorCode="YSC84_0013"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If the associated <code>Attribute</code> record is configured with <code>AllowMultipleValues</code> as 'N', then only one <code>AdditionalAttribute</code> record is allowed for that <code>Attribute</code> for the associated item or category of this <code>AdditionalAttribute</code> record.</Condition>
+                        <Error
+                            Description="Cannot Define Multiple Values For This Attribute." ErrorCode="YSC84_0011"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If the associated <code>Attribute</code> record is of <code>DataType</code> 'TEXT' and is configured with an <code>AllowedValueLength</code> and the flag  <code>IsAllowedValueDefined</code> is not set to 'Y', then  the length of this <code>Value</code> attribute may not exceed the defined <code>AllowedValueLength</code>.</Condition>
+                        <Error
+                            Description="Length Of Assigned Value Cannot Exceed Allowed Value Length Of The Attribute." ErrorCode="YSC84_0012"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If this <code>AdditionalAttribute</code> record is associated to an <code>Attribute</code> record and the flag  <code>IsAllowedValueDefined</code> is set to 'Y', then either <code>Value</code> or  <code>IntegerValue</code>  or <code>DoubleValue</code> must be one of the computed values from the <code>AttributeAllowedValue</code> record.</Condition>
+                        <Error
+                            Description="Invalid Value Assigned To The Attribute." ErrorCode="YSC84_0006"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AttributeDomainID"
+                type="yfctype:GroupName" use="required">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>The unique identification of the attribute domain.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeGroupID"
+                type="yfctype:GroupName" use="required">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_GROUP_ID" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>The unique identification of the attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DoubleValue" use="optional">
+                <xsd:annotation yfc:columnName="DOUBLE_VALUE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>The value of the assigned attribute whose data type is 'DECIMAL'.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Number"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="IntegerValue" use="optional">
+                <xsd:annotation yfc:columnName="INTEGER_VALUE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>The value of the assigned attribute whose data type is 'INTEGER'.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Number20"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="NAME" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Name of the dynamic attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Operation to perform
+				<br/>Valid Values: 
+				<br/>
+                            <b>
+                                <code>Manage</code>
+                            </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+				<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record. 
+				<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+				<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Deletes an existing record.
+				<br/>The default behavior is <b>
+                                <code>Manage</code>
+                            </b>.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Action">
+                        <xsd:enumeration value="Manage"/>
+                        <xsd:enumeration value="Create"/>
+                        <xsd:enumeration value="Modify"/>
+                        <xsd:enumeration value="Delete"/>
+                        <xsd:enumeration value=""/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Text-2000" use="optional">
+                <xsd:annotation yfc:columnName="VALUE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Value of the attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemServiceAssoc"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old information is removed and replaced with the new information.   
+						  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+						  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssoc">
+        <xsd:annotation yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+            <xsd:documentation>
+                <div>
+                        Stores provided service items or delivery services associated with the category.
+                        </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemServiceAssocSkillList"/>
+            </xsd:all>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Classification to which the services are being associated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HoldSchedTillCompletion"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="HOLD_SCHED_TILL_COMPLETION" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Flag to indicate whether to hold the schedule for the line containing provided service or delivery service item till line containing the parent item has been shipped.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+					  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingProductQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PRICING_PRODUCT_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Pricing Quantity for item used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingServiceQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PRICING_SERVICE_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Pricing Quantity for service used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Quantity for item used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceItemGroupCode"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_ITEM_GROUP_CODE" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>ItemGroupCode for the service or delivery item.  Valid values are PS - Provided Service, DS - Delivery Service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceItemId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_ITEM_ID" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Provided service or delivery service item associated as option when selling the parent item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Quantity for service used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceTimeOffset"
+                type="yfctype:NumberOfHours" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Specifies the service time offset between services in Hours.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_UOM" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>UOM of the provided service or delivery service item associated to the parent item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocSkillList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemServiceAssocSkill"/>
+            </xsd:all>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old information is removed and replaced with the new information.   
+								  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+								  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocSkill">
+        <xsd:annotation yfc:tableName="YFS_ITEM_SERVICE_ASSC_SKILL">
+            <xsd:documentation>
+                <div>
+							Optional. This table is used to store the service skills needed to provide the service for the product item being created.  
+							<Validation>
+                        <Condition>If this element is passed, <code>ServiceSkillId</code> attribute cannot be blank. 
+								</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If this element is passed, <code>ServiceSkillId</code> attribute should be the identifier of a valid service skill created for the organization for which item is being created. 
+								</Condition>
+                        <Error Description="Service Skill not found." ErrorCode="YCM0062_55SP2"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+								  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceSkillId" type="yfctype:ID-40" use="required">
+                <xsd:annotation yfc:columnName="SERVICE_SKILL_ID" yfc:tableName="YFS_ITEM_SERVICE_ASSC_SKILL">
+                    <xsd:documentation>Identifier of a Service Skill.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ClassificationItemAttribute">
+        <xsd:annotation yfc:tableName="YFS_CLASS_ITEM_ATTR">
+            <xsd:documentation>
+                <div>
+				Common item attributes for the classification.
+				<Validation>
+                        <Condition>If <code>ClassificationItemAttribute</code> is passed and the category does not represent a classification value. 
+					</Condition>
+                        <Error
+                            Description="Cannot specify ClassificationItemAttribute for a category that is not a classification value." ErrorCode="YCM75_0003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If both <code>OnhandSafetyFactorQuantity</code> and <code>OnhandSafetyFactorPercentage</code> are provided. 
+					</Condition>
+                        <Error
+                            Description="Cannot specify both OnhandSafetyFactorQuantity and OnhandSafetyFactorPercentage.  Only one can be specified." ErrorCode="YCM75_0001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SafetyFactorDefinitions"/>
+            </xsd:all>
+            <xsd:attribute name="ATPRule" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ATP_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The available to promise rule to be used for the item to determine availability.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AdvanceNotificationTime" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ADVANCE_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The advance notification time for this item. Communication to ship the order to shipping node/supplier is made at most this many days before the expected shipment date. Used during the release process.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AssumeInfiniteInventory"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ASSUME_INFINITE_INVENTORY" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether an item is assumed to be always available.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ClassificationItemAttributeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CLASS_ITEM_ATTR_KEY" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The primary key for the YFS_CLASS_ITEM_ATTR table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DefaultProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="DEFAULT_PRODUCT_CLASS" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The default product class of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>
+                        <div>
+				The future safety factor percentage for item in this classification.  The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryMonitorRule"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_MONITOR_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The monitoring rule that will be used by the availability monitor.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsDeliveryAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_DELIVERY_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method DEL is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsEligibleForShippingDiscount"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_ELIGIBLE_FOR_SHIP_DISC" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>Determines whether the item is eligible for shipping discounts. Default Value: Y.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsFifoTracked" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_FIFO_TRACKED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether an item is FIFO tracked.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsItemBasedAllocationAllowed"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_IBA_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item is allowed for Item Based Allocation process.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsParcelShippingAllowed"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_PARCEL_SHIPPING_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item can be shipped through parcel service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsPickupAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PICKUP_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method PICK is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsReturnable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_RETURNABLE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item belonging to the classification is returnable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSerialTracked" type="yfctype:String" use="optional">
+                <xsd:annotation yfc:columnName="IS_SERIAL_TRACKED" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This flag indicates whether an item is to be serial tracked in inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsShippingAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_SHIPPING_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method SHP is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LeadTime" use="optional">
+                <xsd:annotation yfc:columnName="LEAD_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The lead time for getting the product delivered. Purchase order placed today will arrive after this many days at the warehouse.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MaximumNotificationTime" use="optional">
+                <xsd:annotation yfc:columnName="MAX_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The maximum notification time for this item. Communication to ship the order to shipping node/supplier is made at most this many shipping calendar hours before the expected shipment date. Used during the release process.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfHours"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MinNotificationTime" use="optional">
+                <xsd:annotation yfc:columnName="MIN_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The minimum notification time for this item. Communication to ship the order should be made at least this many days before the expected shipment date. Used to determine the earliest ship date on the line.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="NodeLevelInventoryMonitorRule"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="NODE_LEVEL_INV_MONITOR_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The monitoring rule that will be used by the real-time availability monitor for node-level monitoring.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>
+                        <div>
+				The on-hand safety factor percentage for item in this classification.  The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The on-hand safety factor quantity of this item.  While retrieving availability of this item at a node with a node type that has ApplyOnhandSafetyFactor set to 'Y', OnhandSafetyFactorQuantity will be subtracted from the actual on-hand availability of the item.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RequiresDGOverride" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REQUIRES_DG_OVERRIDE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates if the Default Distribution Rule has to be overridden for real time availability monitoring.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReturnWindow" use="optional">
+                <xsd:annotation yfc:columnName="RETURN_WINDOW" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The number of days after which return may not be accepted.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="UseUnplannedInventory"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="USE_UNPLANNED_INV" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item is allowed to use unplanned inventory. Default value: N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SafetyFactorDefinitions">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+                    Delivery method safety factor is inherited from class_item_attr to item when OnhandSafetyFactorPercentage and OnhandSafetyFactorQuantity are non null. Set OnhandSafetyFactorPercentage and OnhandSafetyFactorQuantity on class_item_attr to zero if safety factors are defined only for delivery methods.
+                    </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SafetyFactorDefinition"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old safety factor defn records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SafetyFactorDefinition">
+        <xsd:annotation yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+            <xsd:documentation>This table stores safety factor definition.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryMethod"
+                type="yfctype:CommonCode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are<b>SHP, PICK or DEL</b>. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>The on-hand safety factor quantity of this item.  The OnhandSafetyFactorQuantity will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are <b>Create, Modify</b>. Delete is not supported. Use <b>Reset</b> to delete existing safety factors.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AssetList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Asset"/>
+            </xsd:all>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old Asset records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Asset">
+        <xsd:annotation yfc:tableName="YFS_ASSET">
+            <xsd:documentation>This table stores Asset information such as images, audio, datasheets, video, and URLs. Assets can be used to further describe Items, Categories, Attributes, and Attribute Allowed Values.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AssetLocaleList"/>
+            </xsd:all>
+            <xsd:attribute name="AssetID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="ASSET_ID" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>The unique identifier for the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AssetKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASSET_KEY" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>Primary key attribute of YFS_ASSET.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContentID" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CONTENT_ID" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>Unique ID of the asset in the external location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContentLocation" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="CONTENT_LOCATION" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>External location of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContentSize" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="CONTENT_SIZE" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>Size of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-500" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>Description of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplayLocalizedFieldInLocale"
+                type="yfctype:Locale" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Label" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="LABEL" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>Label of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value is <b>
+                                <code>Delete</code>
+                            </b>. Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Type" type="yfctype:Action" use="optional">
+                <xsd:annotation yfc:columnName="TYPE" yfc:tableName="YFS_ASSET">
+                    <xsd:documentation>
+                        <div>
+									Type of asset.<br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AssetLocaleList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AssetLocale"/>
+            </xsd:all>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+										If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old records are removed and replaced with the new ones.
+										If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AssetLocale">
+        <xsd:annotation yfc:tableName="YFS_ASSET_LOCALE">
+            <xsd:documentation>This table is used to store localized information for the related asset in different locales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AssetKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASSET_KEY" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>The reference key to the YFS_ASSET table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AssetLocaleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASSET_LOCALE_KEY" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>The primary key of the YFS_ASSET_LOCALE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContentID" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CONTENT_ID" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>Unique ID of the asset in the external location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContentLocation" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="CONTENT_LOCATION" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>External location of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>The country associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-500" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>Description of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Label" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="LABEL" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>Label of the asset.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Language" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="LANGUAGE" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>The language associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+											Valid value is <b>
+                                <code>Delete</code>
+                            </b>. Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Variant" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="VARIANT" yfc:tableName="YFS_ASSET_LOCALE">
+                    <xsd:documentation>The variant associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemAttribute"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old Item Attribute records are removed and replaced with the new ones.
+				If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttribute">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR">
+            <xsd:documentation>
+                <div>
+                    This table stores item attribute definition for each item attribute group.
+					<Validation>
+                        <Condition>
+							 If an <code>ItemAttribute</code> record for an <code>ItemAttributeGroupType</code> of FOR_FILTER is assigned to a category and if the flag <code>IsAllowedValueDefined</code> on the <code>Attribute</code> 
+							 record is not set to <code>Y</code>
+                        </Condition>
+                        <Error
+                            Description="Cannot create an ItemAttribute for an ItemAttributeGroupType of FOR_FILTER if the corresponding Attribute is not configured to have IsAllowedValueDefined flag as 'Y'" ErrorCode="YCM90_002"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttrGroupType"/>
+            </xsd:all>
+            <xsd:attribute name="AttributeDomainID"
+                type="yfctype:GroupName" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The unique identification of the attribute domain.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttributeGroupID"
+                type="yfctype:GroupName" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_GROUP_ID" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The unique identification of the attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The category that this attribute is assigned to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsInherited" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_INHERITED" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the assignment is based on inheritance of the attribute assigned to the upper level category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsKeyAttribute" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_KEY_ATTR" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates that the item attribute is a key attribute for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_DESCRIPTION" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The description of specification attribute on an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_KEY" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The specification group that this specification attribute belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_TYPE" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The item attribute group type this attribute belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_KEY" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>Primary key attribute of YFS_ITEM_ATTR.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeName"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_NAME" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The name of the item attribute that the specification attribute represents.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                            <b>
+                                <code>Manage</code>
+                            </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+						<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record. 
+						<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+						<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Deletes an existing record.
+						<br/>The default behavior is <b>
+                                <code>Manage</code>
+                            </b>.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The sequence of the specifcation attribute within the specification group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttrGroupType">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+            <xsd:documentation>This table stores item attribute group types.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttrGrpTypeLocaleList"/>
+            </xsd:all>
+            <xsd:attribute name="DisplayLocalizedFieldInLocale"
+                type="yfctype:Locale" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_TYPE" yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+                    <xsd:documentation>The group type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupTypeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ITEM_ATTR_GROUP_TYPE_KEY" yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+                    <xsd:documentation>Primary key attribute of YFS_ITEM_ATTR_GROUP_TYPE.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttrGrpTypeLocaleList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttrGrpTypeLocale"/>
+            </xsd:all>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old records are removed and replaced with the new ones.
+									If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttrGrpTypeLocale">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+            <xsd:documentation>This table is used to store localized information for the related item attribute group type in different locales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The country associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The description of this group type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttrGroupTypeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ITEM_ATTR_GROUP_TYPE_KEY" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The reference key to the YFS_ITEM_ATTR_GROUP_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttrGrpTypeLocaleKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ITEM_ATTR_GRP_TYPE_LOCALE_KEY" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The primary key of the YFS_ITEM_ATTR_GRP_TYPE_LOCALE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Language" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="LANGUAGE" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The language associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+										Valid value is <b>
+                                <code>Delete</code>
+                            </b>. Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Variant" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="VARIANT" yfc:tableName="YFS_ITEM_ATTR_GRP_TYPE_LOCALE">
+                    <xsd:documentation>The variant associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InsertBefore">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY">
+            <xsd:documentation>
+                <div>The <code>Category</code> before which the current <code>Category</code> must be inserted. The <code>SequenceNo</code> will be computed such that the current category has <code>SequenceNo</code> less than the <code>SequenceNo</code> of the <code>InsertBefore</code> element.
+                            <Validation>
+                        <Condition>
+                                    Either <code>CategoryKey</code> or a combination of <code>CategoryPath</code> and <code>OrganizationCode</code> must be passed to identify the <code>InsertBefore</code> object.
+                                </Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                                    Passed attributes do not identify a <code>Category</code> record.
+                                </Condition>
+                        <Error Description="No Record Found." ErrorCode="YCP0034"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The path for the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The code for the organization this category is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CategoryLocaleList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CategoryLocale"/>
+            </xsd:all>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CategoryLocale">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY_LOCALE">
+            <xsd:documentation>This table is used to store localized information for the related category in different locales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The reference key to the YFS_CATEGORY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryLocaleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_LOCALE_KEY" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The primary key of the YFS_CATEGORY_LOCALE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The country associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description"
+                type="yfctype:FreeText-2000" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Language" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="LANGUAGE" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The language associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value is <b>
+                                <code>Delete</code>
+                            </b>. Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The short description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Variant" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="VARIANT" yfc:tableName="YFS_CATEGORY_LOCALE">
+                    <xsd:documentation>The variant associated with the locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

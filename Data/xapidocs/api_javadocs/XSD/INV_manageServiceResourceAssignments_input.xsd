@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/manageServiceResourceAssignments/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/manageServiceResourceAssignments/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_manageServiceResourceAssignments_input.xsd" yfc:rootElement="ServiceResourceAssignments">
+        <xsd:appinfo source="yfc:structure">
+            <ServiceResourceAssignments>
+                <ServiceResourceAssignment hasAttributes="Y">
+                    <AssignedToResourcePool hasAttributes="Y"/>
+                    <ServiceResource hasAttributes="Y">
+                        <ResourcePool hasAttributes="Y"/>
+                    </ServiceResource>
+                </ServiceResourceAssignment>
+            </ServiceResourceAssignments>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ServiceResourceAssignments" type="yfc:ServiceResourceAssignmentsXSDType"/>
+    <xsd:complexType name="ServiceResourceAssignmentsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:ServiceResourceAssignment"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="ServiceResourceAssignment">
+        <xsd:annotation yfc:tableName="YFS_SRVC_RESOURCE_ASSIGNMENT">
+            <xsd:documentation>This table stores the resource pools to which a service resource is assigned for a date range.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AssignedToResourcePool"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ServiceResource"/>
+            </xsd:all>
+            <xsd:attribute name="AssignmentEndDate" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGNMENT_END_DATE" yfc:tableName="YFS_SRVC_RESOURCE_ASSIGNMENT">
+                    <xsd:documentation>End date of a period during which the service resource is assigned to a resource pool.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AssignmentStartDate" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGNMENT_START_DATE" yfc:tableName="YFS_SRVC_RESOURCE_ASSIGNMENT">
+                    <xsd:documentation>Start date of a period during which the service resource is assigned to a resource pool.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Valid value is <b>
+                                <code>Delete</code>
+                            </b> or blank.  If not provided the reservation will be created or modified.
+					<Validation>
+                                <Condition>
+							Invalid value is provided.
+						</Condition>
+                                <Error
+                                    Description="Invalid Application Action." ErrorCode="YFS10411"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>Operation</code> is <b>
+                                    <code>Delete</code>
+                                    </b>, but no existing record found.
+						</Condition>
+                                <Error Description="Record not found" ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Action">
+                        <xsd:enumeration value="Valid"/>
+                        <xsd:enumeration value="value"/>
+                        <xsd:enumeration value="is"/>
+                        <xsd:enumeration value="Delete"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceResourceAssignmentKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SRVC_RESOURCE_ASSIGNMENT_KEY" yfc:tableName="YFS_SRVC_RESOURCE_ASSIGNMENT">
+                    <xsd:documentation>Primary key attribute of YFS_SRVC_RESOURCE_ASSIGNMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AssignedToResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>This table stores information for a resource pool. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (like regions serviced and skill sets). Capacity for providing services is maintained at the Resource Pool level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CapacityOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CAPACITY_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the catalog organization. A resource pool is always created wihin the context of a capacity organization. An organization can source services from any resource pool within the same capacity organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceResource">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_RESOURCE">
+            <xsd:documentation>This table stores the service resources defined for resource pools.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+            </xsd:all>
+            <xsd:attribute name="ServiceResourceId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_RESOURCE_ID" yfc:tableName="YFS_SERVICE_RESOURCE">
+                    <xsd:documentation>The unique identifier of the service resource.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceResourceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_RESOURCE_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                    <xsd:documentation>Primary key attribute of YFS_SERVICE_RESOURCE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>This table stores information for a resource pool. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (like regions serviced and skill sets). Capacity for providing services is maintained at the Resource Pool level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CapacityOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CAPACITY_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the catalog organization. A resource pool is always created wihin the context of a capacity organization. An organization can source services from any resource pool within the same capacity organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

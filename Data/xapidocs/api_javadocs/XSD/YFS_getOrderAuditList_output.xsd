@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getOrderAuditList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getOrderAuditList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getOrderAuditList_output.xsd" yfc:rootElement="OrderAuditList">
+        <xsd:appinfo source="yfc:structure">
+            <OrderAuditList hasAttributes="Y">
+                <OrderAudit hasAttributes="Y">
+                    <Order hasAttributes="Y"/>
+                    <OrderAuditLevels>
+                        <OrderAuditLevel hasAttributes="Y">
+                            <OrderLine hasAttributes="Y">
+                                <Item hasAttributes="Y">
+                                    <LanguageDescriptionList>
+                                    <LanguageDescription hasAttributes="Y"/>
+                                    </LanguageDescriptionList>
+                                </Item>
+                            </OrderLine>
+                            <OrderRelease hasAttributes="Y"/>
+                            <OrderAuditDetails>
+                                <OrderAuditDetail hasAttributes="Y">
+                                    <IDs>
+                                    <ID hasAttributes="Y"/>
+                                    </IDs>
+                                    <Attributes>
+                                    <Attribute hasAttributes="Y"/>
+                                    </Attributes>
+                                    <CustomAuditDetails>
+                                    <OrderAuditDetail hasAttributes="Y">
+                                    <IDs>
+                                    <ID hasAttributes="Y"/>
+                                    </IDs>
+                                    <Attributes>
+                                    <Attribute hasAttributes="Y"/>
+                                    </Attributes>
+                                    </OrderAuditDetail>
+                                    </CustomAuditDetails>
+                                </OrderAuditDetail>
+                            </OrderAuditDetails>
+                            <ModificationTypes>
+                                <ModificationType hasAttributes="Y"/>
+                            </ModificationTypes>
+                        </OrderAuditLevel>
+                    </OrderAuditLevels>
+                </OrderAudit>
+            </OrderAuditList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderAuditList" type="yfc:OrderAuditListXSDType"/>
+    <xsd:complexType name="OrderAuditListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderAudit"/>
+        </xsd:sequence>
+        <xsd:attribute name="LastOrderAuditKey" type="yfctype:Key" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Last Order Audit Key in the output.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LastRecordSet" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Flag to indicate if the records obtained are a complete list. If there are more than 500 records matching the criteria passed in input xml, only 500 records are returned and this flag is set to <b>N</b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReadFromHistory" type="yfctype:Text-1" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                    Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values:
+                    <br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_AUDIT table.
+                    <br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_AUDIT_H table (the history table).
+                    <br/>
+                        <b>
+                            <code>B</code>
+                        </b> - Returns records that satisfy the input criteria from both YFS_AUDIT and YFS_AUDIT_H tables. Records returned from the current table are first in the output.
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TotalOrderAuditList" type="yfctype:Count" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Total number of records returned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderAudit">
+        <xsd:annotation yfc:tableName="YFS_ORDER_AUDIT">
+            <xsd:documentation>This table stores order audit information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderAuditLevels"/>
+            </xsd:all>
+            <xsd:attribute name="AuditTransactionId"
+                type="yfctype:TransactionID" use="optional">
+                <xsd:annotation yfc:columnName="AUDIT_TRANSACTION_ID" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The identifier of the audit transaction. All records for a modification are tied together using this ID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreateUserName" type="yfctype:UserName" use="optional">
+                <xsd:annotation yfc:columnName="USERNAME" yfc:tableName="YFS_USER">
+                    <xsd:documentation>Name of the user who created the audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>Timestamp when the record was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createuserid"
+                type="yfctype:Createuserid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>User who created the record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModifyUserName" type="yfctype:UserName" use="optional">
+                <xsd:annotation yfc:columnName="USERNAME" yfc:tableName="YFS_USER">
+                    <xsd:documentation>Name of the user who modified the audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>Timestamp when the record was last modified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyuserid"
+                type="yfctype:Modifyuserid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>User who modified the record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NewBuffer" type="yfctype:Text-1500" use="optional">
+                <xsd:annotation yfc:columnName="NEW_BUFFER" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>New values are stored as name-value pairs in this field. This field is used by deprecated APIs that log audits in non-XML format.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OldBuffer" type="yfctype:Text-1500" use="optional">
+                <xsd:annotation yfc:columnName="OLD_BUFFER" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>Old values are stored as name-value pairs in this field. This field is used by deprecated APIs that log audits in non-XML format.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAuditKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_AUDIT_KEY" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The primary key for the YFS_ORDER_AUDIT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The order header that this order audit is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The order line that this order audit is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The order release that this order audit is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>Reason Code</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>Reason Text</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>This field provides additional reference information, and can be customized by the enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>This field provides additional reference information, and can be customized by the enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference3" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_3" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>This field provides additional reference information, and field can be customized by the enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference4" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_4" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>This field provides additional reference information, and field can be customized by the enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="XMLFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="XML_FORMAT" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>This flag indicates whether or not this audit record is stored in XML format. Only deprecated APIs log audits in non-XML format.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="isHistory" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                        Valid Values:
+                        <br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Record is from the current table, YFS_AUDIT.
+                        <br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Record is from the history table, YFS_AUDIT_H.
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderAuditLevels">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderAuditLevel"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderAuditLevel">
+        <xsd:annotation yfc:tableName="YFS_ORDER_AUDIT_LEVEL">
+            <xsd:documentation>This table stores all the modifications that occurred on entities for an audit record in YFS_Order_Audit table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLine"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderRelease"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderAuditDetails"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ModificationTypes"/>
+            </xsd:all>
+            <xsd:attribute name="ModificationLevel"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="MODIFICATION_LEVEL" yfc:tableName="YFS_ORDER_AUDIT_LEVEL">
+                    <xsd:documentation>Level at which modification is done. Order, Order_Line, Order_Release or Order_Release_Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModificationLevelScreenName"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Screen Name for the Modification level.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_AUDIT_LEVEL">
+                    <xsd:documentation>Link to order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY" yfc:tableName="YFS_ORDER_AUDIT_LEVEL">
+                    <xsd:documentation>Link to order release.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+            </xsd:all>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderedQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="ORDERED_QTY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The quantity of the line item that has been ordered. If part of the line is cancelled, this number is reduced appropriately. If an order line is returned, this number is not reduced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The sub line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LanguageDescriptionList"/>
+            </xsd:all>
+            <xsd:attribute name="AlternateItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_ITEM_ID" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>This field indicates the alternate ItemID, which can be passed instead of the actual ItemID. This is an alias for the ItemID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BundleFulfillmentMode" use="optional">
+                <xsd:annotation yfc:columnName="BUNDLE_FULFILLMENT_MODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The way in which the bundle will be fulfilled. It can be Ship Independent (00), Ship Together (01), or Deliver Together (02) for Bundle Item. Default value is based on the catalog. If the item is not in the catalog, then Ship Together(01) is defaulted for Bundle Item.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Text-2">
+                        <xsd:enumeration value=""/>
+                        <xsd:enumeration value="00"/>
+                        <xsd:enumeration value="01"/>
+                        <xsd:enumeration value="02"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="CostCurrency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="COST_CURRENCY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The currency in which the unit cost is specified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The country of origin being requested.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerItem" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ITEM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item ID for the buyer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerItemDesc"
+                type="yfctype:Text-500" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CUSTOMER_ITEM_DESCRIPTION" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item description of the buyer organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ECCNNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ECCN_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The Export Commodity Control Number for a commodity contained in the shipment, as indicated on the Waybill.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HarmonizedCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="HARMONIZED_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The harmonized code, if applicable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ISBN" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ISBN" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The ISBN number, if applicable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemDesc" type="yfctype:Text-500" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_DESCRIPTION" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The description of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The identifier for the item. The ITEM_ID, UOM, and PRODUCT_CLASS form the unique inventory identifier for an order line. The ITEM_ID, UOM and ORGANIZATION_CODE form the unique item identifier for the Product Management module.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemShortDesc" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_SHORT_DESCRIPTION" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The short description of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemWeight" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_WEIGHT" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The weight of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemWeightUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_WEIGHT_UOM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit of measure used for weight.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturerItem"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="MANUFACTURER_ITEM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item identifier for the manufacturer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturerItemDesc"
+                type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="MANUFACTURER_ITEM_DESC" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item description for the manufacturer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturerName"
+                type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="MANUFACTURER_NAME" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The name of the manufacturer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NMFCClass" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="NMFC_CLASS" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The National Motor Freight Classification - A way of classifying goods for the purposes of transportation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NMFCCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="NMFC_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The National Motor Freight Classification - A way of classifying goods for the purposes of transportation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NMFCDescription"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="NMFC_DESCRIPTION" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The description of the NMFC. National Motor Freight Classification is a way of classifying goods for the purposes of transportation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product class. This field is used as an inventory identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductLine" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_LINE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product line for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ScheduleBCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SCHEDULE_B_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The Schedule B commodity codes - A 10-digit numeric codes used to identify products that are exported to other countries.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubstituteItemID"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Substituted ItemID. This field is only populated if the item on the Order line is substituted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubstituteItemUOM"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Substituted Item UOM. This field is only populated if the item on the Order line is substituted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplierItem" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SUPPLIER_ITEM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item ID of the supplier (if this is a PO or the line is being drop-shipped and the supplier is known upfront).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplierItemDesc"
+                type="yfctype:ItemDesc" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SUPPLIER_ITEM_DESCRIPTION" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The item description of the supplier (if this is a PO or line is being drop-shipped and the supplier is known upfront).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxProductCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="TAX_PRODUCT_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product code classification for the purposes of taxation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UPCCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UPC_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The UPC Code of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitCost" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_COST" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit cost of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LanguageDescriptionList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LanguageDescription"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LanguageDescription">
+        <xsd:annotation yfc:tableName="YFS_LANGUAGE_DESCRIPTION">
+            <xsd:documentation>This table stores description in different languages.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Description" type="yfctype:Text-500" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_LANGUAGE_DESCRIPTION">
+                    <xsd:documentation>A localized description.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocaleCode" type="yfctype:Locale" use="optional">
+                <xsd:annotation yfc:columnName="LOCALE_CODE" yfc:tableName="YFS_LANGUAGE_DESCRIPTION">
+                    <xsd:documentation>Locale for which the extended description is stored.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderRelease">
+        <xsd:annotation yfc:tableName="YFS_ORDER_RELEASE">
+            <xsd:documentation>This table stores releases made against an order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReleaseNo" type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="RELEASE_NO" yfc:tableName="YFS_ORDER_RELEASE">
+                    <xsd:documentation>The release number. Generated as a one up number against that release.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderAuditDetails">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="OrderAuditDetail">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_AUDIT_DETAIL">
+                        <xsd:documentation>This table stores detailed information about attributes that changed for a record in YFS_Order_Audit_Level in XML format.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="IDs">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="0" name="ID">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="Name"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Name of the ID</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="Value"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Value of the ID</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Attributes">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="1" name="Attribute">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="Extended" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Determines whether the attribute is an extended field. If this attribute
+								is not available, then it means the attribute is not extended.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Flag">
+
+                                    <xsd:enumeration value="N"/>
+
+                                    <xsd:enumeration value="Y"/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="ModificationType"
+                                    type="yfctype:Text-40" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Modification Type used for changing the attribute</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="Name"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Name of the Attribute Changed</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="NewValue"
+                                    type="yfctype:Text-100" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>New Value of the attribute modified</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="OldValue"
+                                    type="yfctype:Text-100" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Old Value of the attribute modified</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CustomAuditDetails"/>
+                        </xsd:all>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Text-10" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Action</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AuditType"
+                            type="yfctype:Text-30" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Audit Type</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CustomAuditDetails">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="OrderAuditDetail">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_AUDIT_DETAIL">
+                        <xsd:documentation>This table stores detailed information about attributes that changed for a record in YFS_Order_Audit_Level in XML format.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="IDs">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="0" name="ID">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="Name"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Name of the ID</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="Value"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Value of the ID</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Attributes">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="1" name="Attribute">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="Extended" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Determines whether the attribute is an extended field. If this attribute
+								is not available, then it means the attribute is not extended.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Flag">
+
+                                    <xsd:enumeration value="N"/>
+
+                                    <xsd:enumeration value="Y"/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="ModificationType"
+                                    type="yfctype:Text-40" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Modification Type used for changing the attribute</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="Name"
+                                    type="yfctype:Text-30" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Name of the Attribute Changed</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="NewValue"
+                                    type="yfctype:Text-100" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>New Value of the attribute modified</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="OldValue"
+                                    type="yfctype:Text-100" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>Old Value of the attribute modified</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Text-10" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Action</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AuditType"
+                            type="yfctype:Text-30" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Audit Type</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ModificationTypes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ModificationType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ModificationType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_AUDIT">
+            <xsd:documentation>This table stores order audit information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="MODIFICATION_TYPE" yfc:tableName="YFS_ORDER_AUDIT">
+                    <xsd:documentation>The type of modification that has occurred, for example AddQuantity or ChangeAppointment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ScreenName" type="yfctype:ScreenName" use="optional">
+                <xsd:annotation
+                    yfc:columnName="MODIFICATION_TYPE_SCREEN_NAME" yfc:tableName="YFS_STATUS_MODIFICATION_TYPE">
+                    <xsd:documentation>A screen name associated with a modification type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

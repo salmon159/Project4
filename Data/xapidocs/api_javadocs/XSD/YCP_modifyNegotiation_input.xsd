@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/modifyNegotiation/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/modifyNegotiation/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_modifyNegotiation_input.xsd" yfc:rootElement="ModifyNegotiation">
+        <xsd:appinfo source="yfc:structure">
+            <ModifyNegotiation hasAttributes="Y">
+                <Negotiation hasAttributes="Y">
+                    <AddLine hasAttributes="Y">
+                        <AdditionalAttributeList>
+                            <AdditionalAttribute hasAttributes="Y"/>
+                        </AdditionalAttributeList>
+                    </AddLine>
+                    <ChangeStatus hasAttributes="Y"/>
+                    <ChangeExpirationDate hasAttributes="Y"/>
+                    <ChangeAttributes>
+                        <Extn/>
+                    </ChangeAttributes>
+                    <NegotiationLine hasAttributes="Y">
+                        <ChangeAttributes>
+                            <Extn/>
+                        </ChangeAttributes>
+                    </NegotiationLine>
+                </Negotiation>
+            </ModifyNegotiation>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ModifyNegotiation" type="yfc:ModifyNegotiationXSDType"/>
+    <xsd:complexType name="ModifyNegotiationXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Negotiation"/>
+        </xsd:all>
+        <xsd:attribute name="Override" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicate if modifcation rules need to be overridden</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SelectMethod" type="yfctype:Text-20" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Specifies what is the method of selecting the records. Valid methods are WAIT,NO_WAIT,NONE.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TranId" use="required">
+            <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                <xsd:documentation>The unique identifier for a transaction.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UserId" type="yfctype:LoginId" use="optional">
+            <xsd:annotation yfc:columnName="LOGINID" yfc:tableName="YFS_USER">
+                <xsd:documentation>The login ID for the user.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Negotiation">
+        <xsd:annotation yfc:tableName="YFS_NEGOTIATION_HDR">
+            <xsd:documentation>
+                <div>
+				One of the following must be passed to identify the <code>Negotiation</code>:
+				<br/>- <code>NegotiationHeaderKey</code>
+                    <br/>- <code>NegotiationNo</code> and <code>EnterpriseCode</code>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AddLine"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ChangeStatus"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ChangeExpirationDate"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChangeAttributes">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <div>
+                                <code>ChangeAttributes</code> modifies an extended attribute.
+				</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Extn">
+                                <xsd:complexType/>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:NegotiationLine"/>
+            </xsd:sequence>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Virtual Field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NegotiationHeaderKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NEGOTIATION_HDR_KEY" yfc:tableName="YFS_NEGOTIATION_HDR">
+                    <xsd:documentation>Primary key. Always system generated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NegotiationNo"
+                type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="NEGOTIATION_NO" yfc:tableName="YFS_NEGOTIATION_HDR">
+                    <xsd:documentation>Part of unique key of negotiation. Enterprise code and negotiation number together uniquely identify a negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AddLine">
+        <xsd:annotation yfc:tableName="YFS_NEGOTIATION_LINE">
+            <xsd:documentation>
+                <div>
+					One of the following must be passed:
+					<br/>- <code>LineEntity</code> and <code>LineEntityKey</code>
+                    <br/>- <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttributeList"/>
+            </xsd:all>
+            <xsd:attribute name="ApplicationAction"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="APPLICATION_ACTION" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Action to be performed on the order if negotiated quantity is less than the original quanitity. Currently, only CANCEL is supported.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApplicationReference"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="APPLICATION_REFERENCE" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreightTerms" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FREIGHT_TERMS" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>This is FOB on order line to which this negotiation line corresponds to. This can be configured as a negotiable attributes in yfs_negotiation_line_attr table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>The unique identifier for Items of the order line to which this negotiation line corresponds to. This can be configured as a negotiable attributes in yfs_negotiation_line_attr table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineEntity" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="LINE_ENTITY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Currently can have value ORDER_LINE only.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineEntityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LINE_ENTITY_KEY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Primary key of the order line to which this negotiation line corresponds too.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Price" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="PRICE" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Price on the order line to which this negotiation line corresponds to. This can be configured as a negotiable attributes in yfs_negotiation_line_attr table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Prime_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Product_class of the order line to which this negotiation line corresponds to. This can be configured as a negotiable attributes in yfs_negotiation_line_attr table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Quantity on the order line. This is always negotiable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_DATE" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>This is request ship date of the order line. Depending on the order driver date, either delivery_date or ship_date is negotiable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Sub_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>UOM of the order line to which this negotiation line corresponds to. This can be configured as a negotiable attributes in yfs_negotiation_line_attr table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttributeList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttribute"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttribute">
+        <xsd:annotation yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+            <xsd:documentation>Stores dynamic attributes attached with an entity. Currently used to store additional attributes for item and category entities.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="NAME" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Name of the dynamic attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Text-2000" use="optional">
+                <xsd:annotation yfc:columnName="VALUE" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Value of the attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ChangeStatus">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+                    <code>BaseDropStatus</code> or <code>ToStatus</code> must be passed.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BaseDropStatus"
+                type="yfctype:ShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="DROP_STATUS"
+                    yfc:isConditional="Y" yfc:tableName="YFS_PIPELINE_DEFINITION">
+                    <xsd:documentation>Base drop status for transaction</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToStatus" type="yfctype:ShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS"
+                    yfc:isConditional="Y" yfc:tableName="YFS_STATUS">
+                    <xsd:documentation>
+                        <div>
+					The status that the transaction is to move to from the base status.
+						<Validation>
+                                <Condition>The <code>BaseDropStatus</code> of the <code>ToStatus</code> should be same as the negotiation's <code>BaseDropStatus</code>.
+							</Condition>
+                                <Error Description="" ErrorCode="YCP0043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ToStatus</code> must be setup in the <code>YFS_STATUS</code> table.
+							</Condition>
+                                <Error Description="" ErrorCode="YCP0044"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ChangeExpirationDate">
+        <xsd:complexType>
+            <xsd:attribute name="ToExpirationDate"
+                type="yfctype:TimeStamp" use="required">
+                <xsd:annotation
+                    yfc:columnName="NEGOTIATION_EXPIRATION_DATE" yfc:tableName="YFS_NEGOTIATION_HDR">
+                    <xsd:documentation>
+                        <div>
+					The date the negotiation expires. There is no logic built on this attribute. However, the negotiation monitor can be configured to raise alerts on <code>ToExpirationDate</code>. 
+						<Validation>
+                                <Condition>
+                                    <code>ToExpirationDate</code> is required.
+						</Condition>
+                                <Error Description="" ErrorCode="YCP0042"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="NegotiationLine">
+        <xsd:annotation yfc:tableName="YFS_NEGOTIATION_LINE">
+            <xsd:documentation>This table stores line information of a negotiation. One negotiation line is created for each order line of the negotiation's order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChangeAttributes">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Extn">
+                                <xsd:complexType/>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="LineEntity" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LINE_ENTITY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Currently can have value ORDER_LINE only.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineEntityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LINE_ENTITY_KEY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Primary key of the order line to which this negotiation line corresponds too.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Prime_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Sub_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

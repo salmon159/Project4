@@ -1,0 +1,58 @@
+<TrackResponse>
+	<Response>
+		<ResponseStatus Code="1" Description="Success"/>
+		<TransactionReference/>
+	</Response>
+	<Shipment PickupDate="20240921" ShipperNumber="X4029Y">
+		<InquiryNumber Code="01" Description="ShipmentIdentificationNumber" Value="1ZE4B394A833800685"/>
+		<ShipmentType/>
+		<Service Code="003" Description="UPS Ground"/>
+		<Package TrackingNumber="1ZE4B394A833800685">
+			<Activity>
+				<ActivityLocation>
+					<Address City="ISELIN" CountryCode="US" StateProvinceCode="NJ"/>
+				</ActivityLocation>
+				<Status Code="UA" Description="UPS has returned your package to the sender." Type="D"/>
+				<Date>20240927</Date>
+				<Time>131431</Time>
+			</Activity>
+			<PackageWeight Weight="1.20">
+				<UnitOfMeasurement Code="LBS"/>
+			</PackageWeight>
+			<ReferenceNumber/>
+		</Package>
+	</Shipment>
+</TrackResponse>
+
+
+
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="TrackResponse">
+    <TrackResponse>
+        <xsl:apply-templates select="@*|node()"/>
+        <CustomSQL>
+        <xsl:variable name="awb" select="/TrackResponse/Shipment/Package/@TrackingNumber"/>
+        <xsl:variable name="sqla" select="concat('select SCAC,shipment_no,order_no,AIRWAY_BILL_NO from yfs_shipment where AIRWAY_BILL_NO= &quot;',$awb)"/>
+            <xsl:attribute name="Query">
+                <xsl:value-of select="$sqla"/>
+            </xsl:attribute>
+        </CustomSQL>
+        
+        </TrackResponse>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+<CustomSQL Query="update yfs_order_release set SHIPNODE_KEY='XTH' , SUPPLIER_CODE='XTH' , SUPPLIER_NAME='XTH' where ORDER_RELEASE_KEY='20241212224046275512740' and ORDER_HEADER_KEY='20241212223707275511312'"/>
+
+
+select ShipmentNo,OrderNo

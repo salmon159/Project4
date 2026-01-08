@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/createCategory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/createCategory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_createCategory_input.xsd" yfc:rootElement="CategoryList">
+        <xsd:appinfo source="yfc:structure">
+            <CategoryList>
+                <Category hasAttributes="Y">
+                    <AdditionalAttributeList>
+                        <AdditionalAttribute hasAttributes="Y"/>
+                    </AdditionalAttributeList>
+                    <ItemServiceAssocList>
+                        <ItemServiceAssoc hasAttributes="Y">
+                            <ItemServiceAssocSkillList>
+                                <ItemServiceAssocSkill hasAttributes="Y"/>
+                            </ItemServiceAssocSkillList>
+                        </ItemServiceAssoc>
+                    </ItemServiceAssocList>
+                    <ClassificationItemAttribute hasAttributes="Y">
+                        <SafetyFactorDefinitions hasAttributes="Y">
+                            <SafetyFactorDefinition hasAttributes="Y"/>
+                        </SafetyFactorDefinitions>
+                    </ClassificationItemAttribute>
+                </Category>
+            </CategoryList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CategoryList" type="yfc:CategoryListXSDType"/>
+    <xsd:complexType name="CategoryListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Category"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Category">
+        <xsd:annotation yfc:tableName="YFS_CATEGORY">
+            <xsd:documentation>
+                <div>Item category master table. 
+            <Validation>
+                        <Condition>Either CategoryDomainKey or a combination of CategoryDomain/IsClassification must be passed.</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Must be a valid category domain (CategoryDomainKey not found).</Condition>
+                        <Error
+                            Description="Invalid Category Domain Key." ErrorCode="YCM0032"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Must be a valid category domain (CategoryDomain/IsClassification combination not found).</Condition>
+                        <Error Description="Category Domain Not Found." ErrorCode="YCM0036"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttributeList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemServiceAssocList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ClassificationItemAttribute"/>
+            </xsd:all>
+            <xsd:attribute name="CategoryDomain" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_DOMAIN" yfc:tableName="YFS_CATEGORY_DOMAIN">
+                    <xsd:documentation>The identifier for a category domain defined by an organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryDomainKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_DOMAIN_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The category domain associated with this category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryID" type="yfctype:ID-40" use="required">
+                <xsd:annotation yfc:columnName="CATEGORY_ID" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+			 Unique identifier for a category.
+				 <Validation>
+                                <Condition>If <code>CategoryDomain</code> is classification, the <code>CategoryID</code> must be unique within the <code>CategoryDomain</code>.
+					</Condition>
+                                <Error
+                                    Description="Category is not unique within CategoryDomain" ErrorCode="YCM0051"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description"
+                type="yfctype:FreeText-2000" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsClassification"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_DOMAIN" yfc:tableName="YFS_CATEGORY_DOMAIN">
+                    <xsd:documentation>The identifier for a category domain defined by an organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+			 The organization for which the category is created.
+				 <Validation>
+                                <Condition>Value not passed.
+					</Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YCM0002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Must be a valid organization code.
+						</Condition>
+                                <Error
+                                    Description="Invalid Organization Code." ErrorCode="YCM0019"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentCategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The parent category associated with this category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>The short description of the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status" type="yfctype:EnumShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+            Status in the catalog. 
+            <br/>Default:  <b>
+                                <code>2000</code>
+                            </b> - <i>Held</i>
+                            <br/>Other available Status values includes <b>
+                                <code>3000</code>
+                            </b> - <i>Published</i>.
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttributeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AdditionalAttribute"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttribute">
+        <xsd:annotation yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+            <xsd:documentation>
+                <div>
+                    Optional. Stores dynamic attributes attached with an entity. Currently used to store additional attributes for item and category entities.
+                    <Validation>
+                        <Condition>If this element is passed, <code>Name</code> attribute cannot be blank.</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If this element is passed, <code>Value</code> attribute cannot be blank.</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="NAME" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Name of the dynamic attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Text-2000" use="required">
+                <xsd:annotation yfc:columnName="VALUE" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Value of the attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemServiceAssoc"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssoc">
+        <xsd:annotation yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+            <xsd:documentation>
+                <div>
+                    Optional. All valid provided service items and delivery service associated to an item are maintained in this table.
+                    <Validation>
+                        <Condition>If the Category Domain is not a Classification Domain, then <code>ItemServiceAssoc</code> cannot be passed.</Condition>
+                        <Error
+                            Description="Cannot create Item Service Associations for a Category where the Category Domain is not a Classification Domain." ErrorCode="YCM0065_55SP2"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemServiceAssocSkillList"/>
+            </xsd:all>
+            <xsd:attribute name="HoldSchedTillCompletion"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="HOLD_SCHED_TILL_COMPLETION" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Flag to indicate whether to hold the schedule for the line containing provided service or delivery service item till line containing the parent item has been shipped.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingProductQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PRICING_PRODUCT_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Pricing Quantity for item used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingServiceQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PRICING_SERVICE_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Pricing Quantity for service used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Quantity for item used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceItemGroupCode"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_ITEM_GROUP_CODE" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>ItemGroupCode for the service or delivery item.  Valid values are PS - Provided Service, DS - Delivery Service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceItemId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_ITEM_ID" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Provided service or delivery service item associated as option when selling the parent item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_QUANTITY" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>Quantity for service used in this association.  This value will be copied over to YFS_ORDER_PROD_SER_ASSOC table when the association is used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceTimeOffset"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ServiceUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_UOM" yfc:tableName="YFS_ITEM_SERVICE_ASSOC">
+                    <xsd:documentation>UOM of the provided service or delivery service item associated to the parent item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocSkillList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemServiceAssocSkill"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemServiceAssocSkill">
+        <xsd:annotation yfc:tableName="YFS_ITEM_SERVICE_ASSC_SKILL">
+            <xsd:documentation>
+                <div>
+                            Optional. This table is used to store the service skills needed to provide the service for the product item being created.  
+                            <Validation>
+                        <Condition>If this element is passed, <code>ServiceSkillId</code> attribute cannot be blank. 
+                                </Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If this element is passed, <code>ServiceSkillId</code> attribute should be the identifier of a valid service skill created for the organization for which item is being created. 
+                                </Condition>
+                        <Error Description="Service Skill not found." ErrorCode="YCM0062_55SP2"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ServiceSkillId" type="yfctype:ID-40" use="required">
+                <xsd:annotation yfc:columnName="SERVICE_SKILL_ID" yfc:tableName="YFS_ITEM_SERVICE_ASSC_SKILL">
+                    <xsd:documentation>Identifier of a Service Skill.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ClassificationItemAttribute">
+        <xsd:annotation yfc:tableName="YFS_CLASS_ITEM_ATTR">
+            <xsd:documentation>
+                <div>
+				Common item attributes for the classification.
+				<Validation>
+                        <Condition>If <code>ClassificationItemAttribute</code> is passed and the category does not represent a classification value. 
+					</Condition>
+                        <Error
+                            Description="Cannot specify ClassificationItemAttribute for a category that is not a classification value." ErrorCode="YCM75_0003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If both <code>OnhandSafetyFactorQuantity</code> and <code>OnhandSafetyFactorPercentage</code> are provided. 
+					</Condition>
+                        <Error
+                            Description="Cannot specify both OnhandSafetyFactorQuantity and OnhandSafetyFactorPercentage.  Only one can be specified." ErrorCode="YCM75_0001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SafetyFactorDefinitions"/>
+            </xsd:all>
+            <xsd:attribute name="ATPRule" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ATP_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The available to promise rule to be used for the item to determine availability.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AdvanceNotificationTime" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ADVANCE_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The advance notification time for this item. Communication to ship the order to shipping node/supplier is made at most this many days before the expected shipment date. Used during the release process.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AssumeInfiniteInventory"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ASSUME_INFINITE_INVENTORY" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether an item is assumed to be always available.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DefaultProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="DEFAULT_PRODUCT_CLASS" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The default product class of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>
+                        <div>
+				The future safety factor percentage for item in this classification.  The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryMonitorRule"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_MONITOR_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The monitoring rule that will be used by the availability monitor.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsDeliveryAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_DELIVERY_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method DEL is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsEligibleForShippingDiscount"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_ELIGIBLE_FOR_SHIP_DISC" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>Determines whether the item is eligible for shipping discounts. Default Value: Y.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsFifoTracked" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_FIFO_TRACKED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether an item is FIFO tracked.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsItemBasedAllocationAllowed"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_IBA_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item is allowed for Item Based Allocation process.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsParcelShippingAllowed"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_PARCEL_SHIPPING_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item can be shipped through parcel service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsPickupAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PICKUP_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method PICK is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsReturnable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_RETURNABLE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item belonging to the classification is returnable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSerialTracked" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="IsShippingAllowed" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_SHIPPING_ALLOWED" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the delivery method SHP is allowed for item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LeadTime" use="optional">
+                <xsd:annotation yfc:columnName="LEAD_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The lead time for getting the product delivered. Purchase order placed today will arrive after this many days at the warehouse.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MaximumNotificationTime" use="optional">
+                <xsd:annotation yfc:columnName="MAX_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The maximum notification time for this item. Communication to ship the order to shipping node/supplier is made at most this many shipping calendar hours before the expected shipment date. Used during the release process.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfHours"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MinNotificationTime" use="optional">
+                <xsd:annotation yfc:columnName="MIN_NOTIFICATION_TIME" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The minimum notification time for this item. Communication to ship the order should be made at least this many days before the expected shipment date. Used to determine the earliest ship date on the line.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="NodeLevelInventoryMonitorRule"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="NODE_LEVEL_INV_MONITOR_RULE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The monitoring rule that will be used by the real-time availability monitor for node-level monitoring.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>
+                        <div>
+				The on-hand safety factor percentage for item in this classification.  The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The on-hand safety factor quantity of this item.  While retrieving availability of this item at a node with a node type that has ApplyOnhandSafetyFactor set to 'Y', OnhandSafetyFactorQuantity will be subtracted from the actual on-hand availability of the item.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RequiresDGOverride" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REQUIRES_DG_OVERRIDE" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates if the Default Distribution Rule has to be overridden for real time availability monitoring.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReturnWindow" use="optional">
+                <xsd:annotation yfc:columnName="RETURN_WINDOW" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>The number of days after which return may not be accepted.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="UseUnplannedInventory"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="USE_UNPLANNED_INV" yfc:tableName="YFS_CLASS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates whether the item is allowed to use unplanned inventory. Default value: N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SafetyFactorDefinitions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SafetyFactorDefinition"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old safety factor defn records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SafetyFactorDefinition">
+        <xsd:annotation yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+            <xsd:documentation>This table stores safety factor definition.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryMethod"
+                type="yfctype:CommonCode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are<b>SHP, PICK or DEL</b>. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>The on-hand safety factor quantity of this item.  The OnhandSafetyFactorQuantity will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are <b>Create, Modify and Delete</b>. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

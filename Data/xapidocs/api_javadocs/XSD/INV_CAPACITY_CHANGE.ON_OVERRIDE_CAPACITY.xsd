@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/CAPACITY_CHANGE/ON_OVERRIDE_CAPACITY"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/CAPACITY_CHANGE/ON_OVERRIDE_CAPACITY" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_CAPACITY_CHANGE.ON_OVERRIDE_CAPACITY.xsd" yfc:rootElement="OverrideResourcePoolCapacity">
+        <xsd:appinfo source="yfc:structure">
+            <OverrideResourcePoolCapacity hasAttributes="Y">
+                <ResourcePools>
+                    <ResourcePool hasAttributes="Y">
+                        <ServiceSlots>
+                            <ServiceSlot hasAttributes="Y">
+                                <Dates>
+                                    <Date hasAttributes="Y"/>
+                                </Dates>
+                            </ServiceSlot>
+                        </ServiceSlots>
+                    </ResourcePool>
+                </ResourcePools>
+            </OverrideResourcePoolCapacity>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OverrideResourcePoolCapacity" type="yfc:OverrideResourcePoolCapacityXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					This is a mandatory element. 
+					<Validation>
+                        <Condition> If the correct root element <code>OverrideResourcePoolCapacity</code> is not passed:</Condition>
+                        <Error Description="Invalid Root Node" ErrorCode="INV10003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OverrideResourcePoolCapacityXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:ResourcePools"/>
+        </xsd:all>
+        <xsd:attribute name="TransactInWorkDay" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Applicable for resource pools with purpose <code>
+                            <b>WMS-RP</b>
+                        </code>. The flag indicates whether the capacities are defined in terms of Work Day defined at the node or not.<br>
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </br>
+					If no value is passed, the default is <b>
+                            <code>N</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ResourcePools">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						This is a mandatory element.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ResourcePool"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>
+                <div>
+							This is a mandatory element. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (for example, regions serviced and skill sets). Capacity for providing services is maintained at a against a Resource Pool.
+							<Validation>
+                        <Condition> If either <code>ResourcePoolKey</code> or <code>ResourcePoolId</code> + <code>Node</code> + <code>CapacityOrganizationCode</code> are not passed:</Condition>
+                        <Error
+                            Description="Missing Mandatory Attributes" ErrorCode="INV10008"/>
+                        <Error Description="Invalid Resource Pool" ErrorCode="INV10014"/>
+                    </Validation>
+                    <Validation>
+                        <Condition> If Resource Pool defines Resources</Condition>
+                        <Error
+                            Description="Cannot override capacity of resource pool which maintains capacity at the resource level." ErrorCode="INV71_5"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:ServiceSlots"/>
+            </xsd:all>
+            <xsd:attribute name="CapacityOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CAPACITY_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the catalog organization. A resource pool is always created wihin the context of a capacity organization. An organization can source services from any resource pool within the same capacity organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceSlots">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+								This is a mandatory element.
+							</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ServiceSlot"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceSlot">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_SLOT">
+            <xsd:documentation>
+                <div>
+									This is a mandatory element. This table contains the list of service slots for a Slot Group.
+									<Validation>
+                        <Condition> If <code>StartTime</code> and <code>EndTime</code> are not passed:</Condition>
+                        <Error
+                            Description="Missing Mandatory Attributes" ErrorCode="INV10008"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Dates"/>
+            </xsd:all>
+            <xsd:attribute name="EndTime" type="yfctype:Time" use="optional">
+                <xsd:annotation yfc:columnName="END_TIME" yfc:tableName="YFS_SERVICE_SLOT">
+                    <xsd:documentation>EndTime of the service slot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartTime" type="yfctype:Time" use="optional">
+                <xsd:annotation yfc:columnName="START_TIME" yfc:tableName="YFS_SERVICE_SLOT">
+                    <xsd:documentation>StartTime of the service slot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Dates">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+										This is a mandatory element.
+									</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:Date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Date">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+											This is a mandatory element.
+											<Validation>
+                        <Condition> If <code>Date</code> is not passed:
+															<br>If <code>Capacity</code> is not passed, it is not overridden and <code>Date</code> is ignored.</br>
+                        </Condition>
+                        <Error
+                            Description="Missing Mandatory Attributes" ErrorCode="INV10008"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Capacity" type="yfctype:Capacity" use="optional">
+                <xsd:annotation yfc:columnName="CAPACITY" yfc:tableName="YFS_RES_POOL_CAPCTY_OVERRIDE">
+                    <xsd:documentation>
+                        <div>
+											Amount of capacity to override.
+											<Validation>
+                                <Condition> If <code>Capacity</code> is negative.
+												</Condition>
+                                <Error Description="Invalid capacity." ErrorCode="INV71_8"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CapacityUnitOfMeasure"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The capacity unit of measure in which capacity is overridden. If this attribute is not passed, it is assumed to be the resource pool's primary unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Date" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="CAPACITY_DATE" yfc:tableName="YFS_RES_POOL_CAPCTY_OVERRIDE">
+                    <xsd:documentation>Date to override.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OverrideReason" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="OVERRIDE_REASON" yfc:tableName="YFS_RES_POOL_CAPCTY_OVERRIDE">
+                    <xsd:documentation>
+                        <div>
+												The reason this capacity was overridden.
+											</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplementalCapacity"
+                type="yfctype:Capacity" use="optional">
+                <xsd:annotation yfc:columnName="SUPPLEMENTAL_CAPACITY" yfc:tableName="YFS_RES_POOL_CAPCTY_OVERRIDE">
+                    <xsd:documentation>
+                        <div>
+											Amount of supplemental capacity to override.
+											<Validation>
+                                <Condition> If <code>SupplementalCapacity</code> is negative.
+												</Condition>
+                                <Error Description="Invalid capacity." ErrorCode="INV71_8"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

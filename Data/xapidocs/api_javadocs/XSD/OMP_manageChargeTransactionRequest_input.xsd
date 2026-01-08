@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/manageChargeTransactionRequest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/manageChargeTransactionRequest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_manageChargeTransactionRequest_input.xsd" yfc:rootElement="ChargeTransactionRequestList">
+        <xsd:appinfo source="yfc:structure">
+            <ChargeTransactionRequestList hasAttributes="Y">
+                <ChargeTransactionRequest hasAttributes="Y"/>
+            </ChargeTransactionRequestList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ChargeTransactionRequestList" type="yfc:ChargeTransactionRequestListXSDType">
+        <xsd:annotation>
+            <xsd:documentation>Charge Transaction Requests may only be modified
+				in the context of a single Order. If the OrderHeaderKey is not
+				passed, EnterpriseCode, DocumentType, and OrderNo must be passed to
+				find the OrderHeaderKey.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ChargeTransactionRequestListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ChargeTransactionRequest"/>
+        </xsd:sequence>
+        <xsd:attribute name="DocumentType" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The DocumentType of the Order. Must be passed with
+					EnterpriseCode and OrderNo to find the order if OrderHeaderKey is
+					not passed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The EnterpriseCode of the Order. Must be passed with
+					DocumentType and OrderNo to find the order if OrderHeaderKey is not
+					passed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                <xsd:documentation>The OrderHeaderKey that is associated with this charge tran request.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The OrderNo of the Order. Must be passed with
+					EnterpriseCode and DocumentType to find the order if OrderHeaderKey
+					is not passed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ChargeTransactionRequest">
+        <xsd:annotation yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+            <xsd:documentation>This table holds the ORDER_HEADER_KEY and the request id which make a set of unique groups for payment processing on the order.  Authorizations will be split such that each authorization is for only one request.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeTransactionRequestId"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_TRAN_REQUEST_ID" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                    <xsd:documentation>The unique identifier of the request in combination with the ORDER_HEADER_KEY.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeTransactionRequestKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_TRAN_REQUEST_KEY" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                    <xsd:documentation>The primary key for the YFS_CHARGE_TRAN_REQUEST table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeTransactionRequestSequence"
+                type="yfctype:PossibleKey" use="optional">
+                <xsd:annotation yfc:columnName="REQUEST_SEQUENCE" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                    <xsd:documentation>The order in which the Groups should be authorized.  Records with REQUEST_SEQUENCE NOT NULL will be processed first; NULL Sequences will be ordered by CHARGE_TRAN_REQUEST_ID, ascending.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxRequestAmount" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="MAX_REQUEST_AMOUNT" yfc:tableName="YFS_CHARGE_TRAN_REQUEST">
+                    <xsd:documentation>The maximum amount this unique identifier represents before distribution to another group begins to become Authorized.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:YSCOperation" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The operation to perform on this record. Valid values are listed in the table below.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

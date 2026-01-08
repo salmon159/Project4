@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<CustomerAssignment CustomerAssignmentKey="" CustomerID=""
+    CustomerKey="" CustomerOrganizationCode=""
+    DeleteChildTeamAssignments="" Operation="" OrganizationCode=""
+    TeamCode="" TeamKey="" UserId="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/manageCustomerAssignment/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				Specify assignments of  <code>Team</code> to <code>Customer</code> or a combination of <code>Team</code> and <code>Customer</code> and <code>User</code> or <code>Customer</code> to a valid user of a Buyer Organization. <code>Team</code> is a manadatory attribute if the assignment is not to a valid buyer user. <code>Team</code> is also mandated if the organization of the <code>User</code> has roles other than the Buyer.
+				</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute EntityName="Customer" Name="CustomerID" NameInEntity="Customer_ID">
+                <Description>
+                    <div>
+				Identifier for the customer.  Either the <code>CustomerID</code> or <code>CustomerKey</code> has to be passed when creating or deleting the assignment.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="CustomerKey" NameInEntity="Customer_Key">
+                <Description>
+                    <div>
+				Unique identifier for the customer.
+				<Validation>
+                            <Condition>
+                                <code>CustomerKey</code> provided is wrong.
+					</Condition>
+                            <Error Description="Invalid Customer" ErrorCode="YCP0165"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="CustomerOrganizationCode">
+                <Description>
+                    <div>
+				Organization code of organization that defines the Customer. If CustomerID is passed then a valid CustomerOrganizationCode has to be passed. If <code>CustomerOrganizationCode</code> is not passed, then the <code>OrganizationCode</code> of the Team or the CustomerMasterOrg of the Team's Organization must define the Customer.
+				<Validation>
+                            <Condition>
+                                <code>CustomerOrganizationCode</code> passed is wrong.
+					</Condition>
+                            <Error Description="Invalid Organization" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="DeleteChildTeamAssignments">
+                <Description>
+                    <div>
+                        <br/> Whenever the operation is <code>Delete</code> and <code>UserId</code> is passed then only the relevant Customer assignment is  deleted. In this case if the deletion is successful, the <code>AssignedReps</code> on the customer is decreased by 1. 
+				If the <code>UserId</code> is not passed then based on this flag the Customer assignments are deleted.
+				<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Indicates that assignments associated with the child Teams of the Team passed, need to be deleted.
+					<br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Only relevant Customer and Team assignments are deleted and child Team assignments are not considered for deletion.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Action" Name="Operation">
+                <Description>
+                    <div>Action to take.
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record.  
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/> Whenever the operation is <code>Create</code> and <code>UserId</code> is passed, then validation for maximum assignments is done. The maximum number of assignments cannot be greater than the value of <code>AssignedReps</code> on the <code>Customer</code>. If the customer assignment to the team and user is successful the <code>AssignedReps</code> value on the <code>Customer</code> is increased by 1. If the <code>Customer</code> is assigned to a valid <code>CustomerContact</code> this validation is not done.
+					<Validation>
+                            <Condition>Action is<b>
+                                    <code>Create</code>
+                                </b> and <b>
+                                    <code>UserId</code>
+                                </b> is passed and maximum assignments is reached. 
+					</Condition>
+                            <Error
+                                Description="Maximum Customer Assignments Reached" ErrorCode="YCP80_0004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+				Organization code of organization that defines this Team or User. Both the Team and User could belong to same organization or to diffrent organizations. If Team and User belong to different organizations, then the <code>OrganizationCode</code> should be the organization of the Team but within the same organization hierarchy of the User's organization. If <code>TeamCode</code> is passed then a valid OrganizationCode has to be passed. When assigning Buyer user to a Customer, this attribute should correspond to the Organization Code of the Buyer User's Organization.
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> passed is wrong.
+					</Condition>
+                            <Error Description="Invalid Organization" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Data_Security_Group" Name="TeamCode" NameInEntity="Data_Security_Group_Id">
+                <Description>
+                    <div>
+				The identifier for the team.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="TeamKey" NameInEntity="Team_Key">
+                <Description>
+                    <div>
+				Primary key for the YFS_DATA_SECURITY_GROUP table.  
+				<Validation>
+                            <Condition>
+                                <code>TeamKey</code> provided is wrong.
+					</Condition>
+                            <Error Description="Invalid Team" ErrorCode="YFS80_10545"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="UserId" NameInEntity="User_Id">
+                <Description>
+                    <div>
+				Identifier for a user that manages the customer.
+				<Validation>
+                            <Condition>
+                                <code>User</code> does not belong to the team.
+					</Condition>
+                            <Error Description="Invalid User Team" ErrorCode="YCP80_0006"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+</CustomerAssignment>

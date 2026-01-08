@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/reserveItemInventory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/reserveItemInventory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_reserveItemInventory_input.xsd" yfc:rootElement="ReserveItemInventory">
+        <xsd:appinfo source="yfc:structure">
+            <ReserveItemInventory hasAttributes="Y">
+                <Tag hasAttributes="Y"/>
+            </ReserveItemInventory>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ReserveItemInventory" type="yfc:ReserveItemInventoryXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_RESERVATION">
+            <xsd:documentation>
+                <div>
+                Stores reservation information about an item.
+                <Validation>
+                        <Condition>Item's inventory picture is being marked as incorrect at the specified shipnode and <code>ConsiderInventoryNodeControl</code> flag is passed as <code>Y</code> or not passed or passed as blank.
+                    </Condition>
+                        <Error
+                            Description="Cannot create reservation against a node/item combination for which inventory picture is being marked as incorrect." ErrorCode="INV10033_55SP1"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ReserveItemInventoryXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tag"/>
+        </xsd:all>
+        <xsd:attribute name="ApplyFutureSafetyFactor"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			This flag indicates that future safety factor should be applied in future availability calculation of the item at the node with a node type that has <code>ApplyFutureSafetyFactor</code> = <code>
+                            <b>Y</b>
+                        </code>.
+			<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplyOnhandSafetyFactor"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			This flag indicates that on-hand safety factor should be applied in current availability calculation of the item at the node with a node type that has <code>ApplyOnhandSafetyFactor</code> = <code>
+                            <b>Y</b>
+                        </code>.
+			<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Indicates whether the requested quantity passed in QtyToBeReserved is reserved without looking for inventory availability.
+			<br/>Default: <b>
+                            <code>Y</code>
+                        </b> - <i>Check Inventory</i>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderInventoryNodeControl"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                Indicates whether inventory of the item at the node that is marked incorrect has to be considered.
+				<br/>Valid Values: <b>
+                            <code/>
+                        </b> or <b>
+                            <code>N</code>
+                        </b> or <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Default:<b>
+                            <code/>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryMethod" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_METHOD" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+		Posible values include Delivery <b>DEL</b>, Ship <b>SHP</b> or Pick Up <b>PICK</b>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+		</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DemandType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DEMAND_TYPE" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+			Inventory is reserved with the value passed in <code>DemandType</code>. If there is no supply for this demand type, an  error is thrown.
+			<br/>Default: <b>
+                            <code>RESERVED</code>
+                        </b>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div>
+                        <b>With Inventory Visibility (IV) integration phase 2 enabled</b>, the value of this attribute is passed to IV reservations API. IV may throw error if this demand type is not supported.
+      			<br/>Default: <b>
+                            <code>OPEN_ORDER</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ExpirationDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="EXPIRATION_DATE" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+			Expiration date for the reservation.  If not pass and the <code>DEFAULT_RESERVATION_EXPIRATION_TIME</code> rule is setup with a value greater than 0, the expiration date will be calculated as ship date + <code>DEFAULT_RESERVATION_EXPIRATION_TIME</code>.
+			<br/>Default: High Date.
+			<br/>If more quantities are added to an existing reservation, the <code>ExpirationDate</code> will be recalculated.
+          <br/>
+                        <br/>
+                        <b>With Inventory Visibility (IV) integration enabled</b>,
+          <br/>this <code>ExpirationDate</code> will be converted into minutes beyond the current time before calling IV reservations API. The number of minutes will be passed as reservation expiration duration to the IV API. If the value of <code>ExpirationDate</code> is found to be older than the current time then an error with code <code>IVADP0001</code> is thrown.
+          <br/> If no <code>ExpirationDate</code> is passed and the DEFAULT_RESERVATION_EXPIRATION_TIME rule is setup with a value greater than 0, then the same will be converted into minutes and passed as reservation expiration duration to the IV reservation API. If the rule is not setup or does not have a value greater than 0, then a default reservation expiration duration of <code>120</code> minutes is passed to the IV API.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsShipNodeRequired" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates if <code>ShipNode</code> is required to reserve the inventory. Demands can be created without <code>ShipNode</code> only for umpromised demand type. When <code>ShipNode</code> is passed <code>IsShipNodeRequired</code> is defaulted to <code>Y</code>
+                        <br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MinShipByDate" use="optional">
+            <xsd:annotation yfc:columnName="MIN_SHIP_BY_DATE" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+				Inventory rules are read for this organization's inventory consolidator.
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> not passed.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is invalid.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QtyToBeCancelled" type="yfctype:Quantity" use="optional">
+            <xsd:annotation yfc:columnName="QUANTITY"
+                yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+			How much reserved quantity to cancel. Either <code>QtyToBeReserved</code> or <code>QtyToBeCancelled</code> must be passed.
+			If quantity passed is greater then quantity already reserved then only the reserved quantity is cancelled.
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QtyToBeReserved" type="yfctype:Quantity" use="optional">
+            <xsd:annotation yfc:columnName="QUANTITY"
+                yfc:isConditional="Y" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+				How much quantity to reserve. Either <code>QtyToBeReserved</code> or <code>QtyToBeCancelled</code> must be passed.
+				<Validation>
+                            <Condition>If <code>ReserveIfPartial</code> is <b>
+                                    <code>N</code>
+                                </b>, and there is not sufficient quantity to meet the requested quantity.
+					</Condition>
+                            <Error Description="Reservation Failed" ErrorCode="YFS10265"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>ReserveIfPartial</code> is <b>
+                                    <code>Y</code>
+                                </b>, and there is no matching inventory to meet the requested quantity.
+					</Condition>
+                            <Error Description="Reservation Failed" ErrorCode="YFS10265"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Neither <code>QtyToBeReserved</code> nor <code>QtyToBeCancelled</code> is passed.
+					</Condition>
+                            <Error
+                                Description="Quantity must be specified for reservation or cancellation." ErrorCode="YFS10416"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReservationID" type="yfctype:Text-100" use="required">
+            <xsd:annotation yfc:columnName="RESERVATION_ID" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+			Reservation is created for the passed value for <code>ReservationID</code>. The same <code>ReservationID</code> must be passed at the time of creating order if the reservation has to be consumed.
+      <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled, for creating new reservations in IV, this <code>ReservationID</code> will be passed as <code>reference</code> for calling the IV reservation API.
+      <br/>For cancelling existing reservations, this <code>ReservationId</code> can be either of the following
+        <br/> 1. Reservation Id of the IV reservation.
+        <br/> In this case, the reservation record corresponding to the given IV reservation Id will be fetched. The other input parameters for this api will not be used to match the reservation record obtained from IV because IV reservation Id can be used to uniquely identify a reservation record in IV. If a reservation record is found, it will be cancelled by calling IV reservation API.
+        <br/> 2. Reservation reference of the IV reservation.
+        <br/> In this case, the reservation record(s) corresponding to the given IV reservation reference will be fetched. There may be multiple reservation records corresponding to a given IV reference hence the input attributes <code>ItemId</code>, <code>ShipNode</code>, <code>ProductClass</code>, <code>UnitOfMeasure</code>, <code>ReservationPool</code> and <code>ReservationPoolType</code> will be used to match against the IV reservation records. The matched reservation records will be cancelled by calling IV reservation API.
+			<Validation>
+                            <Condition>
+                                <code>ReservationID</code> not passed.
+				</Condition>
+                            <Error Description="Blank Reservation ID" ErrorCode="YFS10262"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReservationPool" type="yfctype:Segment" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>The segment for this inventory supply</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReservationPoolType"
+            type="yfctype:SegmentType" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>The segment type for this inventory supply.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReserveIfPartial" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Indicates if the reservation should be made if only part of the quantity requested can be reserved. If passed as
+			<code>Y</code>, the available quantity is reserved. If <code>N</code>, the reservation is not made.
+			<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_DATE" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                <xsd:documentation>
+                    <div>
+				Inventory availability is calculated for the ship node passed. Refer to <code>IsShipNodeRequired</code> for more details.
+				<Validation>
+                            <Condition>
+                                <code>ShipNode</code> not passed.
+					</Condition>
+                            <Error Description="YFS:Void Ship Node" ErrorCode="YFS10049"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ShipNode</code> is invalid.
+					</Condition>
+                            <Error Description="YFS:Invalid Ship Node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SynchDemandExpirationDateOnly"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates if <code>ExpirationDate</code> requires update for existing reservation with same reservation id. Value of QtyToBeCancelled and QtyToBeReserved is ignored, when this flag is set to Y.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored and is always considered <code>N</code>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Tag">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>This table stores tag information for inventory.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

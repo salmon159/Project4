@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/Order_Line_Reservation_tran"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/Order_Line_Reservation_tran" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_Order_Line_Reservation_tran.xsd" yfc:rootElement="OrderLineReservations">
+        <xsd:appinfo source="yfc:structure">
+            <OrderLineReservations hasAttributes="Y">
+                <OrderLineReservation hasAttributes="Y"/>
+            </OrderLineReservations>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderLineReservations" type="yfc:OrderLineReservationsXSDType"/>
+    <xsd:complexType name="OrderLineReservationsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderLineReservation"/>
+        </xsd:sequence>
+        <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The <code>Reset</code> flag can be passed as <code>Y</code> to reset all previous reservations and replace them with the new list.  When reservations are removed, any inventory allocations will be cleared.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderLineReservation">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+            <xsd:documentation>
+                <div>Identifies a reservation to make for the order line.  Existing reservations cannot be modified directly; instead, if a new reservation is created with the same reservation attributes as an existing reservation, the new reservation will be consolidated into the existing reservation, and demand will be created for the new quantity.<br/>If new quantity is being added to the order line in the same call that a reservation is being added, and the reservation matches the order line's attributes, then the reservation will be rolled up in to the order line, and the matching quantity will move to "Reserved" status.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The batch number that has been specified on the reservation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DEMAND_TYPE" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>
+                        <div>
+                        The inventory demand type used by the reservation.  For all user-created reservations, this will be defaulted from the document params.
+                        When promising server is present and existing inventory reservation is used in order line reservation, pass same DemandType as inventory reservation</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The reserved item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The lot number that has been specified on the reservation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The ship node at which the item has been reserved.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The reserved item's product class.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="required">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>
+                        <div>The quantity to reserve.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestedReservationDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="REQ_RESERVATION_DATE" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The date when the reserved inventory is needed, such as the shipping date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReservationID" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="RESERVATION_ID" yfc:tableName="YFS_INVENTORY_RESERVATION">
+                    <xsd:documentation>
+                        <div>The reservation ID from an existing inventory reservation.  If the reservation exists, that quantity will be consumed first.  Any quantity that cannot be obtained from the reservation will be reserved on the fly.  If <code>ReservationID</code> is not passed, all quantity for this reservation will be reserved on the fly.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The revision number that has been specified on the reservation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_LINE_RESERVATION">
+                    <xsd:documentation>The reserved item's unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

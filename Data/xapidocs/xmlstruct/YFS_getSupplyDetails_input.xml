@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2011 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<getSupplyDetails ConsiderAllNodes="" ConsiderAllSegments=""
+    ConsiderFEFOMatching="" ConsiderUnassignedDemand="" DemandType=""
+    DistributionRuleId="" EndDate="" ItemID="Required"
+    ItemOrganizationCode="" MinShipByDate="" OrganizationCode="Required"
+    ProductClass="" RequiredQty="" Segment="" SegmentType="" ShipDate=""
+    ShipNode="" UnitOfMeasure="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/getSupplyDetails/input">
+    <yfc:doc>
+        <Element EntityName="Inventory_Supply"/>
+        <Attributes>
+            <Attribute DataType="Flag" Name="ConsiderAllNodes">
+                <Description>
+                    <div>
+				Indicates whether all nodes are to be considered in the inventory reporting.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Default:<b>
+                            <code>N</code>
+                        </b>
+                        <br/>If the <code>ConsiderAllNodes</code> value is <b>
+                            <code>Y</code>
+                        </b>:
+				<br/>- The availability check is done without applying any distribution rule filter.
+				<br/>- No particular <code>DistributionRule</code> is used and all supplies and demand for the item are considered, including unassigned demands.
+				<br/>- No <code>DistributionRule</code> is used to match supplies and demands for availability calculations.
+				<br/>- <code>DistributionRuleId</code> is ignored.
+				<br/>
+                        <br/>If the <code>ConsiderAllNodes</code> value is <b>
+                            <code>N</code>
+                        </b>, then either the <code>DistributionRuleId</code> passed or the calling organization's default <code>DistributionRuleId</code> is used for availability calculations.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderAllSegments">
+                <Description>
+                    <div>
+				Indicates whether all segments are to be considered in the availability checking.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+				 Default:<b>
+                            <code>N</code>
+                        </b>
+                        <br/>If the <code>ConsiderAllSegments</code> value is <b>
+                            <code>Y</code>
+                        </b>, then all matching inventories, regardless of <code>Segment</code> and <code>SegmentType</code>, are considered. The <code>Segment</code> and <code>SegmentType</code> are ignored even if provided, when the <code>ConsiderAllSegments</code> value is <b>
+                            <code>Y</code>
+                        </b>.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderFEFOMatching">
+                <Description>
+                    <div>
+				This flag indicates whether the demand should be allocated against the applicable supply in the First Expire First Out order.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Default:<b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderUnassignedDemand">
+                <Description>
+                    <div>
+				Consider unassigned demand.
+				<Validation>
+                            <Condition>
+                                <b>
+                                    <code>ConsiderUnassignedDemand</code>
+                                </b> is passed and <b>
+                                    <code>ConsiderAllNodes</code>
+                                </b> is also passed.
+					</Condition>
+                            <Error
+                                Description="Cannot pass ConsiderUnassignedDemand" ErrorCode="YFS10499"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Demand" Name="DemandType">
+                <Description>
+                    <div>
+				Specifies a <code>DemandType</code> used in the inventory availability calculations.
+				<br/>Only valid <code>SupplyType</code>s that can be consumed against the <code>DemandType</code> value are considered in the inventory availability calculations.
+				<BR/>Default: OPEN_ORDER
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Item_Ship_Node"
+                Name="DistributionRuleId" NameInEntity="Distribution_Rule_Id">
+                <Description>
+                    <div>
+				If <code>DistributionRuleId</code> is passed then supplies and demands are read, and the distribution rule filter is applied.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Date" Name="EndDate">
+                <Description>
+                    <div>
+				Pass <code>EndDate</code> to specify the lastest date to look for inventory.  If the <code>ShipDate</code> passed is beyond the ATP horizon, <code>EndDate</code> must be passed to extend the horizon date. 
+				<br/>Default: ATP horizon. 
+				<Validation>
+                            <Condition>Must be a valid date
+					</Condition>
+                            <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ItemID">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <b>
+                                    <code>ItemID</code>
+                                </b> is not passed.
+					</Condition>
+                            <Error Description="Blank Item ID" ErrorCode="YFS10047"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Item" Name="ItemOrganizationCode" NameInEntity="Organization_Code"/>
+            <Attribute DataType="Date" Name="MinShipByDate">
+                <Description>
+                    <div>
+                The preferred minimum ship by date of the available supply.  Available supply with ship by date earlier than the minimum ship by date will not be considered in the availability. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="OrganizationCode">
+                <Description>
+                    <div>
+				Inventory rules are read for this organization's inventory consolidator.
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> not passed.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is invalid.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ProductClass"/>
+            <Attribute EntityName="Inventory_Supply" Name="RequiredQty" NameInEntity="Quantity">
+                <Description>
+                    <div>
+					Required Quantity.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="CommonCode" Name="Segment">
+                <Description>
+                    <div>
+				Segment of supplies to be considered.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="SegmentType" Name="SegmentType">
+                <Description>
+                    <div>
+				Segment Type of supplies to be considered.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Demand" Name="ShipDate" NameInEntity="Demand_Ship_Date">
+                <Description>
+                    <div>
+				If <code>ShipDate</code> is passed, all supplies and demands from current date to the <code>ShipDate</code> are returned. If no  <code>ShipDate</code> is passed, all supplies for today and all demands against these supplies are returned. 
+				<Validation>
+                            <Condition>Date passed is not valid
+					</Condition>
+                            <Error Description="Invalid Date Format." ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" Name="ShipNode">
+                <Description>
+                    <div>
+				Ship node from which to get the inventory. If the passed Node is not setup in the passed organization's, distribution rule, <code>ConsiderAllNodes</code> must be passed as <b>
+                            <code>Y</code>
+                        </b>.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure"/>
+        </Attributes>
+    </yfc:doc>
+    <Tag BatchNo="" LotAttribute1="" LotAttribute2="" LotAttribute3=""
+        LotKeyReference="" LotNumber="" ManufacturingDate="" RevisionNo="">
+        <yfc:doc>
+            <Element EntityName="Inventory_Tag">
+                <Description>
+                    <div>
+				If <code>Tag</code> element is provided, inventory supplies with tag information, which have input Tag criteria as a subset of their the unique identifiers will be returned. 
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </Tag>
+    <ItemFilter GetUnpublishedItems="N|Y" IgnoreInvalidItems="N|Y">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YFS_getATP_input.xml" IncludeXMLPath="/GetATP/ItemFilter"/>
+        <yfc:doc>
+            <Element EntityName="Item">
+                <Description>Determines the filtering attributes when determining availability of a model item.
+				This can be used to specify the correct style, size, or color of a model item and only include
+				model children inventory whose item definition meet the required input.
+				<br/>Note: Only extended attributes of the YFS_ITEM table are supported.</Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Flag" Name="GetUnpublishedItems">
+                    <Description>Indicates if unpublished items needs to be considered.</Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="IgnoreInvalidItems">
+                    <Description>
+                        <div>
+					This flag indicates whether invalid items should be considered.
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+					Default value: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <PrimaryInformation ColorCode="" ItemType="" ManufacturerItem=""
+            ManufacturerName="" ProductLine="" SizeCode="">
+            <yfc:doc>
+                <Element EntityName="Item"/>
+            </yfc:doc>
+        </PrimaryInformation>
+        <ClassificationCodes CommodityCode="" ECCNNo=""
+            HarmonizedCode="" NAICSCode="" NMFCCode="" StorageType=""
+            TaxProductCode="" UNSPSC="" VelocityCode="">
+            <yfc:doc>
+                <Element EntityName="Item"/>
+            </yfc:doc>
+        </ClassificationCodes>
+    </ItemFilter>
+</getSupplyDetails>

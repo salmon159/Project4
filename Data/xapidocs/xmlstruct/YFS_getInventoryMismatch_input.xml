@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<InventorySnapShot ApplyDifferences="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/getInventoryMismatch/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Flag" Name="ApplyDifferences">
+                <Description>
+                    <div>
+				 Indicates whether to apply the differences to the <code>YFS_INVENTORY_SUPPLY</code> table in the database.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/> If <code>ApplyDifferences</code> is passed as <b>
+                            <code>N</code>
+                        </b>, an XML report detailing mismatches is returned.
+				<br/> If <code>ApplyDifferences</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, the inventory mismatches detected by the <code>getInventoryMismatch</code> processing  are applied to the <code>YFS_INVENTORY_SUPPLY</code> table in the database.
+				</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ShipNode CompareAllInventoryLotsFlag="" CompleteInventoryFlag="" ShipNode="Required">
+        <yfc:doc>
+            <Element EntityName="Ship_Node">
+                <Description>
+                    <div>
+            Only one ShipNode element can be passed to this API.
+            </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Flag" Name="CompareAllInventoryLotsFlag">
+                    <Description>
+                        <div>
+					Indicates whether to check inventory of all <code>LotNumber</code> and <code>ShipByDate</code> of the item for mismatches, or only the <code>LotNumber</code> and/or <code>ShipByDate</code> that are described in the input XML.
+					<br/>Default: <b>
+                                <code>Y</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                            <br/>If  <code>CompareAllInventoryLotsFlag</code> is passed as <b>
+                                <code>Y</code>
+                            </b>,  all the <code>LotNumber</code>s and <code>ShipByDate</code>s in the database for the item are checked for mismatches.
+					<br/>If  <code>CompareAllInventoryLotsFlag</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the <code>LotNumber</code>s and <code>ShipByDate</code>s supplied in the input XML are checked for mismatches. 
+					<br/>If <code>CompleteInventoryFlag</code> is <b>
+                                <code>Y</code>
+                            </b> the <code>CompareAllInventoryLotsFlag</code> can not be <b>
+                                <code>N</code>
+                            </b>.
+			</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="CompleteInventoryFlag">
+                    <Description>
+                        <div>
+					Indicates whether to check all of the inventory for mismatches, or only those items described in the input XML.
+					<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                            <br/>If  <code>CompleteInventoryFlag</code> is passed as <b>
+                                <code>Y</code>
+                            </b>,  all the items in the database for the <code>ShipNode</code> are checked for mismatches.
+					<br/>If  <code>CompleteInventoryFlag</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the <code>Item</code>s supplied in the input XML are checked for mismatches.
+			</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="ShipNode" Name="ShipNode">
+                    <Description>
+                        <div>
+                            <Validation>
+                                <Condition>
+                                    <code>ShipNode</code> must be passed and must be a valid existing <code>ShipNode.</code>
+                                </Condition>
+                                <Error Description="Invalid shipnode." ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Item Description="" InventoryOrganizationCode=""
+            ItemID="Required" ProductClass="" UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Inventory_Item"/>
+                <Attributes>
+                    <Attribute EntityName="Item" Name="Description" NameInEntity="Description"/>
+                    <Attribute DataType="OrgCode" Name="InventoryOrganizationCode"/>
+                </Attributes>
+            </yfc:doc>
+            <SupplyDetails ETA="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" Quantity="" ShipByDate=""
+                SupplyReference="" SupplyReferenceType="" SupplyType=""
+                Tracked="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Supply"/>
+                    <Attributes>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="LotAttribute1" NameInEntity="Lot_Attribute1"/>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="LotAttribute2" NameInEntity="Lot_Attribute2"/>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="LotAttribute3" NameInEntity="Lot_Attribute3"/>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="LotKeyReference" NameInEntity="Lot_Key_Reference"/>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="LotNumber" NameInEntity="Lot_Number">
+                            <Description>
+                                <div>
+						LotNumber. 
+						<Validation>
+                                    <Condition>The <code>Item</code> is Tag controlled and neither <code>LotNumber</code> nor <code>Tag</code> element is passed.
+						</Condition>
+                                    <Error
+                                    Description="No LotNumber or Tag information found" ErrorCode="INV10028"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Tag"
+                            Name="ManufacturingDate" NameInEntity="Lot_Manufacture_Date"/>
+                        <Attribute DataType="Flag" Name="Tracked"/>
+                    </Attributes>
+                </yfc:doc>
+                <Tag BatchNo="" LotAttribute1="" LotAttribute2=""
+                    LotAttribute3="" LotKeyReference="" LotNumber=""
+                    ManufacturingDate="" RevisionNo="">
+                    <yfc:doc>
+                        <Element EntityName="Inventory_Tag">
+                            <Description>
+                                <div>
+			Tag information is stored only if the Node tracks tag information in inventory.
+			<Validation>
+                                    <Condition>The <code>Item</code> is Tag controlled and neither <code>LotNumber</code> nor <code>Tag</code> is passed.
+				</Condition>
+                                    <Error
+                                    Description="No LotNumber or Tag information found" ErrorCode="INV10028"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                </Tag>
+            </SupplyDetails>
+        </Item>
+    </ShipNode>
+</InventorySnapShot>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/processRoutingExternally/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/processRoutingExternally/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_processRoutingExternally_output.xsd" yfc:rootElement="PromiseShipments">
+        <xsd:appinfo source="yfc:structure">
+            <PromiseShipments>
+                <PromiseShipment hasAttributes="Y">
+                    <PromiseShipmentLines>
+                        <PromiseShipmentLine hasAttributes="Y"/>
+                    </PromiseShipmentLines>
+                </PromiseShipment>
+            </PromiseShipments>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PromiseShipments" type="yfc:PromiseShipmentsXSDType"/>
+    <xsd:complexType name="PromiseShipmentsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromiseShipment"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="PromiseShipment">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromiseShipmentLines"/>
+            </xsd:all>
+            <xsd:attribute name="BreakBulkNode" type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							If two or more OrderLines are to be delivered together, 
+							this is the node where these lines are merged before final delivery.
+							it will be used as merge node without any validation if shipping is allowed for that node.
+							<br/>NOTE: if merge node is already present at the order line then this BreakBulkNode from the UE output will not be used for any logic.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierServiceCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Carrier service code.
+							<br/>NOTE: Both SCAC and CarrierServiceCode attributes should be passed in the UE output.
+							<br/>NOTE: If CarrierServiceCode and SCAC are passed in the UE then it will take precedence 
+							over CarrierServiceCode and /or SCAC passed at promise header / line in the input of 
+							promising apis.
+							<br/>NOTE: If Carrier Service code and SCAC are passed in the UE output then 
+							these values will override line / header level values even if these are blank values.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Currency in which Unit Cost is returned. If attribute is not
+							returned,
+							Enterprise's local currency will be asssumed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FailureReasonCode"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							This reason will appear in api output if no solution is found.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HandlingUnits" type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Number of units (boxes) in the shipment. This is only used for display 
+							purpose and not for any calculation
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastLegTransportationCost"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							LastLeg Transportation Cost
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RejectShipment" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="RequestedDeliveryDate"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							The date requested the order to be delivered on. RequestedDeliveryDate will not be read from 
+							the UE output if RequestedShipDate is not passed. When both are passed, these dates will be 
+							stamped as EarliestDeliveryDate and EarliestShipDate without any other validation. 
+							Procurement dates will again be calculated in this case.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestedShipDate"
+                type="yfctype:Text-24" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							The date the customer has requested the order to be shipped on. 
+							EarliestShipDate and EarliestDeliveryDate will be recomputed, 
+							whenever ReqShipDate returned is changed. <br/>NOTE: RequestedShipDate preponing is not allowed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SCAC" type="yfctype:Key" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							SCAC. 
+							<br/>NOTE: Both SCAC and CarrierServiceCode attributes should be passed in the UE output.
+							<br/>NOTE: If CarrierServiceCode and SCAC are passed in the UE then it will take precedence 
+							over CarrierServiceCode and /or SCAC passed at promise header / line in the input of 
+							promising apis.
+							<br/>NOTE: If Carrier Service code and SCAC are passed in the UE output then 
+							these values will override line / header level values even if these are blank values.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentId" type="yfctype:ID-10" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Unique Identifier for each Promise Shipment.
+							<code>ShipmentId</code>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromiseShipmentLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromiseShipmentLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromiseShipmentLine">
+        <xsd:complexType>
+            <xsd:attribute name="PromiseShipmentLineKey"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Unique identifier for each shipment line (choice).
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RejectShipmentLine" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Flag to Reject any shipment line (choice) in the shipment.
+									<br/>
+									Valid Values:
+									<b>
+                                <code>Y</code>
+                            </b>
+									or
+									<b>
+                                <code>N</code>
+                            </b>
+                            <br/>
+									Default:
+									<b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

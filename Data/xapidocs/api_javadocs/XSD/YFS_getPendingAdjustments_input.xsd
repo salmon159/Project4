@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getPendingAdjustments/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getPendingAdjustments/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getPendingAdjustments_input.xsd" yfc:rootElement="PendingAdjustment">
+        <xsd:appinfo source="yfc:structure">
+            <PendingAdjustment hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PendingAdjustment" type="yfc:PendingAdjustmentXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+            <xsd:documentation>
+                <div>
+				Inventory costing related table. Stores adjustments that have not been posted yet for costing purposes.
+					<Validation>
+                        <Condition>
+						Either <code>OrganizationCode</code> or <code>ShipNode</code> must be passed. If not passed:
+						</Condition>
+                        <Error
+                            Description="Invalid ship node.  Ship node or organization is mandatory." ErrorCode="YFS10048"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PendingAdjustmentXSDType">
+        <xsd:attribute name="FromDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="ADJUSTMENT_DATE" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                <xsd:documentation>The adjustment date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>
+                    <div>
+				Item Identification.
+					<Validation>
+                            <Condition>
+						If <code>ItemID</code> is not passed:
+						</Condition>
+                            <Error Description="Blank ItemID" ErrorCode="YFS10047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					If <code>OrganizationCode</code> is passed, the ship nodes owned by this organization are considered.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code>, if passed, should be a valid organization. If not a valid organization:
+							</Condition>
+                            <Error Description="Invalid Organization" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                <xsd:documentation>
+                    <div>
+					If <code>ShipNode</code> is passed, all open adjustments for this ship node are considered.
+						<Validation>
+                            <Condition>
+                                <code>ShipNode</code>, if passed, should be a valid ship node. If not a valid ship node:
+							</Condition>
+                            <Error Description="Invalid ship node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="ADJUSTMENT_DATE" yfc:tableName="YFS_INVENTORY_PENDING_ADJ">
+                <xsd:documentation>The adjustment date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

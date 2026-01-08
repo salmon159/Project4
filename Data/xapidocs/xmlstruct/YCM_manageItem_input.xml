@@ -1,0 +1,1697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite, IBM Order Management (5737-D18)
+(C) Copyright IBM Corp. 2005, 2018 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<ItemList ComputeUnitCost="" InsertMissingAttributeAllowedValues=""
+    ValidateAdditionalAttributeValues="" xmlns="http://www.sterlingcommerce.com/documentation/YCM/manageItem/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Flag" Name="ComputeUnitCost">
+                <Description>
+                    <div>
+		If this attribute is passed, Item Unit cost will be computed as follows,
+		 <code>For Physical Kit Items</code>
+		 Unit cost is computed as the total of all the component unit costs extended by the kit quantity PLUS the WIP cost factor
+		 of the physical kit item. If the WIP cost factor of the physical kit item is not defined, then the WIP cost factor for the
+		 catalog organization's primary enterprise is used. For cost factor calculation QUANTITY,WEIGHT and VOLUME attributes are used from parent physical kit item. For PERCENTAGE based calculation the unit cost computed as described above, will be used.
+		 <code>For Logical Kit Items</code>
+		 Unit cost is computed as the unit price of the primary supplier's default price program PLUS the primary supplier's
+		 standard cost factor. If the primary supplier's standard cost factor is not defined, the standard cost factor for the
+		 primary supplier's primary enterprise is used.
+		 <code>For Regular Items</code>
+		 Unit cost is computed as the unit price of the primary supplier's default price program PLUS the primary supplier's
+		 landed cost factor and the primary supplier's standard cost factor applied on that value. If the primary supplier's
+		 standard/landed cost factors are not defined, the standard/landed cost factors for the primary supplier's primary
+		 enterprise is used.
+		</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="InsertMissingAttributeAllowedValues">
+                <Description>
+                    <div>
+		When ValidateAdditionalAttributeValues flag is set to <code>Y</code> then the values to be associated to an item attribute (passed in the <code>AdditionalAttributeList</code> element) is validated against their corresponding <code>Attribute Allowed Values</code>.When validation fails error code YSC84_0006 is thrown.However if InsertMissingAttributeAllowedValues flag is set to Y, then the values to be associated to an item attribute (passed in the AdditionalAttributeList element) are not validated against their corresponding Attribute Allowed Values and data gets persisted in YFS_ATTR_ALLOWED_VALUE table
+		<br/>Valid Values:<code>Y</code> or <code>N</code>
+                        <br/>Default:<b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ValidateAdditionalAttributeValues">
+                <Description>
+                    <div>
+		When this attribute is passed as <code>N</code> then the values to be associated to an item attribute (passed in the <code>AdditionalAttributeList</code> element) are not validated against their corresponding <code>Attribute Allowed Values</code>. When this attribute is not passed the value for this attribute is assumed to be <code>Y</code> validations are applied.
+		<br/>Valid Values:<code>Y</code> or <code>N</code>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Item Action="" AssociateItemToCategories="" CanUseAsServiceTool=""
+        CheckInventoryBeforeDelete="" GlobalItemID="" ItemGroupCode=""
+        ItemID="Conditional" ItemKey="Conditional"
+        OrganizationCode="Conditional" SubCatalogOrganizationCode=""
+        SyncTS="" UnitOfMeasure="Conditional" yfc:DTDOccurrence="OneOrMany">
+        <yfc:doc>
+            <Element EntityName="Item">
+                <Description>
+                    <div>
+		  The Item to be modified. Pass the <code>ItemKey</code> attribute <i>or</i> the combination of <code>OrganizationCode</code>, <code>ItemID</code>, and <code>UnitOfMeasure</code> to identify the Item.
+		  <Validation>
+                            <Condition>Must pass either  <code>ItemKey</code> attribute <i>or</i> the combination of <code>OrganizationCode</code>, <code>ItemID</code>, and <code>UnitOfMeasure</code>.
+				</Condition>
+                            <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Values passed are invalid, and do not identify an item.
+				</Condition>
+                            <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Try to modify the <code>ItemID</code>, <code>OrganizationCode</code>, or <code>UnitOfMeasure</code> attributes.
+				</Condition>
+                            <Error
+                                Description="Primary Key or Unique Keys can not be modified." ErrorCode="YCM0040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Try to delete an item that still has inventory in the system.
+				</Condition>
+                            <Error
+                                Description="Delete Item Operation Failed." ErrorCode="YCM0005"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Try to create a service item with a different <code>UnitOfMeasure</code> but with <code>ItemID</code> that already exits.
+				</Condition>
+                            <Error
+                                Description="There exists a provided service item or delivery service item with same ItemID with different UnitOfMeasure." ErrorCode="YCM0054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Try to modify item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code> and a circular association relationship.
+				</Condition>
+                            <Error
+                                Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have a circular association relationship." ErrorCode="YCM82_002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Try to modify item with an <code>EffectiveStartDate</code> or <code>EffectiveEndDate</code> and multiple association relationships.
+				</Condition>
+                            <Error
+                                Description="An Item with an EffectiveStartDate or EffectiveEndDate cannot have multiple association relationships." ErrorCode="YCM82_003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+				If <code>SubCatalogOrganizationCode</code> is not of a valid sub-catalog organization of the catalog organization specified in <code>OrganziationCode</code> field:
+				</Condition>
+                            <Error
+                                Description="Invalid sub-catalog organization" ErrorCode="YCM83_007"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+				If <code>UnitOfMeasure</code> is not configured in the system.
+				</Condition>
+                            <Error
+                                Description="Invalid ItemId-UOM-OrganizationCode Combination" ErrorCode="YCM0031"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Action" Name="Action">
+                    <Description>
+                        <div>Action to take
+					<br/>Valid Values:
+					<br/>
+                            <b>
+                                <code>Manage</code>
+                            </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+					<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - Creates a new record.
+					<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+					<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                                <code>Manage</code>
+                            </b>.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="String" Name="AssociateItemToCategories">
+                    <Description>
+                        <div>
+				If AssociateItemToCategories is passed as <code>Y</code> during item creation, item and category list, association is made. When category details are mentioned within an Item tag(<code>&lt;Item&gt;&lt;CategoryList&gt;&lt;Category CategoryID="" CategoryPath=""/&gt;&lt;CategoryList/&gt;&lt;Item/&gt;</code>),only the relevant categories and item are associated, else item is associated with all categories which are part of the same organization code
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="String" Name="CheckInventoryBeforeDelete">
+                    <Description>
+                        <div>
+				If CheckInventoryBeforeDelete is passed as N, check for inventory is skipped. By default value for CheckInventoryBeforeDelete is Y.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Item" Name="GlobalItemID" NameInEntity="Global_Item_Id">
+                    <Description>
+                        <div>
+				Unique global identifier used to cross reference an item.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Item" Name="ItemGroupCode" NameInEntity="Item_Group_Code">
+                    <Description>
+                        <div>
+				This field indicates whether the item is a Product or Provided Service or Provided Service Option or Delivery Service or Delivery Service Option.
+					<br/>Default: <b>
+                                <code>PROD</code>
+                            </b> - Product
+					<br/>Valid Values:
+					<br/>
+                            <b>
+                                <code>PROD</code>
+                            </b> - Product
+					<br/>
+                            <b>
+                                <code>PS</code>
+                            </b> - Provided Service
+					<br/>
+                            <b>
+                                <code>DS</code>
+                            </b> - Delivery Service
+					<br/>
+                            <b>
+                                <code>SS</code>
+                            </b> - Special Service
+					<br/>
+                            <b>
+                                <code>PSOPT</code>
+                            </b> - Provided Service Option
+					<br/>
+                            <b>
+                                <code>DSOPT</code>
+                            </b> - Delivery Service Option
+				<Validation>
+                                <Condition> Try to modify the <code>ItemGroupCode</code> attribute.
+				</Condition>
+                                <Error
+                                    Description="ItemGroupCode can not be modified." ErrorCode="YCM0057"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Value of this attribute cannot be PS or DS if <code>KitCode</code> is bundle.
+				</Condition>
+                                <Error
+                                    Description="Bundle cannot be provided service or Delivery Service." ErrorCode="YCM80_001"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Item" Name="SyncTS" NameInEntity="SyncTS">
+                    <Description>
+                        <div>
+				The timestamp the item was synchronized with an external system. If attribute is passed in the input without a value, the attribute will be updated to current timestamp.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Item" Name="UnitOfMeasure" NameInEntity="Uom">
+                    <Description>
+                        <div>
+				The unit of measure for item quantity.
+				<br/>
+                            <code>UnitOfMeasure</code> is empty for Special Service item.				
+				<Validation>
+                                <Condition> If <code>UnitOfMeasure</code> is non empty for <code>SS</code> item.
+					</Condition>
+                                <Error
+                                    Description="Invalid UnitOfMeasure for Special Service item." ErrorCode="YCM922_002"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <PrimaryInformation AgeVerificationCode="" AllowGiftWrap=""
+            AssumeInfiniteInventory="" BOMXML=""
+            BundleFulfillmentMode=""
+            BundlePricingStrategy="PARENT|COMP|ALL"
+            CapacityPerOrderedQty="" CapacityQuantityStrategy=""
+            ColorCode="" ConfigurationModelName="" ConfiguredModelKey=""
+            CostCurrency="" CountryOfOrigin="" CreditWOReceipt=""
+            DefaultProductClass="" Description="" EffectiveEndDate=""
+            EffectiveStartDate="" ExtendedDescription=""
+            ExtendedDisplayDescription="" FixedCapacityQtyPerLine=""
+            FixedPricingQtyPerLine="" ImageID="" ImageLabel=""
+            ImageLocation="" InvoiceBasedOnActuals=""
+            IsAirShippingAllowed="" IsConfigurable=""
+            IsDeliveryAllowed="" IsEligibleForShippingDiscount="|N|Y"
+            IsForwardingAllowed="" IsFreezerRequired="" IsHazmat=""
+            IsModelItem="" IsParcelShippingAllowed="" IsPickupAllowed=""
+            IsPreConfigured="" IsProcurementAllowed=""
+            IsReturnService="" IsReturnable="" IsShippingAllowed=""
+            IsSoldSeparately="" IsStandaloneService=""
+            IsSubOnOrderAllowed="" ItemType="" Keywords="" KitCode=""
+            ManufacturerItem="" ManufacturerItemDesc=""
+            ManufacturerName="" MasterCatalogID="" MaxOrderQuantity=""
+            MinOrderQuantity="" MinReturnWindow=""
+            MinimumCapacityQuantity="" ModelItemUnitOfMeasure=""
+            NumSecondarySerials="" OrderingQuantityStrategy=""
+            PricingQuantityConvFactor="" PricingQuantityStrategy=""
+            PricingUOM="" PricingUOMStrategy="" PrimaryEnterpriseCode=""
+            PrimarySupplier="" ProductLine="" RequiresProdAssociation=""
+            ReturnWindow="" RunQuantity="" SerializedFlag=""
+            ServiceTypeID="" ShipmentConsolidationWindow=""
+            ShortDescription="" SizeCode="" Status="" TaxableFlag=""
+            UnitCost="" UnitHeight="" UnitHeightUOM="" UnitLength=""
+            UnitLengthUOM="" UnitWeight="" UnitWeightUOM="" UnitWidth="" UnitWidthUOM="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="String" Name="BOMXML">
+                        <Description>
+                            <div>The BOM XML used to define a preconfigured item.
+					<Validation>
+                                    <Condition>
+                                    <code>BOMXML</code> and <code>Components</code> are passed to create the item.</Condition>
+                                    <Error
+                                    Description="BOMXML and Components cannot be passed together." ErrorCode="YCM85_024"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>Item must be preconfigured in order to pass <code>BOMXML</code>.</Condition>
+                                    <Error
+                                    Description="Item must be preconfigured." ErrorCode="YCM85_023"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If item component in <code>BOMXML</code> is a kit, it must be a preconfigured item.</Condition>
+                                    <Error
+                                    Description="Component bundle item in BOMXML for a preconfigured item must be preconfigured." ErrorCode="YCM85_028"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="BundleFulfillmentMode">
+                        <Description>
+                            <div>
+                        This field indicates the way bundle will be fulfilled. It can be Ship Together(01), Ship Independent(00), or Deliver Together(02). Default value is Ship Together(01).
+                        <Validation>
+                                    <Condition>
+                                    <code>BundleFulfillmentMode</code> cannot be other than 00, 01, or 02.
+                                    </Condition>
+                                    <Error
+                                    Description="Bundle fulfillment mode cannot be other than 00, 01, or 02." ErrorCode="YCM79_007"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item"
+                        Name="CapacityQuantityStrategy" NameInEntity="Capacity_Quantity_Strategy">
+                        <Description>
+                            <div>
+				This field determines how the capacity quantity is arrived at for provided and delivery services from the inventory quantity.   Valid values: ORD - Based on the ordered service quantity; ASSOC - Based on the service and product association.  Default value: ORD.
+				<Validation>
+                                    <Condition> Valid <code>CapacityQuantityStrategy</code> value for Special Service item is <code>ORD</code>
+                                    </Condition>
+                                    <Error
+                                    Description="Invalid CapacityQuantityStrategy for special service item." ErrorCode="YCM922_001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="ConfigurationModelName">
+                        <Description>
+                            <div>The model name of the configurable item.
+					<Validation>
+                                    <Condition>ConfigurationModelName is set for an item that is not configurable.</Condition>
+                                    <Error
+                                    Description="Item must be configurable in order to pass ConfigurationModelName." ErrorCode="YCM85_040"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="IsConfigurable" NameInEntity="Is_Configurable">
+                        <Description>
+                            <div>
+				This flag indicates that the item is a configurable item. A configurable item can either be a bundle or a physical kit. A configurable bundle item offers a number of different options from which a customer can select before buying the product. Components for a bundle are not specified in the catalog as the actual components will be determined by the user when an order is placed. A physical kit must always be pre-configured.
+				<Validation>
+                                    <Condition>
+                                    <code>IsConfigurable</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>KitCode</code> is not <code>
+                                    <b>BUNDLE or PK</b>
+                                    </code>.
+					</Condition>
+                                    <Error
+                                    Description="A configurable item must be a bundle or physical kit item." ErrorCode="YCM80_014"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>IsConfigurable</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>ConfiguredModelKey</code> is not passed.
+					</Condition>
+                                    <Error
+                                    Description="A configurable item must have a ConfiguredModelKey." ErrorCode="YCM80_015"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>IsConfigurable</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>KitCode</code> is <code>
+                                    <b>PK</b>
+                                    </code> but <code>IsPreConfigured</code> is <code>
+                                    <b>N</b>
+                                    </code> .
+					</Condition>
+                                    <Error
+                                    Description="A configurable physical item must be pre-configured." ErrorCode="YCM83_012"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="IsModelItem" NameInEntity="Is_Model_Item">
+                        <Description>
+                            <div>
+				This flag indicates that the item is an item with variations (formerly known as a model item). An item with variations represents a group of items with similar set of attributes.
+				<Validation>
+                                    <Condition>An item with variations is a child of another item with variations.
+					</Condition>
+                                    <Error
+                                    Description="An item with variations is a child of another item with variations." ErrorCode="YCM80_011"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>An item with variations is a logical kit, a bundle, or a dynamic physical kit.
+					</Condition>
+                                    <Error
+                                    Description="An item with variations cannot be a logical kit, a bundle, or a dynamic physical kit." ErrorCode="YCM80_012"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="IsPreConfigured" NameInEntity="Is_Pre_Configured">
+                        <Description>
+                            <div>
+				This flag indicates that the configurable item is pre-configured with selected options. If a bundle is pre-configured, the bundle or physical components that represent the selected option will be available in the catalog. For a pre-configured physical kit, only the physical kit will be available as the item in the catalog.
+				<Validation>
+                                    <Condition>
+                                    <code>IsPreConfigured</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>IsConfigurable</code> is not <code>
+                                    <b>Y</b>
+                                    </code>.
+					</Condition>
+                                    <Error
+                                    Description="A pre-configured item must be a configurable item." ErrorCode="YCM80_016"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="IsReturnable"/>
+                    <Attribute EntityName="Item"
+                        Name="IsSubOnOrderAllowed" NameInEntity="Is_Sub_On_Order_Allowed">
+                        <Description>
+                            <div>
+				Indicates if during scheduling an order, supersession is allowed or not. If passed as <b>
+                                    <code>Y</code>
+                                </b>, schedule will automatically attempt to substitute an item with preferred or regular substitute.
+					<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                                <Validation>
+                                    <Condition>If <code>IsSubOnOrderAllowed</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b> and item is a kit item, it must be a physical kit.
+					</Condition>
+                                    <Error
+                                    Description="Item cannot be substituted on the order if the item is tag-controlled." ErrorCode="YCM80_004"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="KitCode" NameInEntity="Kit_Code"/>
+                    <Attribute EntityName="Item" Name="MasterCatalogID" NameInEntity="Master_Catalog_Id">
+                        <Description>
+                            <div>
+				The master catalog ID to which this item belongs.
+				<Validation>
+                                    <Condition>Must be a valid <code>MasterCatalogId</code> for the passed <code>OrganizationCode</code>.
+					</Condition>
+                                    <Error
+                                    Description="Invalid Master Catalog ID for the selected Organization Code" ErrorCode="YCM0018"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>MasterCatalogId</code> is provided and item is delivery or service item.
+					</Condition>
+                                    <Error
+                                    Description="MasterCatalogID cannot be specified for delivery or service item." ErrorCode="YCM0066"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="PricingUOM" NameInEntity="Pricing_UOM">
+                        <Description>
+                            <div>
+				The pricing unit of measure, if different from the inventory unit of measure.   <code>PricingUOM</code> should be passed if pricing is maintainted.
+				</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item"
+                        Name="PricingUOMStrategy" NameInEntity="Pricing_UOM_Strategy">
+                        <Description>
+
+                            <div>
+				This field determines how the pricing unit of measure is defaulted for the item. It could be same as the inventory UOM or could be different.  <code>PricingUOMStrategy</code> should be passed if pricing is maintainted.
+				<br/>Valid Values:
+				<div
+                                    class="innerpanel" width="30%">
+                                    <table border="0" cellpadding="0"
+                                    cellspacing="0" class="table">
+                                    <tbody>
+                                    <tr>
+                                    <td class="tablecolumn" width="10%">
+                                    <b>Value</b>
+                                    </td>
+                                    <td class="tablecolumn" width="40%">
+                                    <b>Meaning</b>
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn" width="10%">
+                                    <b>
+                                    <code>INV</code>
+                                    </b>
+                                    </td>
+                                    <td class="tablecolumn" width="90%">Pricing unit of measure is the same as inventory unit of measure.</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn" width="10%">
+                                    <b>
+                                    <code>ALT</code>
+                                    </b>
+                                    </td>
+                                    <td class="tablecolumn" width="90%">Pricing unit of measure is different than inventory unit of measure.</td>
+                                    </tr>
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="TaxableFlag"/>
+                    <Attribute EntityName="Item" Name="UnitHeightUOM" NameInEntity="Unit_Height_Uom">
+                        <Description>
+                            <div>
+				Unit of measure in which item height is measured.
+				<Validation>
+                                    <Condition>An invalid dimension unit of measure is passed.
+					</Condition>
+                                    <Error
+                                    Description="Invalid dimension unit of measure." ErrorCode="YCM0067"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="UnitLengthUOM" NameInEntity="Unit_Length_Uom">
+                        <Description>
+                            <div>
+				Unit of measure in which item length is measured.
+				<Validation>
+                                    <Condition>An invalid dimension unit of measure is passed.
+					</Condition>
+                                    <Error
+                                    Description="Invalid dimension unit of measure." ErrorCode="YCM0067"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="UnitWidthUOM" NameInEntity="Unit_Width_Uom">
+                        <Description>
+                            <div>
+				Unit of measure in which item width is measured.
+				<Validation>
+                                    <Condition>An invalid dimension unit of measure is passed.
+					</Condition>
+                                    <Error
+                                    Description="Invalid dimension unit of measure." ErrorCode="YCM0067"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </PrimaryInformation>
+        <WMSItemAttributes ConstrainedByHeight="" Deformable=""
+            PackByVolume="" PackedHeight="" PackedLength=""
+            PackedWidth="" StackHeightIncrease=""/>
+        <InventoryParameters ATPRule="" AdvanceNotificationTime=""
+            DefaultExpirationDays="" FutureSafetyFactorPercentage=""
+            InventoryMonitorRule="" IsFifoTracked=""
+            IsItemBasedAllocationAllowed="" IsSerialTracked=""
+            LeadTime="" MaximumNotificationTime=""
+            MinNotificationTime="" NodeLevelInventoryMonitorRule=""
+            OnhandSafetyFactorPercentage=""
+            OnhandSafetyFactorQuantity="" ProcessingTime=""
+            RequiresDGOverride="" TagControlFlag="" TimeSensitive="" UseUnplannedInventory="">
+            <yfc:doc>
+                <Element EntityName="Item">
+                    <Description>
+                        <div>
+				Inventory related parameters.
+				<Validation>
+                                <Condition>If both <code>OnhandSafetyFactorQuantity</code> and <code>OnhandSafetyFactorPercentage</code> are provided.
+					</Condition>
+                                <Error
+                                    Description="Cannot specify both OnhandSafetyFactorQuantity and OnhandSafetyFactorPercentage.  Only one can be specified." ErrorCode="YCM75_0001"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Item"
+                        Name="FutureSafetyFactorPercentage" NameInEntity="Future_Safety_Factor_Pct">
+                        <Description>
+                            <div>
+				The future safety factor percentage of this item.  The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                    <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100.
+					</Condition>
+                                    <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item"
+                        Name="OnhandSafetyFactorPercentage" NameInEntity="Onhand_Safety_Factor_Pct">
+                        <Description>
+                            <div>
+				The on-hand safety factor percentage of this item.  The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                    <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100.
+					</Condition>
+                                    <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="TagControlFlag" NameInEntity="Tag_Control_Flag">
+                        <Description>
+                            <div>
+				Used to indicate if item is tag controlled. Inventory module uses this flag to determine if additional inventory attributes need to be stored for the item
+				<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b> or <b>
+                                    <code>S</code>
+                                </b>
+                                <br/>
+                                <b>
+                                    <code>S</code>
+                                </b> - <i>Sometimes</i> - Inventory does not mandate tag details.
+				<br/>If this is passed as <b>
+                                    <code>Y</code>
+                                </b> then InventoryTagAttributes element must be passed.
+				</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="TimeSensitive">
+                        <Description>
+                            <div>
+				Indicates if the item is time sensitive.
+				<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </InventoryParameters>
+        <SafetyFactorDefinitions Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+								If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old safety factor defn records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied. 
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <SafetyFactorDefinition DeliveryMethod="Required"
+                FutureSafetyFactorPercentage=""
+                OnhandSafetyFactorPercentage=""
+                OnhandSafetyFactorQuantity="" Operation="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="CommonCode"
+                            EntityName="Sku_Safety_Factor_Defn"
+                            Name="DeliveryMethod" NameInEntity="DeliveryMethod">
+                            <Description>
+                                <div>
+									Valid value are<b>SHP, PICK or DEL</b>. 
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Sku_Safety_Factor_Defn"
+                            Name="FutureSafetyFactorPercentage" NameInEntity="Future_Safety_Factor_Pct">
+                            <Description>
+                                <div>
+				The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                    <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                    <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Sku_Safety_Factor_Defn"
+                            Name="OnhandSafetyFactorPercentage" NameInEntity="Onhand_Safety_Factor_Pct">
+                            <Description>
+                                <div>
+				The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                    <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                    <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity"
+                            EntityName="Sku_Safety_Factor_Defn"
+                            Name="OnhandSafetyFactorQuantity" NameInEntity="Onhand_Safety_Factor_Qty"/>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+									Valid value are <b>Create, Modify and Delete</b>. 
+								</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </SafetyFactorDefinition>
+        </SafetyFactorDefinitions>
+        <ClassificationCodes CommodityCode="" ECCNNo=""
+            HarmonizedCode="" HazmatClass="" Model="" NAICSCode=""
+            NMFCClass="" NMFCCode="" OperationalConfigurationComplete=""
+            PickingType="" PostingClassification="" Schedule_B_Code=""
+            StorageType="" TaxProductCode="" UNSPSC="" VelocityCode="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute EntityName="Item" Name="Model" NameInEntity="Model">
+                        <Description>
+                            <div>
+			   This field describes the identifier of the item with variations to which this item belongs. The unique
+			   identifier is the combination of <code>Model</code> and <code>ModelItemUnitOfMeasure</code>.
+				  <Validation>
+                                    <Condition>If item is assigned to different categories than the item with variations to which it belongs
+					</Condition>
+                                    <Error
+                                    Description="Children of an item with variations must be assigned to the same categories as the item with variations" ErrorCode="YCM91_001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ClassificationCodes>
+        <ItemAliasList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+				  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old item aliases are removed and replaced with the new ones.
+				  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+				  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemAlias Action="" AliasName="Required"
+                AliasValue="Required" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Action">
+                            <Description>
+                                <div>
+			   Action to take.  Valid values are <b>
+                                    <code>Modify</code>
+                                    </b>, and <b>
+                                    <code>Delete</code>
+                                    </b>.  Set to <b>
+                                    <code>Modify</code>
+                                    </b> to modify the contents of the item alias.  Set to <b>
+                                    <code>Delete</code>
+                                    </b> to delete the item alias from YFS_ITEM_ALIAS table.  Default value is <b>
+                                    <code>Modify</code>
+                                    </b>.
+			   </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ItemAlias>
+        </ItemAliasList>
+        <ItemServiceSkillList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+				  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old item service skills are removed and replaced with the new ones.
+				  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+				  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemServiceSkill Operation="" ServiceSkillId="Required">
+                <yfc:doc>
+                    <Element EntityName="Item_Service_Skill">
+                        <Description>
+                            <div>
+				Optional.  Valid for only for service items. This table is used to store the service skills needed to provide a service.
+				<Validation>
+                                    <Condition>If this element is passed, <code>ServiceSkillId</code> attribute cannot be blank.
+					</Condition>
+                                    <Error
+                                    Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If this element is passed, <code>ServiceSkillId</code> attribute should be the identifier of a valid service skill created for the organization for which item is being modified.
+					</Condition>
+                                    <Error
+                                    Description="Service Skill not found." ErrorCode="YCM0062_55SP2"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>This element can be passed only for service items.
+					</Condition>
+                                    <Error
+                                    Description="Service Skills can be specified only for service items." ErrorCode="YCM0063_55SP2"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+						   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+						  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ItemServiceSkill>
+        </ItemServiceSkillList>
+        <ItemOptionList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+					  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old item options are removed and replaced with the new ones.
+					  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+					  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemOption ItemKey="" ItemOptionKey="" Operation=""
+                OptionItemId="" OptionUOM="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Item_Option">
+                        <Description>
+                            <div>
+			Options for an provided service or delivery service item.
+				<Validation>
+                                    <Condition>Invalid information item information is passed for option.
+				</Condition>
+                                    <Error
+                                    Description="Item is not found." ErrorCode="YCM0033"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+			   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+			  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ItemOption>
+        </ItemOptionList>
+        <ItemServiceAssocList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+					  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old information is removed and replaced with the new information.
+					  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+					  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemServiceAssoc CategoryKey="" HoldSchedTillCompletion=""
+                ItemKey="" ItemServiceAssocKey="" Operation=""
+                PricingProductQuantity="" PricingServiceQuantity=""
+                ProductQuantity="" ServiceItemGroupCode="Required"
+                ServiceItemId="Required" ServiceQuantity=""
+                ServiceTimeOffset="" ServiceUOM="Required" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+			   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+			  </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="String" Name="ServiceTimeOffset"/>
+                    </Attributes>
+                </yfc:doc>
+                <ItemServiceAssocSkillList Reset="">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="Flag" Name="Reset">
+                                <Description>
+                                    <div>
+						  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b>, the old information is removed and replaced with the new information.
+						  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                    </b>, only the deltas are applied.
+						  </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <ItemServiceAssocSkill Operation="" ServiceSkillId="Required">
+                        <yfc:doc>
+                            <Element EntityName="Item_Service_Assoc_Skill">
+                                <Description>
+                                    <div>
+					Optional. This table is used to store the service skills needed to provide the service for the product item being created.
+					<Validation>
+                                    <Condition>If this element is passed, <code>ServiceSkillId</code> attribute cannot be blank.
+						</Condition>
+                                    <Error
+                                    Description="Missing mandatory parameters." ErrorCode="YCM0002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If this element is passed, <code>ServiceSkillId</code> attribute should be the identifier of a valid service skill created for the organization for which item is being created.
+						</Condition>
+                                    <Error
+                                    Description="Service Skill not found." ErrorCode="YCM0062_55SP2"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Element>
+                            <Attributes>
+                                <Attribute DataType="Action" Name="Operation">
+                                    <Description>
+                                    <div>
+						   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+						  </div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                    </ItemServiceAssocSkill>
+                </ItemServiceAssocSkillList>
+            </ItemServiceAssoc>
+        </ItemServiceAssocList>
+        <AlternateUOMList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+					  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old information is removed and replaced with the new information.
+					  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+					  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <AlternateUOM Height="" HeightUOM="" IsOrderingUOM=""
+                ItemKey="" ItemUOMKey="" Length="" LengthUOM=""
+                Operation="" Quantity="" UnitOfMeasure="" Weight=""
+                WeightUOM="" Width="" WidthUOM="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Item_UOM">
+                        <Description>
+                            <div>
+			Alternate UOM for an item.
+			<Validation>
+                                    <Condition>An invalid dimension unit of measure is passed for <code>LengthUOM</code>, <code>WeightUOM</code>, or <code>HeightUOM</code>.
+				</Condition>
+                                    <Error
+                                    Description="Invalid dimension unit of measure." ErrorCode="YCM0067"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+			   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+			  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </AlternateUOM>
+        </AlternateUOMList>
+        <ItemInstructionList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+				  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old item instructions are removed and replaced with the new ones.
+				  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+				  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemInstruction InstructionCode="" InstructionText=""
+                InstructionType="" ItemInstructionKey="" ItemKey=""
+                Operation="" SeqNo="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Item_Instruction">
+                        <Description>
+                            <div>
+				Stores instructions pertaining to the item.
+				Standard pre-defined instruction code as defined by the catalog organization can be used as the value of <code>InstructionCode</code>.
+				Free form instruction text for the given instruction type can be used as the value of <code>InstructionText</code>.
+				</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Item_Instruction"
+                            Name="InstructionCode" NameInEntity="Instruction_Code">
+                            <Description>
+                                <div>Standard pre-defined instruction code as defined by the catalog organization. If passed, it will be validated against configuration and <code>InstructionText</code> will be ignored. <code>InstructionText</code> is used whenever <code>InstructionCode</code> is not passed.
+							<Validation>
+                                    <Condition>Invalid item instruction code.
+								</Condition>
+                                    <Error
+                                    Description="Undefined instruction code" ErrorCode="YCM81_001"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+			   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+			  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ItemInstruction>
+        </ItemInstructionList>
+        <ItemExclusionList>
+            <ItemExclusion ExclusionCode="Required" yfc:DTDOccurrence="ZeroOrMany"/>
+            <Remove>
+                <ItemExclusion ExclusionCode="Required" yfc:DTDOccurrence="ZeroOrMany"/>
+            </Remove>
+        </ItemExclusionList>
+        <AdditionalAttributeList Reset="">
+            <yfc:includeInParent IncludeXMLChildNodes="Y"
+                IncludeXMLFileName="MasterAdditionalAttributeListForInput.xml" IncludeXMLPath="/AdditionalAttributeList"/>
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+								If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied. 
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <AdditionalAttribute AttributeDomainID="Required"
+                AttributeGroupID="Required" DoubleValue="Conditional"
+                IntegerValue="Conditional" Name="Required"
+                Operation="Manage|Create|Modify|Delete|"
+                Value="Conditional" yfc:DTDOccurrence="REQUIRED">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+	This entity is used to store values for an attribute assigned to a category or item. This entity is also used to store dynamic attributes attached with an entity. Currently used to store additional attributes for item and category entities.
+	<Validation>
+                                    <Condition>If this element is passed, <code>Name</code> attribute cannot be blank.</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If this element is passed, either <code>Value</code> or  <code>IntegerValue</code>  or <code>DoubleValue</code> must be passed.</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>An <code>AdditionalAttribute</code> record is not allowed for an <code>Attribute</code> record that has an <code>AttributeReference</code> associated to it.</Condition>
+                                    <Error
+                                    Description="Cannot Assign Value To Reference Attribute." ErrorCode="YSC84_0013"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If the associated <code>Attribute</code> record is configured with <code>AllowMultipleValues</code> as 'N', then only one <code>AdditionalAttribute</code> record is allowed for that <code>Attribute</code> for the associated item or category of this <code>AdditionalAttribute</code> record.</Condition>
+                                    <Error
+                                    Description="Cannot Define Multiple Values For This Attribute." ErrorCode="YSC84_0011"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If the associated <code>Attribute</code> record is of <code>DataType</code> 'TEXT' and is configured with an <code>AllowedValueLength</code> and the flag  <code>IsAllowedValueDefined</code> is not set to 'Y', then  the length of this <code>Value</code> attribute may not exceed the defined <code>AllowedValueLength</code>.</Condition>
+                                    <Error
+                                    Description="Length Of Assigned Value Cannot Exceed Allowed Value Length Of The Attribute." ErrorCode="YSC84_0012"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If this <code>AdditionalAttribute</code> record is associated to an <code>Attribute</code> record and the flag  <code>IsAllowedValueDefined</code> is set to 'Y', then either <code>Value</code> or  <code>IntegerValue</code>  or <code>DoubleValue</code> must be one of the computed values from the <code>AttributeAllowedValue</code> record.</Condition>
+                                    <Error
+                                    Description="Invalid Value Assigned To The Attribute." ErrorCode="YSC84_0006"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>Operation to perform
+				<br/>Valid Values: 
+				<br/>
+                                    <b>
+                                    <code>Manage</code>
+                                    </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+				<br/>
+                                    <b>
+                                    <code>Create</code>
+                                    </b> - Creates a new record. 
+				<br/>
+                                    <b>
+                                    <code>Modify</code>
+                                    </b> - Change values in an existing record.
+				<br/>
+                                    <b>
+                                    <code>Delete</code>
+                                    </b> - Deletes an existing record.
+				<br/>The default behavior is <b>
+                                    <code>Manage</code>
+                                    </b>.
+				</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </AdditionalAttribute>
+        </AdditionalAttributeList>
+        <Components Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>If the value of <code>Reset</code> passed is <b>
+                                    <code>Y</code>
+                                </b>, the component definitions are changed. If the value of <code>Reset</code> passed is <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+				  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Component ComponentItemID="Conditional"
+                ComponentItemKey="Conditional"
+                ComponentOrganizationCode="Conditional"
+                ComponentUnitOfMeasure="Conditional"
+                KitQuantity="Required" Operation="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Kit_Item">
+                        <Description>
+                            <div>This element defines a component of the Item, if it is a Kit Item.  To identify a component, pass either <code>ComponentItemKey</code>
+                                <i>or</i>
+                                <code>ComponentItemID</code>, <code>ComponentOrganizationCode</code>, and <code>ComponentUnitOfMeasure</code> is required.
+				  <Validation>
+                                    <Condition>Try to add a ComponentItem that cannot be identified in the database.
+					</Condition>
+                                    <Error Description="Item Not Found." ErrorCode="YCM0033"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If kitCode is Nonbundle then component cannot be Bundle.
+					</Condition>
+                                    <Error
+                                    Description="Nonbundle kit item cannot have Bundle as component." ErrorCode="YCM80_002"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>Item already exist in hierarchy.
+					</Condition>
+                                    <Error
+                                    Description="Item already exists in hierarchy." ErrorCode="YCM80_003"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>Component item is not PS or PROD and parent item is bundle.
+						</Condition>
+                                    <Error
+                                    Description="Bundle component cannot be other than PS or PROD." ErrorCode="YCM79_006"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>Bundle component is DPK.
+						</Condition>
+                                    <Error
+                                    Description="Bundle component cannot be DPK." ErrorCode="YCM79_009"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>KitCode</code> is missing when item components are provided in the input.
+					</Condition>
+                                    <Error
+                                    Description="Kit Code is required when item components are provided in the input." ErrorCode="YCM85_027"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>One or more bundle components did not meet item validation criteria.
+					</Condition>
+                                    <Error
+                                    Description="Invalid Item Confirguration." ErrorCode="YCM91_002"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>KitCode</code> is passed as a fractional value.</Condition>
+                                    <Error
+                                    Description="Fractional quantity cannot be passed to this attribute." ErrorCode="YFS10447"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Item"
+                            Name="ComponentItemID" NameInEntity="Item_Id">
+                            <Description>Along with <code>ComponentOrganizationCode</code> and <code>ComponentUnitOfMeasure</code>, it identifies a component item.</Description>
+                        </Attribute>
+                        <Attribute EntityName="Item"
+                            Name="ComponentItemKey" NameInEntity="Item_Key">
+                            <Description>Component item's primary key.</Description>
+                        </Attribute>
+                        <Attribute EntityName="Item"
+                            Name="ComponentOrganizationCode" NameInEntity="Organization_Code">
+                            <Description>Organization that maintains the catalog for the Component Item.</Description>
+                        </Attribute>
+                        <Attribute EntityName="Item"
+                            Name="ComponentUnitOfMeasure" NameInEntity="Uom">
+                            <Description>Unit of measure for the Component Item.</Description>
+                        </Attribute>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+					   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity. To add or modify a component there is no need to pass operation attribute. It is determined internally. Delete is the one which should be passed explicitly.
+					  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </Component>
+        </Components>
+        <LanguageDescriptionList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+				  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>,  the language descriptions change.   If <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied.
+				  </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <LanguageDescription Description="" ExtendedDescription=""
+                ExtendedDisplayDescription="" LocaleCode="Required"
+                Operation="" ShortDescription="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Language_Description">
+                        <Description>
+                            <div>
+			 If this element is passed, <code>LocaleCode</code> is a mandatory attribute. The <code>LocaleCode</code> is not validated. The information is stored in the YFS_LANGUAGE_DESCRIPTION table.
+			 </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+			   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+			  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </LanguageDescription>
+        </LanguageDescriptionList>
+        <InventoryTagAttributes BatchNo="" ItemKey="" ItemTagKey=""
+            LotAttribute1="" LotAttribute2="" LotAttribute3=""
+            LotKeyReference="" LotNumber="" ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Item_Tag">
+                    <Description>
+                        <div>
+		Defines the Tag Identifier and Tag Descriptor attributes for Tag Controlled Items.
+		<Validation>
+                                <Condition>If no Tag Identifier is specified and the item is tag controlled.
+			</Condition>
+                                <Error
+                                    Description="No tag identifier attributes specified for tag controlled item." ErrorCode="YCM0065"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </InventoryTagAttributes>
+        <ServiceActivities>
+            <ServiceActivity ActivityCode="Required"
+                ActivitySeqNo="Required" Operation="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute EntityName="Service_Activity"
+                            Name="ActivityCode" NameInEntity="Activity_Code">
+                            <Description>
+                                <div>
+					Specifies the activity to be performed for the item.
+					<Validation>
+                                    <Condition>
+                                    <code>ActivityCode</code> passed is not configured
+					</Condition>
+                                    <Error
+                                    Description="Invalid Service Activity Code" ErrorCode="YCM0064"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+                                    <code>ActivityCode</code> is not passed
+					</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Service_Activity"
+                            Name="ActivitySeqNo" NameInEntity="Activity_Seq_No">
+                            <Description>
+                                <div>
+					Attribute to specify the Sequence Number in which the Instruction should be performed.
+					<Validation>
+                                    <Condition>
+                                    <code>ActivitySeqNo</code> is not passed
+					</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing" ErrorCode="YCM0002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+					Attribute to specify whether the Instruction should be added or deleted. If passed as <b>Delete</b> activity is deleted from the item else a new instruction is created.
+					</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <ServiceActivityInstructions>
+                    <ServiceActivityInstruction InstructionText=""
+                        InstructionURL="" Operation=""
+                        SequenceNo="Required" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="InstructionText" NameInEntity="Instruction_Text"/>
+                                <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="InstructionURL" NameInEntity="Instruction_URL"/>
+                                <Attribute DataType="Action" Name="Operation">
+                                    <Description>
+                                    <div>
+				Attribute to specify whether the Instruction should be added or deleted. If passed as <b>Delete</b> instruction is deleted else a new instruction is created.
+				</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="SequenceNo" NameInEntity="Sequence_No"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </ServiceActivityInstruction>
+                </ServiceActivityInstructions>
+            </ServiceActivity>
+        </ServiceActivities>
+        <AssetList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+								If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old Asset records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied. 
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Asset AssetID="" AssetKey="" ContentID=""
+                ContentLocation="" ContentSize="" Description=""
+                DisplayLocalizedFieldInLocale="" Label="" Operation="" Type="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Locale" Name="DisplayLocalizedFieldInLocale">
+                            <Description>
+                                <div>
+									The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+									Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>. Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Action" Name="Type">
+                            <Description>
+                                <div>
+									Type of asset.<br/>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <AssetLocaleList Reset="">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="Flag" Name="Reset">
+                                <Description>
+                                    <div>
+										If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b>, the old records are removed and replaced with the new ones.
+										If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                    </b>, only the deltas are applied. 
+									</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <AssetLocale AssetKey="" AssetLocaleKey=""
+                        ContentID="" ContentLocation="" Country=""
+                        Description="" Label="" Language="" Operation="" Variant="">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="Action" Name="Operation">
+                                    <Description>
+                                    <div>
+											Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>. Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+										</div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                    </AssetLocale>
+                </AssetLocaleList>
+            </Asset>
+        </AssetList>
+        <WIPCostFactorPurpose CostFactorGroupKey="Required"
+            PostingClassification="" SupplierOrganizationCode="">
+            <yfc:doc>
+                <Element EntityName="Cost_Factor_Purpose">
+                    <Description>
+                        <div>
+		WIPCostFactorPurpose element can be passed in for managing the cost factor purpose for a physical kit item. The values passed in this 
+		element are stored in YFS_COST_FACTOR_PURPOSE table if <code>KitCode</code> is <code>PK</code>, otherwise they are ignored. Cost_Factor_Purpose
+		column in this table is stamped with a default value of <code>WIP</code>. CostFactorGroupKey must be passed in to update the cost factor purpose for 
+		the item. If not passed in, the cost factor purpose will get deleted for that item.
+		</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Cost_Factor_Purpose"
+                        Name="CostFactorGroupKey" NameInEntity="Cost_Factor_Group_Key"/>
+                    <Attribute EntityName="Cost_Factor_Purpose"
+                        Name="PostingClassification" NameInEntity="Posting_Classification"/>
+                    <Attribute EntityName="Cost_Factor_Purpose"
+                        Name="SupplierOrganizationCode" NameInEntity="Supplier_Organization_Code"/>
+                </Attributes>
+            </yfc:doc>
+        </WIPCostFactorPurpose>
+        <ItemLocaleList Reset="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Reset">
+                        <Description>
+                            <div>
+								If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, the old records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, only the deltas are applied. 
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ItemLocale Country="" ImageID="" ItemKey=""
+                ItemLocaleKey="" Language="" Operation="" Variant="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Operation">
+                            <Description>
+                                <div>
+									Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>. Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+								</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <PrimaryInformation Description=""
+                    ExtendedDescription="" ExtendedDisplayDescription=""
+                    ImageID="" ImageLabel="" ImageLocation=""
+                    ShortDescription="" yfc:GroupName="ItemLocaleList:ItemLocale:PrimaryInformation">
+                    <yfc:doc>
+                        <Element EntityName="Item_Locale"/>
+                        <Attributes>
+                            <Attribute DataType="Text-200" Name="ImageID">
+                                <Description>
+                                    <div>
+									Unique ID of the image in the external location.
+								</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="Text-200" Name="ImageLabel">
+                                <Description>
+                                    <div>
+									Label of the image.
+								</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="URL" Name="ImageLocation">
+                                <Description>
+                                    <div>
+									External location of the image.
+								</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </PrimaryInformation>
+            </ItemLocale>
+        </ItemLocaleList>
+        <CategoryList>
+            <Category CategoryID="" CategoryPath=""/>
+        </CategoryList>
+        <CategoryAssociations IgnoreCategoryAssociationException="">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+                            <code>CategoryAssociations</code> element can create or remove association between categories to an item based on <code>CategoryKey</code> or <code>CategoryPath</code>. Although multiple categories can be associated to an Item, performance of manageItem has to be considered accordingly.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="IgnoreCategoryAssociationException">
+                        <Description>
+                            <div>
+								If <code>IgnoreCategoryAssociationException</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, then exception scenarios are ignored. For e.g. item is already associated to a category and user is attempting to associate again.
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Category Action="" CategoryKey="" CategoryPath="" yfc:DTDOccurrence="OneOrMany">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Action">
+                            <Description>
+                                <div>Action to take
+								<br/>Valid Values:
+								<br/>
+                                    <b>
+                                    <code>Create</code>
+                                    </b> - Creates a new association.
+								<br/>
+                                    <b>
+                                    <code>Delete</code>
+                                    </b> - Deletes an existing association.
+								<br/>
+								The default behavior is <b>
+                                    <code>Create</code>
+                                    </b>.
+							</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Category"
+                            Name="CategoryKey" NameInEntity="Category_Key">
+                            <Description>
+                                <div>
+								The primary key of YFS_CATEGORY table.
+							</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Category"
+                            Name="CategoryPath" NameInEntity="Category_Path">
+                            <Description>
+                                <div>
+								Contains the hierarchy or path of the category with respect to the category domain.
+							</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </Category>
+        </CategoryAssociations>
+    </Item>
+</ItemList>

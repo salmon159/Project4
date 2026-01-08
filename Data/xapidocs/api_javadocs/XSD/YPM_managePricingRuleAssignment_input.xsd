@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/managePricingRuleAssignment/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/managePricingRuleAssignment/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YPM_managePricingRuleAssignment_input.xsd" yfc:rootElement="PricingRuleAssignment">
+        <xsd:appinfo source="yfc:structure">
+            <PricingRuleAssignment hasAttributes="Y">
+                <PricingRule hasAttributes="Y"/>
+                <Coupon hasAttributes="Y"/>
+            </PricingRuleAssignment>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PricingRuleAssignment" type="yfc:PricingRuleAssignmentXSDType">
+        <xsd:annotation yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+            <xsd:documentation>
+                <div>
+					Specify the pricing rule assignment information to be created, modified or deleted. An assignment is either for a specific customer or group of customers (based on the attributes of customer).
+					<Validation>
+                        <Condition>Both <code>CustomerID</code> and attributes of customer are passed and are not void.</Condition>
+                        <Error
+                            Description="An assignment cannot be both for customer and attributes of customer." ErrorCode="YPM10089"/>
+                    </Validation>
+					Modifying a customer specific assignment by passing any of the customer attributes resets <code>CustomerID</code> and <code>Shareable</code> to null. 
+					Similarly modifying an assignment defined based on customer attributes, by passing <code>CustomerID</code> resets all the customer attributes on the assignment to null.  
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PricingRuleAssignmentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricingRule"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Coupon"/>
+        </xsd:all>
+        <xsd:attribute name="AssignmentID" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="ASSIGNMENT_ID" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>Used to UNIQUELY identify a pricing rule assignment. The other columns are still included in the key for backward                     compatible purposes. Note that existing records, which have NULL for ASSIGNMENT_ID, will have the column populated automatically                      by SEQ_YPM_ASSIGNMENTID whenever managePricingRuleAssignment on the record. Once populated, it should be solely used.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CreateGlobalSellerAssignment"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Valid Values are <code>Y</code> and <code>N</code>. If value is passed as <code>Y</code> then a seller assignment is created for the enterprise which is applicable to all sellers across all regions.
+					<Validation>
+                            <Condition>Promotion can have either global or specific seller assignments for an enterprise.</Condition>
+                            <Error
+                                Description="Pricing rule can not have both global and specific seller assignments for an enterprise." ErrorCode="YPM10108"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerID" type="yfctype:CustomerId" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>The identifier for the customer. If null then this assignment is applicable irrespective of the <code>CustomerID</code> of a customer. If a <code>CustomerID</code> is passed then this assignment is based on customer identifier and hence all other customer attributes of this assignment are reset to null.
+						<Validation>
+                            <Condition>For the passed <code>CustomerID</code>, customer does not exists.
+							</Condition>
+                            <Error Description="Invalid CustomerID." ErrorCode="YPM10028"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The customer with passed <code>CustomerID</code> is not a business customer.
+							</Condition>
+                            <Error
+                                Description="Pricing rule can only be assigned to business customer." ErrorCode="YPM10090"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerLevel" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_LEVEL" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>The level of a customer with the enterprise. If null then this assignment is applicable irrespective of the customer level of a customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerType"
+            type="yfctype:EnumAssignmentCustomerType" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_TYPE" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>Type of customer to which this pricing rule is assigned. If the <code>CustomerType</code> is null then this assignment is applicable irrespective of the type of customer.
+						<Validation>
+                            <Condition>If not null then <code>CustomerType</code> must be one of the allowed values.</Condition>
+                            <Error Description="Invalid CustomerType." ErrorCode="YPM10027"/>
+                        </Validation>
+						If the assignment is assigned to everyone, then all other customer attributes of this assignment are reset to null.
+						If neither <code>CustomerID</code> nor attributes of customer have any specific values, then <code>CustomerType</code> is set to <code>
+                            <b>04</b>
+                        </code> i.e. assigned to everyone.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>Organization code of the enterprise to which assignment belongs. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode cannot be void." ErrorCode="YPM10030"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+						<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+						<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+						<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+						<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingRuleAssignmentKey"
+            type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICING_RULE_ASSIGNMENT_KEY" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>Primary key attribute of YPM_PRICING_RULE_ASSIGNMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingRuleKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICING_RULE_KEY" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>The pricing rule that this assignment is associated with.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RefreshCache" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Attribute can be used to control whether the cache is updated or not.  If the value <code>N</code> the cache will not be refreshed.  The default value is <code>Y</code>.
+                   	</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value=""/>
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="RegionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="REGION_KEY" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>The region to which the pricing rule is assigned. If <code>RegionKey</code> is null then this assignment is applicable irrespective of the region of a customer.
+						<Validation>
+                            <Condition>If not null then <code>RegionKey</code> should be a valid region within the region schema that is configured for purpose <b>
+                                    <code>SELLING</code>
+                                </b>.</Condition>
+                            <Error Description="Invalid region passed." ErrorCode="YCP0158"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RelationshipType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="RELATIONSHIP_TYPE" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>The type of the relationship that exists between an organization and an enterprise. If null then this assignment is applicable irrespective of the relationship type of a customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Shareable" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="SHAREABLE" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>Indicates whether the rule should be shared with the customer's descendant customers or not. Applicable only when CustomerID is populated on this assignment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Vertical" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="VERTICAL" yfc:tableName="YPM_PRICING_RULE_ASSIGNMENT">
+                <xsd:documentation>Vertical of the customer to which the pricing rule is assigned. If null then this assignment is applicable irrespective of the vertical of a customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PricingRule">
+        <xsd:annotation yfc:tableName="YPM_PRICING_RULE">
+            <xsd:documentation>
+                <div>The pricing rule that is assigned.
+						<Validation>
+                        <Condition>The passed <code>PricingRuleName</code> in the context of <code>EnterpriseCode</code> does not retrieve a pricing rule.</Condition>
+                        <Error
+                            Description="Invalid pricing rule identifiers." ErrorCode="YPM10063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PricingRuleName"
+                type="yfctype:PricingRuleName" use="optional">
+                <xsd:annotation yfc:columnName="PRICING_RULE_NAME" yfc:tableName="YPM_PRICING_RULE">
+                    <xsd:documentation>Name of the pricing rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Coupon">
+        <xsd:annotation yfc:tableName="YPM_COUPON">
+            <xsd:documentation>
+                <div>The coupon that is assigned.
+						<Validation>
+                        <Condition>The passed <code>CouponID</code> or <code>CouponKey</code> in the context of <code>EnterpriseCode</code> does not retrieve a pricing rule.</Condition>
+                        <Error
+                            Description="Invalid pricing rule identifiers." ErrorCode="YPM10063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CouponID" type="yfctype:CouponId" use="optional">
+                <xsd:annotation yfc:columnName="COUPON_ID" yfc:tableName="YPM_COUPON">
+                    <xsd:documentation>Unique identifier of a coupon.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CouponKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUPON_KEY" yfc:tableName="YPM_COUPON">
+                    <xsd:documentation>Primary key attribute of YPM_COUPON table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

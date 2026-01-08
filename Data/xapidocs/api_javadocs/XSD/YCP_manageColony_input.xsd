@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageColony/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageColony/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageColony_input.xsd" yfc:rootElement="Colony">
+        <xsd:appinfo source="yfc:structure">
+            <Colony hasAttributes="Y">
+                <ColonyPoolList>
+                    <ColonyPool hasAttributes="Y"/>
+                </ColonyPoolList>
+            </Colony>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Colony" type="yfc:ColonyXSDType">
+        <xsd:annotation yfc:tableName="PLT_DB_COLONY">
+            <xsd:documentation>
+                <div>
+					This element refers to header-level information for colony configuration.
+						<Validation>
+                        <Condition>During a modify operation, if both ColonyId and PkPrefix are passed,
+							the PkPrefix must match the existing record.</Condition>
+                        <Error
+                            Description="Key fields cannot be modified." ErrorCode="YFS10415"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The default colony (with PkPrefix of 20) cannot be deleted.</Condition>
+                        <Error
+                            Description="Cannot delete the default colony." ErrorCode="PLT0504"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Any resources mapped to a colony must be deleted before the colony
+							can be deleted.</Condition>
+                        <Error
+                            Description="Cannot delete the colony because colony map records still refer to it." ErrorCode="PLT0505"/>
+                    </Validation>
+
+						The ColonyId and PkPrefix are required during a create operation. Either is sufficient
+						do identify the colony during a delete or modify operation. 
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ColonyXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ColonyPoolList"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ColonyId" type="yfctype:ColonyId" use="optional">
+            <xsd:annotation yfc:columnName="COLONY_ID" yfc:tableName="PLT_DB_COLONY">
+                <xsd:documentation>Unique identifier of a Colony</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ColonyVersion" type="yfctype:ColonyVersion" use="optional">
+            <xsd:annotation yfc:columnName="COLONY_VERSION" yfc:tableName="PLT_DB_COLONY">
+                <xsd:documentation>
+                    <div>
+						Version of this colony, for tracking purposes.
+					    ColonyVersion will be set to the current version if it is either blank or not passed in the input and
+					    either of ColonyId or PKPrefix is passed.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PkPrefix" type="yfctype:ColonyPrefix" use="optional">
+            <xsd:annotation yfc:columnName="PK_PREFIX" yfc:tableName="PLT_DB_COLONY">
+                <xsd:documentation>
+                    <div>
+						Two-digit prefix for creation of table keys within the colony.
+						<Validation>
+                            <Condition>The prefix must be between 10 and 19, inclusive, and cannot be 19.</Condition>
+                            <Error
+                                Description="Invalid Primary Key Prefix" ErrorCode="PLT0503"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:ColonyStatus" use="optional">
+            <xsd:annotation yfc:columnName="STATUS" yfc:tableName="PLT_DB_COLONY">
+                <xsd:documentation>
+                    <div>
+						Enabled status of the colony. A colony is only enabled if the status is not set. If a status is set,
+						then any attempt to use the colony will result in an exception (PLT0528), with this status provided
+						as the <code>"ErrorRelatedMoreInfo"</code> attribute. To re-enable a colony, set the status to an
+						empty string (""). <strong>WARNING</strong>: Disabling the default colony may render the system
+						inoperable. 
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UseDefaultConfiguration" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Controls whether to share CONFIGURATION and STATISTICS table types with the default colony.
+					A value of "true" is suggested for an easier and more consistent configuration, though false is the
+					default value.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:TFBoolean">
+                    <xsd:enumeration value="false"/>
+                    <xsd:enumeration value="true"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ColonyPoolList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ColonyPool"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ColonyPool">
+        <xsd:annotation yfc:tableName="PLT_DB_COLONY_POOL">
+            <xsd:documentation>This table maps a shard and table type combination for a colony.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PoolId" type="yfctype:DatabasePoolId" use="optional">
+                <xsd:annotation yfc:columnName="POOL_ID" yfc:tableName="PLT_DB_COLONY_POOL">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>If PoolId is invalid.</Condition>
+                                <Error Description="YCP:No Record Found" ErrorCode="YCP0045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TableType" type="yfctype:TableType" use="required">
+                <xsd:annotation yfc:columnName="TABLE_TYPE" yfc:tableName="PLT_DB_COLONY_POOL">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>If <code>Action</code> is <b>
+                                    <code>Create</code>
+                                    </b> and <code>TableType</code> is not passed.</Condition>
+                                <Error
+                                    Description="TableType is a mandatory field." ErrorCode="PLT0511"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

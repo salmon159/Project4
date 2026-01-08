@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getLinesToReceive/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getLinesToReceive/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getLinesToReceive_output.xsd" yfc:rootElement="GetLinesToReceive">
+        <xsd:appinfo source="yfc:structure">
+            <GetLinesToReceive hasAttributes="Y">
+                <ReceivableLineList>
+                    <ReceivableLine hasAttributes="Y"/>
+                    <KitLines>
+                        <ReceivableLine hasAttributes="Y"/>
+                    </KitLines>
+                </ReceivableLineList>
+            </GetLinesToReceive>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="GetLinesToReceive" type="yfc:GetLinesToReceiveXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="GetLinesToReceiveXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ReceivableLineList"/>
+        </xsd:all>
+        <xsd:attribute name="CanAddLines" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicates whether you can add lines to the shipment.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The enterprise to which this shipment belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ReceivableLineList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="ReceivableLine">
+                    <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+                        <xsd:documentation>Stores information about shipment lines. Shipment lines are created using createShipment or changeShipment API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="AvailableToReceiveQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>The quantity that can be still received against the line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="EnterpriseCode"
+                            type="yfctype:OrgCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_SHIPMENT">
+                                <xsd:documentation>The enterprise to which this shipment belongs.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ExpectedQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>If shipment doesn't have lines this is the ordered quantity in the order line. Otherwise it is the actual quantity in the shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ItemID"
+                            type="yfctype:ItemID" use="optional">
+                            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The identifier of the item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="KitCode"
+                            type="yfctype:Text-20" use="optional">
+                            <xsd:annotation yfc:columnName="KIT_CODE" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The kit code of the item, if it is a Kit item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="KitQty"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation yfc:columnName="KIT_QTY" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The number of components required for one kit.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LineType"
+                            type="yfctype:String" use="optional"/>
+                        <xsd:attribute name="OrderHeaderKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The order header key that is associated with this shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The order line key that is associated with this shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderNo"
+                            type="yfctype:VarcharDocumentNo" use="optional">
+                            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The order number corresponding to the order for the shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderReleaseKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_RELEASE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The order release key that is associated with this shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PrimeLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The prime line number of the corresponding order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ProductClass"
+                            type="yfctype:ProductClass" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The product class.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReceivedQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Quantity received for the Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ReleaseNo"
+                            type="yfctype:Count" use="optional">
+                            <xsd:annotation yfc:columnName="RELEASE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The release number of the order release for the shipment line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="RequestedSerialNo"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="REQUESTED_SERIAL_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The requested serial number of the item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="RequiresDetailAttributes" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Indicates whether the item in the line requires detailed attributes (like Serial Number, Lot Number ... ) while receiving.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Segment"
+                            type="yfctype:Segment" use="optional">
+                            <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The segment of inventory customized for an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SegmentType"
+                            type="yfctype:SegmentType" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The segment type of inventory customized for an order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipmentLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The primary key for the YFS_SHIPMENT_LINE table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipmentLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SHIPMENT_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>A part of the primary key . The shipment line number is unique for a shipment.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The sub line number of the corresponding order line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SuggestedDispositionCode"
+                            type="yfctype:DispositionCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DISPOSITION_CODE" yfc:tableName="YFS_RECEIPT_LINE">
+                                <xsd:documentation>The code used to identify a disposition.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="TotalQuantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>Total Quantity of the Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="UnitOfMeasure"
+                            type="yfctype:UOM" use="optional">
+                            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_SHIPMENT_LINE">
+                                <xsd:documentation>The unit of measure.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:KitLines"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="KitLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="ReceivableLine">
+                    <xsd:complexType>
+                        <xsd:attribute name="AvailableToReceiveQuantity"
+                            type="yfctype:Quantity" use="optional"/>
+                        <xsd:attribute name="EnterpriseCode"
+                            type="yfctype:OrgCode" use="optional"/>
+                        <xsd:attribute name="ItemID"
+                            type="yfctype:ItemID" use="optional"/>
+                        <xsd:attribute name="KitCode"
+                            type="yfctype:Text-20" use="optional"/>
+                        <xsd:attribute name="KitQty"
+                            type="yfctype:Quantity" use="optional"/>
+                        <xsd:attribute name="OrderHeaderKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="OrderLineKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="OrderNo"
+                            type="yfctype:VarcharDocumentNo" use="optional"/>
+                        <xsd:attribute name="OrderReleaseKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="PrimeLineNo"
+                            type="yfctype:LineNo" use="optional"/>
+                        <xsd:attribute name="ProductClass"
+                            type="yfctype:ProductClass" use="optional"/>
+                        <xsd:attribute name="ReceivedQuantity"
+                            type="yfctype:Quantity" use="optional"/>
+                        <xsd:attribute name="ReleaseNo"
+                            type="yfctype:Count" use="optional"/>
+                        <xsd:attribute name="RequestedSerialNo"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="RequiresDetailAttributes"
+                            type="yfctype:Flag" use="optional"/>
+                        <xsd:attribute name="ShipmentLineKey"
+                            type="yfctype:Key" use="optional"/>
+                        <xsd:attribute name="ShipmentLineNo"
+                            type="yfctype:LineNo" use="optional"/>
+                        <xsd:attribute name="SubLineNo"
+                            type="yfctype:LineNo" use="optional"/>
+                        <xsd:attribute name="SuggestedDispositionCode"
+                            type="yfctype:DispositionCode" use="optional"/>
+                        <xsd:attribute name="TotalQuantity"
+                            type="yfctype:Quantity" use="optional"/>
+                        <xsd:attribute name="UnitOfMeasure"
+                            type="yfctype:UOM" use="optional"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

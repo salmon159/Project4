@@ -1,0 +1,153 @@
+Avalara Return Changes 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+	<xsl:template match="/">
+		<Order>
+			<xsl:attribute name="OrderHeaderKey">
+				<xsl:value-of select="/OrderInvoice/Order/OrderLines/OrderLine/@DerivedFromOrderHeaderKey"/>
+			</xsl:attribute>
+			<xsl:attribute name="Modifyts">
+				<xsl:value-of select="/OrderInvoice/Order/@Modifyts"/>
+			</xsl:attribute>
+			<xsl:attribute name="RefundType">
+				<xsl:value-of select="'Partial'"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReferenceCode">
+				<xsl:value-of select="'order return'"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderReleaseKey">
+				<xsl:value-of select="/OrderInvoice/@OrderInvoiceKey"/>
+			</xsl:attribute>
+			<xsl:variable name="varOrderType">
+				<xsl:value-of select="OrderInvoice/Order/@OrderType"/>
+			</xsl:variable>
+			<OrderLines>
+				<xsl:for-each select="/OrderInvoice/Order/OrderLines/OrderLine">
+					<xsl:variable name="varExtnSellerLineNo">
+						<xsl:value-of select="Extn/@ExtnSOSellerLineNo"/>
+					</xsl:variable>
+					<xsl:variable name="varShipChrgSellerLineNo">
+						<xsl:value-of select="@ShipTogetherNo"/>
+					</xsl:variable>
+					<OrderLine>
+						<Extn>
+							<xsl:attribute name="ExtnSellerLineNo">
+								<xsl:value-of select="Extn/@ExtnSOSellerLineNo"/>
+							</xsl:attribute>
+							<xsl:attribute name="ShipChrgSellerLineNo">
+								<xsl:value-of select="$varShipChrgSellerLineNo"/>
+							</xsl:attribute>
+						</Extn>
+					</OrderLine>
+					
+				</xsl:for-each>
+			</OrderLines>
+		</Order>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+
+	
+					
+					
+					
+					<?xml version="1.0" encoding="UTF-8"?>
+<ManageXmlList>
+    <ManageXml Action="Manage" AttributeName="OrderNo"
+        AttributeValue="/Order/OrderList/Order/@OrderNo" Xpath="/Order"/>
+    <ManageXml Action="Manage" AttributeName="LineNo"
+        AttributeValue="/Order/OrderLines/OrderLine[*]/@PrimeLineNo" Xpath="/Order/OrderLines/OrderLine"/>
+    <ManageXml Action="Manage" AttributeName="ExtnDocumentType"
+        AttributeValue="/Order/@DocumentType" ElementName="Extn" Xpath="/Order/OrderLines/OrderLine"/>
+    <ManageXml Action="Remove" Xpath="/Order/OrderList"/>
+</ManageXmlList>
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Order Modifyts="2025-08-21T03:00:26-04:00" OrderHeaderKey="2025082012581857083935" OrderNo="US00115262" OrderReleaseKey="202508210360001757094808" ReferenceCode="order return" RefundType="Partial">
+    <OrderLines>
+        <OrderLine LineNo="">
+            <Extn ExtnDocumentType="" ExtnSellerLineNo="1" varShipChrgSellerLineNo="3"/>
+        </OrderLine>
+    </OrderLines>
+</Order>
+
+
+
+
+##################################################################################################################
+##################################################################################################################
+
+XSL Didn't work 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+	<xsl:template match="/">
+		<Order>
+			<xsl:copy-of select="/Order/@*"/>
+			<xsl:attribute name="OrderReleaseKey">
+				<xsl:value-of select="concat(/Order/@OrderNo,'_R_',substring(/Order/@OrderReleaseKey,0,13))"/>
+			</xsl:attribute>
+			<OrderLines>
+				<xsl:for-each select="/Order/OrderLines/OrderLine">
+					<xsl:variable name="varExtnSellerLineNo">
+						<xsl:value-of select="@ExtnSellerLineNo"/>
+					</xsl:variable>
+					<xsl:variable name="varShipChrgSellerLineNo">
+						<xsl:value-of select="@ShipChrgSellerLineNo"/>
+					</xsl:variable>
+					<xsl:variable name="varNull">
+						<xsl:value-of select="''"/>
+					</xsl:variable>
+					<OrderLine>
+						<xsl:attribute name="LineNo">
+							<xsl:value-of select="$varNull"/>
+						</xsl:attribute>
+						<Extn>
+							<xsl:attribute name="ExtnDocumentType">
+								<xsl:value-of select="$varNull"/>
+							</xsl:attribute>
+							<xsl:attribute name="ExtnSellerLineNo">
+								<xsl:value-of select="$varExtnSellerLineNo"/>
+							</xsl:attribute>
+						</Extn>
+					</OrderLine>
+					<OrderLine>
+						<xsl:attribute name="LineNo">
+							<xsl:value-of select="$varNull"/>
+						</xsl:attribute>
+						<Extn>
+							<xsl:attribute name="ExtnDocumentType">
+								<xsl:value-of select="$varNull"/>
+							</xsl:attribute>
+							<xsl:attribute name="ExtnSellerLineNo">
+								<xsl:value-of select="$varShipChrgSellerLineNo"/>
+							</xsl:attribute>
+						</Extn>
+					</OrderLine>
+				</xsl:for-each>
+			</OrderLines>
+		</Order>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+    <xsl:template match="/">
+        <Order>
+            <xsl:copy-of select="/Order/@*"/>
+            <xsl:attribute name="OrderReleaseKey">
+                <xsl:value-of select="concat(/Order/@OrderNo,'_R_',substring(/Order/@OrderReleaseKey,0,13))"/>
+            </xsl:attribute>
+            <xsl:copy-of select="/Order/OrderLines/."/>
+        </Order>
+    </xsl:template>
+</xsl:stylesheet>

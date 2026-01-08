@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/beforeCreateLocationUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/beforeCreateLocationUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_beforeCreateLocationUE_input.xsd" yfc:rootElement="Location">
+        <xsd:appinfo source="yfc:structure">
+            <Location hasAttributes="Y">
+                <SKUDedications>
+                    <SKUDedication hasAttributes="Y"/>
+                </SKUDedications>
+            </Location>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Location" type="yfc:LocationXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOCATION">
+            <xsd:documentation>Warehouse zones are further divided into locations of different sizes where inventory is stored. Each location belongs to a zone and a node. It is classified as INTRANSIT, REGULAR, VIRTUAL, STAGING or DOCK. It has attributes like aisle number, bay number, level number etc.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LocationXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SKUDedications"/>
+        </xsd:all>
+        <xsd:attribute name="AisleNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="AISLE_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the aisle Number of the location. The locations belong to zones which have travel aisle's between them. A zone could belong to multiple aisles and multiple zones could belong to an aisle. But a location in a zone always belongs to one and only one aisle.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AisleSuffix" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="AISLE_SUFFIX" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>this field indicates the aisle section of the location id.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BayNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="BAY_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the location's bay number. Typically, the aisle, level and bay put together represents the physical location of the location in a node, if they are based on coordinate system. The bay attribute of the location (x-coordinate from the beginning of the aisle) is used in arriving at locations nearest to the dedicated locations algorithm that is used in putaway. Typically, the bay attribute is contained within the location ID.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckDigit" type="yfctype:VText-5" use="optional">
+            <xsd:annotation yfc:columnName="CHECK_DIGIT" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>Check Digit is a numeric representation of Location. It is generally used by Voice Systems to verify the Location. Location Check Digit is non unique.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DockType" type="yfctype:Text-10" use="optional">
+            <xsd:annotation yfc:columnName="DOCK_TYPE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field depicts the type of the dock location. For a non-dock location, this field is set to blank. For a dock location, it is set to INBOUND if it is used exclusively for inbound activities. Similarly, it is set to OUTBOUND if is used exclusively for outbound activities. In case, the dock location is used for both inbound and outbound activities, this attribute is set to BOTH.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FreezeMoveIn" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="FREEZE_MOVE_IN" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This flag indicates whether the inventory is moved into the location. This is used for warehouses with certain number of locations. However, the usage of locations is phased out over a period of time.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FreezeMoveOut" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="FREEZE_MOVE_OUT" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This flag indicates whether inventory is moved out of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InStagingLocationId"
+            type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="IN_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						In Drop off location (For moves coming into a location, they may be dropped here).
+							<Validation>
+                            <Condition>
+                                <code>InStagingLocationId</code> should be a valid location of the type <code>
+                                    <b>STAGING</b>
+                                </code> if passed. 
+								</Condition>
+                            <Error
+                                Description="Staging locations must be of type STAGING." ErrorCode="WMS00068"/>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsSchedulable" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="LevelNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="LEVEL_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the level number of the location. The height of the location (y-co-ordinate of the location from the floor) is classified as levels. The level attribute of the location is used in arriving at locations nearest to the dedicated locations algorithm used during the putaway process. Typically, the level attribute is contained within the location ID.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationBarCode"
+            type="yfctype:LocationBarCode" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_BAR_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates that a numeric barcode of the location identifier is stored for this location. The way this is intended to be used in WMS is that an RF operator when prompted to scan the location Id is also expected to scan the location bar code on the RF terminal. This ensures that the operator has traveled to the location suggested by the system and picked up or dropped off inventory at the specified location. Simply keying in the human readable form of the location ID on the RF terminal will be rejected by the system. The objective of this feature is to ensure inventory accuracy.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+                        <code>Location</code> Identifier. Forms unique key of the <code>YFS_LOCATION</code> table in conjunction with the <code>NODE_KEY</code>.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> and <code>LocationId</code> combination should not be an existing combination.
+								</Condition>
+                            <Error
+                                Description="The Node and LocationId combination already exists." ErrorCode="WMS00044"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The primary key for the YFS_LOCATION table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationSizeCode"
+            type="yfctype:LocationSizeCode" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						Defines the capacity of a location. All locations having the same size (dimensions and ability to hold the same weight) are classified under the same size code. This maps to the primary key attribute of the <code>YFS_LOCATION_SIZE_CODE</code> table.
+							<Validation>
+                            <Condition>
+                                <code>LocationSizeCode</code> passed should be a valid location size code.
+								</Condition>
+                            <Error
+                                Description="Invalid Location Size Code." ErrorCode="WMS00066"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationType"
+            type="yfctype:EnumLocationType" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_TYPE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						System defined classification of location to aid association of locations of certain types for certain other operations with WMS. The supported types are: <code>
+                            <b>INTRANSIT</b>
+                        </code> (Mobile locations), <code>
+                            <b>STAGING</b>
+                        </code>, <code>
+                            <b>VIRTUAL</b>
+                        </code>, <code>
+                            <b>REGULAR</b>
+                        </code> and <code>
+                            <b>DOCK</b>
+                        </code>. For example, all equipment locations should be of type <code>
+                            <b>INTRANSIT</b>
+                        </code>. If LocationType is passed blank or passed unallowed values then default LocationType is taken as <code>REGULAR</code>
+                        <Validation>
+                            <Condition>
+                                <code>LocationType</code> should be one of <code>
+                                    <b>INTRANSIT</b>
+                                </code>, <code>
+                                    <b>REGULAR</b>
+                                </code>, <code>
+                                    <b>VIRTUAL</b>
+                                </code>, <code>
+                                    <b>STAGING</b>
+                                </code>, and <code>
+                                    <b>DOCK</b>
+                                </code>.
+								</Condition>
+                            <Error Description="Invalid Location Type." ErrorCode="WMS00067"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveInSeqNo" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_IN_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is used by task management to suggest location while moving in the inventory (putaway). The putaway location selection algorithm uses this information to select locations from a list of locations based on the move in sequence.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveOutSeqNo" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_OUT_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is used by task management to suggest location while moving out inventory (picking). The pick location selection algorithm uses this information to select locations from a list of locations based on its move in sequence.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+                        <code>Node</code> Identifier. Primary Key of the <code>YFS_SHIP_NODE</code> table. Forms unique key of this table in conjunction with the <code>LOCATION_ID</code>.
+							<Validation>
+                            <Condition>
+                                <code>Node</code> should be passed.
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed should exist in the database.
+								</Condition>
+                            <Error
+                                Description="Node passed does not exist." ErrorCode="WMS00042"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> and <code>LocationId</code> combination should not be an existing combination.
+								</Condition>
+                            <Error
+                                Description="The Node and LocationId combination already exists." ErrorCode="WMS00044"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OutStagingLocationId"
+            type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="OUT_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						Out Drop off Location (Location where moves originated at this location, may be dropped).
+							<Validation>
+                            <Condition>
+                                <code>OutStagingLocationId</code> should be a valid location of the type <code>
+                                    <b>STAGING</b>
+                                </code> if passed. 
+								</Condition>
+                            <Error
+                                Description="Staging locations must be of type STAGING." ErrorCode="WMS00068"/>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StorageCode" type="yfctype:StorageCode" use="optional">
+            <xsd:annotation yfc:columnName="STORAGE_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						It is an attribute of the location that allows the warehouse to store items that have the same storage profile as that of the location.  For example, hazardous inflammable items need locations close to fire extinguishers. In this case the locations will be marked as having a storage code, which is suitable for storing Inflammable items. This ensures that only inflammable items get to these locations.
+							<Validation>
+                            <Condition>
+                                <code>StorageCode</code> passed should be a valid location storage code for <code>Node</code>.
+								</Condition>
+                            <Error
+                                Description="The StorageCode is invalid." ErrorCode="WMS00100"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VelocityCode" type="yfctype:VelocityCode" use="optional">
+            <xsd:annotation yfc:columnName="VELOCITY_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						Items are classified as <code>
+                            <b>A</b>
+                        </code>, <code>
+                            <b>B</b>
+                        </code> or <code>
+                            <b>C</b>
+                        </code> class items based on whether they are fast selling, not so fast selling and low selling item. These item classifications are typically followed by all enterprises to optimize certain operations such as sourcing and stocking. The reason we have locations preferring certain velocity codes is that, we could have locations closer to dock stocking <code>
+                            <b>A</b>
+                        </code> class items, and locations furthest away from the dock stocking <code>
+                            <b>C</b>
+                        </code> class items. Velocity code is a preference on the location and not a constraint. If <code>
+                            <b>A</b>
+                        </code> class items fill up all locations meant for <code>
+                            <b>A</b>
+                        </code> class items, then they can go in to <code>
+                            <b>B</b>
+                        </code> and then <code>
+                            <b>C</b>
+                        </code>. Similarly <code>
+                            <b>C</b>
+                        </code> can go to <code>
+                            <b>B</b>
+                        </code> and then <code>
+                            <b>A</b>
+                        </code> for lack of space in the respective locations preferred for a specific velocity code. <code>
+                            <b>B</b>
+                        </code> class items go into <code>
+                            <b>C</b>
+                        </code> and then into <code>
+                            <b>A</b>
+                        </code>. If <code>VelocityCode</code> is passed blank or passed unallowed values then default <code>VelocityCode</code> is taken Last <code>VelocityCode</code> in the alphabetic sequence in common code of type <code>VELOCITY_CODE</code>. 
+							<Validation>
+                            <Condition>
+                                <code>VelocityCode</code> should be one of the valid values as identified in common code of type <code>VELOCITY_CODE</code>. 
+								</Condition>
+                            <Error Description="Invalid Velocity Code." ErrorCode="WMS00065"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="XCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="X_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the X co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="YCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="Y_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the Y co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="Z_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the Z co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						Zone to which a location belongs. This in conjunction with the node key identifies a unique zone within the node.
+							<Validation>
+                            <Condition>
+                                <code>ZoneId</code> should be a valid Zone in the <code>Node</code>.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and ZoneId combination." ErrorCode="WMS00035"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SKUDedications">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SKUDedication"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SKUDedication">
+        <xsd:annotation yfc:tableName="YFS_SKU_DEDICATION">
+            <xsd:documentation>This contains definitions of locations that are dedicated to certain SKUs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>
+                        <div>
+							Enterprise to which location is dedicated.
+								<Validation>
+                                <Condition>
+                                    <code>EnterpriseCode</code> should not be void. Error if <code>EnterpriseCode</code> is void.
+									</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Should be a valid <code>EnterpriseCode</code> participating in this <code>Node</code>/<code>Organization</code>.
+									</Condition>
+                                <Error
+                                    Description="Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemId" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>
+                        <div>
+							Item Identifier of SKU.
+								<Validation>
+                                <Condition>
+                                    <code>ItemId</code> should not be void. Error if <code>ItemId</code> is void.
+									</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field specifies the location identifier. This field when associated with the NODE_KEY identifies a unique location in the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="MAX_QTY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This quantity indicates the maximum quantity upto which location can be replenished. This quantity is used by Release Wave and Location Monitor transactions while replenishing.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="MIN_QTY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>If the inventory at the dedicated location goes below this quantity then replenishment is triggered for the location. Replenishment is triggered by Release Wave and Location Monitor transactions upon additional configuration.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The primary key for the YFS_SKU_DEDICATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="required">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>
+                        <div>
+							Product Class of SKU.
+								<Validation>
+                                <Condition>
+                                    <code>ProductClass</code> should not be void. Error if <code>ProductClass</code> is void.
+									</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SKUDedicationKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SKU_DEDICATION_KEY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The primary key for the YFS_SKU_DEDICATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field stores customization details for those items that are custom specific. When the inventory is customized for a specific order, it needs to be tracked separately so that it can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field stores customization details for items that are custom specific.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>
+                        <div>
+							Unit of Measure of SKU.
+								<Validation>
+                                <Condition>
+                                    <code>UnitOfMeasure</code> should not be void. Error if <code>UnitOfMeasure</code> is void.
+									</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

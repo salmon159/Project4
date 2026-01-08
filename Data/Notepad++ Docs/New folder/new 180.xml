@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" method="xml"/>
+    <xsl:variable name="vExtnAreaCode" select="/Container/Shipment/Extn/@ExtnAreaCode"/>
+    <xsl:variable name="vExtnCODAmount" select="/Container/Shipment/Extn/@ExtnCODAmount"/>
+    <xsl:variable name="vShipNode" select="/Container/Shipment/ShipNode/@ShipNode"/>
+    <xsl:variable name="vPersonInfoKey" select="/Container/Shipment/FromAddress/@PersonInfoKey"/>
+	<xsl:variable name="vConditionVariable2" select="/Container/Shipment/ShipmentLines/ShipmentLine/OrderLine/@ConditionVariable2"/>
+    
+    <xsl:template match="/Container">
+        <Container>
+            <xsl:attribute name="ToPayCustomer">
+                <xsl:value-of select="'false'"/>
+            </xsl:attribute>
+            <xsl:attribute name="ShipmentOrderTypeCd">
+                <xsl:value-of select="'BOTH'"/>
+            </xsl:attribute>
+            <xsl:attribute name="OrderState">
+                <xsl:value-of select="'FORWARD'"/>
+            </xsl:attribute>
+            <xsl:attribute name="DistributionCenter">
+                <xsl:value-of select="'TG Cash HUB(TG HQ)'"/>
+            </xsl:attribute>
+            <xsl:attribute name="PartialDeliveryAllowed">
+                <xsl:value-of select="'N'"/>
+            </xsl:attribute>
+            <xsl:attribute name="CancellationAllowed">
+                <xsl:value-of select="'N'"/>
+            </xsl:attribute>
+            <xsl:attribute name="ReturnAllowed">
+                <xsl:value-of select="'Y'"/>
+            </xsl:attribute>
+            <xsl:attribute name="clientCode">
+                <xsl:value-of select="'Tanishq UAE'"/>
+            </xsl:attribute>
+            <xsl:attribute name="pickupBranch">
+                <xsl:value-of select="'TG Cash HUB(TG HQ)'"/>
+            </xsl:attribute>
+            <xsl:attribute name="returnBranch">
+                <xsl:value-of select="'TG Cash HUB(TG HQ)'"/>
+            </xsl:attribute>
+            <xsl:attribute name="deliverBranch">
+                <xsl:value-of select="'TG Cash HUB(TG HQ)'"/>
+            </xsl:attribute>
+            <xsl:attribute name="Vendor">
+                <xsl:value-of select="$vShipNode"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()|@*"/>
+        </Container>
+    </xsl:template>
+    <xsl:template match="/Container/Shipment">
+        <Shipment>
+            <xsl:attribute name="RegisterPickUp">
+                <xsl:value-of select="'true'"/>
+            </xsl:attribute>
+            <xsl:attribute name="ShipNode">
+                <xsl:value-of select="concat(@ShipNode,$vPersonInfoKey)"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()|@*[name() != 'ShipNode']"/>
+			
+			<xsl:attribute name="ConditionVariable2">
+                <xsl:value-of select="$vConditionVariable2"/>
+            </xsl:attribute>
+        </Shipment>
+    </xsl:template>
+    <xsl:template match="node()|@*">
+        <xsl:copy>
+            <xsl:apply-templates select="node()|@*"/>
+        </xsl:copy>
+    </xsl:template>
+</xsl:stylesheet>

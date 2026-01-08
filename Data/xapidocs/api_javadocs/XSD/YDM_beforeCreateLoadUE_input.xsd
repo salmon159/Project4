@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/beforeCreateLoadUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/beforeCreateLoadUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_beforeCreateLoadUE_input.xsd" yfc:rootElement="Load">
+        <xsd:appinfo source="yfc:structure">
+            <Load hasAttributes="Y">
+                <LoadShipments>
+                    <LoadShipment hasAttributes="Y">
+                        <Shipment hasAttributes="Y"/>
+                    </LoadShipment>
+                </LoadShipments>
+                <LoadStops>
+                    <LoadStop hasAttributes="Y">
+                        <StopAddress hasAttributes="Y"/>
+                    </LoadStop>
+                </LoadStops>
+                <LoadCharges>
+                    <LoadCharge hasAttributes="Y"/>
+                </LoadCharges>
+                <Instructions>
+                    <Instruction hasAttributes="Y"/>
+                </Instructions>
+                <AdditionalDates hasAttributes="Y">
+                    <AdditionalDate hasAttributes="Y"/>
+                </AdditionalDates>
+            </Load>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Load" type="yfc:LoadXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOAD">
+            <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LoadXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LoadShipments"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LoadStops"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LoadCharges"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Instructions"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalDates"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicates the action that can be perfomed on the shipment. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BolNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="BOL_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The Bill of Lading number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CarrierServiceCode" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="CARRIER_SERVICE_CODE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The carrier service availed for transporting this load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CreateOneLoadPerShipment"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicates if each shipment should be converted into a separate load.  Valid values are Y, N and Void. Void implies N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+            <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The currency corresponding to the load charges.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>A document type derived from the base document type 1001 - LOAD.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DropAtShipmentDestination"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation
+                yfc:columnName="DROP_AT_SHIPMENT_DESTINATION" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>This flag indicates that the load is created by choosing an option in which each shipment is dropped off at the shipment destination.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The enterprise that created the load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsExpInclInManifest" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IS_EXP_INCL_IN_MANIFEST" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>This flag to indicates whether a load is included in the manifest explicitly. This is set to 'Y' when the user selects the load from the console and adds to a manifest explicitly.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The primary key for the YFS_LOAD table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_TYPE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The user defined load type. This field is used to indicate the composition of the load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManifestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="MANIFEST_KEY" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The manifest key that is associated with this load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OverrideModificationRules"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>OverrideModificationRules is used to override the statuses of shipment that can be considered for various modifications. Valid values are Y, N and Void. Void implies N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_ORGANIZATION_CODE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The organization that owns the load. This could be the enterprise code or any other valid organization in the system.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PickupFromShipmentOrigin"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="PICKUP_FROM_SHIPMENT_ORIGIN" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>This flag indicates whether the load is created by choosing an option in which each shipment is picked up from the shipment origin.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PodNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="POD_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The Proof of Delivery number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="PRO_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The progressive number. It is generated for Loads with shipment mode as LTL, also if shipment mode changes from any other mode to LTL. Re-generation of PRO number happens, when the Carrier changes.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RemoveShipmentsOnDelete"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>RemoveShipmentsOnDelete is applicable only when the Action is Delete. The system by default deletes only empty loads or in other words, a load with no shipments included in it. However, if you wish to delete a load even if it comprises of shipments, set this attribute to Y.  Valid values are Y, N and Void. Void implies N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Scac" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SCAC" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The carrier that transports this load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SealNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SEAL_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The seal number on the load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipVia" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_VIA" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The means of shipping the shipment. The values are usually Land, Air, Sea or Ocean.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TotalActualCharge" type="yfctype:Money" use="optional">
+            <xsd:annotation yfc:columnName="TOTAL_ACTUAL_CHARGE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The actual charge for transporting all shipments in this load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TrailerNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="TRAILER_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The number of the trailer by which the load leaves the origin.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VesselName" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="VESSEL_NAME" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>This indicates the name of the vessel used for transportation.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VoyageNo" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="VOYAGE_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>This indicates the vessel's voyage number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="LoadShipments">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LoadShipment"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LoadShipment">
+        <xsd:annotation yfc:tableName="YFS_LOAD_SHIPMENT">
+            <xsd:documentation>Stores shipments that belong to a load. In addition, it stores the pick up and drop off point for a shipment during load delivery. This is created and updated by the manageLoad API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            </xsd:all>
+            <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates the action that can be perfomed on a load shipment. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_SHIPMENT_KEY" yfc:tableName="YFS_LOAD_SHIPMENT">
+                    <xsd:documentation>The primary key for the YFS_LOAD_SHIPMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_LOAD_SHIPMENT">
+                    <xsd:documentation>The shipment belonging to the load.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LoadStops">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LoadStop"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LoadStop">
+        <xsd:annotation yfc:tableName="YFS_LOAD_STOP">
+            <xsd:documentation>Stores information about a load stop. A load stop is identified by a stop node -  which is a receiving or shipping node on the system, or a stop address in cases where stop nodes do correspond to a receiving node which is not maintained on the system. A load stop is created and managed by the manageLoad API. Certain time related attributes such as actual arrival and departure dates, and the stop reached attribute are updated by the receiveIntransitUpdates API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:StopAddress"/>
+            </xsd:all>
+            <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates the action that can be perfomed on a load stop. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActualArrivalDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_ARRIVAL_DATE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The actual arrival date and time of the load at this load stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActualDepartureDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_DEPARTURE_DATE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The actual departure date and time of the load from this load stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierAppointmentDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CARRIER_APPOINTMENT_DATE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The time after which an appointment can be taken by the ship node with the carrier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierAppointmentNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="CARRIER_APPOINTMENT_NO" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>A number which will help the ship node and the carrier identify the pick up details and any relevant details about the shipment delivery.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DockLocationId"
+                type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="DOCK_LOCATION_ID" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The identifier of the dock location for the load stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExpectedArrivalDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="EXPECTED_ARRIVAL_DATE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The date and time at which the load is expected to arrive at the load stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExpectedDepartureDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="EXPECTED_DEPARTURE_DATE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The date and time at which the load is expected to depart from the load stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The load for which stops are maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadStopKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_STOP_KEY" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The primary key for the YFS_LOAD_STOP table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StopAddressKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="STOP_ADDRESS_KEY" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The stop address key. A stop may be identified alternatively by a stop address. This is typically the case when receiving or destination nodes are not maintained on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StopNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="STOP_NODE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The stop node. A stop node corresponds to a receiving or ship node on the system. The information of such nodes are maintained in YFS_SHIP_NODE entity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StopReached" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="STOP_REACHED" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>This flag indicate whether updates have been received for this load stop, and is updated by the receiveIntransitUpdates API.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StopSequenceNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="STOP_SEQUENCE_NO" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The stop sequence number that determines the load travel path. The origin stop is assigned the sequence no. -1 and the destination stop is assigned the sequence no. 99999. All intermediate stops may be sequenced by the user to fall within this range. Stop Type attribute of the stop determines whether a stop is the origin, destination or an intermediate stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StopType" type="yfctype:EnumStopType" use="optional">
+                <xsd:annotation yfc:columnName="STOP_TYPE" yfc:tableName="YFS_LOAD_STOP">
+                    <xsd:documentation>The type of the load stop. There are three types of load stops: O - corresponds to the origin stop, D - corresponds to the destination stop and I - for an intermediate stop.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="StopAddress">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorTxt" type="yfctype:ErrorText" use="optional">
+                <xsd:annotation yfc:columnName="ERROR_TXT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The URL of the person or organization referred to in this contact information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary key for the YFS_PERSON_INFO table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreferredShipAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PREFERRED_SHIP_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The preferred ship address over and above the address in this record. Pointer to another record of this type in this table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UseCount" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="USE_COUNT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VerificationStatus"
+                type="yfctype:ShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="VERIFICATION_STATUS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This field is currently not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LoadCharges">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LoadCharge"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LoadCharge">
+        <xsd:annotation yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+            <xsd:documentation>This table stores load level and shipment level charges. Based on the existence of either load key or the shipment key on a record, a charge is associated with a load or shipment respectively. Charges can be grouped based on charge category and charge name. The invoice corresponding to the charge is posted on each record by the createShipmentInvoice API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates the action that can be perfomed on a load charge. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActualCharge" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_CHARGE" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Actual charge for the load or shipment for the charge category and charge name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Category of the charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Charge as it is commonly known.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeNameKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME_KEY" yfc:tableName="YFS_CHARGE_NAME">
+                    <xsd:documentation>Primary key for a charge name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EstimatedCharge" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="ESTIMATED_CHARGE" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Estimated charge for the load or shipment for the charge category and charge name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InvoiceNo" type="yfctype:InvoiceNo" use="optional">
+                <xsd:annotation yfc:columnName="INVOICE_NO" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Invoice under which these charges are captured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="KeyReference1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="KEY_REFERENCE1" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Any additional payment references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="KeyReference2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="KEY_REFERENCE2" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Any additional payment references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Load for which charges are maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadShipmentChargeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="LOAD_SHIPMENT_CHARGE_KEY" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Primary key attribute of YFS_LOAD_SHIPMENT_CHARGE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PayeeOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="PAYEE_ORGANIZATION_CODE" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Organization code of the payee.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_LOAD_SHIPMENT_CHARGE">
+                    <xsd:documentation>Shipment for which charges are maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="isHistory" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates if data is fetched from the regular table or the history table. Valid values are Y and N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instructions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Instruction"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instruction">
+        <xsd:annotation yfc:tableName="YFS_INSTRUCTION_DETAIL">
+            <xsd:documentation>Generic table used to store instructions associated with various entities in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates the action that can be perfomed on an instruction. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionDetailKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_DETAIL_KEY" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Primary key attribute of YFS_INSTRUCTION_DETAIL table that identifies an instruction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionText"
+                type="yfctype:InstructionText" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TEXT" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Free-form text indicating any additional information related to the instruction type or otherwise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionType"
+                type="yfctype:InstructionType" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TYPE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Categorization of instructions so that they can be grouped together for reference. For example, you may have instructions of type Pick, Pack, and Ship for an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionURL" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_URL" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>The URL relating to and/or containing the instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionUsage"
+                type="yfctype:InstructionUsage" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_USAGE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Another way of categorization of instructions, over and above the instruction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Link to the entity key for which the instruction is stored. For example, if this record stores order header level instructions, then this attribute stores the value of order header key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>You could have an instruction exceeding the limits of a single record. Sequence number is used to provide a way to store a link between such instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TableName" type="yfctype:TableName" use="optional">
+                <xsd:annotation yfc:columnName="TABLE_NAME" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Identifies the entity for which this instruction is stored. For example, if this record stores order header instructions, then you will see this field reading YFS_ORDER_HEADER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalDates">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AdditionalDate"/>
+            </xsd:sequence>
+            <xsd:attribute name="Action" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates the action that can be perfomed on an additional date. The valid values for Action are Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalDate">
+        <xsd:annotation yfc:tableName="YFS_ADDITIONAL_DATE">
+            <xsd:documentation>This table stores additional date attributes that may be stored for an entity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActualDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_DATE" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>Actual Date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AdditionalDateKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ADDITIONAL_DATE_KEY" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>Primary Key attribute of YFS_ADDITIONAL_DATE.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DateTypeId" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="DATE_TYPE_ID" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>The unique identifier for a date type for which additional dates are stored.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExpectedDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="EXPECTED_DATE" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>Expected Date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromActualDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>From Actual date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromExpectedDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>From Expected date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromRequestedDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>From Requested date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>A key pointing to the entity for which an additional date is maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceType" type="yfctype:Text-2" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_TYPE" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>A reference type that identifies the entity for which these attributes are stored.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestedDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="REQUESTED_DATE" yfc:tableName="YFS_ADDITIONAL_DATE">
+                    <xsd:documentation>Requested Date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToActualDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>To Actual date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToExpectedDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>To Expected date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToRequestedDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>To Requested date criteria for shipment list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

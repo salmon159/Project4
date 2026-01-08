@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/getReturnOrderPriceUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/getReturnOrderPriceUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="OMP_getReturnOrderPriceUE_output.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <OrderLines>
+                    <OrderLine hasAttributes="Y">
+                        <LinePriceInfo hasAttributes="Y"/>
+                        <LineCharges hasAttributes="Y">
+                            <LineCharge hasAttributes="Y">
+                                <ChargeBreakups>
+                                    <ChargeBreakup hasAttributes="Y"/>
+                                </ChargeBreakups>
+                            </LineCharge>
+                        </LineCharges>
+                        <LineTaxes>
+                            <LineTax hasAttributes="Y"/>
+                        </LineTaxes>
+                    </OrderLine>
+                </OrderLines>
+                <HeaderCharges hasAttributes="Y">
+                    <HeaderCharge hasAttributes="Y">
+                        <ChargeBreakups>
+                            <ChargeBreakup hasAttributes="Y"/>
+                        </ChargeBreakups>
+                    </HeaderCharge>
+                </HeaderCharges>
+                <HeaderTaxes>
+                    <HeaderTax hasAttributes="Y"/>
+                </HeaderTaxes>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderCharges"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderTaxes"/>
+        </xsd:all>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LinePriceInfo"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineCharges"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineTaxes"/>
+            </xsd:all>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The sub line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LinePriceInfo">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>
+                <div>
+				If the order is a draft order, <code>SettledQuantity</code> must not be passed.
+				<Validation>
+                        <Condition>A non-zero value passed for <code>SettledQuantity</code>
+                        </Condition>
+                        <Error
+                            Description="Cannot specify non-zero SettledQuantity for line of draft order." ErrorCode="YFS10508"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DiscountPercentage"
+                type="yfctype:Percentage" use="optional">
+                <xsd:annotation yfc:columnName="DISCOUNT_PERCENTAGE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The discount percentage is the percentage decrease in price between the list and unit price for a given buyer. This value is calculated by subtracting the difference between the list price and unit price and divided by the list price.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsEligibleForShippingDiscount"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="IS_ELIGIBLE_FOR_SHIP_DISC" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>This flag can override the configured value for the item. Otherwise it is the same as the configured value for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsLinePriceForInformationOnly"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PRICE_INFO_ONLY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>
+								This flag indicates whether price information passed on the line is for information only. If it is 'Y' then line total will not be considered in order total. If it is not passed or passed as 'N' then line total is considered in order total.
+								If this flag is not passed for a static bundle (bundle defined in the catalog),
+								the the flag will be set on the parent and its components based on the
+								<code>BundlePricingStrategy</code> defined on the item.
+								<br/>
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <tr>
+                                    <th class="tablecolumn">BundlePricingStrategy</th>
+                                    <th class="tablecolumn">Bundle Parent Value</th>
+                                    <th class="tablecolumn">Components Value</th>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">COMP</td>
+                                    <td class="tablecolumn">Y</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">PARENT</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                    <td class="tablecolumn">Y</td>
+                                </tr>
+                                <tr>
+                                    <td class="tablecolumn">ALL</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                    <td class="tablecolumn">Null (or N)</td>
+                                </tr>
+                            </table>
+                            <Validation>
+                                <Condition>If flag is changed after line is invoiced partially or fully.
+									</Condition>
+                                <Error
+                                    Description="You cannot change the flag once anything on the line is invoiced." ErrorCode="OMP79_0022"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsPriceLocked" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PRICE_LOCKED" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>This flag indicates whether UnitPrice passed at LinePriceInfo element must be used and price determination ignored, if price determination is configured and enabled. Valid values are 'Y' or 'N'. Default value is 'N'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ListPrice" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="LIST_PRICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>the list price of the item. This is an informational field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RetailPrice" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="RETAIL_PRICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The retail price of the item. this is an informational field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SettledQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="SETTLED_QUANTITY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>
+	                        		The quantity which should be settled before it is actually invoiced.<br/>
+                            <code>DeliveryMethod</code> takes higher precedence over <code>SettledQuantity</code>. In other words, if <code>DeliveryMethod</code> is being changed from a delivery method that requires immediate settlement to a 
+	                        		one that does not (for example, from CARRY to SHIP), and <code>SettledQuantity</code> is set in the same call, then, the value passed as <code>SettledQuantity</code> will be
+	                        		ignored and <code>SettledQuantity</code> will be set to zero.
+                        		</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxExemptionCertificate"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation
+                    yfc:columnName="TAX_EXEMPTION_CERTIFICATE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The Tax Exemption Certificate applied to this order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxableFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="TAXABLE_FLAG" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>This flag indicates whether this order line is taxable or not. This field is for informational purposes only. Currently, it is not used in any tax calculations. If not passed, this flag is defaulted to that of item in the catalog, if exists, else it is defaulted to "N".</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitPrice" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_PRICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit price for the order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineCharges">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LineCharge"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>If reset is passed as Y, all the existing charges that are not passed as a child node will be set to zero.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineCharge">
+        <xsd:annotation yfc:tableName="YFS_LINE_CHARGES">
+            <xsd:documentation>This table stores any additional charges or discounts that can be added to an  order line.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChargeBreakups">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeBreakup">
+                                <xsd:annotation yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>This table stores breakup of the charges copied to return order from linked sales order(s).</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="AwardId"
+                                    type="yfctype:Text-120" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_ID" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>A unique identifier for the award. If pricing is maintained within the system, this will be the PricingRuleName of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardType"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_TYPE" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The type of award. If pricing is maintained within the system, this will be the RuleCategory of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ChargeAmount"
+                                    type="yfctype:PlusMinusMoney" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_AMOUNT" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The amount of the charge.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="DerivedFromOrderHeaderKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DERIVED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The key of the order header from which this charge is derived.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="DerivedFromOrderLineKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DERIVED_FROM_ORDER_LINE_KEY" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The key of the order line from which this charge is derived.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_CATEGORY.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_NAME.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerLine"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERLINE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Fixed charge amount for this order/invoice line. When the line charge is associated with an order line, this amount will be invoiced on the first invoice for this order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerUnit" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERUNIT" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Charge per unit for the item on this order/invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Any additional reference related to this line charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineTaxes">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						Pass this element to replace the tax information for an order line. To update the tax information for an order line, all applicable taxes (not just the modified or added tax) should be passed to the API. Tax which is not passed will be removed from the order line.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LineTax"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineTax">
+        <xsd:annotation yfc:tableName="YFS_TAX_BREAKUP">
+            <xsd:documentation>
+                <div>
+						Contains tax related information for various entities in the system.  If <code>ChargeCategory</code> and <code>ChargeName</code> are not provided, tax will be considered as a billable and positive charge.  Whether <code>YFSRecalculateLineTaxUE</code> is implemented or not, <code>ChargeCategory</code>, <code>Tax</code>, and <code>TaxPercentage</code> are required for the repricing logic.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>
+							The charge category for which tax is being charged. For example, Labeling or Handling.
+							To specify the tax for the line price, use the charge category  <b>
+                            <code>Price</code>
+                        </b>.
+							</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Charge name for which tax is being charged. For example, Price Ticket.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE1" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE2" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference3" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE3" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Tax" type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="TAX" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>
+                        <div>
+								The tax amount. <code>Tax</code> cannot be less than zero.  During the default repricing logic, this is recalculated using the <code>TaxPercentage</code> and the price of the related <code>ChargeCategory</code>.  This can be overridden with the YFSRecalulateLineTaxUE.
+		                            </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxName" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="TAX_NAME" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>The tax name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxPercentage" type="yfctype:TaxType" use="optional">
+                <xsd:annotation yfc:columnName="TAX_PERCENTAGE" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Percentage amount for tax calculation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxableFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="TAXABLE_FLAG" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>This flag indicates if a charge can be taxed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderCharges">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HeaderCharge"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>If reset is passed as Y, all the existing charges that are not passed as a child node will be set to zero.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderCharge">
+        <xsd:annotation yfc:tableName="YFS_HEADER_CHARGES">
+            <xsd:documentation>This table stores charges that are applied at the header level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ChargeBreakups">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="ChargeBreakup">
+                                <xsd:annotation yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>This table stores breakup of the charges copied to return order from linked sales order(s).</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="AwardId"
+                                    type="yfctype:Text-120" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_ID" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>A unique identifier for the award. If pricing is maintained within the system, this will be the PricingRuleName of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardType"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_TYPE" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The type of award. If pricing is maintained within the system, this will be the RuleCategory of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ChargeAmount"
+                                    type="yfctype:PlusMinusMoney" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_AMOUNT" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The amount of the charge.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="DerivedFromOrderHeaderKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DERIVED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The key of the order header from which this charge is derived.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="DerivedFromOrderLineKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DERIVED_FROM_ORDER_LINE_KEY" yfc:tableName="YFS_CHARGE_BREAKUP">
+                                    <xsd:documentation>The key of the order line from which this charge is derived.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ChargeAmount"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The amount of the charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The charge category. For example, Labeling or Handling.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The name of the charge. For example, Price Ticket.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Reference information about this charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderTaxes">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						Pass this element to replace the tax information. To update the tax information for an order, all applicable taxes (not just the modified or added tax) should be passed to the API. Tax which is not passed will be removed from the order.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HeaderTax"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderTax">
+        <xsd:annotation yfc:tableName="YFS_TAX_BREAKUP">
+            <xsd:documentation>
+                <div>
+						Contains tax related information for various entities in the system.  If <code>ChargeCategory</code> and <code>ChargeName</code> are not provided, tax will be considered as a billable and positive charge.  Whether <code>YFSRecalculateHeaderTaxUE</code> is implemented or not, <code>ChargeCategory</code>, <code>Tax</code>, and <code>TaxPercentage</code> are required for the repricing logic.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>The charge category for which tax is being charged. For example, Labeling or Handling.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Charge name for which tax is being charged. For example, Price Ticket.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE1" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE2" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference3" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE3" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Additional reference information. This field can be customized by the Enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Tax" type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="TAX" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>
+                        <div>
+						The tax amount. <code>Tax</code> cannot be less than zero.  During the default repricing logic, this is recalculated using the <code>TaxPercentage</code> and the price of the related <code>ChargeCategory</code>.  This can be overridden with the <code>YFSRecalulateHeaderTaxUE</code>.
+                            </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxName" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="TAX_NAME" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>The tax name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxPercentage" type="yfctype:TaxType" use="optional">
+                <xsd:annotation yfc:columnName="TAX_PERCENTAGE" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>Percentage amount for tax calculation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxableFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="TAXABLE_FLAG" yfc:tableName="YFS_TAX_BREAKUP">
+                    <xsd:documentation>This flag indicates if a charge can be taxed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

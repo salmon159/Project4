@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/deleteZone/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/deleteZone/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_deleteZone_input.xsd" yfc:rootElement="Zone">
+        <xsd:appinfo source="yfc:structure">
+            <Zone hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Zone" type="yfc:ZoneXSDType">
+        <xsd:annotation yfc:tableName="YFS_ZONE">
+            <xsd:documentation>This table stores the zone level setup details for a warehouse. The warehouse may be divided into multiple zones based on the product storage, packaging types, etc. Zone is a way of classifying a set of locations that share common properties. Locations belong to zones. Zone level storage constraints are auto propagated to locations through membership in a zone. The mix and do not mix constraints at zone level, apply to every single location in the zone.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ZoneXSDType">
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_ZONE">
+                <xsd:documentation>
+                    <div>
+                        <code>Node</code> Identifier. Primary Key of the <code>YFS_SHIP_NODE</code> table. Forms unique key of this table in conjunction with the <code>ZONE_ID</code>.
+						<Validation>
+                            <Condition>if <code>ZoneKey</code> not passed, <code>Node</code> and <code>ZoneId</code> combination should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and ZoneId combination." ErrorCode="WMS00035"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_ZONE">
+                <xsd:documentation>
+                    <div>
+                        <code>Zone</code> Identifier. Forms unique key of the <code>YFS_ZONE</code> table in conjunction with the <code>NODE_KEY</code>.
+						<Validation>
+                            <Condition>if <code>ZoneKey</code> not passed, <code>Node</code> and <code>ZoneId</code> combination should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and ZoneId combination." ErrorCode="WMS00035"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZoneKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ZONE_KEY" yfc:tableName="YFS_ZONE">
+                <xsd:documentation>
+                    <div>
+					Primary key attribute of <code>YFS_ZONE</code> table.
+						<Validation>
+                            <Condition>
+                                <code>ZoneKey</code> passed should be a valid <code>ZoneKey</code>.
+							</Condition>
+                            <Error Description="Invalid ZoneKey." ErrorCode="WMS00036"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Zones having locations cannot be deleted.
+							</Condition>
+                            <Error
+                                Description="Zones with locations cannot be deleted." ErrorCode="WMS00120"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

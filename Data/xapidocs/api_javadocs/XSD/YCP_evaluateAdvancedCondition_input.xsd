@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/evaluateAdvancedCondition/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/evaluateAdvancedCondition/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_evaluateAdvancedCondition_input.xsd" yfc:rootElement="AdvancedCondition">
+        <xsd:appinfo source="yfc:structure">
+            <AdvancedCondition hasAttributes="Y">
+                <Environment>
+                    <Param hasAttributes="Y"/>
+                </Environment>
+                <Input/>
+                <AddInputs>
+                    <AddInput hasAttributes="Y"/>
+                </AddInputs>
+            </AdvancedCondition>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AdvancedCondition" type="yfc:AdvancedConditionXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					This Advanced Condition wrapper takes a mandatory ConditionID or ConditionKey. 
+					If ConditionKey is not passed, ConditionID along with ProcessTypeKey and OrganizationCode
+					becomes mandatory.
+					ConditionID or ConditionKey is used to obtain the YFS_Condition from the database.
+					The  Greex rule is them obtained from the database for this condition.
+					<br/>
+					The input to the Greex is passed as a child	element to Input element.
+					<br/>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="AdvancedConditionXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Environment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Input"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AddInputs"/>
+        </xsd:all>
+        <xsd:attribute name="ConditionID" type="yfctype:Identifier" use="optional">
+            <xsd:annotation yfc:columnName="CONDITION_ID" yfc:tableName="YFS_CONDITION">
+                <xsd:documentation>
+                    <div>
+						Identifies the Condition ID.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConditionKey" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="OrganizationCode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_CONDITION">
+                <xsd:documentation>
+                    <div>
+						Indicates the owner organization associated with the Condition Id.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessTypeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PROCESS_TYPE_KEY" yfc:tableName="YFS_CONDITION">
+                <xsd:documentation>
+                    <div>
+						Indicates the process type key associated with the condition Id.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Environment">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The environment to the Greex rule is passed  as a child element.These are name value pairs. 
+				By default the following environment variables would be created for the Greex engine from 
+				YFSEnvironment.
+				<br/>
+				 a)OrganizationCode
+				 <br/>
+				 b)ShipNode
+				 <br/>
+				 c)SysDate
+				 <br/>
+				 d)CurrentUser
+				 <br/>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Param"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Param">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The parameter that is to be passed to the environment.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						The name of parameter.
+						<br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="value" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						The value of parameter.
+						<br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Input">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The input to the Greex rule is passed  as a child element.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AddInputs">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The additional inputs to the Greex rule.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AddInput"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AddInput">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The additional input document to the Greex rule is passed  as a child element.
+				The name attribute indicates the namespace of the document.
+				<br/>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:attribute name="name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Name of namespace for the additional input XML which is used in the greex rule.
+						<br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

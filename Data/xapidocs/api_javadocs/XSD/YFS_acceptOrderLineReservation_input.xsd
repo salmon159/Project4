@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/acceptOrderLineReservation/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/acceptOrderLineReservation/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YFS_acceptOrderLineReservation_input.xsd" yfc:rootElement="OrderLineStatusList">
+        <xsd:appinfo source="yfc:structure">
+            <OrderLineStatusList>
+                <OrderLineStatus hasAttributes="Y">
+                    <OrderLineTranQuantity hasAttributes="Y"/>
+                </OrderLineStatus>
+            </OrderLineStatusList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderLineStatusList" type="yfc:OrderLineStatusListXSDType"/>
+    <xsd:complexType name="OrderLineStatusListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderLineStatus"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="OrderLineStatus">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLineTranQuantity"/>
+            </xsd:all>
+            <xsd:attribute name="OrderReleaseStatusKey"
+                type="yfctype:Key" use="required">
+                <xsd:annotation
+                    yfc:columnName="ORDER_RELEASE_STATUS_KEY" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+                    <xsd:documentation>
+                        <div>
+                      Primary Key for OrderReleaseStatus. This attribute is mandatory.
+                      <Validation>
+                                <Condition> This attribute is not passed.
+                        </Condition>
+                                <Error
+                                    Description="Invalid Order Release Status Key has been passed." ErrorCode="OMP11067"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Order Release Status has order line schedule without procurement node.
+                      </Condition>
+                                <Error
+                                    Description="Procure From Node value for passed order release status cannot be blank." ErrorCode="OMP11062"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Duplicate Order Release Status Key in the input xml.
+                      </Condition>
+                                <Error
+                                    Description="The same OrderReleaseStatusKey can not be passed more than once in the input xml." ErrorCode="OMP11060"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                        Indicates accepted quantity.  Remaining status quantity will be automatically rejected.  If not passed complete quantity will be rejected.
+                       
+                    <Validation>
+                                <Condition> Quantity is less than 0.
+                      </Condition>
+                                <Error
+                                    Description="Accepted Quantity cannot be less than 0." ErrorCode="OMP11066"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Quantity is greater than status quantity.
+                      </Condition>
+                                <Error
+                                    Description="Accepted Quantity cannot be greater than Status Quantity" ErrorCode="OMP11064"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_ORDER_LINE_SRC_CNTRL">
+                    <xsd:documentation>
+                        <div>
+                        Free-text attribute to indicate additional information.
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLineTranQuantity">
+        <xsd:complexType>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                        Quantity in Transactional Unit Of Measure.  Indicates accepted quantity.  Remaining status quantity will be automatically rejected.  If not passed complete quantity will be rejected.
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionalUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>UOM on which all the transactional quantities are specified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

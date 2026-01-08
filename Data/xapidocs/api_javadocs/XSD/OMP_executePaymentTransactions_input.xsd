@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/executePaymentTransactions/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/executePaymentTransactions/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_executePaymentTransactions_input.xsd" yfc:rootElement="PaymentMethods">
+        <xsd:appinfo source="yfc:structure">
+            <PaymentMethods hasAttributes="Y">
+                <PaymentMethod hasAttributes="Y">
+                    <PersonInfoBillTo hasAttributes="Y"/>
+                    <PersonInfoShipTo hasAttributes="Y"/>
+                </PaymentMethod>
+            </PaymentMethods>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PaymentMethods" type="yfc:PaymentMethodsXSDType"/>
+    <xsd:complexType name="PaymentMethodsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:PaymentMethod"/>
+        </xsd:sequence>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div> The unique identifier for the Document Type that all payment methods associates to. 
+			<Validation>
+                            <Condition> Invalid value passed.</Condition>
+                            <Error
+                                Description="YFS:Missing Mandatory Parameters." ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Identifies the Enterprise governing this batch of payment transactions. 
+			<Validation>
+                            <Condition> Invalid value passed.</Condition>
+                            <Error
+                                Description="YFS:Missing Mandatory Parameters." ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EntryType" type="yfctype:Text-100" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The entry type used for payment.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="OrderNo" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div> Identifies the seller organization governing this batch of payment transactions. <br/>If the <code>USE_ENTERPRISE_CODE_FOR_PAYMENT</code> flag is set to <code>N</code> in the configurator and the <code>SellerOrganizationCode</code> is passed then it will be used to determine the payment group. If not passed it is defaulted to the <code>EnterpriseCode</code>.
+		  </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PaymentMethod">
+        <xsd:annotation yfc:tableName="YFS_PAYMENT">
+            <xsd:documentation>This table stores details about the customer's payment methods. The key to this table is posted in YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfoBillTo"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfoShipTo"/>
+            </xsd:all>
+            <xsd:attribute name="AuthorizationId"
+                type="yfctype:Text-255" use="optional">
+                <xsd:annotation yfc:columnName="AUTHORIZATION_ID" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                    <xsd:documentation>For authorization requests, this field holds the identifier of the authorization that was made. For charge requests, this field holds the authroization ID to be used for charging the amount.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BillToKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BILL_TO_KEY" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>
+								The unique identifier for bill to address information on the
+								payment. If
+								<code>BillToKey</code>
+								is passed, then
+								<code>PersonInfoBillTo</code>
+								element is ignored
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeType"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_TYPE" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+								Mandatory. The type of charge that is being applied to the
+								payment method.
+								<br/>
+								Valid Values:
+								<b>
+                                <code>AUTHORIZATION</code>
+                            </b>
+								or
+								<b>
+                                <code>CHARGE</code>
+                            </b>
+                            <Validation>
+                                <Condition> Default error code when user exit error code not
+										defined. 
+							</Condition>
+                                <Error Description="Invalid Data." ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CheckNo" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="CHEQUE_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The cheque number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CheckReference" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="CHEQUE_REFERENCE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The cheque reference.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardExpDate"
+                type="yfctype:CreditCardExpDate" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_EXP_DATE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The expiration date for the credit card.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardName" type="yfctype:Text-300" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_NAME" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The credit card name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardNo" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>
+								Credit card number. Required if
+								<code>PaymentType</code>
+								is CREDIT_CARD
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardType" type="yfctype:Text-32" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_TYPE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The credit card type group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>
+                        <div> The currency of the requested amount.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerAccountNo"
+                type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ACCOUNT_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary account number for payment methods that are defined under the PaymentTypeGroup CUSTOMER_ACCOUNT; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerPONo" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_PO_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The PO number of the customer. For purchase orders, this can be used for storing the purchase order number of the purchasing system if that number is not already stored as part of the order number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DebitCardNo" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="DEBIT_CARD_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary account number for payment methods that are defined under the PaymentTypeGroup DEBIT_CARD; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntryType" type="yfctype:Text-100" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The Entry Type used to enter payment information into the system.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:Text-300" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The first name of the credit card holder.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:Text-300" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The last name of the credit card holder.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MerchantId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="MERCHANT_ID" yfc:tableName="YFS_PAYMENT_RULE">
+                    <xsd:documentation>The merchant identifier used for the collection.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:Text-300" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The middle name of the credit card holder.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference1"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE1" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 1. Additionally, this is the primary account number for payment methods that are defined under the PaymentTypeGroup OTHER; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference2"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE2" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 2.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference3"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE3" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 3.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference4"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE4" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 4. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference5"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE5" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 5. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference6"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE6" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 6. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference7"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE7" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 7. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference8"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE8" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 8. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference9"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE9" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 9. This does not identify the payment method uniquely.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentType" type="yfctype:Text-20" use="required">
+                <xsd:annotation yfc:columnName="PAYMENT_TYPE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>
+								Mandatory. Defines the type of payment for this transaction.
+								<br/>
+								The
+								<code>PaymentType</code>
+								must be a value that is already configured for the Seller
+								Organization.
+								<br/>
+								Valid Values:
+								<code>CREDIT_CARD</code>
+								,
+								<code>CUSTOMER_ACCOUNT</code>
+								,
+								<code>STORED_VALUE_CARD</code>
+								, or
+								<code>OTHER</code>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>Reason code for last update.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestAmount"
+                type="yfctype:PlusMinusMoney" use="required">
+                <xsd:annotation yfc:columnName="REQUEST_AMOUNT" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+								Mandatory. The amount request being requested for authorization
+								or charging. If
+								<code>RequestAmount</code>
+								is negative and is in
+								<code>CHARGE</code>
+								mode, the payment type will be check if it is valid for return.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecureAuthenticationCode"
+                type="yfctype:SecureCode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The <code>SecureAuthenticationCode</code> is the code used to identify if the payment method is in the 
+							customer's possession, for example, the CVV2 code on a credit card. The knowledge of this code validates that the transaction has been made by 
+							the credit card's holder.
+							The <code>SecureAuthenticationCode</code> is only used within this API 
+							call and will be discarded at the end of the API; the value will not be persisted in the database. </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipToKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_TO_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>
+                        <div>
+								The ShipTo unique identifier for this payment method. If
+								<code>ShipToKey</code>
+								is passed, then
+								<code>PersonInfoShipTo</code>
+								element is ignored
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SvcNo" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="SVC_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary account number for payment methods that are defined under the PaymentTypeGroup STORED_VALUE_CARD; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VoidTransaction" use="optional">
+                <xsd:annotation yfc:columnName="VOID_TRANSACTION" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                    <xsd:documentation>
+                        <div> Identifies the request is a tender void, if <code>Y</code>.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value="Y"/>
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value=""/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PersonInfoBillTo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PersonInfoShipTo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

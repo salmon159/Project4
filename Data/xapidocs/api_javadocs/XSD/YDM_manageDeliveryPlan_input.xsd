@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/manageDeliveryPlan/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/manageDeliveryPlan/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_manageDeliveryPlan_input.xsd" yfc:rootElement="DeliveryPlan">
+        <xsd:appinfo source="yfc:structure">
+            <DeliveryPlan hasAttributes="Y">
+                <Shipments>
+                    <Shipment hasAttributes="Y"/>
+                </Shipments>
+            </DeliveryPlan>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="DeliveryPlan" type="yfc:DeliveryPlanXSDType">
+        <xsd:annotation yfc:tableName="YFS_DELIVERY_PLAN">
+            <xsd:documentation>Stores information related to delivery plan. Delivery plan is a complete sequence of movements needed to deliver one or more orders from origin to destination. It consists loads, stops, shipments, origins and destinations. A Delivery Plan includes expected dates of arrival and departure at all start and end points of the plan. A delivery plan is created by including shipments into the plan. Shipments included in a delivery plan are load planned. When  all shipments in a delivery plan are included into loads for every leg of the shipment from source to destination, the delivery plan is said to be completely planned. Delivery plan is created and managed by the manageDeliveryPlan API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="DeliveryPlanXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipments"/>
+        </xsd:all>
+        <xsd:attribute name="Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates the action that can be perfomed on the delivery plan. The valid values for Action are Create, Modify, Create-Modify, Delete or Void(blanks). In case when Action is Void, it is treated as Create-Modify.
+				<Validation>
+                            <Condition>If passed, it should be one of Create, Modify, Create-Modify or Delete.
+					</Condition>
+                            <Error
+                                Description="Value of Action attribute in the input XML is not amongst the valid values supported by the API." ErrorCode="YDM00015"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>Action</code> is Delete, the delivery plan should be empty (no shipments associated) or must have <code>RemoveContentOnDelete</code> must be <code>
+                                    <b>Y</b>
+                                </code>.
+					</Condition>
+                            <Error
+                                Description="Cannot delete delivery plan with contents unless RemoveContentOnDelete is passed as Y." ErrorCode="YDM00071"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:ID-40">
+                    <xsd:enumeration value="Create"/>
+                    <xsd:enumeration value="Modify"/>
+                    <xsd:enumeration value="Create-Modify"/>
+                    <xsd:enumeration value="Delete"/>
+                    <xsd:enumeration value="Void"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanClosedFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_CLOSED_FLAG" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>This flag indicates whether the delivery plan is closed. This is a computed field that is used internally as a way to logically mark data for purge so that transactions do not look into this data. This data is later purged by the purge agent at preset intervals.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_DATE" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					Any name or reference you may wish to associate with the delivery plan. It is associated with the delivery plan.
+						<Validation>
+                            <Condition>
+                                <code>DeliveryPlanDate</code> should be a valid XML date.
+							</Condition>
+                            <Error Description="No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_KEY" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					Primary key attribute of <code>YFS_DELIVERY_PLAN</code> table. Used to identify a delivery plan.
+						<Validation>
+                            <Condition>Delivery plan pointed by the <code>DeliveryPlanKey</code> or <code>DeliveryPlanNo</code> must not exist when the action is Create.
+							</Condition>
+                            <Error Description="Record Already Exists." ErrorCode="YCP0051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Delivery plan pointed by the <code>DeliveryPlanKey</code> or <code>DeliveryPlanNo</code> must exist when the action is Modify or Delete. Closed delivery plans cannot be modified.
+							</Condition>
+                            <Error Description="Invalid Date Format." ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanName" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_NAME" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>A name or reference you may wish to associate with the delivery plan.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanNo" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_NO" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					Unique key or business key, which by itself identifies a delivery plan. 
+						<Validation>
+                            <Condition>Delivery plan pointed by the <code>DeliveryPlanKey</code> or <code>DeliveryPlanNo</code> must not exist when the action is Create.
+							</Condition>
+                            <Error Description="Record Already Exists." ErrorCode="YCP0051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Delivery plan pointed by the <code>DeliveryPlanKey</code> or <code>DeliveryPlanNo</code> must exist when the action is Modify or Delete. Closed delivery plans cannot be modified.
+							</Condition>
+                            <Error Description="Invalid Date Format." ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeliveryPlanPlannedFlag"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="DELIVERY_PLAN_PLANNED_FLAG" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>This flag indicates whether the delivery plan is planned. This is a computed. When all shipments in a delivery plan are included into loads for every leg of the shipment from source to destination, the delivery plan is said to be planned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					A document type derived from the base document type 1001 - LOAD. Mandatory when Action is Create and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>DocumentType</code> must be passed when <code>Action</code> is Create.
+							</Condition>
+                            <Error
+                                Description="Enterprise code is mandatory." ErrorCode="YDM00012"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Passed Document Type must be valid, and the base document type of this document type must be 1001(Base document type LOAD).
+							</Condition>
+                            <Error Description="Invalid Document Type." ErrorCode="YCP0029"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					Enterprise that created the delivery plan. Mandatory when Action is Create and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed when <code>Action</code> is Create.
+							</Condition>
+                            <Error
+                                Description="Enterprise code is mandatory." ErrorCode="YDM00012"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must exist in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Enterprise Code." ErrorCode="YCP0011"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OverrideModificationRules" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <code>OverrideModificationRules</code> is used to override the statuses of shipment that can be included in to or removed from a delivery plan. This is determined using the modification_type <code>SHIPMENT_INCLUDE_IN_DELIVERY_PLAN</code> and <code>SHIPMENT_REMOVE_FROM_DELIVERY_PLAN</code> respectively.  Valid values are <code>
+                            <b>Y</b>
+                        </code>, <code>
+                            <b>N</b>
+                        </code> and <code>
+                            <b>Void</b>
+                        </code>. Void implies <code>
+                            <b>N</b>
+                        </code>. Used only when Action is Delete or /DeliveryPlan/Shipments/Shipment@AssociationAction is Add or Void.
+			   <Validation>
+                            <Condition>
+                                <code>
+                                    <b>Y</b>
+                                </code>/<code>
+                                    <b>N</b>
+                                </code> or <code>
+                                    <b>Void</b>
+                                </code>. Defaulted to <code>
+                                    <b>N</b>
+                                </code> if <code>
+                                    <b>Void</b>
+                                </code>.
+					</Condition>
+                            <Error
+                                Description="Only valid values are Y and N." ErrorCode="YCP0070"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_ORGANIZATION_CODE" yfc:tableName="YFS_DELIVERY_PLAN">
+                <xsd:documentation>
+                    <div>
+					Organization that owns the delivery plan. This could be the enterprise code or any other valid organization in the system. However, it must match at least the enterprise code or seller organization code or buyer organization code of the shipments being added into the delivery plan.
+						<Validation>
+                            <Condition>If passed, it must be a valid organization. Defaulted as the Enterprise's organization, which is the Enterprise Code itself. Should be a valid organization.
+							</Condition>
+                            <Error
+                                Description="Owner Organization is invalid." ErrorCode="YCP0057"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RemoveContentOnDelete" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			   RemoveContentOnDelete is applicable only when the Action is Delete. The system by default deletes only empty delivery plan or in other words, a delivery plan with no contents. However, if you wish to delete a delivery plan even if it comprises of load and shipments, set this attribute to Y.  Valid values are Y, N and Void. Void implies N. 
+			   <Validation>
+                            <Condition>Used only when Action is Delete. This is used to specify to the system that a delivery plan with content (load or shipments) can be deleted.
+					</Condition>
+                            <Error
+                                Description="Only valid values are Y and N." ErrorCode="YCP0070"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Shipments">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Shipment"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div>
+       Pass  <code>ShipmentKey</code>
+                    <i>or</i> pass <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code>  to identify the shipment.
+       </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AssociationAction" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			   Indicates an association action between shipment and delivery plan. The valid values for AssociationAction are Add, Remove or Void(blanks). In case when Action is Void, it is treated as Add. Basically, it is used to specify if shipment needs to be added to or removed from the delivery plan.
+				<Validation>
+                                <Condition>AssociationAction should be either Add or Remove. If not specified, it is assumed to be Add. If passed, it should be one of Add or Remove.
+							</Condition>
+                                <Error
+                                    Description="Value of Association Action attribute in the input XML is not amongst the valid values supported by the API." ErrorCode="YDM00016"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:ID-40">
+                        <xsd:enumeration value="Add"/>
+                        <xsd:enumeration value="Remove"/>
+                        <xsd:enumeration value="Void"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+					Primary key attribute of <code>YFS_SHIPMENT</code> table. Used to identify a delivery plan.
+						<Validation>
+                                <Condition>Shipment must exist on the system.
+							</Condition>
+                                <Error
+                                    Description="ShipmentKey or ShipmentNo points to an invalid shipment." ErrorCode="YDM00017"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must not belong to a load.
+							</Condition>
+                                <Error
+                                    Description="Shipment belonging to a load cannot be added to or removed from the delivery plan." ErrorCode="YDM00018"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must not belong to any other delivery plan.
+							</Condition>
+                                <Error
+                                    Description="Shipment can belong to only one delivery plan." ErrorCode="YDM00019"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must belong to this delivery plan if AssociationAction is Remove.
+							</Condition>
+                                <Error
+                                    Description="Cannot remove a shipment that does not belong to this delivery plan." ErrorCode="YDM00021"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipments must not be closed.
+							</Condition>
+                                <Error
+                                    Description="Closed shipment cannot be added to a delivery plan." ErrorCode="YDM00023"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>When AssociationAction is Add or Void, the shipment status must be one of the statuses defined for the shipment modification rules for the modification type <code>SHIPMENT_INCLUDE_IN_DELIVERY_PLAN</code> , unless <code>OverrideModificationRules</code> is set to <code>
+                                    <b>Y</b>
+                                    </code>, in which status check will not be carried out.
+							</Condition>
+                                <Error
+                                    Description="Shipment modification rules do not permit shipment in its current status to be included in the delivery plan." ErrorCode="YDM00024"/>
+                                <Error
+                                    Description="Shipment modification rules do not permit modification of shipment in its current status." ErrorCode="YDM00025"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>When AssociationAction is Remove, the shipment status must be one of the statuses defined for the shipment modification rules for the modification type <code>SHIPMENT_INCLUDE_IN_DELIVERY_PLAN</code> , unless <code>OverrideModificationRules</code> is set to <code>
+                                    <b>Y</b>
+                                    </code>, in which status check will not be carried out.
+							</Condition>
+                                <Error
+                                    Description="Shipment modification rules do not permit shipment in its current status to be removed from the delivery plan." ErrorCode="YDM00080"/>
+                                <Error
+                                    Description="Shipment modification rules do not permit modification of shipment in its current status." ErrorCode="YDM00025"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+					Primary key attribute of <code>YFS_SHIPMENT</code> table. Used to identify a delivery plan.
+						<Validation>
+                                <Condition>Shipment must exist on the system.
+							</Condition>
+                                <Error
+                                    Description="ShipmentKey or ShipmentNo points to an invalid shipment." ErrorCode="YDM00017"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must not belong to a load.
+							</Condition>
+                                <Error
+                                    Description="Shipment belonging to a load cannot be added to or removed from the delivery plan." ErrorCode="YDM00018"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must not belong to any other delivery plan.
+							</Condition>
+                                <Error
+                                    Description="Shipment can belong to only one delivery plan." ErrorCode="YDM00019"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment must belong to this delivery plan if AssociationAction is Remove.
+							</Condition>
+                                <Error
+                                    Description="Cannot remove a shipment that does not belong to this delivery plan." ErrorCode="YDM00021"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipments must not be closed.
+							</Condition>
+                                <Error
+                                    Description="Closed shipment cannot be added to a delivery plan." ErrorCode="YDM00023"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>When AssociationAction is Add or Void, the shipment status must be one of the statuses defined for the shipment modification rules for the modification type <code>SHIPMENT_INCLUDE_IN_DELIVERY_PLAN</code> , unless <code>OverrideModificationRules</code> is set to <code>
+                                    <b>Y</b>
+                                    </code>, in which status check will not be carried out.
+							</Condition>
+                                <Error
+                                    Description="Shipment modification rules do not permit shipment in its current status to be included in the delivery plan." ErrorCode="YDM00024"/>
+                                <Error
+                                    Description="Shipment modification rules do not permit modification of shipment in its current status." ErrorCode="YDM00025"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>When AssociationAction is Remove, the shipment status must be one of the statuses defined for the shipment modification rules for the modification type <code>SHIPMENT_INCLUDE_IN_DELIVERY_PLAN</code> , unless <code>OverrideModificationRules</code> is set to <code>
+                                    <b>Y</b>
+                                    </code>, in which status check will not be carried out.
+							</Condition>
+                                <Error
+                                    Description="Shipment modification rules do not permit shipment in its current status to be removed from the delivery plan." ErrorCode="YDM00080"/>
+                                <Error
+                                    Description="Shipment modification rules do not permit modification of shipment in its current status." ErrorCode="YDM00025"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/getLPNDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/getLPNDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_getLPNDetails_input.xsd" yfc:rootElement="GetLPNDetails">
+        <xsd:appinfo source="yfc:structure">
+            <GetLPNDetails hasAttributes="Y">
+                <LPN hasAttributes="Y"/>
+                <DataAccessFilter hasAttributes="Y"/>
+            </GetLPNDetails>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="GetLPNDetails" type="yfc:GetLPNDetailsXSDType"/>
+    <xsd:complexType name="GetLPNDetailsXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:LPN"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DataAccessFilter"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ORGANIZATION">
+                <xsd:documentation>
+                    <div>
+					Inventory organization code for the Enterprise is obtained from <code>YFS_ORGANIZATION</code>.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LPN_LOCATION">
+                <xsd:documentation>
+                    <div>
+					The Node in which the <code>LPN</code> exists.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> must be passed. 
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if <code>LPN</code> does not exist in the <code>Node</code>. 
+							</Condition>
+                            <Error
+                                Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="LPN">
+        <xsd:annotation yfc:tableName="YFS_LPN_HDR">
+            <xsd:documentation>Stores the LPN and its hierarchy.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A CaseId for which details have to be returned.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Exactly one of <code>CaseId</code> or <code>PalletId</code> should be passed or <code>LPNHdrKey</code> should be passed. Both <code>CaseId</code>, <code>PalletId</code> or <code>LPNHdrKey</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LPNHdrKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LPN_HDR_KEY" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+					Uniquely Identifies the <code>LPN</code> for which details have to be returned.
+						<Validation>
+                                <Condition>Should be a valid <code>LPNHdrKey</code>.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A PalletId for which details have to be returned.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Exactly one of <code>CaseId</code> or <code>PalletId</code> should be passed or <code>LPNHdrKey</code> should be passed. Both <code>CaseId</code>, <code>PalletId</code> or <code>LPNHdrKey</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DataAccessFilter">
+        <xsd:complexType>
+            <xsd:attribute name="ApplyDataSecurityFilters"
+                type="yfctype:Text-1" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values:
+						<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Returns records by honoring the Data Security Groups.
+						<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Returns records by ignoring the Data Security Groups.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

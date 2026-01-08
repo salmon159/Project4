@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/beforeRegisterTaskInProgressUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/beforeRegisterTaskInProgressUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_beforeRegisterTaskInProgressUE_input.xsd" yfc:rootElement="Task">
+        <xsd:appinfo source="yfc:structure">
+            <Task hasAttributes="Y">
+                <Inventory hasAttributes="Y">
+                    <TagAttributes hasAttributes="Y"/>
+                    <SerialNumberDetails>
+                        <SerialNumberDetail hasAttributes="Y"/>
+                    </SerialNumberDetails>
+                </Inventory>
+            </Task>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Task" type="yfc:TaskXSDType">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="TaskXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Inventory"/>
+        </xsd:all>
+        <xsd:attribute name="AssignedToUserId" type="yfctype:LoginId" use="optional">
+            <xsd:annotation yfc:columnName="ASSIGNED_TO_USER_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The user to whom this task is assigned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EquipmentId" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="EQUIPMENT_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The specific equipment that is used to perform this task.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EquipmentLocationId" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="EQUIPMENT_LOCATION_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The identifier of the location associated with the location placeholder for the equipment, so that inventory in the location can be queried and tracked.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldReasonCode"
+            type="yfctype:HoldReasonCode" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_REASON_CODE" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The reason for the hold, if the task is held due to an exception. The system will ship with one system defined value for this field:  Y01: Inventory Shortage. Users can add more reasons during installation.  Example values are: 02: Equipment malfunction 03: Location Repair.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SourceLocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="SOURCE_LOCATION_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The location at which the movement of a product starts in a warehouse.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TargetLocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="TARGET_LOCATION_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The location at which the task ends.  This may be overridden during execution.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="TASK_ID"
+                yfc:isConditional="Y" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+				Pass either <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+				<Validation>
+                            <Condition>
+                                <code>TaskId</code> passed does not exist in the YFS_TASK table.
+					</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TASK_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+				Pass either <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+				<Validation>
+                            <Condition>
+                                <code>TaskKey</code> passed does not exist in the YFS_TASK table.
+					</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Inventory">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TagAttributes"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialNumberDetails"/>
+            </xsd:all>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The status of the inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>
+					 If quantity is less than task quantity then the passed quantity moves to completed status with updated information. The rest of the quantity moves to open status.  Adding quantity is not allowed- if the quantity is more than task quantity, an error is thrown. 
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceCaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Source Case Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourcePalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Source Pallet Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetCaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Target Case Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetPalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Target Pallet Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TagAttributes">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>This table stores tag information for inventory.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialNumberDetails">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SerialNumberDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialNumberDetail">
+        <xsd:complexType>
+            <xsd:attribute name="SerialNo" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Serial Number of Item </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

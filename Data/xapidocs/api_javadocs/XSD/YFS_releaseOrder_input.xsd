@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/releaseOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/releaseOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_releaseOrder_input.xsd" yfc:rootElement="ReleaseOrder">
+        <xsd:appinfo source="yfc:structure">
+            <ReleaseOrder hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ReleaseOrder" type="yfc:ReleaseOrderXSDType"/>
+    <xsd:complexType name="ReleaseOrderXSDType">
+        <xsd:attribute name="AllocationRuleID" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Identifies an Allocation Rule. An Enterprise can configure multiple allocation rule sets for each document types.
+				If an <code>AllocationRuleID</code> is passed, the associated allocation rule is used for this order. 
+				<Validation>
+                            <Condition> The <code>AllocationRuleID</code> passed is invalid for the combination of document type of the order, and  Enterprise's ruleset. It may be invalid because there is no matching allocation rule for that ID.
+					</Condition>
+                            <Error
+                                Description="Invalid Allocation Rule Id" ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to indicates whether inventory availability should be checked during scheduling. 
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b> - <i>Check Inventory</i>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>The document type used to describe the order. Part of the unique key for the order. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>Identifies the Enterprise.  Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreReleaseDate" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to notify the schedule process to ignore the line release dates. Setting this to <b>
+                            <code>Y</code>
+                        </b> results in line quantities being scheduled even if the date criteria for release is not met.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreTransactionDependencies" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Flag to override any transaction dependencies that may be defined for the transaction this API invokes.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, transaction dependencies will not be evaluated, and thus will not prevent the API from processing.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:String">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>Unique identifier of the Order. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>A value that identifies an order within an enterprise. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

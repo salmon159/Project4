@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getUserConstraintList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getUserConstraintList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getUserConstraintList_input.xsd" yfc:rootElement="User">
+        <xsd:appinfo source="yfc:structure">
+            <User hasAttributes="Y">
+                <EligibleTaskTypeList>
+                    <EligibleTaskType hasAttributes="Y"/>
+                </EligibleTaskTypeList>
+                <UserZoneList>
+                    <UserZone hasAttributes="Y"/>
+                </UserZoneList>
+                <UserTranConstraintList>
+                    <UserTranConstraint hasAttributes="Y"/>
+                </UserTranConstraintList>
+            </User>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="User" type="yfc:UserXSDType">
+        <xsd:annotation yfc:tableName="YFS_USER">
+            <xsd:documentation>This table stores information on users in the system.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="UserXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EligibleTaskTypeList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:UserZoneList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:UserTranConstraintList"/>
+        </xsd:all>
+        <xsd:attribute name="LoginId" type="yfctype:LoginId" use="optional">
+            <xsd:annotation yfc:columnName="LOGINID" yfc:tableName="YFS_USER">
+                <xsd:documentation>Login id for whom constraints to be searched based on partial criteria such as "LIKE","CONTAINS".</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Maximum records return by list api.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OnlyLoggedInUsers" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>				Pass as <b>
+                            <code>Y</code>
+                        </b> to return only logged-in users. 				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_KEY" yfc:tableName="YFS_USER">
+                <xsd:documentation>The organization to which a user belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UserId" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>User id for whom constraints to be searched.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UserKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="USER_KEY" yfc:tableName="YFS_USER">
+                <xsd:documentation>The primary key for the YFS_USER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="EligibleTaskTypeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EligibleTaskType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EligibleTaskType">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The task type that the user is eligible to perform.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="UserZoneList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:UserZone"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="UserZone">
+        <xsd:annotation yfc:tableName="YFS_USER_ZONE">
+            <xsd:documentation>This table stores the work area definition for each user group. Work area is the set of locations, consisting of the zone and aisle combination within which a set of users work. The system suggests tasks originating and terminating only in these areas.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Aisle" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="AISLE" yfc:tableName="YFS_USER_ZONE">
+                    <xsd:documentation>This field indicates the aisle number the user currently works in.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_USER_ZONE">
+                    <xsd:documentation>The node key that is associated with this user zone.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RecordType"
+                type="yfctype:EnumRecordType" use="optional">
+                <xsd:annotation yfc:columnName="RECORD_TYPE" yfc:tableName="YFS_USER_ZONE">
+                    <xsd:documentation>This field indicates whether the work area record applies to the source or the target locations zone and aisle combination. Valid values are: Option 01: Indicates that the work area record applies to the Source Zone and Aisle. Option 02: Indicates that the work area record applies to the Target Zone and Aisle.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+                <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_USER_ZONE">
+                    <xsd:documentation>The field indicates the zone identifier for this user group that carries out the tasks.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="UserTranConstraintList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:UserTranConstraint"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="UserTranConstraint">
+        <xsd:annotation yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+            <xsd:documentation>This table stores transactional constraints, such as order number and shipment number.  Transactional constraints are temporary in nature, and are automatically purged by the system when the corresponding transaction data is purged.  When tasks are suggested to a user, these constraints have to be met.  If no constraints are specified here, it means that any type of task can be suggested to the user.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ActiveFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVE_FLAG" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>This flag indicates whether the constraint should be applied.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AssignedToUserId"
+                type="yfctype:LoginId" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGNED_TO_USER_ID" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The identifier of the user for whom the transactional constraints are being defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The batch in which the user can work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerNo" type="yfctype:ContainerNo" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The container in which the user is eligibile to work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CountRequestNo"
+                type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="COUNT_REQUEST_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The count request in which the user is eligible to work on.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The enterprise key that is associated with this user tran constraints. &#xd;
+Within a Node, operations can vary by Enterprise.  Therefore, task type level attributes are maintained at an enterprise level for a node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MoveRequestNo"
+                type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="MOVE_REQUEST_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The move request on which the user is eligible to work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The node to which the user belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The receipt on which the user is eligible to work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The shipment on which the user can work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The identifier of the task type that the user is eligible to perform.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserTranConstraintsKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="USER_TRAN_CONSTRAINTS_KEY" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The primary key for the YFS_USER_TRAN_CONSTRAINTS table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WaveNo" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="WAVE_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The wave number on which the user can work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_USER_TRAN_CONSTRAINTS">
+                    <xsd:documentation>The work order on which the user is eligible to work.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/createInventoryActivity/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/createInventoryActivity/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="INV_createInventoryActivity_input.xsd" yfc:rootElement="InventoryActivity">
+        <xsd:appinfo source="yfc:structure">
+            <InventoryActivity hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="InventoryActivity" type="yfc:InventoryActivityXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ACTIVITY">
+            <xsd:documentation>
+                <div>
+				Inventory activity represents inventory items whose supplies or demands had been adjusted.
+					<Validation>
+                        <Condition>
+                         	If CreateForInvItemsAtNode="N", <code>OrganizationCode</code> and <code>ItemID</code> are required.
+						</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+							If CreateForInvItemsAtNode="N", valid inventory item information is required.
+						</Condition>
+                        <Error Description="Invalid item." ErrorCode="YFS10437"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            If CreateForInvItemsAtNode="Y", <code>OrganizationCode</code> and <code>Node</code> are required.
+						</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YFS10364"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InventoryActivityXSDType">
+        <xsd:attribute name="CreateForInvItemsAtNode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Indicates if inventory activity to be created for inventory items of <code>Node</code>,<code>Organization</code>.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>N</code>
+                        </b> or <b>
+                            <code>Y</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="N"/>
+                    <xsd:enumeration value="Y"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="DistributionRuleId"
+            type="yfctype:DistributionRuleId" use="optional">
+            <xsd:annotation yfc:columnName="DISTRIBUTION_RULE_ID" yfc:tableName="YFS_DISTRIBUTION_RULE">
+                <xsd:documentation>
+                    <div>
+                        <code>DistributionRuleId</code> can be passed so that inventory activity will be created with the provided item for all nodes configured within the distribution rule.  If both <code>DistributionRuleId</code> and <code>Node</code> are passed, inventory activity will only be created for the <code>Node</code>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                <xsd:documentation>
+                    <div>
+					The node where inventory changes occur.
+						<Validation>
+                            <Condition>
+							Invalid <code>Node</code> passed.
+							</Condition>
+                            <Error Description="Invalid Ship Node." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessedFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="PROCESSED_FLAG" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                <xsd:documentation>
+                    <Description>
+						The flag indicates whether this inventory activity has been picked up for processing by the Real-Time Availability Monitor.  Valid values: [F,N] Default: N
+						<br/>Specify:<br/>
+                        <b>
+                            <code>F</code>
+                        </b> for Force Publish. Indicating that inventory activity has not been processed and the Real-Time Availability Monitor should publish the availability picture regardless whether it has changed from the previously published availability.<br/>
+                        <b>
+                            <code>N</code>
+                        </b> otherwise. 
+					</Description>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Purpose" type="yfctype:Text-3" use="optional">
+            <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                <xsd:documentation>Purpose code for creating the activity. Valid Values: [05]</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

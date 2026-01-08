@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/registerBarcodeForPacking/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/registerBarcodeForPacking/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_registerBarcodeForPacking_input.xsd" yfc:rootElement="BarCode">
+        <xsd:appinfo source="yfc:structure">
+            <BarCode hasAttributes="Y">
+                <ContextualInfo hasAttributes="Y"/>
+                <ItemContextualInfo hasAttributes="Y"/>
+                <ShipmentContextualInfo hasAttributes="Y"/>
+                <Note hasAttributes="Y"/>
+            </BarCode>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="BarCode" type="yfc:BarCodeXSDType">
+        <xsd:annotation yfc:tableName="YFS_BARCODE_TRANSLATION">
+            <xsd:documentation>This table defines how barcodes are validated based on the context of the data.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="BarCodeXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:ContextualInfo"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemContextualInfo"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentContextualInfo"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Note"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Action must be specified to pack or unpack shipment.the Valid values are PACK and UNPACK
+					the default value is PACK.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BarCodeData" type="yfctype:String" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					BarCode data to be translated.
+						<Validation>
+                            <Condition>
+                                <code>BarCodeData</code> should be passed.
+							</Condition>
+                            <Error
+                                Description="BarCodeData is mandatory." ErrorCode="YCP0187"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BarCodeType" type="yfctype:Text-100" use="required">
+            <xsd:annotation yfc:columnName="BARCODE_TYPE" yfc:tableName="YFS_BARCODE_TRANSLATION">
+                <xsd:documentation>
+                    <div>
+					BarCode Type associated with the data being scanned.
+						<Validation>
+                            <Condition>
+                                <code>BarCodeType</code> should be passed.
+							</Condition>
+                            <Error
+                                Description="BarCodeType is mandatory." ErrorCode="YCP0186"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ContextualInfo">
+        <xsd:annotation yfc:tableName="YFS_BARCODE_TRANSLATION">
+            <xsd:documentation>This table defines how barcodes are validated based on the context of the data.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BuyerOrganizationCode"
+                type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Identifies the buying organization</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>An Enterprise in general implies a business undertaking. In the participant modeling, the enterprise is understood to be a broker/mediator, and is also used to arrive at the inventory org and subsequently the catalog org. So, bar code translators dependent on inventory, catalog or various enterprise dependent document types would use this de-referencing mechanism to translate data.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_BARCODE_TRANSLATION">
+                    <xsd:documentation>
+                        <div>
+					This is the organization from which bar code set up will be picked up.
+						<Validation>
+                                <Condition>
+                                    <code>OrganizationCode</code> should be passed.
+							</Condition>
+                                <Error
+                                    Description="Organization code is mandatory for this operation." ErrorCode="YFS10513"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Identifies the selling organization</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemContextualInfo">
+        <xsd:complexType>
+            <xsd:attribute name="AlternateUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM_UOM">
+                    <xsd:documentation>Alternate UOM applicable for the Item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="KitCode" type="yfctype:EnumKitCode" use="optional">
+                <xsd:annotation yfc:columnName="KIT_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field indicates the kit code for this item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass" type="yfctype:CodeValue" use="optional">
+                <xsd:annotation yfc:columnName="CODE_VALUE" yfc:tableName="YFS_COMMON_CODE">
+                    <xsd:documentation>The unique code value belonging to a particular code type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentContextualInfo">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div>
+	  				To identify the <code>Shipment</code>, pass either <code>ShipmentKey</code> or <code>ShipmentNo</code>, <code>SellerOrganizationCode</code> and <code>ShipNode</code>
+                    <Validation>
+                        <Condition>Unique keys of Shipment are not passed.
+						</Condition>
+                        <Error
+                            Description="Either ShipmentKey or ShipmentNo, ShipNode and SellerOrganizationCode is mandatory." ErrorCode="YDM00065"/>
+                    </Validation>
+                </div>
+                <div>
+	  				To identify the <code>Container</code>
+                    <code>, ContainerScm</code> or <code>ShipmentContainerKey is used.When the first product is packed in a New Container,passing ContainerScm attribute is mandatory.Subsequently,when the Container is updated with more products ShipmentContainerKey should be passed. When Unpacking, ShipmentContainerKey  should be mandatorily passed</code>
+                    <Validation>
+                        <Condition>Unique keys of Container data are not passed.
+						</Condition>
+                        <Error
+                            Description="Either ContainerScm or Shipment container key is mandatory." ErrorCode="YCD00068"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ContainerScm" type="yfctype:UCC128" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_SCM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>A unique number which helps identify the shipper as well as the goods.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentContainerKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_CONTAINER_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT_CONTAINER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Note">
+        <xsd:annotation yfc:tableName="YFS_NOTES">
+            <xsd:documentation>
+                <div>
+	  				If this <code>Note</code> element is passed, a note will be added to the Order being packed or unpacked with the passed <code>ReasonCode</code>. The <code>ContactUser</code> will be stamped as the logged in User's ID.
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="NoteText" type="yfctype:NoteText" use="optional">
+                <xsd:annotation yfc:columnName="NOTE_TEXT" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Detailed Notes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The reason for which the notes are logged. Like "CustomerContact" etc. The values will be selected from common code of code type "NOTES_REASON"</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

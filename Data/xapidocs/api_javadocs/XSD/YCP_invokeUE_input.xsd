@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/invokeUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/invokeUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_invokeUE_input.xsd" yfc:rootElement="InvokeUE">
+        <xsd:appinfo source="yfc:structure">
+            <InvokeUE hasAttributes="Y">
+                <XMLData/>
+            </InvokeUE>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="InvokeUE" type="yfc:InvokeUEXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					This invoke UE wrapper takes a mandatory transaction
+					id or document type and a mandatory User Exit name as input. The
+					inputs are used to validate the User Exit.
+					<br/>
+					The input to the UE is passed either as a child
+					element or as a text child node of the XMLData
+					element.
+					<br/>
+					This API's entry point to invoking a named UE is to be used
+					ONLY for the following :
+					<br/>
+					1. A UE that takes an Environment and an input XML document pair
+					<br/>
+					2. A UE which necessarily returns an output XML document
+					<br/>
+					In cases where the input is as mentioned above but the output is of 
+					a datatype that is anything other than an XML Document, an exception will 
+					be thrown.
+					<Validation>
+                        <Condition>If <code>DocumentType</code> and <code>TransactionId</code> are not passed
+						</Condition>
+                        <Error
+                            Description="Either TransactionId or DocumentType is mandatory." ErrorCode="YCP0046"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InvokeUEXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:XMLData"/>
+        </xsd:all>
+        <xsd:attribute name="CheckIfUserExitIsImplemented"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Pass as  <b>
+                            <code> Y </code>
+                        </b> to only check if User Exit is implemented or not. 
+					This flag when passed <b>
+                            <code> Y </code>
+                        </b> will suppress the invocation of the User Exit. Both <code>TransactionId
+					</code> attribute and <code>XMLData</code> element will be ignored and their validation will be suppressed.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:DocumentType" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_DOCUMENT_PARAMS">
+                <xsd:documentation>
+                    <div>
+						Identifies the document type associated to the
+						User Exit.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORG_KEY" yfc:tableName="YFS_USER_EXIT_IMPL">
+                <xsd:documentation>
+                    <div>
+						If EnterpriseCode is passed, the API uses the User Exit implementation associated with the enterprise. The API evaluates the organization hierarchy of the enterprise to determine which User Exit implementation to use.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TranId" use="optional">
+            <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+						Identifies the transaction associated to the
+						User Exit.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UserExit" type="yfctype:UserExitName" use="required">
+            <xsd:annotation yfc:columnName="USER_EXIT_NAME" yfc:tableName="YFS_USER_EXIT">
+                <xsd:documentation>
+                    <div>
+						Name of the User Exit that is to be invoked.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="XMLData">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				The input to the UserExit is passed either as a child element or as
+				a text child node of this element. If DTD or XSD validation is required,
+				the input must be passed as text.
+				<br/>
+				Validations will be done to see if the xml is well formed. It is the
+				responsibility of the UserExit being called to validate the contents
+				of this XML data for functional correctness.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

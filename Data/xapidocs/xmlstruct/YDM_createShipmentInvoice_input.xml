@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!-- Either ShipmentNo or ShipmentKey or TaskQKey is required. TransactionId is required if TaskQKey is not passed. -->
+<Shipment SellerOrganizationCode="Conditional" ShipNode="Conditional"
+    ShipmentKey="Conditional" ShipmentNo="Conditional"
+    TaskQKey="Conditional" TransactionId="Conditional" xmlns="http://www.sterlingcommerce.com/documentation/YDM/createShipmentInvoice/input">
+    <yfc:includeInParent IncludeXMLFileName="YFS_Shipment_keys.xml" IncludeXMLPath="/Shipment"/>
+    <yfc:doc>
+        <Element EntityName="Shipment">
+            <Description>
+                <div>
+		Refers to  the shipment. Once a shipment is invoiced 'Invoice_Complete' flag on the shipment is updated to 'Y'. Pass one of the following to identify the shipment.
+		<br/>
+                    <code>ShipmentKey</code>
+                    <br/>
+                    <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code>
+                    <br/> In addition, pass either <code>TaskQKey</code> or <code>TransactionId</code>.
+	    <Validation>
+                        <Condition>Invalid Shipment key passed.
+		</Condition>
+                        <Error Description="Invalid Shipment key" ErrorCode="YFS10112"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Invalid transaction ID passed. 
+			</Condition>
+                        <Error Description="Invalid transaction ID" ErrorCode="YCP0068"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>ChargeActualFreightFlag</code> on the order of the shipment is set to <code>
+                                <b>Y</b>
+                            </code>, then the <code>createShipmentInvoice</code> API will create or override a charge category/charge name of <code>Shipping/"blank"</code> on the order with the freight charge passed in on the shipment.   If a charge category, <code>Shipping</code>, is not setup for the enterprise.
+			</Condition>
+                        <Error Description="Invalid charge category" ErrorCode="YFS10537"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>ChargeActualFreightFlag</code> on the order of the shipment is set to <code>
+                                <b>Y</b>
+                            </code>, then the <code>createShipmentInvoice</code> API will create or override a charge category/charge name of <code>Shipping/"blank"</code> on the order with the freight charge passed in on the shipment.   If a charge name, <code>"blank"</code>, is not setup for <code>Shipping</code> charge category for the enterprise.
+			</Condition>
+                        <Error Description="Invalid charge" ErrorCode="YFS10346"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>OrderAvailableOnSystem</code> flag on the shipment is <code>
+                                <b>M</b>
+                            </code>:
+			</Condition>
+                        <Error
+                            Description="Cannot create invoice for shipment with order may be on system." ErrorCode="YDM80_0011"/>
+                    </Validation>
+                    <i>or</i>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute EntityName="Task_Queue" Name="TaskQKey" NameInEntity="TaskQKey">
+                <Description>
+                    <div>
+			Primary key of a Task Queue record. Pass either <code>TaskQKey</code> or <code>TranactionID</code>. 
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Transaction" Name="TransactionId" NameInEntity="Tranid">
+                <Description>
+                    <div>Unique identifier to an instance of shipment invoice creation transaction. Pass either <code>TaskQKey</code> or <code>TransactionId</code>. If TransactionId is passed, the transaction should be an instance of the abstract transaction 
+			<code>CREATE_SHIPMENT_INVOICE</code>. Configure this transaction, with its pickup and drop statuses, and  <code>ON_INVOICE_CREATION</code> event in the relevant pipeline.
+			</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+</Shipment>

@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Container ActivityCode="" AddingComplete="" CODReturnTrackingNo=""
+    CaseId="" ContainerNo="" ContainerScm="" ContainerType=""
+    CorrugationItemKey="" DoInventoryUpdatesOffline="" LoadKey=""
+    PalletId="" ShipmentKey="" UpdateOpenContainers="" xmlns="http://www.sterlingcommerce.com/documentation/YDM/addToContainer/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Activity" Name="ActivityCode">
+                <Description>ActivityCode to be associated with Container while adding to Container.
+				</Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="AddingComplete">
+                <Description>
+                    <div>If equals Y then Container Status changes to either <code>Packed</code> or <code>ShortPicked</code> depending on the whether ContainerDetails' <code>QuantityPlaced</code> equals <code>Quantity</code>. If no <code>ContainerDetails</code> then it changes to <code>Packed</code>. 
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <Validation>
+                            <br/>
+                            <Condition> if it is Y and the Container does not have <code>ContainerDetails</code> or any child containers and container contents are required.
+					</Condition>
+                            <Error
+                                Description="Container contents is required." ErrorCode="YDM00215"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LPNNo" Name="CaseId">
+                <Description>
+                    <div>The Container identifier to which <code>Inventory</code> or <code>Source</code> is to be added. 
+				<Validation>
+                            <Condition> If <code>Container</code> is a Inventory Case/Pallet then <code>Source</code> should be a valid Container and <code>CaseId</code> should be valid SCM.
+				</Condition>
+                            <Error
+                                Description="Shipping Container can be added to a Inventory Pallet with valid SCM." ErrorCode="YDM00174"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="DoInventoryUpdatesOffline">
+                <Description>
+                    <div>Set to enable inventory update offline.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Load" Name="LoadKey" NameInEntity="LoadKey">
+                <Description>
+                    <div>Specifies the load to which container belongs</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LPNNo" Name="PalletId">
+                <Description>
+                    <div>The Container identifier to which <code>Inventory</code> or 
+				<code>Source</code> is to be added. 
+				<Validation>
+                            <Condition>If <code>Container</code> is a Inventory Case/Pallet then <code>Source</code> should be a valid Container and <code>PalletId</code> should be valid SCM.
+				</Condition>
+                            <Error
+                                Description="Shipping Container can be added to a Inventory Pallet with valid SCM." ErrorCode="YDM00174"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="UpdateOpenContainers">
+                <Description>
+                    <div>
+                        <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+					If equals Y then open container records in YFS_Open_Container table will be updated with the child container attributes.
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <PackLocation LocationId="Conditional" Node="Required" StationId="Conditional">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="LocationId" Name="LocationId">
+                    <Description>
+                        <div>A valid location in the Node
+							<Validation>
+                                <Condition> If <code>Node</code> is WMS Node Integrated with DCM and Location cannot be derived from <code>Source</code> or <code>Container</code> then Location must be an a valid <code>Location</code> in the Node.
+								</Condition>
+                                <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="ShipNode" Name="Node">
+                    <Description>
+                        <div>Node at which Packing is taking place.
+							<Validation>
+                                <br/>
+                                <Condition> Must be a valid. <code>Node</code>.
+								</Condition>
+                                <Error Description="Invalid ShipNode." ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="EquipmentId" Name="StationId">
+                    <Description>
+                        <div>Station associated to pack location
+							<Validation>
+                                <Condition> If <code>Node</code> is WMS Node Integrated with DCM, then Station must be a valid <code>Station</code> in the Node.
+								</Condition>
+                                <Error Description="Invalid Data." ErrorCode="YCM0017"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </PackLocation>
+    <Shipment SellerOrganizationCode="" ShipmentNo=""/>
+    <Load LoadNo=""/>
+    <Source CaseId="" LoadKey="" PalletId="" ShipmentKey="" TransactionId="">
+        <yfc:doc>
+            <Element>
+                <Description>
+					Specifies the Container or SKU to be added.
+					When an inventory LPN is picked into a system suggested outbound container, the LPN will not be retained as the child container of the outbound container, only the SKU and the quantity is updated in container details table. But if the inventory LPN is picked into a user suggested outbound container, then LPN will be retained as child container of the outbound container. This happens only if the CaseId/PalletId is a NewPrePrintedLicencePlate, else the SKU and quantity will be updated in container details table. 
+				</Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="LPNNo" Name="CaseId">
+                    <Description>
+                        <div>The Container or Inventory LPN identifier which needs to added to <code>Container</code> or converted to a container.
+					<Validation>
+                                <br/>
+                                <Condition> If <code>CaseId</code> does not point to a valid Inventory <code>Case</code> or shipping container 
+						</Condition>
+                                <Error
+                                    Description="Cannot add non Shipping or Inventory Container to another Container." ErrorCode="YDM00195"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Load" Name="LoadKey" NameInEntity="LoadKey">
+                    <Description>
+                        <div>Specifies the load to which container belongs</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LPNNo" Name="PalletId">
+                    <Description>
+                        <div>The Container or Inventory LPN identifier which needs to added to <code>Container</code> or converted to a container. 
+					<Validation>
+                                <br/>
+                                <Condition> If <code>PalletId</code> does not point to a valid Inventory <code>Pallet</code> or shipping container 
+						</Condition>
+                                <Error
+                                    Description="Cannot add non Shipping or Inventory Container to another Container." ErrorCode="YDM00195"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Shipment" Name="ShipmentKey" NameInEntity="ShipmentKey"/>
+                <Attribute EntityName="Transaction" Name="TransactionId" NameInEntity="Tranid">
+                    <Description>If passed this would be used for the ChildContainer which is added to the Container.
+					</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Shipment SellerOrganizationCode="" ShipmentNo=""/>
+        <Load LoadNo=""/>
+        <Inventory CountryOfOrigin="" FifoNo="" InnerPackQuantity=""
+            InventoryItemKey="" InventoryStatus="" InventoryTagKey=""
+            NoOfInnerPacks="" Quantity="" ReceiptHeaderKey="" Segment=""
+            SegmentType="" ShipByDate="">
+            <yfc:doc>
+                <Element EntityName="Location_Inventory">
+                    <Description>
+                        <div>
+					The <code>Inventory</code> passed is decreased from the <code>PackLocation</code> and is increased at the virtual location associated with <code>PACK</code> reason code. This reason code needs to be setup for the <code>Node</code>.
+					<Validation>
+                                <br/>
+                                <Condition> if <code>PACK</code> reason code associated with a virtual location is not setup for the <code>Node</code>.
+					</Condition>
+                                <Error
+                                    Description="WMS: Invalid ReasonCode." ErrorCode="WMS00071"/>
+                            </Validation>
+                            <Validation>
+                                <br/>
+                                <Condition> if <code>Inventory</code> is passed and container contents are not required.
+					</Condition>
+                                <Error
+                                    Description="Container contents is not required and should not be specified." ErrorCode="YDM00214"/>
+                            </Validation>
+                            <Validation>
+                                <br/>
+                                <Condition> Either <code>Quantity</code> or <code>InnerPackQuantity</code> and <code>NoOfInnerPacks</code> must be passed.
+					</Condition>
+                                <Error
+                                    Description="Quantity not passed in the input." ErrorCode="WMS00021"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Quantity" Name="InnerPackQuantity">
+                        <Description>
+                            <div>Quantity contained in inner packs.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity" Name="NoOfInnerPacks">
+                        <Description>
+                            <div>Number of inner packs packed in the shipment container.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Quantity">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <br/>
+                                    <Condition> In case of SystemSuggested Container, Quantity should not exceed un placed ContainerDetail Quantity. 
+							In case of User Suggested Container, Quantity should not exceed 
+							uncontainerized quantity of corresponding ShipmentLine + 
+					        (Over Ship Percentage*ShipmentLine Quantity)/100. 
+							</Condition>
+                                    <Error
+                                    Description="Not enough uncontainerized quantity available on the shipment for containerization." ErrorCode="YDM00063"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Receipt ReceiptNo="">
+                <yfc:doc>
+                    <Element EntityName="Receipt_Header"/>
+                </yfc:doc>
+            </Receipt>
+            <InventoryItem ItemID="Required" ProductClass="Required"
+                UnitOfMeasure="Required" yfc:DTDOccurrence="REQUIRED">
+                <yfc:doc>
+                    <Element>
+                        <Description>SKU to be added
+						</Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Inventory_Item" Name="ItemID">
+                            <Description>
+                                <div>
+                                    <Validation>
+                                    <br/>
+                                    <Condition> If void </Condition>
+                                    <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Item" Name="ProductClass">
+                            <Description>
+                                <div>
+                                    <Validation>
+                                    <br/>
+                                    <Condition> If void </Condition>
+                                    <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure">
+                            <Description>
+                                <div>
+                                    <Validation>
+                                    <br/>
+                                    <Condition> If void </Condition>
+                                    <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </InventoryItem>
+            <AdditionalAttributes CustomerPoNo="" DepartmentCode="" MarkForKey="">
+                <yfc:doc>
+                    <Element>
+                        <Description>Do not mix attributes to be considered during packing
+						</Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Shipment_Line" Name="CustomerPoNo">
+                            <Description> The Customer PO # that is associated with Shipment Line
+						</Description>
+                        </Attribute>
+                        <Attribute EntityName="Shipment_Line" Name="DepartmentCode">
+                            <Description> The Department Code that is associated with Shipment Line
+						</Description>
+                        </Attribute>
+                        <Attribute EntityName="Shipment_Line" Name="MarkForKey">
+                            <Description>The mark for key that is associated with this shipment line 
+						</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </AdditionalAttributes>
+            <TagDetail BatchNo="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" RevisionNo="">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Tag">
+                        <Description>
+                            <div>
+							Stores tag information for container details. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+							</div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </TagDetail>
+            <RequestedTag BatchNo="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" RevisionNo="">
+                <yfc:doc>
+                    <Element EntityName="Shipment_Line_Req_Tag">
+                        <Description>
+							This is used to specify the <code>RequestedTag</code> if any to be used while packing. If this information is provided, API tries to fetch a shipment line with matching Requested Tag. Also, if <code>RequestedTag</code> is not given, preference will be given to a shipment line with blank requested tag and then a line with matching <code>RequestedTag</code>.
+							<div>
+                                <Validation>
+                                    <br/>
+                                    <Condition> In case of a matching shipment line cannot be found for the given input. 
+									</Condition>
+                                    <Error
+                                    Description="Could not identify matching Shipment line." ErrorCode="YDM00239"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </RequestedTag>
+            <SerialList>
+                <SerialRangeList>
+                    <SerialRange FromSerialNo="" ToSerialNo="" yfc:DTDOccurrence="OneOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="SerialNo" Name="FromSerialNo">
+                                    <Description>
+                                    <div>Staring serial number of a range for item. 
+										<Validation>
+                                    <Condition> From Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute DataType="SerialNo" Name="ToSerialNo">
+                                    <Description>
+                                    <div>Ending serial number of a range for item. 
+										<Validation>
+                                    <Condition> From Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                    </SerialRange>
+                </SerialRangeList>
+                <SerialDetail SecondarySerial1="" SecondarySerial2=""
+                    SecondarySerial3="" SecondarySerial4=""
+                    SecondarySerial5="" SecondarySerial6=""
+                    SecondarySerial7="" SecondarySerial8=""
+                    SecondarySerial9="" SerialNo="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Global_Serial_Num"/>
+                        <Attributes>
+                            <Attribute Name="SerialNo">
+                                <Description>
+                                    <div>If passed will be adjusted against <code>RequestedSerialNo</code> of <code>ShipmentLine</code> of the shipment if found.
+								</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </SerialDetail>
+            </SerialList>
+        </Inventory>
+    </Source>
+    <Audit ReasonText="" Reference1="" Reference2="" Reference3=""
+        Reference4="" Reference5="">
+        <yfc:doc>
+            <Element EntityName="Location_Inventory_Audit"/>
+        </yfc:doc>
+    </Audit>
+    <Corrugation ItemID="">
+        <yfc:doc>
+            <Element EntityName="Item"/>
+        </yfc:doc>
+    </Corrugation>
+</Container>

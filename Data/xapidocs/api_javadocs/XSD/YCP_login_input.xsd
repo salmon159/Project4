@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/login/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/login/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_login_input.xsd" yfc:rootElement="Login">
+        <xsd:appinfo source="yfc:structure">
+            <Login hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Login" type="yfc:LoginXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+						If the external authenticator class is not provided, the values for <code>LoginID</code> and <code>Password</code> must match the values stored in the database.
+						</Condition>
+                        <Error Description="Invalid Login ID" ErrorCode="YFS10192"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LoginXSDType">
+        <xsd:attribute name="DisplayUserID" type="yfctype:Text-150" use="optional">
+            <xsd:annotation yfc:columnName="DISPLAY_USER_ID" yfc:tableName="YFS_USER">
+                <xsd:documentation>Indicates Display User's ID which is used for login in to the system.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="LoginID" type="yfctype:LoginId" use="required">
+            <xsd:annotation yfc:columnName="LOGINID" yfc:tableName="YFS_USER">
+                <xsd:documentation>The login ID for the user.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Password" type="yfctype:Password" use="required">
+            <xsd:annotation yfc:columnName="PASSWORD" yfc:tableName="YFS_USER">
+                <xsd:documentation>The password for the user.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Timeout" use="optional">
+            <xsd:annotation yfc:columnName="TIMEOUT" yfc:tableName="YFS_USER_ACTIVITY">
+                <xsd:documentation>Number of milliseconds of inactivity before the token is considered invalid.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TokenInvalidTimeOut"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

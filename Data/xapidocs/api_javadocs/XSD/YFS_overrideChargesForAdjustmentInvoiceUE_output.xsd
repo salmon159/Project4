@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/overrideChargesForAdjustmentInvoiceUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/overrideChargesForAdjustmentInvoiceUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YFS_overrideChargesForAdjustmentInvoiceUE_output.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <OrderLines>
+                    <OrderLine hasAttributes="Y">
+                        <LineCharges>
+                            <LineCharge hasAttributes="Y"/>
+                        </LineCharges>
+                        <LinePriceInfo hasAttributes="Y"/>
+                    </OrderLine>
+                </OrderLines>
+                <HeaderCharges>
+                    <HeaderCharge hasAttributes="Y"/>
+                </HeaderCharges>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderCharges"/>
+        </xsd:all>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineCharges"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LinePriceInfo"/>
+            </xsd:all>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineCharges">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LineCharge"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineCharge">
+        <xsd:annotation yfc:tableName="YFS_LINE_CHARGES">
+            <xsd:documentation>This table stores any additional charges or discounts that can be added to an  order line.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_CATEGORY.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Link to YFS_CHARGE_NAME.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerLine"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERLINE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Fixed charge amount for this order/invoice line. When the line charge is associated with an order line, this amount will be invoiced on the first invoice for this order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargePerUnit" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="CHARGEPERUNIT" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Charge per unit for the item on this order/invoice line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsBillable" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Describes if the charge is billable. Default: <code>N</code>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsDiscount" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Describes if the charge is discountable. Default: <code>N</code>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_LINE_CHARGES">
+                    <xsd:documentation>Any additional reference related to this line charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LinePriceInfo">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="UnitPrice" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_PRICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit price for the order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderCharges">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HeaderCharge"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderCharge">
+        <xsd:annotation yfc:tableName="YFS_HEADER_CHARGES">
+            <xsd:documentation>This table stores charges that are applied at the header level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ChargeAmount"
+                type="yfctype:PlusMinusMoney" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The amount of the charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeCategory"
+                type="yfctype:ChargeCategory" use="required">
+                <xsd:annotation yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The charge category. For example, Labeling or Handling.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeName" type="yfctype:ChargeName" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>The name of the charge. For example, Price Ticket.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsBillable" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Describes if the charge is billable. Default: <code>N</code>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsDiscount" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Describes if the charge is discountable. Default: <code>N</code>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE" yfc:tableName="YFS_HEADER_CHARGES">
+                    <xsd:documentation>Reference information about this charge.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

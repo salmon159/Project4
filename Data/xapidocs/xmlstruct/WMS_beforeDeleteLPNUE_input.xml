@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DeleteLPN EnterpriseCode="Required" Node="Required" xmlns="http://www.sterlingcommerce.com/documentation/WMS/beforeDeleteLPNUE/input">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="WMS_deleteLPN_input.xml" IncludeXMLPath="/DeleteLPN"/>
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Inventory_Item" Name="EnterpriseCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					The Enterprise whose License Plate is being deleted.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed. 
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Ship_Node" Name="Node" NameInEntity="Ship_Node">
+                <Description>
+                    <div>
+					Indicates the node or warehouse from where the <code>LPN</code> is being deleted.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> must be passed. 
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <LPN CaseId="" PalletId="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="LPN_Hdr">
+                <Description>
+                    <div>
+					Input XML must contain this element.
+						<Validation>
+                            <Condition>Error if <code>LPN</code> not passed. 
+							</Condition>
+                            <Error
+                                Description="The Input XML is Invalid." ErrorCode="WMS00024"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="LPNNo" Name="CaseId">
+                    <Description>
+                        <div>
+						A CaseId. Id through which the inventory being tracked throughout the node.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LPNNo" Name="PalletId">
+                    <Description>
+                        <div>
+						A PalletId. Id through which the inventory being tracked throughout the node.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <LPNLocation LocationId="">
+            <yfc:doc>
+                <Element EntityName="LPN_Location"/>
+                <Attributes>
+                    <Attribute EntityName="Location" Name="LocationId" NameInEntity="Location_Id">
+                        <Description>
+                            <div>
+							Location where the <code>LPN</code> resides.
+								<Validation>
+                                    <Condition>
+                                    <code>LocationId</code> should be a valid location in the warehouse.
+									</Condition>
+                                    <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If passed <code>LPN</code> should reside in this <code>LocationId</code>.
+									</Condition>
+                                    <Error
+                                    Description="CaseId/PalletId exists at a different location." ErrorCode="WMS00014"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </LPNLocation>
+    </LPN>
+    <Audit DocumentType="" ReasonCode="" ReasonText="" Reference1=""
+        Reference2="" Reference3="" Reference4="" Reference5="">
+        <yfc:doc>
+            <Element EntityName="Location_Inventory_Audit"/>
+            <Attributes>
+                <Attribute EntityName="Location_Inventory_Audit"
+                    Name="ReasonCode" NameInEntity="Reason_Code">
+                    <Description>
+                        <div>
+						Gives the reason code for the inventory transaction. The business significance of this reason code is that inventory bins will be tied to this reason code, which will be used to adjust inventory (for inventory synchronization purposes) on host systems. This is mandatory if inventory is getting updated.
+							<Validation>
+                                <Condition>Mandatory for inventory adjustments.
+								</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Should be a valid reason code in the system.
+								</Condition>
+                                <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if reason code do not have valid inventory bin.
+								</Condition>
+                                <Error
+                                    Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Audit>
+</DeleteLPN>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<ApproverResponse ApproverUserID="Required" xmlns="http://www.sterlingcommerce.com/documentation/YSC/recordApprovals/input">
+    <yfc:doc>
+        <Element EntityName="User">
+            <Description>
+                <div>
+					Specifies the user who is recording a response to a violation.
+					<Validation>
+                        <Condition>
+							If no User exists with a
+							<code>Loginid</code>
+							the same as the given
+							<code>ApproverUserID</code>
+                        </Condition>
+                        <Error Description="User Not Found." ErrorCode="OMP921_MO07"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+							If the User with
+							<code>Loginid</code>
+							the same as the specified
+							<code>ApproverUserID</code>
+							is not a valid approver for all specified violations.
+						</Condition>
+                        <Error Description="Invalid Approver" ErrorCode="OMP921_MO05"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+							If the specified User with
+							<code>Loginid</code>
+							the same as the specified
+							<code>ApproverUserID</code>
+							has not been authenticated.
+						</Condition>
+                        <Error Description="User Not Authenticated" ErrorCode="OMP921_MO00"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute EntityName="User" Name="ApproverUserID" NameInEntity="Loginid"/>
+        </Attributes>
+    </yfc:doc>
+    <ValidationList yfc:DTDOccurrence="REQUIRED">
+        <Validation Domain="" OrganizationCode="" ValidationID=""
+            ValidationKey="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Element EntityName="Validation">
+                    <Description>
+                        <div>
+							Specifies the validation against which violations are to be
+							recorded.
+							<code>ValidationKey</code>
+							or a combination of
+							<code>ValidationID</code>
+							,
+							<code>Domain</code>
+							, and
+							<code>OrganizationCode</code>
+							can be specified to identify a Validation.
+							<Validation>
+                                <Condition>If no Validation matches the criteria.
+								</Condition>
+                                <Error
+                                    Description="No Validation Found." ErrorCode="OMP921_MO03"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <TransactionViolationList yfc:DTDOccurrence="REQUIRED">
+                <TransactionViolation ApprovalRuleID=""
+                    Approved="Required" ApproverComments=""
+                    DocumentType="" MessageCode="" OrganizationCode=""
+                    SequenceNumber="" Status="" TransactionInfoID="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+									An individual violation. If a record does not exist with the
+									specified
+									<code>TransactionInfoID</code>
+									and
+									<code>SequenceNumber</code>
+									, a new violation will be created with the given
+									<code>TransactionInfoID</code>
+									and the next available
+									<code>SequenceNumber</code>
+									for the TransactionInfo record. If no
+									<code>TransactionInfoID</code>
+									is passed, one will be generated for the transaction.
+									<Validation>
+                                    <Condition>The Approval Rule does not exist.
+										</Condition>
+                                    <Error
+                                    Description="Approval Rule Not Found." ErrorCode="OMP921_MO01"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+                                    <code>ApprovalRuleID</code>
+											is invalid for the specified Validation.
+										</Condition>
+                                    <Error
+                                    Description="Approval Rule is not valid for Validation" ErrorCode="OMP921_MO02"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+											The Violation does not exist and any of the parameters to
+											create it:
+											<code>ApprovalRuleID</code>
+											,
+											<code>OrganizationCode</code>
+											, or
+											<code>DocumentType</code>
+											is missing.
+										</Condition>
+                                    <Error
+                                    Description="Missing Mandatory Parameters" ErrorCode="YFS10364"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="String" Name="Approved">
+                                <Description>
+									Determines whether the violation is Approved.
+
+									Valid Values:
+									<b>
+                                    <code>Y</code>
+                                    </b>
+									or
+									<b>
+                                    <code>N</code>
+                                    </b>
+                                </Description>
+                            </Attribute>
+                            <Attribute
+                                EntityName="Transaction_Approval_Status"
+                                Name="ApproverComments" NameInEntity="APPROVER_COMMENTS"/>
+                        </Attributes>
+                    </yfc:doc>
+                    <TransactionInfo OrderHeaderKey="">
+                        <yfc:doc>
+                            <Element>
+                                <Description>
+                                    <div>
+										The element containing the unique fields for a given
+										Concrete
+										Transaction Info table.
+									</div>
+                                </Description>
+                            </Element>
+                            <Attributes>
+                                <Attribute
+                                    EntityName="Order_Transaction_Info"
+                                    Name="OrderHeaderKey" NameInEntity="ORDER_HEADER_KEY"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </TransactionInfo>
+                    <TransactionViolationReferenceList>
+                        <TransactionViolationReference
+                            ReferenceName="Required"
+                            ReferenceValue="Required" yfc:DTDOccurrence="OneOrMany">
+                            <yfc:doc>
+                                <Element>
+                                    <Description>
+                                    <div>
+											A Violation Reference.
+										</div>
+                                    </Description>
+                                </Element>
+                            </yfc:doc>
+                        </TransactionViolationReference>
+                    </TransactionViolationReferenceList>
+                </TransactionViolation>
+            </TransactionViolationList>
+        </Validation>
+    </ValidationList>
+</ApproverResponse>

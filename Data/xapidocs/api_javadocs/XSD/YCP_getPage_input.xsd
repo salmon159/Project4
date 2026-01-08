@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getPage/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getPage/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getPage_input.xsd" yfc:rootElement="Page">
+        <xsd:appinfo source="yfc:structure">
+            <Page hasAttributes="Y">
+                <ReferenceData/>
+                <PreviousPage hasAttributes="Y"/>
+                <API hasAttributes="Y">
+                    <Input/>
+                    <Template/>
+                </API>
+            </Page>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Page" type="yfc:PageXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Paginate an API.
+					<Validation>
+                        <Condition>If PaginationStrategy is not GENERIC or ROWNUM or RESULTSET or NEXTPAGE</Condition>
+                        <Error Description="Invalid pagination strategy" ErrorCode="PLT3005"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PageXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ReferenceData"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PreviousPage"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:API"/>
+        </xsd:all>
+        <xsd:attribute name="PageNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Page number to retrieve. Page numbers are 1-based (the first page number is 1).</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PageSetToken" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Reference to an existing page result to extract data from. If it doesn't exist, this token will be used to identify a new set of pages. This attribute is only used when the <code>PaginationStrategy</code> is GENERIC.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PageSize" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Number of records per page</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PaginationStrategy" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:String">
+                    <xsd:enumeration value="GENERIC"/>
+                    <xsd:enumeration value="ROWNUM"/>
+                    <xsd:enumeration value="RESULTSET"/>
+                    <xsd:enumeration value="NEXTPAGE"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Refresh" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Boolean">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="StartRowNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Row number of the first record in the page. This <code>StartRowNumber</code>
+				takes precedence over the <code>PageNumber</code> attribute when determining how to retrieve
+				records. Row numbers are 0-based (the first row number is 0).</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="XMLPath" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+					Path of the parent output XML element whose children will be paged.
+					For example, the <code>User</code> elements in the following XML will be
+					paged when an <code>XMLPath</code> of <code>/UserList</code>
+					is given.<br/>
+                    <pre>&lt;Organization&gt;
+    &lt;UserList&gt;
+        &lt;User Loginid="User1"/&gt;
+        &lt;User Loginid="User2"/&gt;
+    &lt;/UserList&gt;
+&lt;/Organization&gt;</pre>
+					Note if the <code>XMLPath</code> is not found in the output, the
+					output of <code>getPage</code> will be marked as invalid.
+					<p>
+					This attribute is only supported for the GENERIC <code>PaginationStrategy</code>.
+					The default behavior is to select the root element. To explicitly select the root element, use a single slash (<code>/</code>).
+					</p>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ReferenceData">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Search for a page of data that contains this record. Unique identifiers for the record must be given.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PreviousPage">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Find a page of data immediately following this record. Unique identifiers for the record must be given.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+            <xsd:attribute name="PageNumber" type="yfctype:Integer" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The page number of the page represented by this data. If this attribute is given and the data is found, the resulting page number will be one greater than this one.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="API">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Input"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Template"/>
+            </xsd:all>
+            <xsd:attribute name="IsFlow" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Set value to Y only if paginating a service. (NOTE: Only 'GENERIC' strategy is supported while paginating a Service.)		
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Name" type="yfctype:Text-100" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Name of the API to call.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Version" type="yfctype:Text-10" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Version number of the API. Only provide a
+							value if a specific version of the API is
+							needed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Input">
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Template">
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

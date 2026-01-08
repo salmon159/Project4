@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2016 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<Items ApplyDifferences="" BatchMode="" BatchSize=""
+    CompleteInventoryFlag="" PublishedTime="" ReasonCode=""
+    ReasonText="" ShipNode="Required" ValidateItems=""
+    YantraMessageGroupID="" xmlns="http://www.sterlingcommerce.com/documentation/INV/loadInventoryMismatch/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+			The Items element contains common attributes for loading inventory picture of its children (Item elements) into the YFS_INVENTORY_SUPPLY_TEMP table.  Furthermore, these common attributes will be used by the syncLoadedInventory API.
+			</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="ApplyDifferences">
+                <Description>
+                    <div>
+				 Indicates whether to apply the differences to the <code>YFS_INVENTORY_SUPPLY</code> table in the database during the inventory synchronization process.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If <code>ApplyDifferences</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, the inventory mismatches detected are applied to the <code>YFS_INVENTORY_SUPPLY</code> table in the database.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="BatchMode">
+                <Description>
+                    <div>
+				 Indicates whether inventory supply of items are inserted in batch mode.
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Integer" Name="BatchSize">
+                <Description>
+                    <div>
+				 Indicates the maximum number items whose inventory supply records are to be processed in one batch.
+				<br/>Default: <b>
+                            <code>1000</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="CompleteInventoryFlag">
+                <Description>
+                    <div>
+				Indicates whether to check all of the inventory for mismatches, or only those items described in the input XML during the inventory synchronization process.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If <code>CompleteInventoryFlag</code> is passed as <b>
+                            <code>Y</code>
+                        </b>,  all the inventory supplies in the database for the <code>ShipNode</code> are checked for mismatches.
+				<br/>If <code>CompleteInventoryFlag</code> is passed as <b>
+                            <code>N</code>
+                        </b>, only the supplies provided in the input XML are checked for mismatches.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" Name="PublishedTime">
+                <Description>
+                    <div>
+				 Date and Time when inventory snapshot was taken.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Audit" Name="ReasonCode" NameInEntity="Reason_Code"/>
+            <Attribute EntityName="Inventory_Audit" Name="ReasonText" NameInEntity="Reason_Text"/>
+            <Attribute EntityName="Inventory_Supply" Name="ShipNode" NameInEntity="Shipnode_Key">
+                <Description>
+                    <div>
+				Node where inventory is located.
+				<Validation>
+                            <Condition>
+                                <code>ShipNode</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="Missing mandatory parameter." ErrorCode="YFS10364"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Must be a valid node in the system.
+					</Condition>
+                            <Error Description="Invalid Ship Node." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ValidateItems">
+                <Description>
+                    <div>
+				Indicates whether the items passed should be checked if they are defined in the Catalog or not.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If <code>ValidateItems</code> is passed as <b>
+                            <code>Y</code>
+                        </b>,  all the items passed are validated.
+				<br/>If <code>ValidateItems</code> is passed as <b>
+                            <code>N</code>
+                        </b>,  none of the items are validated.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Supply_Temp"
+                Name="YantraMessageGroupID" NameInEntity="Yantra_Message_Group_ID"/>
+        </Attributes>
+    </yfc:doc>
+    <Item InventoryOrganizationCode="Required" ItemID="Required"
+        ProductClass="" UnitOfMeasure="" yfc:DTDOccurrence="OneOrMany">
+        <yfc:doc>
+            <Element EntityName="Inventory_Item">
+                <Description>
+                    <div>
+			Inventory item whose supplies will be loaded into YFS_Inventory_Supply_Temp table for inventory synchonization process.
+			<Validation>
+                            <Condition>
+                                <code>InventoryOrganizationCode</code> or <code>ItemID</code> is not passed.
+				</Condition>
+                            <Error
+                                Description="Missing mandatory parameters." ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute Name="InventoryOrganizationCode">
+                    <Description>
+                        <div>
+				Inventory Organization Code.
+				<Validation>
+                                <Condition>Must be a valid organization in the system.
+					</Condition>
+                                <Error
+                                    Description="Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Supplies>
+            <Supply AvailabilityType="" ETA="" Quantity="" Segment=""
+                SegmentType="" ShipByDate="" SupplyLineReference=""
+                SupplyReference="" SupplyReferenceType=""
+                SupplyType="Required" yfc:DTDOccurrence="OneOrMany">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Supply"/>
+                    <Attributes>
+                        <Attribute Name="AvailabilityType">
+                            <Description>
+                                <div>
+						Valid values: INFINITE or TRACK. INFINITE indicates that inventory is available as infinite.  Default value: TRACK.
+						</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Supply"
+                            Name="SupplyType" NameInEntity="Supply_type">
+                            <Description>
+                                <div>
+						The supply type of this inventory supply.  
+							<Validation>
+                                    <Condition>
+                                    <code>SupplyType</code> must be passed.
+								</Condition>
+                                    <Error
+                                    Description="No supply type." ErrorCode="YFSI10006"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Tag BatchNo="" LotAttribute1="" LotAttribute2=""
+                    LotAttribute3="" LotKeyReference="" LotNumber=""
+                    ManufacturingDate="" RevisionNo="">
+                    <yfc:doc>
+                        <Element EntityName="Inventory_Tag">
+                            <Description>
+                                <div>
+							Stores tag information for inventory. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.	
+							<Validation>
+                                    <Condition>
+								If Item is tag-controlled, all of the unique tag identifiers must be passed.
+								</Condition>
+                                    <Error
+                                    Description="Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+								If Item is tag-controlled, and there is no tag number generated from the provided inventory identifier attributes.
+								</Condition>
+                                    <Error
+                                    Description="No Tag number" ErrorCode="YFSI10004"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                </Tag>
+            </Supply>
+        </Supplies>
+    </Item>
+</Items>

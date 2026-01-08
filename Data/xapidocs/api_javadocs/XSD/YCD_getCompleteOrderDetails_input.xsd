@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/getCompleteOrderDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/getCompleteOrderDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCD_getCompleteOrderDetails_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <ItemAttributeGroupTypeList>
+                    <ItemAttributeGroupType hasAttributes="Y"/>
+                </ItemAttributeGroupTypeList>
+                <Modifications>
+                    <Modification hasAttributes="Y"/>
+                </Modifications>
+                <SpecificOrderLines>
+                    <OrderLine hasAttributes="Y">
+                        <Modifications>
+                            <Modification hasAttributes="Y"/>
+                        </Modifications>
+                    </OrderLine>
+                </SpecificOrderLines>
+                <OrderLines>
+                    <OrderLine>
+                        <Modifications>
+                            <Modification hasAttributes="Y"/>
+                        </Modifications>
+                    </OrderLine>
+                </OrderLines>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttributeGroupTypeList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Modifications">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="unbounded" minOccurs="1" name="Modification">
+                            <xsd:complexType>
+                                <xsd:attribute name="ModificationType"
+                                    type="yfctype:Text-40" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>The Order level status modification type. This attribute is used to check whether order level modification is allowed or not for the modification type passed.</div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SpecificOrderLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+        </xsd:all>
+        <xsd:attribute name="ApplicationCode"
+            type="yfctype:ApplicationCode" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_CODE" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>
+                    <div>The application code from which this api is being called.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplicationVersion"
+            type="yfctype:ApplicationVersion" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_VERSION" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>
+                    <div>The application code from which this api is being called.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApproverUserID" type="yfctype:Text-24" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>This is the User ID which will be used to return back the CurrentUserOrderApprovalDetails information for a quote.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DisplayLocalizedFieldInLocale"
+            type="yfctype:Locale" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DisplayTransactionPrice"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Returns the transactional uom's unit price if set to Y, the default value is derived from the YCD_USE_TRANSACTIONAL_QUANTITY rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnorePendingChanges" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If passed as Y, this will cause the API to ignore any existing pending changes on the order when returning the results.  If passed as "N", then the pending changes made to the order will be incorporated in the resulting output.
+					</div>
+                    <div>Default Value: <b>N</b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LastOrderLineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+					The order line key to begin retreiving records from.  Use in conjunction with <code>MaximumRecords</code>.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocalShipNode" type="yfctype:Text-24" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The Ship Node of the logged in user.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The number of order lines to be returned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RepriceOrder" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Invokes the repriceOrder api when passed with a value of "Y".  Default value is "N"</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RetrieveDefaultCustomerPaymentMethod"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+            			This flag will cause the API to retrieve the default payment method associated to the Customer / Contact on the order and add them to the PaymentMethods list in the results only if there are no PaymentMethods on the order.  When stamped, if the payment method is not stored on the Order the <code>IsCustomer</code> flag will be stamped as "Y" on the record.
+            		</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SortingType" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						This attribute is used to sort the Order Lines that are returned from the Api based on the criteria passed.				
+						<br/>Valid Value: <b>
+                            <code>ITEM</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StatusModificationType"
+            type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                		Status Modification Type. If passed this modification type is used to compute the modification quantities.
+                		<Validation>
+                            <Condition>If Status Modification is not available for the ORDER_LINE Modification Level.</Condition>
+                            <Error
+                                Description="Setup for order modification permissions missing." ErrorCode="YFS10136"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UseEnteredByAsApproverUser"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Instead of defaulting to the user id in the environment, pull the EnteredBy user id and use that for the ApproverUserID.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ItemAttributeGroupTypeList">
+        <xsd:annotation>
+            <xsd:documentation>
+					If no ItemAttributeGroupTypeList is passed, then by default the ItemAttributeGroupType will be filtered on the ClassificationPurposeCode of <i>DISPLAY_ATTRIBUTES</i>.  If you are looking for different Item Attributes, you must define the list of types that you want.
+				</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ItemAttributeGroupType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeGroupType">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+            <xsd:documentation>This table stores item attribute group types.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ClassificationPurposeCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CLASSIFICATION_PURPOSE_CODE" yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+                    <xsd:documentation>
+                        <div>Returns the Item Attributes for the Item Attribute Group Type with the defined purpose code.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_TYPE" yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+                    <xsd:documentation>The group type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SpecificOrderLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" name="OrderLine">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                        <xsd:documentation>Identifies a specific order line to be included in the output of the API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Modifications">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="1" name="Modification">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ModificationType"
+                                    type="yfctype:Text-40" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>The Orderline level status modification type. This attribute is used to check whether line level modification is allowed or not for the modification type passed.</div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="GetBundleComponents"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>If this flag is passed as "Y" and the line is a bundle parent, then all child component lines will also be returned.</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OrderLineKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PrimeLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The order line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SubLineNo"
+                            type="yfctype:LineNo" use="optional">
+                            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                                <xsd:documentation>The sub line number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" name="OrderLine">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+                        <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Modifications">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="1" name="Modification">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="ModificationType"
+                                    type="yfctype:Text-40" use="required">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>The Orderline level status modification type. This attribute is used to check whether line level modification is allowed or not for the modification type passed.</div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

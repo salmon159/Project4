@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageCallOutImpl/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageCallOutImpl/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageCallOutImpl_input.xsd" yfc:rootElement="CallOutImpl">
+        <xsd:appinfo source="yfc:structure">
+            <CallOutImpl hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CallOutImpl" type="yfc:CallOutImplXSDType">
+        <xsd:annotation yfc:tableName="PLT_CALLOUT_IMPL">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b> and no record matches the criteria:
+					</Condition>
+                        <Error
+                            Description="Record does not exist in the database." ErrorCode="YFC0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> and <code>CallOutImplKey</code>  or <code>CallOutImplId</code> already exists in the database.
+					</Condition>
+                        <Error
+                            Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> and CallOutImplKey is blank:
+					</Condition>
+                        <Error
+                            Description="Primary Key cannot be blanked out." ErrorCode="YFC0013"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> and <code>CallOutImplId</code> is not passed.
+					</Condition>
+                        <Error
+                            Description="CallOutImplId is a Mandatory fields." ErrorCode="YCP0046"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> or <code>Modify </code> and <code>CallOutId</code> passed is invalid.
+					</Condition>
+                        <Error
+                            Description="CallOutId passed is invalid." ErrorCode="PLT0532"/>
+                    </Validation>
+					The CallOutImplId is required during a create/delete/modify operation 
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CallOutImplXSDType">
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallOutId" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CALLOUT_ID" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>The primary key of the associated PLT_CALLOUT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallOutImplId" type="yfctype:ID-40" use="required">
+            <xsd:annotation yfc:columnName="CALLOUT_IMPL_ID" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>This is used to uniquely identify a record of the PLT_CALLOUT_IMPL table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallOutImplKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CALLOUT_IMPL_KEY" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>The primary key of the PLT_CALLOUT_IMPL table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsSuspended" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IS_SUSPENDED" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>This field is set to Y if the execution of the CallOut implementation has resulted                        in a TimeOut. This could be because of some error-prone code which is resulting in infinite loop                       and not returning the thread. The default value is N. Any character other than Y will be considered as N</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="JavaClassName" type="yfctype:JavaClass" use="optional">
+            <xsd:annotation yfc:columnName="JAVA_CLASS_NAME" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>The java class implementing the CallOut.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+            <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>The sequence number for this callout implementation. The default value of this field is 0. If a negative value is passed, this will be set to 0.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitTimeOut" type="yfctype:UnitTimeOut" use="optional">
+            <xsd:annotation yfc:columnName="TIMEOUT" yfc:tableName="PLT_CALLOUT_IMPL">
+                <xsd:documentation>The timeout for the callout implementation in seconds. The default value of this field is 60000. If the value passed is either 0 or negative, this will be set to the default value</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

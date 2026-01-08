@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/postPickContainerization/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/postPickContainerization/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="WMS_postPickContainerization_input.xsd" yfc:rootElement="ContainerizeShipmentLines">
+        <xsd:appinfo source="yfc:structure">
+            <ContainerizeShipmentLines hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ContainerizeShipmentLines" type="yfc:ContainerizeShipmentLinesXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Identifies either the Shipment or Batch or Inventory Pallet for which the containerization API will be called on all uncontainerized Shipment lines. 
+				<Validation>
+                        <Condition>All the attributes that can help us uniquely identify a Shipment or a Batch or a Inventory Pallet must be passed in the input.In this case, Either <code>ShipmentKey</code> or	<code>ShipmentNo</code> and <code>SellerOrganizationCode</code> and <code>Node</code> or <code>TargetLPNNo</code> and <code>Node</code> need to be passed in the input.
+					</Condition>
+                        <Error Description="Unable to locate record" ErrorCode="WMS00002"/>
+                        <Error
+                            Description="Missing Mandatory Parameters" ErrorCode="WMS00063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ContainerizeShipmentLinesXSDType">
+        <xsd:attribute name="BatchNo" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+				Batch # whose shipment lines needs to be containerized.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>A valid location in the Node
+					<Validation>
+                            <Condition> If <code>Node</code> is WMS Node Integrated with DCM, then Location must be a valid <code>Location</code> in the Node.
+						</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_NODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIP_NODE">
+                <xsd:documentation>
+                    <div>
+				Ship Node corresponding to the specified Batch # or Inventory Pallet Id.
+				<Validation>
+                            <br/>
+                            <Condition> Must be a valid. <code>Node</code>.
+					</Condition>
+                            <Error Description="Invalid ShipNode." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>
+                    <div>
+				Seller Organization Code of the shipment that needs to be containerized.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>
+                    <div>
+				Shipment key of the shipment that needs to be containerized.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>
+                    <div>
+				Shipment # of the shipment that needs to be containerized.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StationId" type="yfctype:EquipmentId" use="optional">
+            <xsd:annotation yfc:columnName="EQUIPMENT_ID" yfc:tableName="YFS_EQUIPMENT">
+                <xsd:documentation>
+                    <div>Station associated to pack location
+					<Validation>
+                            <Condition> If <code>Node</code> is WMS Node Integrated with DCM, then Station must be a valid <code>Station</code> in the Node.
+						</Condition>
+                            <Error Description="Invalid Data." ErrorCode="YCM0017"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TargetLPNNo" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="TARGET_LPN_NO" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+				Inventory Pallet Id whose shipment lines need to be containerized.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

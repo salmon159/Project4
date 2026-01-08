@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/getAlternateStoreInventory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/getAlternateStoreInventory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_getAlternateStoreInventory_input.xsd" yfc:rootElement="AlternateStore">
+        <xsd:appinfo source="yfc:structure">
+            <AlternateStore hasAttributes="Y">
+                <Order hasAttributes="Y"/>
+                <NodeSearch hasAttributes="Y">
+                    <ShipToAddress hasAttributes="Y"/>
+                </NodeSearch>
+                <OrderLines>
+                    <OrderLine hasAttributes="Y">
+                        <Item hasAttributes="Y"/>
+                        <Tag hasAttributes="Y"/>
+                    </OrderLine>
+                </OrderLines>
+            </AlternateStore>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AlternateStore" type="yfc:AlternateStoreXSDType"/>
+    <xsd:complexType name="AlternateStoreXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:NodeSearch"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+        </xsd:all>
+        <xsd:attribute name="IgnoreUnpromised" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If <code>IgnoreUnpromised</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, unpromised demands are not considered during inventory availability calculations.
+				<BR/>Default: <code>N</code>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsPartialSubstitutionAllowed"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The Organization used to identify the fulfillment rules, ship nodes, and order/item information.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsSubstitutionAllowed" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Flag to indicate if substitution is allowed for Items.
+					<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Mode" type="yfctype:Text-2" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The mode determines which availability call will be made to derive the availability picture.<br/>
+                        <br/>
+                        <b>
+                            <code>01</code>
+                        </b> - Call getFulfillmentOptionsForLines to evaluate the inventory at each node for each order line utilizing the order line as input.<br/>
+                        <b>
+                            <code>02</code>
+                        </b> - Call getAvailableInventory for each node / item combination and return back the available quantity at each node.<br/>
+                        <b>
+                            <code>03</code>
+                        </b> - Call findInventory for each node / item combination and return back the earliest available date the requested quantity of each order line can be retrieved.
+					
+					<Validation>
+                            <Condition>
+                                <code>Mode</code> is not provided.</Condition>
+                            <Error
+                                Description="Missing or Invalid Search Criteria" ErrorCode="YCD00043"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The Organization used to identify the fulfillment rules, ship nodes, and order/item information.
+					<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not provided.</Condition>
+                            <Error
+                                Description="Missing or Invalid Search Criteria" ErrorCode="YCD00043"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+					This identifies the Order being evaluated for, and either the OrderHeaderKey or the OrderNo, DocumentType and EnterpriseCode are mandatory when the AlternateStore.Mode = "01"
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="NodeSearch">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					This input is used to make an internal call to getSurroundingNodeList to retrieve a list of nodes to evaluate for the items provided.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipToAddress"/>
+            </xsd:all>
+            <xsd:attribute name="DistanceToConsider"
+                type="yfctype:Number-22" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Nodes in this radius from <code>ShipToAddress</code> will be returned.  Defaulted to <code>YCD_DISTANCE_TO_CONSIDER</code> if not passed.
+					<Validation>
+                                <Condition>
+                                    <code>YCD_DISTANCE_TO_CONSIDER</code> is not defined.
+							</Condition>
+                                <Error
+                                    Description="DistanceToConsider was not provided or defined by YCD_DISTANCE_TO_CONSIDER" ErrorCode="YCP77_00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DistanceToConsiderUOM"
+                type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Specifies the UOM for <code>DistanceToConsider</code>. Defaulted to <code>YCD_DISTANCE_UOM_TO_CONSIDER</code> if not passed.
+						<Validation>
+                                <Condition>
+                                    <code>YCD_DISTANCE_UOM_TO_CONSIDER</code> is not defined.</Condition>
+                                <Error
+                                    Description="DistanceToConsiderUOM was not provided or defined by YCD_DISTANCE_UOM_TO_CONSIDER" ErrorCode="YCD00044"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FulfillmentType" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						If passed, sourcing rules for the <code>OrganizationCode</code>'s primary enterprise will be read to determine the valid nodes to be returned. The <code>OrganizationCode</code> will be used as the seller organization. Only those nodes that can be fulfilled by the sourcing rule and those within the specified range will be returned. Defaulted to YCD_STORE_SEARCH. 
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeType" type="yfctype:NodeType" use="optional">
+                <xsd:annotation yfc:columnName="NODE_TYPE" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>The type of the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipToAddress">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>
+                <div>
+		    			Country is always required and either the ZipCode or City,State are required inputs to derive the distance.
+		    			<Validation>
+                        <Condition>
+                            <code>Country</code> or <code>ZipCode</code> or <code>City/State</code> was not provided.
+		    				</Condition>
+                        <Error
+                            Description="Missing or Invalid Search Criteria" ErrorCode="YCD00043"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLines">
+        <xsd:annotation>
+            <xsd:documentation>
+					Order Lines are Mandatory.
+					<div>
+                    <Validation>
+                        <Condition>
+								No OrderLines element was provided.
+							</Condition>
+                        <Error
+                            Description="No OrderLines element was provided" ErrorCode="YCD00045"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>
+                <div>
+					When Mode="01", this is treated as a true order line object an which may or may not be saved to the order yet.  In modes 02 and 03, this is a container element for the list of items being evaluated.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tag"/>
+            </xsd:all>
+            <xsd:attribute name="GiftWrap" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_GIFT_WRAP" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>This field indicates if the order line has to be gift wrapped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LevelOfService"
+                type="yfctype:LevelOfService" use="optional">
+                <xsd:annotation yfc:columnName="LEVEL_OF_SERVICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>Indicates the level of service required for this order line.  Default is Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>Used to identify the order line when using Mode="01"
+					<Validation>
+                                <Condition>
+                                    <code>Mode="01"</code> and no Order identifier is provided
+						</Condition>
+                                <Error
+                                    Description="Missing Mandatory OrderLine Input" ErrorCode="YCD00045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>Used in combination with <code>SubLineNo</code> to identify the order line when using Mode="01"
+					<Validation>
+                                <Condition>
+                                    <code>Mode="01"</code> and no Order identifier is provided
+						</Condition>
+                                <Error
+                                    Description="Missing Mandatory OrderLine Input" ErrorCode="YCD00045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product class. This field is used as an inventory identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequiredQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								Required Quantity for the order line.  Is mandatory for <code>Mode="03"</code>, is ignored for <code>Mode="02"</code>, and is used to override the OrderedQty on an OrderLine for <code>Mode="01"</code>.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>Used in combination with <code>PrimeLineNo</code> to identify the order line when using Mode="01"
+					<Validation>
+                                <Condition>
+                                    <code>Mode="01"</code> and no Order identifier is provided
+						</Condition>
+                                <Error
+                                    Description="Missing Mandatory OrderLine Input" ErrorCode="YCD00045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>
+                        <div>When working in Modes="02" or "03, this is a required attribute of the OrderLine.  If there is no OrderLine identifier provided in Mode="01" this is also a required attribute.
+							<Validation>
+                                <Condition>
+									ItemID is a mandatory attribute.
+								</Condition>
+                                <Error
+                                    Description="Missing Mandatory OrderLine Input" ErrorCode="YCD00045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Tag">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+            <xsd:documentation>This table stores the requested inventory attributes of an item on a order line .</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>The Batch Number that has been specifed in the Order Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>Lot Attribute 1 used to specify the details of the lot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>Lot Attribute 2 used to specify the details of the lot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>Lot Attribute 3 used to specify the details of the lot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>The Lot key reference that has been specifed in the Order Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>The Lot Number that has been specifed in the Order Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>The Lot manufacturing date that has been specifed in the Order Line.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                    <xsd:documentation>The Revision Number that has been specifed in the Order Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

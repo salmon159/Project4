@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Receipt ArrivalDateTime="" DocumentType="Required" DriverName=""
+    NumOfCartons="" NumOfPallets="" OpenReceiptFlag="" ReceiptDate=""
+    ReceiptNo="" ReceivingDock="" ReceivingNode="Required"
+    ShipmentKey="" TrailerLPNNo="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/startReceipt/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Document_Params" Name="DocumentType">
+                <Description>
+                    <div>
+					The Document Type of the order being received.
+						<Validation>
+                            <Condition>
+                                <code>DocumentType</code> should not be void.
+							</Condition>
+                            <Error Description="Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Receipt_Header" Name="ReceiptDate" NameInEntity="Receipt_Date">
+                <Description>
+                    <div>
+					The date when the receipt was started. If void it is defaulted to the current date.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" EntityName="Receipt_Header"
+                Name="ReceivingDock" NameInEntity="Receiving_Dock_Id">
+                <Description>
+                    <div>
+					The receiving dock for the receipt. <code>ReceivingDock</code> is required if the receipt is being created and if the receiving node tracks inventory at location level using Sterling Warehouse Management System. 
+						<Validation>
+                            <Condition>
+                                <code>ReceivingDock</code> should be a valid location in the warehouse.
+							</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" EntityName="Receipt_Header"
+                Name="ReceivingNode" NameInEntity="Receiving_Node">
+                <Description>
+                    <div>
+					The Node that is receiving the shipment. If passed alongwith <code>ShipmentKey</code>, <code>ReceiptNo</code> and <code>ReceiptHeaderKey</code> should identify an open receipt. Should be an open receipt and should be in the status that can be picked by <code>RECEIVE_RECEIPT</code> transaction.
+						<Validation>
+                            <Condition>
+                                <code>ReceivingNode</code> should not be void.
+							</Condition>
+                            <Error Description="Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ReceivingNode</code> should be a valid node.
+							</Condition>
+                            <Error Description="Invalid Receiving Node." ErrorCode="YFS10371"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Shipment BolNo="" BuyerOrganizationCode=""
+        CarrierServiceCode="Conditional" DocumentType=""
+        EnterpriseCode="" ExpectedDeliveryDate="" OrderHeaderKey=""
+        OrderNo="" OrderReleaseKey="" PodNo="" ProNo="" ReceivingNode=""
+        ReleaseNo="" SCAC="" SealNo="" SellerOrganizationCode=""
+        ShipNode="" ShipmentNo="" TrackingNo="" TrailerNo="">
+        <yfc:doc>
+            <Element EntityName="Shipment">
+                <Description>
+                    <div>
+				Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.
+				<Validation>
+                            <Condition> The input provided should be able to find exactly one shipment.
+					</Condition>
+                            <Error Description="Invalid Shipment." ErrorCode="YFS10533"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The shipment status should be eligible for INCLUDE_IN_RECEIPT transaction.
+					</Condition>
+                            <Error
+                                Description="Shipment status is not in the pickup status for this transaction." ErrorCode="OMP10004"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The combination of order attributes and <Code>ReleaseNo</Code> or <Code>OrderReleaseKey</Code> should identify an OrderRelease if shipment is not present on system.
+					</Condition>
+                            <Error
+                                Description="Either Order or Order Release identifier has to be passed." ErrorCode="YFS10473"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The combination of <Code>OrderNo</Code>, <Code>DocumentType</Code> and <Code>EnterpriseCode</Code> or <Code>OrderHeaderKey</Code> should identify an Order if shipment is not present on system.
+					</Condition>
+                            <Error
+                                Description="YFS: Invalid Order Header Key." ErrorCode="YFS10126"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </Shipment>
+    <Instructions>
+        <Instruction InstructionText="" InstructionType=""
+            InstructionURL="" SequenceNo="" yfc:DTDOccurrence="OneOrMany"/>
+    </Instructions>
+</Receipt>

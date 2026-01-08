@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/validateCreditCardInfoUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/validateCreditCardInfoUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_validateCreditCardInfoUE_output.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y">
+                <PaymentMethod hasAttributes="Y">
+                    <Validation hasAttributes="Y"/>
+                </PaymentMethod>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PaymentMethod"/>
+        </xsd:all>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PaymentMethod">
+        <xsd:annotation yfc:tableName="YFS_PAYMENT">
+            <xsd:documentation>This table stores details about the customer's payment methods. The key to this table is posted in YFS_CHARGE_TRANSACTION table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Validation"/>
+            </xsd:all>
+            <xsd:attribute name="AwaitingAuthInterfaceAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Awaiting charge amount on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AwaitingChargeInterfaceAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Awaiting authorization amount on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BillToKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BILL_TO_KEY" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The bill to address that is associated with this payment. Can be passed if different from the bill to address on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ChargeSequence"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="CHARGE_SEQUENCE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The sequence in which the payment method is to be used for charging.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardExpDate"
+                type="yfctype:CreditCardExpDate" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_EXP_DATE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The expiration date for the credit card.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardName" type="yfctype:Text-300" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_NAME" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The credit card name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardNo" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary account number for payment methods that are defined under the PaymentTypeGroup CREDIT_CARD; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreditCardType" type="yfctype:Text-32" use="optional">
+                <xsd:annotation yfc:columnName="CREDIT_CARD_TYPE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The credit card type group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerAccountNo"
+                type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ACCOUNT_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary account number for payment methods that are defined under the PaymentTypeGroup CUSTOMER_ACCOUNT; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerPONo" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_PO_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The customer PO account number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplayCreditCardNo"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="DISPLAY_CREDIT_CARD_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The four digits of the credit card number that should be displayed.  If not passed, it is defaulted to be the last four digits of the credit card number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplayCustomerAccountNo"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="DISPLAY_CUST_ACCT_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The four digits of the customer account number that should be displayed.  If not passed, it is defaulted to be the last four digits of the customer account number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplayPaymentReference1"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="DISPLAY_PAYMENT_REF1" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The four digits of the payment reference 1 that should be displayed.  If not passed, it is defaulted to be the last four digits of the payment reference 1.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FundsAvailable" type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The funds available to be charged on this payment method as determined by the <code>GetFundsAvailable</code> user exit, if it was invoked.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GetFundsAvailableUserExitInvoked"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Indicates if the <code>GetFundsAvailable</code> user exit was invoked for this payment method.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IncompletePaymentType"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INCOMPLETE_PAYMENT_TYPE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>This flag indicates whether the payment type is incomplete.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxChargeLimit" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="MAX_CHARGE_LIMIT" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The maximum amount that can be charged on this payment method. However, if UnlimitedCharges=Y, this amount will not be considered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_KEY" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The primary key for the YFS_PAYMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference1"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE1" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 1. Additionally, this is the primary account number for payment methods that are defined under the PaymentTypeGroup OTHER; payment methods of this group will be considered incomplete if this is not passed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference2"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE2" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 2.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference3"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE3" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment reference 3.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_TYPE" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The payment type of this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestedAuthAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="REQUESTED_AUTH_AMOUNT" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The total amount requested for authorization on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestedChargeAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="REQUESTED_CHARGE_AMOUNT" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The total amount requested for charging on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SuspendAnyMoreCharges"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SUSPEND_ANY_MORE_CHARGES" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>Flag to indicate more charging has to be suspended.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalAuthorized" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="TOTAL_AUTHORIZED" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The total amount auhorized on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalCharged" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="TOTAL_CHARGED" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The total amount charged on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalRefundedAmount"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="TOTAL_REFUNDED_AMOUNT" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>The total refunded amount on this payment method.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnlimitedCharges" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="UNLIMITED_CHARGES" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>Indicates if there is a limit to the amount that can be charged on the payment method. If not passed, defaults to Y.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Validation">
+        <xsd:annotation yfc:tableName="YFS_VALIDATION">
+            <xsd:documentation>This table stores the configuration for a validation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="IsValid" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>This attribute indicates whether credit card validation was successful. The client checks the value of this attribute. If it is Y, the credit card is considered as valid and the client does not perform any additional validation. If it is N, the credit card is considered as invalid, the client does not perform any additional validation and displays an error on the screen. If it is blank, it is assumed that the credit card was not validated and the client performs its out of the box validation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Message" type="yfctype:Text-200" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>This attribute will have error messages in case the validation fails.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

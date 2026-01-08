@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Validation Domain="" OrganizationCode="" ValidationID=""
+    ValidationKey="" xmlns="http://www.sterlingcommerce.com/documentation/YSC/recordViolations/input">
+    <yfc:doc>
+        <Element EntityName="Validation">
+            <Description>
+                <div>
+					Specifies the validation against which violations are to be
+					recorded.
+					<code>ValidationKey</code>
+					or a combination of
+					<code>ValidationID</code>
+					,
+					<code>Domain</code>
+					, and
+					<code>OrganizationCode</code>
+					can be specified to identify a Validation.
+					<Validation>
+                        <Condition>If no Validation matches the criteria.
+						</Condition>
+                        <Error Description="No Validation Found." ErrorCode="OMP921_MO03"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+    </yfc:doc>
+    <TransactionViolationList yfc:DTDOccurrence="REQUIRED">
+        <TransactionViolation ApprovalRuleID="" DocumentType=""
+            Domain="" MessageCode="" Operation="" OrganizationCode=""
+            RefreshReferences="" SequenceNumber="" Status=""
+            TransactionInfoID="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+							An individual Violation. If the violation is to be created and no
+							<code>TransactionInfoID</code>
+							is passed, one will be generated for the transaction.
+							<Validation>
+                                <Condition>The Approval Rule does not exist.
+								</Condition>
+                                <Error
+                                    Description="Approval Rule Not Found." ErrorCode="OMP921_MO01"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ApprovalRuleID</code>
+									is invalid for the specified Validation.
+								</Condition>
+                                <Error
+                                    Description="Approval Rule is not valid for Validation" ErrorCode="OMP921_MO02"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If Operation is Delete, but no TransactionInfoID or
+									SequenceNumber is
+									specified.
+								</Condition>
+                                <Condition>If Operation is Create, but no ApprovalRuleID,
+									OrganizationCode, or DocumentType is specified.
+								</Condition>
+                                <Error
+                                    Description="Missing Mandatory Parameters" ErrorCode="YFS10364"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If Operation is Delete or RefreshReferences=Y, but
+									the specified Violation
+									does not exist.
+								</Condition>
+                                <Error Description="Violation Not Found" ErrorCode="OMP921_MO09"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Attempt to modify Existing Violation when passing RefreshReferences=Y.
+								</Condition>
+                                <Error
+                                    Description="Cannot modify existing Violation." ErrorCode="OMP921_MO005"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+								Action to take.
+								<br/>
+								Valid Values:
+								<br/>
+                                <code>Create</code>
+								- Creates new record. If the record already exists, it is
+								neither created nor modified.
+								<br/>
+                                <code>Modify</code>
+								- Used only in conjunction with Status 9000.  Will change only the Violation's status to 9000 (Expired).
+								<br/>
+                                <code>Delete</code>
+								- Deletes existing record.
+								<br/>
+								The default behavior is Create.
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <TransactionInfo OrderHeaderKey="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+								The element containing the unique fields for a given
+								Concrete Transaction Info table.
+							</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute EntityName="Order_Transaction_Info"
+                            Name="OrderHeaderKey" NameInEntity="ORDER_HEADER_KEY"/>
+                    </Attributes>
+                </yfc:doc>
+            </TransactionInfo>
+            <TransactionApproverList>
+                <TransactionApprover ApproverGroupKey="Required"
+                    ApproverSequence="Required"
+                    ApproverUserGroupID="Required"
+                    ApproverUserTeam="Required" DelegateUserID=""
+                    IsMandatory="Required" PreviousApproverSequence=""
+                    UserID="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+									An individual approver.
+								</div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="LongSequence"
+                                EntityName="Transaction_Approval_Status"
+                                Name="ApproverSequence" NameInEntity="APPROVER_SEQUENCE"/>
+                            <Attribute
+                                EntityName="Transaction_Approval_Status"
+                                Name="IsMandatory" NameInEntity="IS_MANDATORY"/>
+                            <Attribute
+                                DataType="ApprovalPlanPredecessorSeq"
+                                EntityName="Transaction_Approval_Status"
+                                Name="PreviousApproverSequence" NameInEntity="PREVIOUS_APPROVER_SEQUENCE"/>
+                        </Attributes>
+                    </yfc:doc>
+                </TransactionApprover>
+            </TransactionApproverList>
+            <TransactionViolationReferenceList>
+                <TransactionViolationReference Operation=""
+                    ReferenceName="Required" ReferenceValue="Required"
+                    TransactionViolationReferenceKey="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+									A Violation Reference.
+									<Validation>
+                                    <Condition>
+											If the Violation's
+											<Code>RefreshReferences</Code>
+											attribute equals "Y", and the Operation is Modify or Delete,
+											but no
+											<Code>TransactionViolationReferenceKey</Code>
+											is passed.
+										</Condition>
+                                    <Error
+                                    Description="Missing Mandatory Parameters" ErrorCode="YFS10364"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+											If the Violation's
+											<Code>RefreshReferences</Code>
+											attribute equals "Y", and the Reference's Operation is Modify
+											or Delete,
+											but the specified Reference does not exist.
+										</Condition>
+                                    <Error
+                                    Description="Violation Reference Not Found" ErrorCode="YFC0002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>
+										Action to take. Only considered when the Violation's
+										<Code>RefreshReferences</Code>
+										attribute equals "Y". Otherwise, if the Violation does not
+										exist, the Reference will be created; and if the Violation
+										exists the Reference will neither be created nor modified.
+										<br/>
+										Valid Values:
+										<br/>
+                                    <code>Manage</code>
+										- Creates a new record if it does not exist, or modifies an
+										existing
+										record if it does.
+										<br/>
+                                    <code>Create</code>
+										- Creates a new record.
+										<br/>
+                                    <code>Modify</code>
+										- Change values in an existing record.
+										<br/>
+                                    <code>Delete</code>
+										- Deletes existing record.
+										<br/>
+										The default behavior is Manage.
+									</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </TransactionViolationReference>
+            </TransactionViolationReferenceList>
+        </TransactionViolation>
+    </TransactionViolationList>
+</Validation>

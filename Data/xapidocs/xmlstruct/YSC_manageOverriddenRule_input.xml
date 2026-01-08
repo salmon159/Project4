@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<OrderApprovalRule Action="" Channel="" DocumentType="Required"
+    EffectiveEndDate="" EffectiveStartDate="" IsActive="" IsOverride=""
+    LaneType="" Message="" MessageCode="" OrderApprovalRuleKey=""
+    OrganizationCode="Required" RegionKey="" RuleID="Required"
+    StoreType="" Type="" ValidationKey="Required" xmlns="http://www.sterlingcommerce.com/documentation/YSC/manageOverriddenRule/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				Specify the Rule information to be modified.  <code>OrderApprovalRuleKey</code> or a combination of <code>OrganizationCode</code> and <code>DocumentType</code> and <code>RuleID</code>.
+				
+				</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Action" Name="Action">
+                <Description>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>. 
+						<Validation>
+                            <Condition>Overridden Rule being created or updated must have valid OrganizationCode, DocumentType,
+							RuleID and ValidationKey.  
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP92_0013"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated must have valid Approval Group if approval is required.
+							While modifying <code>IsOverride</code> from <code>X</code> (Approval) to <code>Z</code> (Do not allow) or <code>Y</code> (Allow), Approval Group list needs to be explicitly removed. 
+							</Condition>
+                            <Error
+                                Description="Approval Group not valid" ErrorCode="OMP92_0011"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has a GreexRule with invalid ReturnType. 
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has a GreexRule with invalid return attributes. 
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0009"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has effective end date that comes before
+							effective start date.  
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0020"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>GreexRule attribute contains an unexpected advanced XML rule.  
+							</Condition>
+                            <Error
+                                Description="GreexRule attribute contains an unexpected advanced XML rule." ErrorCode="OMP90_0024"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="IsActive">
+                <Description>
+                    <div>
+	                    Indicates when the Overridden rule is active .
+	                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="IsOverrideFlag" Name="IsOverride">
+                <Description>
+                    <div>
+	                    Indicates when approval is required for Overridden rule.
+	                    
+	                    <br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>X</code>
+                        </b> - Approval is required to proceed with the transaction.
+					<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Allow the transaction no approval required 
+					<br/>
+                        <b>
+                            <code>Z</code>
+                        </b> -Do not allow the transaction.
+					<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="RuleID">
+                <Description>
+                    <div>
+	                    Overridden rule identifier .
+	                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <GreexRule yfc:AllowAnyElement="skip" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+	               			The Greex format advanced XML condition associated with this overridden rule.
+	                   </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </GreexRule>
+    <ApprovalGroupList>
+        <ApprovalGroup Action="" ApprovalGroupId="" ApprovalGroupKey=""
+            DocumentType="" IsSignatureMandatory="" MaxApprover=""
+            MinApprover="" OrganizationCode="" SignaturePolicy="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Action">
+                        <Description>
+                            <div>Valid Values: <code>
+                                    <b>REMOVE</b>
+                                </code>
+                                <br/>
+	                    Default Values: <code>
+                                    <b>MANAGE</b>
+                                </code>
+                                <Validation>
+                                    <Condition>Invalid Data: Attempt to remove non existing approval group</Condition>
+                                    <Error Description="Invalid Data" ErrorCode="YFS10190"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-1"
+                        EntityName="Approval_Rule_Assoc" Name="IsSignatureMandatory">
+                        <Description>
+                            <div>Indicates in case exception is caused by a person higher or equal to Min Approver role, the system will enforce minimum of self signature as approval mechanism..
+						<br/>Valid Values: 
+						<br/>
+                                <b>
+                                    <code>Y</code>
+                                </b>
+                                <br/>
+                                <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Approval_Rule_Assoc" Name="MaxApprover"/>
+                    <Attribute EntityName="Approval_Rule_Assoc" Name="MinApprover"/>
+                    <Attribute DataType="Text-20"
+                        EntityName="Approval_Rule_Assoc" Name="SignaturePolicy">
+                        <Description>
+                            <div>Indicates if approval signature is required by every one in the approval plan sequence or approval by any one in the approval plan sequence.
+						<br/>Valid Values: 
+						<br/>
+                                <b>
+                                    <code>ANYONE</code>
+                                </b>
+                                <br/>
+                                <b>
+                                    <code>EVERYONE</code>
+                                </b>
+                                <br/>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ApprovalGroup>
+    </ApprovalGroupList>
+</OrderApprovalRule>

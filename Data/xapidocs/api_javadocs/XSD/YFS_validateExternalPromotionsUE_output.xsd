@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/validateExternalPromotionsUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/validateExternalPromotionsUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YFS_validateExternalPromotionsUE_output.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order>
+                <OrderLines>
+                    <OrderLine hasAttributes="Y">
+                        <Awards>
+                            <Award hasAttributes="Y">
+                                <PromotionReferences>
+                                    <PromotionReference hasAttributes="Y"/>
+                                </PromotionReferences>
+                            </Award>
+                        </Awards>
+                    </OrderLine>
+                </OrderLines>
+                <Promotions>
+                    <Promotion hasAttributes="Y">
+                        <PromotionReferences>
+                            <PromotionReference hasAttributes="Y"/>
+                        </PromotionReferences>
+                    </Promotion>
+                </Promotions>
+                <Awards>
+                    <Award hasAttributes="Y"/>
+                </Awards>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Promotions"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Awards">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Award">
+                            <xsd:annotation yfc:tableName="YFS_PROMOTION_AWARD">
+                                <xsd:documentation>This table stores information regarding awards that are created out of the promotions or information regarding pricing rules applied on the order. A single promotion or pricing rule can result in multiple awards.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="Action"
+                                    type="yfctype:Action" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>
+					Action to perform on this <code>Award</code>.
+					<br/>Default: <code>Null</code> - if not passed awards will be added if not exist or modified.
+					<br/>Valid Values: 
+						<br/>
+                                    <b>
+                                    <code>REMOVE</code>
+                                    </b> - Removes the award.
+					</div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="AwardAmount"
+                                    type="yfctype:ExternalAmount" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_AMOUNT" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The amount of discount or charge that was applied as a part of this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="AwardApplied"
+                                    type="yfctype:Flag" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_APPLIED" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A flag indicating if the award is applied. When ValidateReferences=Y the value can be 'P' meaning the award was partially applied</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="AwardId"
+                                    type="yfctype:Text-120" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_ID" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A unique identifier for the award. If pricing is maintained within the system, this will be the PricingRuleName of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="AwardKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_AWARD_KEY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The primary key of the YFS_PROMOTION_AWARD table.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="AwardType"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_TYPE" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The type of award. If pricing is maintained within the system, this will be the RuleCategory of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="ChargeCategory"
+                                    type="yfctype:ChargeCategory" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The charge category of the LineCharge or HeaderCharge for which this award was created.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="ChargeName"
+                                    type="yfctype:ChargeName" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The charge name of the LineCharge or HeaderCharge for which this award was created.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="DenialReason"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DENIAL_REASON" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>If the award is denied, the reason for the denial.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="Description"
+                                    type="yfctype:Text-2000" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DESCRIPTION" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A description for the award. If pricing is maintained within the system, this will be the Description of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="PosReasonCode"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="POS_REASON_CODE" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>Reason this promotion was applied.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="PromotionId"
+                                    type="yfctype:PromoCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_ID" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>This identifies the promotion that is added to this order.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="PromotionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_KEY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The promotion this award belongs to.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="OrderLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Awards">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="Award">
+                                <xsd:annotation yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>This table stores information regarding awards that are created out of the promotions or information regarding pricing rules applied on the order. A single promotion or pricing rule can result in multiple awards.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element maxOccurs="1"
+                                    minOccurs="0" name="PromotionReferences">
+                                    <xsd:complexType>
+                                    <xsd:all>
+                                    <xsd:element
+                                    maxOccurs="1"
+                                    minOccurs="0" name="PromotionReference">
+                                    <xsd:annotation yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>This table maintains references against applied promotion on order or order line. For example a unique Coupon barcode.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:complexType>
+
+                                    <xsd:attribute
+                                    name="IsUnique"
+                                    type="yfctype:Flag" use="optional">
+
+                                    <xsd:annotation
+                                    yfc:columnName="IS_UNIQUE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Specifies whether the reference is unique or not.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+
+                                    <xsd:attribute
+                                    name="ReferenceId"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_ID" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Reference value within a particular promotion. For example a unique coupon barcode.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+
+                                    <xsd:attribute
+                                    name="ReferenceSequence" use="optional">
+
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_SEQUENCE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Sequence number for each reference entry.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                    <xsd:union>
+                                    <xsd:simpleType>
+
+                                    <xsd:restriction base="yfctype:PrecisionDigits"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+
+                                    <xsd:restriction base="xsd:string">
+
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                    </xsd:union>
+                                    </xsd:simpleType>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:all>
+                                    <xsd:attribute name="AwardAmount"
+                                    type="yfctype:ExternalAmount" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_AMOUNT" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The amount of discount or charge that was applied as a part of this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardApplied"
+                                    type="yfctype:Flag" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_APPLIED" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A flag indicating if the award is applied. When ValidateReferences=Y the value can be 'P' meaning the award was partially applied</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardId"
+                                    type="yfctype:Text-120" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_ID" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A unique identifier for the award. If pricing is maintained within the system, this will be the PricingRuleName of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_AWARD_KEY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The primary key of the YFS_PROMOTION_AWARD table.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="AwardType"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="AWARD_TYPE" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The type of award. If pricing is maintained within the system, this will be the RuleCategory of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ChargeCategory"
+                                    type="yfctype:ChargeCategory" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_CATEGORY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The charge category of the LineCharge or HeaderCharge for which this award was created.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ChargeName"
+                                    type="yfctype:ChargeName" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="CHARGE_NAME" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The charge name of the LineCharge or HeaderCharge for which this award was created.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="DenialReason"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DENIAL_REASON" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>If the award is denied, the reason for the denial.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="Description"
+                                    type="yfctype:Text-2000" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="DESCRIPTION" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>A description for the award. If pricing is maintained within the system, this will be the Description of the pricing rule that created this award.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PosReasonCode"
+                                    type="yfctype:Text-100" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="POS_REASON_CODE" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>Reason this promotion was applied.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PromotionId"
+                                    type="yfctype:PromoCode" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_ID" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>This identifies the promotion that is added to this order.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="PromotionKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="PROMOTION_KEY" yfc:tableName="YFS_PROMOTION_AWARD">
+                                    <xsd:documentation>The promotion this award belongs to.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The sub line number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Promotions">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Promotion"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Promotion">
+        <xsd:annotation yfc:tableName="YFS_PROMOTION">
+            <xsd:documentation>This table stores information regarding promotions that are associated to an order or any of its lines.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="PromotionReferences">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="PromotionReference">
+                                <xsd:annotation yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>This table maintains references against applied promotion on order or order line. For example a unique Coupon barcode.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="IsUnique"
+                                    type="yfctype:Flag" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="IS_UNIQUE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Specifies whether the reference is unique or not.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ReferenceId"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_ID" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Reference value within a particular promotion. For example a unique coupon barcode.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="ReferenceSequence" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_SEQUENCE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                                    <xsd:documentation>Sequence number for each reference entry.</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                    <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:PrecisionDigits"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                    </xsd:union>
+                                    </xsd:simpleType>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="DenialReason" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="DENIAL_REASON" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>If the promotion is denied, the reason for the denial.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>Description of the promotion.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PromotionApplied" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PROMOTION_APPLIED" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>A flag indicating if the promotion is applied. When ValidateReferences=Y the value can be 'P' meaning the promotion was partially applied.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PromotionId" type="yfctype:PromoCode" use="optional">
+                <xsd:annotation yfc:columnName="PROMOTION_ID" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>This identifies the promotion that is added to this order. This will be used as the CouponID when determining the price of the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PromotionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PROMOTION_KEY" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>The primary key of the YFS_PROMOTION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PromotionType" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PROMOTION_TYPE" yfc:tableName="YFS_PROMOTION">
+                    <xsd:documentation>The type of promotion. Like DISCOUNT, BOGO.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

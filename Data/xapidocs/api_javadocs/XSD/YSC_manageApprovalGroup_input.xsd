@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/manageApprovalGroup/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/manageApprovalGroup/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_manageApprovalGroup_input.xsd" yfc:rootElement="ApprovalGroup">
+        <xsd:appinfo source="yfc:structure">
+            <ApprovalGroup hasAttributes="Y">
+                <ApprovalPlanList>
+                    <ApprovalPlan hasAttributes="Y"/>
+                </ApprovalPlanList>
+            </ApprovalGroup>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ApprovalGroup" type="yfc:ApprovalGroupXSDType">
+        <xsd:annotation yfc:tableName="YFS_APPROVAL_GROUP">
+            <xsd:documentation>The approval group table defines the approval group plans to be used for order approval</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ApprovalGroupXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ApprovalPlanList"/>
+        </xsd:all>
+        <xsd:attribute name="ApprovalGroupId"
+            type="yfctype:ApprovalGroupId" use="optional">
+            <xsd:annotation yfc:columnName="APPROVAL_GROUP_ID" yfc:tableName="YFS_APPROVAL_GROUP">
+                <xsd:documentation>Identifier for this approval group.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApprovalGroupKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="APPROVAL_GROUP_KEY" yfc:tableName="YFS_APPROVAL_GROUP">
+                <xsd:documentation>The primary key of the YFS_APPROVAL_GROUP table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApprovalGroupName"
+            type="yfctype:ApprovalGroupName" use="optional">
+            <xsd:annotation yfc:columnName="APPROVAL_GROUP_NAME" yfc:tableName="YFS_APPROVAL_GROUP">
+                <xsd:documentation>The name of this approval group.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:DocumentType" use="required">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_APPROVAL_GROUP">
+                <xsd:documentation>Document type to which this approval group belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:YSCOperation" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The operation to perform on this record. Valid values are listed in the table below.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_APPROVAL_GROUP">
+                <xsd:documentation>The organization that is associated with this approval group.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PredecessorSeq" type="yfctype:Text-200" use="optional"/>
+    </xsd:complexType>
+    <xsd:element name="ApprovalPlanList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ApprovalPlan"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ApprovalPlan">
+        <xsd:annotation yfc:tableName="YFS_APPROVAL_PLAN">
+            <xsd:documentation>This table stores order approval plans</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ApprovalPlanKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="APPROVAL_PLAN_KEY" yfc:tableName="YFS_APPROVAL_PLAN">
+                    <xsd:documentation>The primary key of the YFS_APPROVAL_PLAN table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:YSCOperation" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The operation to perform on this record. Valid values are listed in the table below.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PredecessorSeq" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="PREDECESSOR_SEQ" yfc:tableName="YFS_APPROVAL_PLAN">
+                    <xsd:documentation>Indicates the predecessor sequences which needs to provide approval first before this team/user group can approve.  Multiple predecessors can be stored by specifying comma separated sequences.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Sequence" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE" yfc:tableName="YFS_APPROVAL_PLAN">
+                    <xsd:documentation>Indicates the sequence of the approval.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LongSequence"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="TeamCode"
+                type="yfctype:DataSecurityGroupId" use="required">
+                <xsd:annotation yfc:columnName="TEAM_CODE" yfc:tableName="YFS_APPROVAL_PLAN">
+                    <xsd:documentation>Team which has to approve the document.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserGroupID" type="yfctype:UserGroup" use="required">
+                <xsd:annotation yfc:columnName="USER_GROUP_ID" yfc:tableName="YFS_APPROVAL_PLAN">
+                    <xsd:documentation>User group which has to approve the document.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

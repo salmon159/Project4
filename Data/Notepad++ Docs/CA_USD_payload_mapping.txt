@@ -1,0 +1,59 @@
+At the OrderHeader level:
+ 
+1. TotalOrderValue 
+ExtnTotalOrderValueUS - (ERPDiscountValue (At orderLine level)) 
+payload.OrderHeader.@TotalOrderValue
+2. PaidAmount
+ExtnTotalOrderValueUS - (ERPDiscountValue (At orderLine level)) 
+OrderHeader.@PaidAmount
+3. CODAmount   Not Available
+4. ShippingCharge            Order.data.shipments[0].shipping_total, OrderLine.c_Shippment.shippingCharge
+ExtnShippingChargeUS
+OrderHeader.@ShippingCharge
+5. ShippingTax   {LineTax ChargeCategory="Shipping" ChargeName="Shipping"  Reference1="5.75" Tax="5.75"}
+** Need confirmation **  
+OrderHeader.@ServiceLevel
+Under PaymentMode:
+ 
+6. Amount Order.data.order_total  Order.data.payment_instruments.amount//not available
+ExtnAmountUS
+OrderHeader.PaymentMethods.*PaymentMethod jpmc 
+paymentDetail.@Amount
+ 
+Under OrderDetail:
+ 
+7. OrderUnitPrice   ExtnOrderUnitPriceUS                         orderDetail.@OrderUnitPrice,     
+8. GoldRate         ExtnGoldRateUS                         orderDetail.@GoldRate,
+9. GoldValue		ExtnGoldValueUS                         orderDetail.@GoldValue,
+10. StoneValue		ExtnStoneValueUS                         orderDetail.@StoneValue,
+11. MakingChargesValue   ExtnMakingChargesValueUS                    orderDetail.@MakingChargesValue,
+12. OrderLineValue			 ** Not Directly Mapped **                   orderDetail.@OrderLineValue,
+13. TariffAmount		ExtnTariffAmountUS                                orderDetail.@ExtnTariffAmount,           
+14. MakingChargesPerGram	ExtnMakingChargesPerGramUS                    orderDetail.@ExtnMakingChargesPerGram,   
+15. MakingChargesPerUnit	ExtnMakingChargesPerUnitUS                    orderDetail.@ExtnMakingChargesPerUnit ,  
+16. GoldRate24KT			ExtnGoldRate24KTUS                            orderDetail.@ExtnGoldRate24KT,           
+17. GoldRate22KT			 ExtnGoldRate22KTUS                           orderDetail.@ExtnGoldRate22KT,          
+18. GoldRate21KT			 ExtnGoldRate21KTUS                           orderDetail.@ExtnGoldRate21KT,           
+19. GoldRate18KT			ExtnGoldRate18KTUS                            orderDetail.@ExtnGoldRate18KT,           
+20. GoldRate14KT			ExtnGoldRate14KTUS                            orderDetail.@ExtnGoldRate14KT, 
+21. CustomDutyTax       ExtnCustomDutyTaxUS                     extractTaxData(getCustomDutyTaxBreakup(orderDetail), "CustomDuty").Tax,
+22. StateTax			ExtnStateTaxUS                     extractTaxData(getSalesTaxBreakup(orderDetail), "State Tax").Tax,
+23. CountryTax			ExtnCountryTaxUS                     extractTaxData(getSalesTaxBreakup(orderDetail), "Country Tax").Tax,
+24. SpecialTax			ExtnSpecialTaxUS                     extractTaxData(getSalesTaxBreakup(orderDetail), "Special Tax").Tax,
+25. CountyTax			ExtnCountyTaxUS                     extractTaxData(getSalesTaxBreakup(orderDetail), "County Tax").Tax,
+26. CityTax				ExtnCityTaxUS                     extractTaxData(getSalesTaxBreakup(orderDetail), "City Tax").Tax,
+27. TotalShippingTax	ExtnTotalShippingTaxUS                     extractTaxData(lineTaxes filter ((tax) -> tax.@ChargeCategory == "Shipping"), "Shipping Tax").Tax,
+28. ShippingStateTax	ExtnShippingStateTaxUS:                    extractTaxData(getShippingTaxBreakup(orderDetail), "State Tax").Tax,
+29. ShippingCountryTax	ExtnShippingCountryTaxUS:                    extractTaxData(getShippingTaxBreakup(orderDetail), "Country Tax").Tax,
+30. ShippingSpecialTax	ExtnShippingSpecialTaxUS:                    extractTaxData(getShippingTaxBreakup(orderDetail), "Special Tax").Tax,
+31. ShippingCountyTax	ExtnShippingCountyTaxUS:                    extractTaxData(getShippingTaxBreakup(orderDetail), "County Tax").Tax,
+32. ShippingCityTax		ExtnShippingCityTaxUS:                    extractTaxData(getShippingTaxBreakup(orderDetail), "City Tax").Tax,
+33. TotalShippingCharge	ExtnTotalShippingChargeUS:                     (lineCharges[0].@ChargeAmount as String),
+34. TotalTax			ExtnTotalTaxUS:                    orderDetail.@TotalTax,
+35. DiscountValue		ExtnDiscountValueUS:     ** Not Directly Mapped **                orderDetail.@DiscountValue,
+36. BillLevelDiscount	ExtnBillLevelDiscountUS: 	** Not Directly Mapped **                 orderDetail.@BillLevelValue,
+37. ERPDiscountValue	ExtnERPDiscountValueUS:   	              orderDetail.@ERPDiscountValue
+ 
+Under TitanPaymentDetail:
+ 
+38. Amount	 ExtnAmountUS: orderDetail.TitanPaymentDetailList.*TitanPaymentDetail paymentDetail.@Amount 

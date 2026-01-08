@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2014 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!--  Either primary key ShipmentContainerKey or all unique key attributes (ContainerNo or ContainerScm, ShipmentKey or LoadKey) must be passed to uniquely identify the Container.  -->
+<Container ActualFreightCharge="" ActualWeight="" ActualWeightUOM=""
+    AppliedWeight="" AppliedWeightUOM="" CODReturnTrackingNo=""
+    ContainerNo="" ContainerScm="" IsPackProcessComplete="" LoadKey=""
+    LocationId="" ManifestKey="" ManifestNo="" SCAC="" ShipNode=""
+    ShipmentContainerKey="" ShipmentKey="" SpecialServicesSurcharge=""
+    TrackingNo="" xmlns="http://www.sterlingcommerce.com/documentation/YDM/beforeAddContainerToManifestUE/output">
+    <yfc:doc>
+        <Element EntityName="Shipment_Container">
+            <Description>
+                <div>
+				Stores container header information. Specifies the container to be manifested.
+				<Validation>
+                        <Condition>Conatiner can be identified by using <code>ShipmentContainerKey</code> or <code>ContainerNo</code> and <code>ShipmentKey</code> or <code>ContainerNo</code> and <code>LoadKey</code>.
+				</Condition>
+                        <Error
+                            Description="Either ContainerNo or ShipmentContainerKey is mandatory." ErrorCode="YDM00066"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If neither <code>ShipmentKey</code> nor <code>LoadKey</code> is passed or identifiable from the <code>Shipment</code> or <code>Load</code> element passed.
+				</Condition>
+                        <Error
+                            Description="Either shipment or load details must be passed in input." ErrorCode="YDM00267"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If a child container which resides in another shipping container(Shipment/Load) is tried to be manifested.
+				</Condition>
+                        <Error
+                            Description="Container cannot be manifested as it resides inside another shipping container." ErrorCode="YDM00201"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="ContainerNo" Name="ContainerNo">
+                <Description>
+                    <div>Unique key or business key, which by itself identifies a shipment container along with <code>ShipmentKey</code> and <code>LoadKey </code>. 
+ 				<Validation>
+                            <Condition> It should be unique shipment container.
+				</Condition>
+                            <Error
+                                Description="Container does not exist in the system." ErrorCode="YDM000157"/>
+                        </Validation>
+                        <Validation>
+                            <Condition> Should be able to identify either a shipment or load for the container.
+				</Condition>
+                            <Error
+                                Description="Either shipment or load details must be passed in input." ErrorCode="YDM00267"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="UCC128" Name="ContainerScm">
+                <Description>
+                    <div>A unique number which helps identify the container along with <code>ShipmentKey</code> or <code>LoadKey</code>.
+				<Validation>
+                            <Condition> It should be unique shipment container.
+				</Condition>
+                            <Error
+                                Description="Container does not exist in the system." ErrorCode="YDM000157"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IsPackProcessComplete">
+                <Description>
+                    <div>Marked as 'Y' if no more pack activities are pending for the container.
+				<Validation>
+                            <Condition> It should be 'Y' to add a container to manifest.
+				</Condition>
+                            <Error
+                                Description="The pack process is not completed for container." ErrorCode="YDM00188"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" Name="LoadKey">
+                <Description>
+                    <div>Specifies the load to which the container belongs.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LocationId" Name="LocationId">
+                <Description>
+                    <div>Location at which container is getting manifested.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" Name="ManifestKey">
+                <Description>
+                    <div>Identifies the manifest to which the container belongs. 
+				<Validation>
+                            <Condition>Already container should not be manifested.
+				</Condition>
+                            <Error
+                                Description="Container already got manifested." ErrorCode="YDM00167"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If passed in input then a manifest record should exist in Manifest entity.
+				</Condition>
+                            <Error Description="Invalid Manifest." ErrorCode="YDM00097"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If manifest is closed, corresponding scac record should exist in ScacEx entity.
+				</Condition>
+                            <Error
+                                Description="Record does not exist in ScacEx entity." ErrorCode="YDM00171"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If 'AutoOpenManifest' flag is 'N' and if there are no open manifests for that day, then a new manifest cannot be created automatically to manifest the container.
+				</Condition>
+                            <Error
+                                Description="Invalid AutoOpenManifest flag in YFS_Scac_Ex entity." ErrorCode="YDM00168"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="DocumentNo" Name="ManifestNo">
+                <Description>
+                    <div>Identifies the manifest to which the container belongs. 
+				<Validation>
+                            <Condition>Already container should not be manifested.
+				</Condition>
+                            <Error
+                                Description="Container already got manifested." ErrorCode="YDM00167"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If passed in input then a manifest record should exist in Manifest entity.
+				</Condition>
+                            <Error Description="Invalid Manifest." ErrorCode="YDM00097"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If manifest is closed, corresponding scac record should exist in ScacEx entity.
+				</Condition>
+                            <Error
+                                Description="Record does not exist in ScacEx entity." ErrorCode="YDM00171"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If 'AutoOpenManifest' flag is 'N' and if there are no open manifests for that day, then a new manifest cannot be created automatically to manifest the container.
+				</Condition>
+                            <Error
+                                Description="Invalid AutoOpenManifest flag in YFS_Scac_Ex entity." ErrorCode="YDM00168"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="SCAC">
+                <Description>
+                    <div>Identifies the carrier to whose manifest, the container is added.
+				<Validation>
+                            <Condition>If passed in input then a manifest record should exist in Manifest entity.
+				</Condition>
+                            <Error Description="Invalid Manifest." ErrorCode="YDM00097"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If manifest is closed, corresponding scac record should exist in ScacEx entity.
+				</Condition>
+                            <Error
+                                Description="Record does not exist in ScacEx entity." ErrorCode="YDM00171"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If 'AutoOpenManifest' flag is 'N' and if there are no open manifests for that day, then a new manifest cannot be created automatically to manifest the container.
+				</Condition>
+                            <Error
+                                Description="Invalid AutoOpenManifest flag in YFS_Scac_Ex entity." ErrorCode="YDM00168"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="ShipNode"/>
+            <Attribute DataType="Key" Name="ShipmentContainerKey">
+                <Description>
+                    <div>Primary key attribute of YFS_SHIPMENT_CONTAINER table. 
+				<Validation>
+                            <Condition> Must be a valid ShipmentContainerKey.
+				</Condition>
+                            <Error
+                                Description="Specified Container does not exist." ErrorCode="YDM000157"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" Name="ShipmentKey">
+                <Description>
+                    <div>Specifies the shipment to which the container belongs.</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Shipment SellerOrganizationCode="" ShipNode="" ShipmentNo="">
+        <yfc:doc>
+            <Element EntityName="Shipment"/>
+        </yfc:doc>
+    </Shipment>
+    <Load LoadNo="">
+        <yfc:doc>
+            <Element EntityName="Load"/>
+        </yfc:doc>
+    </Load>
+    <PrinterPreference PrinterId="" UserId="" UsergroupId="" WorkStationId="">
+        <yfc:doc>
+            <Element EntityName="User_Printer_Preference"/>
+            <Attributes>
+                <Attribute DataType="Text-40" Name="PrinterId">
+                    <Description>
+                        <div> Unique identifier of Printer.
+						</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Equipment" Name="WorkStationId" NameInEntity="Equipment_Id">
+                    <Description> The Work Station with which the printer is associated. </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </PrinterPreference>
+    <Manifest ManifestDate="">
+        <yfc:doc>
+            <Element EntityName="Manifest"/>
+            <Attributes>
+                <Attribute DataType="Date" Name="ManifestDate">
+                    <Description>Specifies the date whose manifest the containers are required to be added to.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Manifest>
+</Container>

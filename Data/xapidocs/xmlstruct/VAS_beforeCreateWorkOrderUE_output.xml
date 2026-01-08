@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<WorkOrder AdditionalRequestedQuantity="" AutoRelease="" CaseId=""
+    ConsiderSupplementalCapacity="" DelayAppointmentTaking=""
+    EnterpriseCode="Required" FinishNoLaterThan="" IgnoreProductLines=""
+    IgnoreRunQuantity="" InvUpdateActivityCode="" IsMultiApptRequired=""
+    IsPlanningComplete="" IsQuantityRequestedOverridden=""
+    ItemID="Conditional" NodeKey="Conditional"
+    OrderLineKey="Conditional" OverrideProductsToBeDelivered=""
+    PalletId="" Priority="" ProductClass="" ProviderOrganizationCode=""
+    Purpose="" QuantityRequested="Conditional" Segment="" SegmentType=""
+    SerialNo="" ServiceItemGroupCode="" ServiceItemID=""
+    ServiceLocationAddressKey="Conditional" ServiceSupervisorId=""
+    ServiceUom="" ShipByDate="" StartNoEarlierThan="" Uom=""
+    WorkOrderNo="" xmlns="http://www.sterlingcommerce.com/documentation/VAS/beforeCreateWorkOrderUE/output">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="VAS_createWorkOrder_input.xml" IncludeXMLPath="/WorkOrder"/>
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>This table stores the information about the work orders to be done at a node 
+			on an inventory item or a license plate.
+				<Validation>
+                        <Condition>Fulfillment type on the service lines are not the same. 
+					Lines with different fulfillment types can never be fulfilled
+					together.</Condition>
+                        <Error
+                            Description="Fulfillment Type on the service lines should be same." ErrorCode="VAS00065"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Service addresses are different for the lines and the work 
+					order. Lines with different addresses can never be fulfilled
+					together.</Condition>
+                        <Error
+                            Description="Mismatch on the service addresses of work order and the lines added to the work order." ErrorCode="VAS00052"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Ship nodes are different for the lines and the work order.
+					Lines with different ship nodes can never be fulfilled together.</Condition>
+                        <Error
+                            Description="Mismatch on the ship nodes of work order and the lines added to the work order." ErrorCode="VAS00049"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AutoRelease">
+                <Description>
+                    <div>Indicates whether to allocate and release the WorkOrder after creating it. In console this can be seen like <code>Release Immediately</code>.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LPNNo" Name="CaseId">
+                <Description>
+                    <div>Case for which the work order is created. Can be passed only if the service is being performed on the LPN or if it is for de-kitting.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderSupplementalCapacity">
+                <Description>
+                    <div>Indicates whether the supplemental capacity should be added to the normal capacity for availability calculation while allocating appointments within the work order.
+					<br/>If <code>ConsiderSupplementalCapacity</code> flag is not passed as <b>
+                            <code>Y</code>
+                        </b>, then the value of the <code>CanConsumeSupplementalCapacity</code> attribute of the customer (if existed) in the order will be used.
+					<br/>This value is not persisted in the system and must be passed while allocating new appointments or changing existing appointments. 
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="EnterpriseCode" NameInEntity="Enterprise_Code">
+                <Description>
+                    <div>Enterprise to which the item or license plate belongs.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> is not provided.</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="FinishNoLaterThan" NameInEntity="Finish_No_Later_Than">
+                <Description>
+                    <div>Pass through fields to be stamped on each task.
+						<Validation>
+                            <Condition>Passed value should not be less than the <code>StartNoEarlierThan</code> date.</Condition>
+                            <Error
+                                Description="Finish no later than date cannot be before Start no earlier than date." ErrorCode="VAS00044"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreProductLines">
+                <Description>
+                    <div>Default value is N. If set to Y, inventory check is not made for product lines being included in workorder and constraints with product lines are not considered.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreRunQuantity">
+                <Description>
+                    <div>Indicates whether to ignore run quantity or not at WorkOrder creation.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="ItemID" NameInEntity="Item_ID">
+                <Description>
+                    <div>ItemID for the work order is being created.
+						<Validation>
+                            <Condition>
+                                <code>ItemID</code> is not provided and <code>ServiceItemGroupCode</code> is one of <code>
+                                    <b>KIT</b>
+                                </code> or <code>
+                                    <b>DKIT</b>
+                                </code>.</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="NodeKey" NameInEntity="Node_Key">
+                <Description>
+                    <div>Node, where work order would be executed.
+						<Validation>
+                            <Condition>Not a valid <code>NodeKey</code>.</Condition>
+                            <Error Description="YFS:Invalid Ship Node." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="OrderLineKey" NameInEntity="Order_Line_Key">
+                <Description>
+                    <div>Order Line primary key.
+						<Validation>
+                            <Condition>
+                                <code>OrderLineKey</code> is not provided and <code>Purpose</code> is <code>
+                                    <b>ORDER</b>
+                                </code> and <code>SegmentType</code> is <code>
+                                    <b>MTO</b>
+                                </code>.</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrderLineKey</code> does not point to a valid order line in <code>YFS_Order_Line</code>.</Condition>
+                            <Error Description="YFS:Invalid Line." ErrorCode="YFS10009"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LPNNo" Name="PalletId">
+                <Description>
+                    <div>Pallet for which the work order is created. Can be passed only if the service is being performed on the LPN or if it is for de-kitting.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order" Name="Priority" NameInEntity="Priority">
+                <Description>
+                    <div>An integer priority. Requests will be processed in the order of this priority.
+					System defined Common Code with CodeType <code>PRIORITY</code>. If priority is not passed, then it is defaulted to value <code>
+                            <b>3</b>
+                        </code> i.e. <code>Normal</code>
+                        <br/>Valid values - <code>
+                            <b>1</b>
+                        </code>, <code>
+                            <b>2</b>
+                        </code>, <code>
+                            <b>3</b>
+                        </code>, <code>
+                            <b>4</b>
+                        </code>. These values correspond to <code>Urgent</code>, <code>High</code>, <code>Normal</code> and <code>Low</code> values respectively.
+						<Validation>
+                            <Condition>
+                                <code>Priority</code> is not a valid priority.</Condition>
+                            <Error
+                                Description="YFS:Invalid Priority No." ErrorCode="YFS10017"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order"
+                Name="ServiceItemGroupCode" NameInEntity="Service_Item_Group_Code">
+                <Description>
+                    <div>The type of service. The values will be defaulted based on the service lines. If there is at least one service line of type "PS" then ServiceItemGroupCode will be set to "PS". If there are only "DS" service lines then ServiceItemGroupCode will be set to "DS".
+						<Validation>
+                            <Condition>
+                                <code>ServiceItemGroupCode</code> is not provided.</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Not a valid <code>ServiceItemGroupCode</code>.</Condition>
+                            <Error
+                                Description="Invalid Service Item Group Code." ErrorCode="VAS00002"/>
+                        </Validation>
+                        <div class="innerpanel" width="30%">
+                            <table border="0" cellpadding="0"
+                                cellspacing="0" class="table">
+                                <thead>
+                                    <tr>
+                                    <td class="tablecolumnheader">ServiceItemGroupCode</td>
+                                    <td class="tablecolumnheader">Meaning</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td class="tablecolumn">KIT</td>
+                                    <td class="tablecolumn">Kitting</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">DKIT</td>
+                                    <td class="tablecolumn">De-kitting</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">COMPL</td>
+                                    <td class="tablecolumn">Inventory Compliance</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INVC</td>
+                                    <td class="tablecolumn">Inventory Change</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">PS</td>
+                                    <td class="tablecolumn">Provided Service / Field Service</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">DS</td>
+                                    <td class="tablecolumn">Delivery Service</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Work_Order"
+                Name="ServiceLocationAddressKey" NameInEntity="Service_Location_Address_Key">
+                <Description>
+                    <div>Customer's location key where work order processing will be performed when the <code>ServiceItemGroupCode </code> is <code>
+                            <b>PS</b>
+                        </code>or<code>
+                            <b>DS</b>
+                        </code>.
+						<Validation>
+                            <Condition>
+                                <code>ServiceLocationAddressKey</code> is not provided and <code>ServiceItemGroupCode</code> is <code>
+                                    <b>PS</b>
+                                </code>.</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Order DocumentType="Conditional" EnterpriseCode="Conditional"
+        OrderHeaderKey="Conditional" OrderNo="Conditional">
+        <yfc:doc>
+            <Element EntityName="Order_Header">
+                <Description>
+                    <div>
+			Identify order related to the work order being created.  <code>OrderHeaderKey</code> or a combination of <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> attributes can be used to identify an order.
+			</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </Order>
+    <WorkOrderComponents>
+        <WorkOrderComponent ComponentQuantity="" ItemID=""
+            ProductClass="" Segment="" SegmentType="" SerialNo=""
+            ShipByDate="" Uom="" WorkOrderComponentKey=""
+            WorkOrderKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="Y"
+                IncludeXMLFileName="YFS_Work_Order_Component_master.xml" IncludeXMLPath="/WorkOrderComponent"/>
+            <yfc:doc>
+                <Element EntityName="Work_Order_Component">
+                    <Description>
+                        <div>
+			This table stores information about all the components required by the work order.<br/>Components are not mandatory for work orders created for the <code>KITTING</code> service item group code.
+			</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <WorkOrderComponentTag BatchNo="" LotAttribute1=""
+                LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                LotNumber="" ManufacturingDate="" RevisionNo=""
+                WorkOrderComponentKey="" WorkOrderComponentTagKey="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+					Stores details of the inventory tag attributes for work order components that are tag tracked. Tag information is stored only if the <code>Node</code> tracks tag information in inventory.	
+					</div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </WorkOrderComponentTag>
+        </WorkOrderComponent>
+    </WorkOrderComponents>
+    <WorkOrderTag BatchNo="" LotAttribute1="" LotAttribute2=""
+        LotAttribute3="" LotKeyReference="" LotNumber=""
+        ManufacturingDate="" RevisionNo="" WorkOrderKey="" WorkOrderTagKey="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Work_Order_master.xml" IncludeXMLPath="/WorkOrder/WorkOrderTag"/>
+        <yfc:doc>
+            <Element EntityName="Work_Order_Tag">
+                <Description>
+                    <div>
+					Stores details of the inventory tag attributes of the work order item that is tag tracked. Tag information is stored only if the <code>Node</code> tracks tag information in inventory.	
+					</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </WorkOrderTag>
+    <WorkOrderActivities>
+        <WorkOrderActivity ActivityCode="" ActivitySeqNo=""
+            WorkOrderActivityKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute EntityName="Work_Order_Activity"
+                        Name="ActivitySeqNo" NameInEntity="Activity_Seq_No">
+                        <Description>
+                            <div>Identifies the sequence in which this activity needs to be performed.
+								<Validation>
+                                    <Condition>Should be unique for a Work Order.</Condition>
+                                    <Error
+                                    Description="Duplicate Activity Sequence No." ErrorCode="VAS00009"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <WorkOrderActivityDtls>
+                <WorkOrderActivityDtl ActivityCode=""
+                    ActivityLocationId="" CaseId="" PalletId=""
+                    QuantityRequested="" SerialNo="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute
+                                EntityName="Work_Order_Activity_Dtl"
+                                Name="ActivityLocationId" NameInEntity="Activity_Location_Id">
+                                <Description>
+                                    <div>Activity Location.
+										<Validation>
+                                    <Condition>If passed should be a valid location in the node.</Condition>
+                                    <Error
+                                    Description="WMS:Invalid LocationKey." ErrorCode="WMS00038"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="LPNNo" Name="CaseId">
+                                <Description>
+                                    <div>Case for which the activity is performed.
+									</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="LPNNo" Name="PalletId">
+                                <Description>
+                                    <div>Pallet for which the activity is performed.
+									</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </WorkOrderActivityDtl>
+            </WorkOrderActivityDtls>
+            <WorkOrderActivityInstructions>
+                <Instruction InstructionDetailKey="" InstructionText=""
+                    InstructionType="" InstructionURL=""
+                    InstructionUsage="" SequenceNo="" yfc:DTDOccurrence="OneOrMany"/>
+            </WorkOrderActivityInstructions>
+        </WorkOrderActivity>
+    </WorkOrderActivities>
+    <WorkOrderServiceLines>
+        <WorkOrderServiceLine CauseAppointmentChange="" LineNo="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="CauseAppointmentChange">
+                        <Description>
+                            <div>
+								The <code>CauseAppointmentChange</code> flag value in the input xml is considered only when the enterprise is configured to maintain this flag externally.								
+								<br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <OrderLine OrderLineKey="" PrimeLineNo="" SubLineNo="" yfc:DTDOccurrence="REQUIRED">
+                <Order DocumentType="" EnterpriseCode=""
+                    OrderHeaderKey="" OrderNo=""/>
+            </OrderLine>
+        </WorkOrderServiceLine>
+    </WorkOrderServiceLines>
+    <WorkOrderProdDeliveries>
+        <WorkOrderProdDelivery CauseAppointmentChange="" LineNo="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="CauseAppointmentChange">
+                        <Description>
+                            <div>
+								The <code>CauseAppointmentChange</code> flag value in the input xml is considered only when the enterprise is configured to maintain this flag externally.
+								<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <OrderLine OrderLineKey="" PrimeLineNo="" SubLineNo="" yfc:DTDOccurrence="REQUIRED">
+                <Order DocumentType="" EnterpriseCode=""
+                    OrderHeaderKey="" OrderNo=""/>
+            </OrderLine>
+        </WorkOrderProdDelivery>
+    </WorkOrderProdDeliveries>
+    <WorkOrderAppointments>
+        <WorkOrderAppointment ApptSeq="" ConsiderCurrentSlot=""
+            IgnoreMinNotificationTime="" IsAppointmentOverridden=""
+            PromisedApptEndDate="" PromisedApptStartDate=""
+            RequestedQuantity="" RequestedVolume="" RequestedWeight=""
+            ResourcePoolId="" ServiceResourceId="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="ConsiderCurrentSlot">
+                        <Description>
+                            <div>
+					The <code>ConsiderCurrentSlot</code> flag indicates that system should consider the available capacity of the current slots, which the current timestamp falls under.
+					<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="IgnoreMinNotificationTime">
+                        <Description>
+                            <div>
+			If set to Y, minimum notification time will be ignored for product and services.  If not passed, assumed N.
+			</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="TimeStamp"
+                        EntityName="Order_Line"
+                        Name="PromisedApptEndDate" NameInEntity="Promised_Appt_End_Date">
+                        <Description>
+                            <div>Promised End date of the Appointment. Passed while creating appointment in case of provided service work order.
+				<Validation>
+                                    <Condition>If the date corresponds to a slot which cannot be used for appointment planning.
+					</Condition>
+                                    <Error
+                                    Description="Slot based Capacity Consumption cannot be done on slots that cannot be used for taking appointments." ErrorCode="INV80_002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="TimeStamp"
+                        EntityName="Order_Line"
+                        Name="PromisedApptStartDate" NameInEntity="Promised_Appt_Start_Date">
+                        <Description>
+                            <div>Promised Start date of the Appointment. Passed while creating appointment in case of provided service work order.
+				<Validation>
+                                    <Condition>If the date corresponds to a slot which cannot be used for appointment planning.
+					</Condition>
+                                    <Error
+                                    Description="Slot based Capacity Consumption cannot be done on slots that cannot be used for taking appointments." ErrorCode="INV80_002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity" Name="RequestedVolume">
+                        <Description>
+                            <div>The quantity requested in the work order's volume unit of measure, which is specified in the <code>VolumeUOM</code> field of the work order</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity" Name="RequestedWeight">
+                        <Description>
+                            <div>The quantity requested in the work order's weight unit of measure, which is specified in the <code>WeightUOM</code> field of the work order</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Work_Order_Appt"
+                        Name="ResourcePoolId" NameInEntity="Resource_Pool_Id">
+                        <Description>
+                            <div>
+					The identifier for the resource pool assoiated with this work order appointment.  
+					<br/>System identifies the resource pool based on the <code>NodeKey</code> on the work order. 
+					<Validation>
+                                    <Condition>Invalid <code>ResourcePoolId</code> is provided or <code>NodeKey</code> is not provided on the work order.
+					</Condition>
+                                    <Error
+                                    Description="INV: Invalid Resource Pool." ErrorCode="INV10014"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <WorkOrderAppointmentUsers>
+                <WorkOrderAppointmentUser UserId="" yfc:DTDOccurrence="OneOrMany"/>
+            </WorkOrderAppointmentUsers>
+        </WorkOrderAppointment>
+    </WorkOrderAppointments>
+    <WorkOrderServiceTools>
+        <WorkOrderServiceTool Comments="" ItemDescription="" ItemID=""
+            QuantityRequired="" UnitOfMeasure="" WorkOrderKey=""
+            WorkOrderServiceToolKey="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="String" Name="ItemDescription"/>
+                </Attributes>
+            </yfc:doc>
+        </WorkOrderServiceTool>
+    </WorkOrderServiceTools>
+    <Instructions>
+        <Instruction InstructionText="" InstructionType=""
+            InstructionURL="" InstructionUsage="" SequenceNo="" yfc:DTDOccurrence="OneOrMany"/>
+    </Instructions>
+    <WorkOrderHoldTypes>
+        <WorkOrderHoldType HoldType="Required" ReasonText="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Wo_Hold_Type">
+                    <Description>
+                        <div>
+			Optional. Stores hold type information. Multiple <code>HoldType</code>s can be applied/ removed for a single work order.
+			</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute Name="HoldType">
+                        <Description>
+                            <div>
+					The code identifying the hold type to be applied/ removed for a Work Order.
+					<Validation>
+                                    <Condition>
+                                    <code>HoldType</code> must be defined in the configuration
+						</Condition>
+                                    <Error
+                                    Description="Hold Type is not setup." ErrorCode="OMP11035"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </WorkOrderHoldType>
+    </WorkOrderHoldTypes>
+    <WorkOrderNotesList>
+        <WorkOrderNotes ContactReference="" ContactTime=""
+            ContactType="" ContactUser="" NoteText="Required"
+            ReasonCode="" VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </WorkOrderNotesList>
+</WorkOrder>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/getIndexStatus/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/getIndexStatus/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_getIndexStatus_output.xsd" yfc:rootElement="IndexStatus">
+        <xsd:appinfo source="yfc:structure">
+            <IndexStatus hasAttributes="Y">
+                <IndexConfig hasAttributes="Y"/>
+                <IndexSyncForEnterprises>
+                    <IndexSync hasAttributes="Y"/>
+                </IndexSyncForEnterprises>
+            </IndexStatus>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="IndexStatus" type="yfc:IndexStatusXSDType">
+        <xsd:annotation yfc:tableName="YFS_INDEX_STATUS">
+            <xsd:documentation>This table contains the sanity of the index server with respect to index build and search operations. Both these operations read this table before attempting on index server. Besides that they update this table if any issues with the index server is found during the opearation.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="IndexStatusXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:IndexConfig"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:IndexSyncForEnterprises"/>
+        </xsd:all>
+        <xsd:attribute name="IndexName" type="yfctype:IndexName" use="optional">
+            <xsd:annotation yfc:columnName="INDEX_NAME" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>The name of the index. This is the XMLName of the corresponding entity. For eg: Indexing is enabled for Order_Header and Shipment entities. Hence name of the indices would be Order and Shipment respectively.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IndexWorking" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="INDEX_WORKING" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>This indicates that indexing operation is working for this index.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NumberOfDocs" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> The number of documents in the index. </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SearchWorking" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="SEARCH_WORKING" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>This indicates that search operation is working for this index.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SizeInBytes" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> The size of the index. </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="IndexConfig">
+        <xsd:annotation yfc:tableName="PLT_INDEX_CONFIG">
+            <xsd:documentation>This table contains status of index</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="IndexName" type="yfctype:IndexName" use="optional">
+                <xsd:annotation yfc:columnName="INDEX_NAME" yfc:tableName="PLT_INDEX_CONFIG">
+                    <xsd:documentation>The actual name of the index if index is defined in the entity xml (non custom mode) or the index config identifer defined in a configuration xml (custom mode).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IndexTemplate" type="yfctype:CLOB" use="optional">
+                <xsd:annotation yfc:columnName="INDEX_TEMPLATE" yfc:tableName="PLT_INDEX_CONFIG">
+                    <xsd:documentation>The template for the index. This is used to retrieve the data to index. In case of custom mode it holds the index definition identified the indexConfigId and for non-custom mode this contains an entity output template with all indexable attributes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IndexUpdateRequired"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INDEX_UPDATE_REQUIRED" yfc:tableName="PLT_INDEX_CONFIG">
+                    <xsd:documentation>This flag indicates whether the  recent update is done on the record</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IndexVersion" use="optional">
+                <xsd:annotation yfc:columnName="INDEX_VERSION" yfc:tableName="PLT_INDEX_CONFIG">
+                    <xsd:documentation>This field indicates the version of index definition.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:IndexVersion"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="IndexSyncForEnterprises">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:IndexSync"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="IndexSync">
+        <xsd:annotation yfc:tableName="YFS_INDEX_SYNC">
+            <xsd:documentation>This table contains the information whether the index is in sync with the database. The search operation checks this table and searches on index only if it is sync. The index update and sync agents modifies this table with the sync results.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_INDEX_SYNC">
+                    <xsd:documentation>The enterprise to which the index syncing operation is tracked.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InSync" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IN_SYNC" yfc:tableName="YFS_INDEX_SYNC">
+                    <xsd:documentation>This indicates that the index is in sync with the database.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IndexName" type="yfctype:IndexName" use="optional">
+                <xsd:annotation yfc:columnName="INDEX_NAME" yfc:tableName="YFS_INDEX_SYNC">
+                    <xsd:documentation>The name of the index. This is the XMLName of the corresponding entity. For eg: Indexing is enabled for Order_Header and Shipment entities. Hence name of the indices would be Order and Shipment respectively.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

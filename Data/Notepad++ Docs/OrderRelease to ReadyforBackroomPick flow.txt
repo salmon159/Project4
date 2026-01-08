@@ -1,0 +1,38 @@
+After Order is released
+
+Taskq agent IBDCarrierSelectionAgentServer(Transaction - IBD_Carrier_Determination) is triggered. 
+It picks the released orders and runs the service IBD_CarrierDetermination on execution
+
+
+######################################
+IBD_CarrierDetermination
+FlowGroupName="IBD_CarrierSelection" FlowName="IBD_CarrierDetermination" OwnerKey="DEFAULT" ProcessTypeKey="ORDER_FULFILLMENT"
+
+This service checks the Order Organization and DocumentType and stamps the SCAC details to the xml
+then posts the xml to IBD_CaptureCarrierDetails ( queue - yfs.titan.carrierpublish.q=OMS.PUBLISHCARRIERSELECTION.IN )
+
+######################################
+IBD_AWBNoAndShipment_Async
+FlowGroupName="IBD_CreateShipment" FlowName="IBD_AWBNoAndShipment_Async" OwnerKey="DEFAULT" ProcessTypeKey="ORDER_FULFILLMENT"
+
+then the IBD_AWBNoAndShipment_Async (IBDRetrieveAWBandShipmentIntegServer) picks it up and pushes it to the service
+IBD_AWBNoandShipment
+
+This service IBD_AWBNoandShipment checks the document type and creates the Shipment accordingly.
+and calls the service - 
+IBD_ChangeShipment(Sales Order) syncronously.
+IBD_PublishReturnShipment (return Order) to queue (yfs.titan.returnshipmentpublish.q=OMS.POSTRETURNSHIPMENTDTLSTOQ.IN)
+
+######################################
+FlowGroupName="IBD_CreateShipment" FlowName="IBD_ChangeShipment" OwnerKey="DEFAULT" ProcessTypeKey="ORDER_FULFILLMENT"
+IBD_ChangeShipment
+
+IBD_ChangeShipment(Sales Order) to stamp the shipnode and also the "Ready for backroom pick" status and calls the service 
+
+
+IBD_OrderDetailOmniPossPostQ (Queue titan.jewellery.orderdetails.in.q) --> 
+
+
+IBD_OrderDetailOmniPoss_Async( IBDRetrieveOrderOmniPossIntegServer) picks up and process to IBD_OrderDetailOmniPoss
+
+IBD_OrderDetailOmniPoss this service then adds the necessary details to the shipment (from Order details) and sends the details to POS

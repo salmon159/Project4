@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM IBM Sterling Selling And Fulfillment 
+	Suite (C) Copyright IBM Corp. 2005, 2014 All Rights Reserved. US Government 
+	Users Restricted Rights - Use, duplication or disclosure restricted by GSA 
+	ADP Schedule Contract with IBM Corp. -->
+<StoreBatch ApplicationName="" AssignedToUserId="" DeliveryMethod=""
+    Department="" DoNotSplitShipment="" GetBatchesOfAllUsers=""
+    GetExistingBatches="" GetNewBatches="" MaxNumberOfShipments=""
+    NoOfShipmentLinesForNewBatch="" OrganizationCode="" Status="" xmlns="http://www.sterlingcommerce.com/documentation/YCD/getNewBatchesUE/input">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="YCD_getStoreBatchList_input.xml" IncludeXMLPath="/StoreBatch"/>
+    <yfc:doc>
+        <Element EntityName="Store_Batch"/>
+        <Attributes>
+            <Attribute DataType="String" EntityName="Store_Batch" Name="ApplicationName">
+                <Description>
+                    <div>
+							The identifier of the application for which the state is being used for creating batches.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="AssignedToUserId" NameInEntity="Assigned_To_User_Id">
+                <Description>
+                    <div>
+							The user who is creating batches. <br/>
+                        <!-- This attribute is validated only when <code>GetNewBatches=Y</code>.<br/> -->
+							If <code>MaxNumberOfShipments</code> is not passed in the input, it is fetched from <code>PLT_USER_UI_STATE</code> table for this user.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" EntityName="Store_Batch" Name="DeliveryMethod">
+                <Description>
+                    <div>
+							 Batches with matching delivery method will be listed.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" EntityName="Store_Batch" Name="Department">
+                <Description>
+                    <div>
+							Batches with matching department will be listed.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="DoNotSplitShipment">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will not split the shipment in different batches. It will keep all the shipment lines of a shipment in the same batch even if the batching and sorting attributes of the lines are different.<br/>
+							Default Value is N.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetBatchesOfAllUsers">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>This is applicable for fetching existing batches only.<br/>
+							If Y is passed, then existing batches of that ship node will be listed. <br/>
+							If N is passed, then only existing batches assigned to that user will be listed<br/>
+							Default Value is N.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetExistingBatches">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will query <code>YFS_BATCH</code> table to get already existing batches.<br/>
+							Default Value is Y.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetNewBatches">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will query <code>YFS_SHIPMENT_LINE</code> table to form batches of unpicked lines.<br/>
+							Default Value is N.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="MaxNumberOfShipments">
+                <Description>
+                    <div>
+							This is the maximum number of shipments that can be in a batch. <br/>
+							This attribute is considered only when <code>GetNewBatches=Y</code>.<br/>
+							If not passed, then this value is obtained from <code>Definition</code> column of <code>PLT_USER_UI_STATE</code> table with 
+							<code>ApplicationName=WSC,ComponentName=BATCH_MAX_SHIPMENTS,ScreenName=ALL and LoginId=AssignedToUserId</code>
+							If no value if stored in  <code>PLT_USER_UI_STATE</code>, then a default value of 10 is used.
+							<Validation>
+                            <Condition>
+                                <code>MaxNumberOfShipments</code> should be a valid number number greater than 0.
+								</Condition>
+                            <Error Description="Invalid Number." ErrorCode="YFS10322"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="NoOfShipmentLinesForNewBatch">
+                <Description>
+                    <div>
+							This attribute puts a limit on the number of shipment lines which will form new batches. <br/>
+							This attribute is considered only when <code>GetNewBatches=Y</code>.<br/>
+							Default value is 3000.
+							<Validation>
+                            <Condition>
+                                <code>NoOfShipmentLinesForNewBatch</code> should be a valid number greater than 0.
+								</Condition>
+                            <Error Description="Invalid Number." ErrorCode="YFS10322"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+							The ship node's organization code to which this batch belongs.
+							This attribute is validated only when <code>GetNewBatches=Y</code>.<br/>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is mandatory.
+								</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory." ErrorCode="YDM000162"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> should be a valid ship node.
+								</Condition>
+                            <Error Description="YFS:Invalid Node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="Status" NameInEntity="Status">
+                <Description>
+                    <div>
+							This attribute is considered only when <code>GetExistingBatches=Y</code>. If value is 
+							<code>1100</code> - open status, in-progress batches will be listed<br/>
+                        <code>2000</code> - picked but not yet staged batches will be listed<br/>
+                        <code>3000</code> - completed batches will be listed<br/>
+                        <code>9000</code> - cancelled batches will be listed<br/>
+							If value is not passed then batches in all the statuses will be listed<br/>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ConfigureBatchBy>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+				This ConfigureBatchBy element is used to create new batches based on the attributes passed. This element is considered only when GetNewBatches=Y.
+				 Having many attributes in ConfigureBatchBy element may have performance implications when large number of shipment lines are to be included in the batches.
+				 If no ConfigureBatchBy element is passed, then default attributes used are DepartmentCode of ShipmentLine entity and EnterpriseCode of Shipment entity. 
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <Attribute Entity="" Name="Required" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Text-32" Name="Entity">
+                        <Description>Name of the entity. This can be either Shipment or ShipmentLine.
+                        <Validation>
+                                <Condition>
+                                    <code>Entity</code> should be passed. It should either be Shipment or ShipmentLine.
+								</Condition>
+                                <Error
+                                    Description="Invalid Entity for ConfigureBatchBy" ErrorCode="YCD00092"/>
+                            </Validation>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-32" Name="Name">
+                        <Description>Name of the attribute to use create batches. This should be a valid attribute of Shipment or ShipmentLine entity.
+                         <Validation>
+                                <Condition>
+                                    <code>Name</code> should be a valid attribute of Shipment or ShipmentLine entity.
+								</Condition>
+                                <Error Description="Invalid Column" ErrorCode="YFC0015"/>
+                            </Validation>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Attribute>
+    </ConfigureBatchBy>
+    <SortLinesBy>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+				This SortLinesBy element is used to sort shipment lines to be added to new batches. This element is considered only when GetNewBatches=Y.
+				 Having many attributes in SortLinesBy element may have performance implications when large number of orders are returned by the API.
+				 If no SortLinesBy element is passed, then shipment lines are sorted by Shipment's ExpectedShipmentDate.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <Attribute Desc="" Entity="" Name="Required" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Desc">
+                        <Description>Sort in decending order.
+						Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+						Default value: <b>
+                                <code>N</code>
+                            </b>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-32" Name="Entity">
+                        <Description>Name of the entity. This can be either Shipment or ShipmentLine.
+                        <Validation>
+                                <Condition>
+                                    <code>Entity</code> should be passed. It should either be Shipment or ShipmentLine.
+								</Condition>
+                                <Error
+                                    Description="Invalid Entity for SortLinesBy" ErrorCode="YCD00092"/>
+                            </Validation>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-32" Name="Name">
+                        <Description>Name of the attribute to use for sorting. This should be a valid attribute of Shipment or ShipmentLine entity.
+                         <Validation>
+                                <Condition>
+                                    <code>Name</code> should be a valid attribute of Shipment or ShipmentLine entity.
+								</Condition>
+                                <Error Description="Invalid Column" ErrorCode="YFC0015"/>
+                            </Validation>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Attribute>
+    </SortLinesBy>
+    <!-- <ShipmentLine IncludeXMLFileName="YFS_Shipment_Line_master.xml" IncludeXMLPath="/ShipmentLine" IncludeXMLChildNodes="N"> -->
+    <ShipmentLine BackroomPickComplete="" BackroomPickedQuantity=""
+        BuyerMarkForNodeId="" CancelReason="" CountryOfOrigin=""
+        CustomerPickedQuantity="" CustomerPoLineNo="" CustomerPoNo=""
+        ExternalReleaseIdentifier="" FifoNo="" GroupSequenceNumber=""
+        IsCustomerPickComplete="" IsHazmat="" IsPackComplete=""
+        IsPickable="" ItemDesc="" ItemID="" KitCode="" LevelOfService=""
+        NetWeight="" NetWeightUom="" OrderHeaderKey="" OrderLineKey=""
+        OrderNo="" OrderReleaseKey="" OverShipQuantity=""
+        PickLocation="" PickLocationSeq="" PrimeLineNo=""
+        ProductClass="" Quantity="" ReleaseNo="" RequestedSerialNo=""
+        ReturnShippingLabelLevel="" Segment="" SegmentType=""
+        ShipToCustomerId="" ShipmentConsolidationGroupId=""
+        ShipmentKey="" ShipmentLineKey="" ShipmentLineNo=""
+        ShipmentSubLineNo="" ShortageQty="" ShortageResolutionReason=""
+        SubLineNo="" UnitOfMeasure="" WaveNo="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="String" Name="BackroomPickedQuantity"/>
+            </Attributes>
+        </yfc:doc>
+        <!-- <Shipment DTDOccurrence="ZeroOrOne" isHistory="" IncludeXMLFileName="YFS_Shipment_master.xml" IncludeXMLPath="/Shipment" IncludeXMLChildNodes="N"> -->
+        <Shipment ActualDeliveryDate="" ActualFreightCharge=""
+            ActualShipmentDate="" AllowOverage="" AppointmentNo=""
+            AssignedToUserId="" BBNMinVolume="" BBNMinWeight=""
+            BackroomPickRequired="" BillToAddressKey=""
+            BillToCustomerId="" BolNo="" BreakBulkNode=""
+            BuyerMarkForNodeId="" BuyerOrganizationCode=""
+            BuyerReceivingNodeId="" CODPayMethod="" CarrierAccountNo=""
+            CarrierServiceCode="" CarrierType="" Code=""
+            CommercialValue="" Currency="" DeliveryCode=""
+            DeliveryMethod="" DeliveryPlanKey="" DeliveryTS=""
+            DestinationZone="" DoNotVerifyCaseContent=""
+            DoNotVerifyPalletContent="" DocumentType="" DownLoadCount=""
+            EmailReturnLabel="" EnterpriseCode="" EspCheckRequired=""
+            ExpectedDeliveryDate="" ExpectedShipmentDate=""
+            ExportTaxpayerID="" FreightTerms="" FromAddressKey=""
+            FromAppointment="" HasOtherShipments=""
+            HazardousMaterialFlag="" HoldLocation="" ITDate="" ITNNo=""
+            ITNo="" InvoiceComplete="" IsPackProcessComplete=""
+            IsProductPlacingComplete="" IsSingleOrder=""
+            LevelOfService="" LinesEntered="" Lockid="" ManifestKey=""
+            ManifestNo="" ManuallyEntered="" MergeNode="" NextAlertTs=""
+            NumOfCartons="" NumOfPallets="" OrderAvailableOnSystem=""
+            OrderHeaderKey="" OrderNo="" OrderReleaseKey=""
+            OriginZone="" OverrideManualShipmentEntry="" PackAndHold=""
+            PackListType="" ParentShipmentKey="" PickListNo=""
+            PickTicketPrinted="" PickticketNo="" PipelineKey="" PodNo=""
+            ProNo="" ProfileID="" ReceivingNode="" ReleaseNo=""
+            RequestedCarrierServiceCode="" RequestedDeliveryDate=""
+            RequestedShipmentDate="" ReturnAuthorizationNumber=""
+            ReturnBillingAccount="" ReturnByDate=""
+            ReturnCarrierService="" ReturnFreightTerms="" SCAC=""
+            ScacIntegrationRequired="" SealNo=""
+            SellerOrganizationCode="" ShipDate="" ShipMode=""
+            ShipNode="" ShipToCustomerId="" ShipVia=""
+            ShipmentClosedFlag="" ShipmentConfirmUpdatesDone=""
+            ShipmentConsolidationGroupId="" ShipmentContainerizedFlag=""
+            ShipmentDeliverUpdatesDone="" ShipmentKey="" ShipmentNo=""
+            ShipmentPlannedFlag="" ShipmentSortLocationId=""
+            ShipmentType="" Status="" StatusDate="" ToAppointment=""
+            TotalActualCharge="" TotalEstimatedCharge="" TotalVolume=""
+            TotalVolumeUOM="" TotalWeight="" TotalWeightUOM=""
+            TrackingNo="" TrailerNo="" WorkOrderApptKey="" WorkOrderKey=""/>
+    </ShipmentLine>
+    <ShipmentIndexLookup EnterpriseCode="" ShipNode="" yfc:UsedForIndexing="Shipment">
+        <yfc:doc>
+            <Element EntityName="Shipment">
+                <Description>
+                    <div>
+							In a multicolony environment, this element should be passed to identify the correct colony. 
+						</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ShipmentIndexLookup>
+</StoreBatch>

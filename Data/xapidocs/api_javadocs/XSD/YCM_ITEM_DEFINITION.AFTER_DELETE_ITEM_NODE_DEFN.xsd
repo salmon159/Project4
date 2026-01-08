@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/ITEM_DEFINITION/AFTER_DELETE_ITEM_NODE_DEFN"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/ITEM_DEFINITION/AFTER_DELETE_ITEM_NODE_DEFN" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCM_ITEM_DEFINITION.AFTER_DELETE_ITEM_NODE_DEFN.xsd" yfc:rootElement="ItemNodeDefn">
+        <xsd:appinfo source="yfc:structure">
+            <ItemNodeDefn hasAttributes="Y">
+                <SafetyFactorDefinitions hasAttributes="Y">
+                    <SafetyFactorDefinition hasAttributes="Y"/>
+                </SafetyFactorDefinitions>
+            </ItemNodeDefn>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ItemNodeDefn" type="yfc:ItemNodeDefnXSDType">
+        <xsd:annotation yfc:tableName="YFS_ITEM_NODE_DEFN">
+            <xsd:documentation>
+                <div>
+					Define node level item attributes for a given <code>OrganizationCode</code>, <code>Node</code>, <code>ItemID</code>, and <code>UnitOfMeasure</code> combination.
+					<Validation>
+                        <Condition>Either <code>OrganizationCode</code>, <code>Node</code>, or <code>ItemID</code> is not provided.
+						</Condition>
+                        <Error
+                            Description="Missing mandatory parameters." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If both <code>OnhandSafetyFactorQuantity</code> and <code>OnhandSafetyFactorPercentage</code> are provided.
+						</Condition>
+                        <Error
+                            Description="Cannot specify both OnhandSafetyFactorQuantity and OnhandSafetyFactorPercentage.  Only one can be specified." ErrorCode="YCM75_0001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemNodeDefnXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SafetyFactorDefinitions"/>
+        </xsd:all>
+        <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+            <xsd:annotation yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>
+                    <div>
+                        The future safety factor percentage of this item,node.  The FutureSafetyFactorPercentage will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+						<Validation>
+                            <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100.
+							</Condition>
+                            <Error Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Percentage"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Unique identifier for an item that belongs to a catalog organization.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemNodeDefnKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_NODE_DEFN_KEY" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Primary key attribute of YFS_ITEM_NODE_DEFN.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Text-24" use="required">
+            <xsd:annotation yfc:columnName="NODE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>
+                    <div>
+                        <code>Node</code> for which node level attributes are setup.
+						<Validation>
+                            <Condition>If <code>Node</code> is invalid.
+							</Condition>
+                            <Error Description="Invalid shipnode." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+            <xsd:annotation yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>
+                    <div>
+                        The on-hand safety factor percentage of this item,node.  The OnhandSafetyFactorPercentage will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor. OnhandSafetyFactorPercentage will be used only when OnhandSafetyFactorQuantity is not specified.
+					<Validation>
+                            <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100.
+						</Condition>
+                            <Error Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Percentage"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+            <xsd:annotation yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>The on-hand safety factor quantity of this item,node.  The OnhandSafetyFactorQuantity will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Quantity"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OperationalConfigurationComplete"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="OPERATIONAL_CONFIG_COMPLETE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Used to indicate if the SKU is being received for the first time in the ship node and operational configurations have been setup.  Will be defaulted to N and can be changed by the operations personnel to Y when complete.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Catalog Organization for which the node level attributes are being created.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PickingType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="PICKING_TYPE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Classification of SKU for pick/pack/ship operations.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StorageType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="STORAGE_TYPE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Classification for Node stocking operations.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Unit of measure for Item quantity. A corresponding parent should exist in YFS_ITEM for each record created in this table with ItemId/UOM.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VelocityCode" type="yfctype:VelocityCode" use="optional">
+            <xsd:annotation yfc:columnName="VELOCITY_CODE" yfc:tableName="YFS_ITEM_NODE_DEFN">
+                <xsd:documentation>Velocity Code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SafetyFactorDefinitions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SafetyFactorDefinition"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old safety factor defn records are removed and replaced with the new ones.
+								If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SafetyFactorDefinition">
+        <xsd:annotation yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+            <xsd:documentation>This table stores safety factor definition.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryMethod"
+                type="yfctype:CommonCode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are<b>SHP, PICK or DEL</b>. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FutureSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="FUTURE_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>FutureSafetyFactorPercentage</code> will be excluded from the actual future availability of the item if the scheduling rule, node type, and supply type are configured to apply future safety factor.
+				<Validation>
+                                <Condition>If <code>FutureSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorPercentage" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_PCT" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>
+                        <div>
+				The <code>OnhandSafetyFactorPercentage</code> will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.
+				<Validation>
+                                <Condition>If <code>OnhandSafetyFactorPercentage</code> is not between 0 to 100. 
+					</Condition>
+                                <Error
+                                    Description="Invalid Safety Factor." ErrorCode="YCM75_0002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Percentage"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OnhandSafetyFactorQuantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ONHAND_SAFETY_FACTOR_QTY" yfc:tableName="YFS_SKU_SAFETY_FACTOR_DEFN">
+                    <xsd:documentation>The on-hand safety factor quantity of this item.  The OnhandSafetyFactorQuantity will be excluded from the actual on-hand availability of the item if the scheduling rule, node type, and supply type are configured to apply on-hand safety factor.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Valid value are <b>Create, Modify and Delete</b>. 
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

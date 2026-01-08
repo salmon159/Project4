@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/updateCustomerAccountBalance/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/updateCustomerAccountBalance/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_updateCustomerAccountBalance_input.xsd" yfc:rootElement="Customer">
+        <xsd:appinfo source="yfc:structure">
+            <Customer hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Customer" type="yfc:CustomerXSDType">
+        <xsd:annotation yfc:tableName="YFS_CUSTOMER">
+            <xsd:documentation>
+                <div>
+				Specify the unique identification of a customer.  <code>CustomerKey</code> or a combination of <code>OrganizationCode</code> and <code>CustomerID</code> can be specified to identify a customer.
+				<Validation>
+                        <Condition>If no customer matches the criteria
+					</Condition>
+                        <Error Description="Invalid Customer." ErrorCode="YCP0165"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CustomerXSDType">
+        <xsd:attribute name="ChangeInOpenOrderAmount"
+            type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Pass this field if open order amount for a customer account needs to be adjusted by external systems. If passed, open order amount for a customer account is increased by passed amount. If passed amount is less than zero then open order amount will go down. 
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerAccountNo" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="CUSTOMER_ACCOUNT_NO" yfc:tableName="YFS_CUSTOMER_PAYMENT_METHOD">
+                <xsd:documentation>
+                    <div>
+				The customer account for which adjustment needs to be made. 		
+				<Validation>
+                            <Condition>
+                                <code>CustomerAccountNo</code> is not passed. 
+					</Condition>
+                            <Error
+                                Description="Mandatory parameters not passed" ErrorCode="YFS10364"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Customer account not setup for the customer.</code>
+                            </Condition>
+                            <Error
+                                Description="Invalid payment method for the customer" ErrorCode="YCP0374"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerID" type="yfctype:CustomerId" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YFS_CUSTOMER">
+                <xsd:documentation>The identifier for the customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_KEY" yfc:tableName="YFS_CUSTOMER">
+                <xsd:documentation>The primary key for the YFS_CUSTOMER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CUSTOMER">
+                <xsd:documentation>The organization code of organization that defines this customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PaymentType" type="yfctype:Text-20" use="required">
+            <xsd:annotation yfc:columnName="PAYMENT_TYPE" yfc:tableName="YFS_CUSTOMER_PAYMENT_METHOD">
+                <xsd:documentation>
+                    <div>
+				The payment type of customer account for which adjustment needs to be made. 		
+				<Validation>
+                            <Condition>
+                                <code>PaymentType</code> is not passed. 
+					</Condition>
+                            <Error
+                                Description="Mandatory parameters not passed" ErrorCode="YFS10364"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Payment type not setup for the customer.</code>
+                            </Condition>
+                            <Error
+                                Description="Invalid payment method for the customer" ErrorCode="YCP0374"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

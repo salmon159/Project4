@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/beforePackShipmentUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/beforePackShipmentUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_beforePackShipmentUE_input.xsd" yfc:rootElement="Shipment">
+        <xsd:appinfo source="yfc:structure">
+            <Shipment hasAttributes="Y">
+                <Containers>
+                    <Container hasAttributes="Y">
+                        <ContainerDetails>
+                            <ContainerDetail hasAttributes="Y">
+                                <ShipmentLine hasAttributes="Y"/>
+                                <ShipmentTagSerials>
+                                    <ShipmentTagSerial hasAttributes="Y"/>
+                                </ShipmentTagSerials>
+                            </ContainerDetail>
+                        </ContainerDetails>
+                        <Instructions>
+                            <Instruction hasAttributes="Y"/>
+                        </Instructions>
+                        <AdditionalAttributes>
+                            <AdditionalAttribute hasAttributes="Y"/>
+                        </AdditionalAttributes>
+                        <SpecialServices>
+                            <SpecialService hasAttributes="Y"/>
+                        </SpecialServices>
+                    </Container>
+                </Containers>
+            </Shipment>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Shipment" type="yfc:ShipmentXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div>
+       Pass  <code>ShipmentKey</code>
+                    <i>or</i> pass <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code>  to identify the shipment.
+       </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ShipmentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Containers"/>
+        </xsd:all>
+        <xsd:attribute name="OverrideModificationRules" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>OverrideModificationRules is used to override the statuses of shipment that can be considered for packing. This is determined using the modification_type PACK_SHIPMENT. Valid values are Y, N and Void. Void implies N.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                    <xsd:enumeration value=""/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Containers">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>If element is not passed
+							</Condition>
+                        <Error
+                            Description="Missing element in input XML." ErrorCode="YFS10507"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Container"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Container">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_CONTAINER">
+            <xsd:documentation>Stores container header information. Containers are created using packShipment, createShipment or changeShipment API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ContainerDetails"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Instructions"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttributes"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SpecialServices"/>
+            </xsd:all>
+            <xsd:attribute name="ActualFreightCharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="ACTUAL_FREIGHT_CHARGE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The information returned by the carrier server, if carrier server integration is availed for the shipment. This indicates the freight charge as arrived at by the carrier server.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AppliedWeight" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="APPLIED_WEIGHT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The information returned by the carrier server, if carrier server integration is availed for the shipment. This indicates the weight that was used for freight charge calculations.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AppliedWeightUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="APPLIED_WEIGHT_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of weight specified in APPLIED_WEIGHT attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AstraCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ASTRA_CODE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BarcodeDiscount" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="BARCODE_DISCOUNT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BasicFreightCharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="BASIC_FREIGHT_CHARGE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarriageValue" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="CARRIAGE_VALUE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierBillAccount"
+                type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="CARRIER_BILL_ACCOUNT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The carrier bill account. If CARRIER_PAYMENT_TYPE is Prepaid (PRE), then carrier bill account is denormalized from YFS_SCAC_EX.account_1 for the ship node. If CARRIER_PAYMENT_TYPE is Third Party Billing(TPB), then if Delivery Code on the shipment is ENTERPRISE, then the carrier bill account is denormalized from YFS_SCAC_EX.account_1 for the Enterprise, Else if the Delivery Code is MARKETPLACE, then the carrier bill account is denormalized from YFS_SCAC_EX.account. If none of the above conditions are satisfied, then the carrier bill account is denormalized from YFS_SHIPMENT.CustCarrier_account_no.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierLocationID"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="CARRIER_LOCATION_ID" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CommitmentCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="COMMITMENT_CODE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerGrossWeight"
+                type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_GROSS_WEIGHT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The weight of the container, inclusive of weights of items and packing material used, if any. The unit of weight is as specified by the CONTAINER_GROSS_WEIGHT_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerGrossWeightUOM"
+                type="yfctype:UOM" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CONTAINER_GROSS_WEIGHT_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of weight specified in CONTAINER_GROSS_WEIGHT attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerHeight"
+                type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_HEIGHT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The height of the container. The units of height are as specified by the CONTAINER_HEIGHT_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerHeightUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_HEIGHT_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of height specified in CONTAINER_HEIGHT attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerLength"
+                type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_LENGTH" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The length of the container. The units of length are as specified by the CONTAINER_LENGTH_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerLengthUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_LENGTH_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of length specified in CONTAINER_LENGTH attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerNetWeight"
+                type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_NET_WEIGHT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The weight of just the items in the container. This does not include weight of the packing material. The unit of weight is as specified by the CONTAINER_NET_WEIGHT_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerNetWeightUOM"
+                type="yfctype:UOM" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CONTAINER_NET_WEIGHT_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of weight specified in CONTAINER_NET_WEIGHT attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerNo" type="yfctype:ContainerNo" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The container number. This is a unique key or business key, which by itself identifies a delivery plan. If not passed as input, the system generates this number using the database sequence SEQ_YFS_CONTAINER_NO.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerScm" type="yfctype:UCC128" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_SCM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>
+                        <div>
+						An unique number which helps identify the shipper as well as the goods.
+							<Validation>
+                                <Condition>
+                                    <code>ContainerScm</code>Should be unique in the <code>YFS_Shipment_Container</code> table.
+								</Condition>
+                                <Error Description="Node not passed." ErrorCode="YDM00132"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerSeqNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_SEQ_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerType" type="yfctype:Text-6" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_TYPE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The type of container. You could use it as an attribute to group containers - either based on size of the container, type of goods that it carries, and so forth.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerWidth"
+                type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_WIDTH" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The width of the container. The units of width are as specified by the CONTAINER_WIDTH_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContainerWidthUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_WIDTH_UOM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The unit of measure for the units of width specified in CONTAINER_WIDTH attribute of this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustCarrierAccountNo"
+                type="yfctype:AccountNo" use="optional">
+                <xsd:annotation yfc:columnName="CUSTCARRIER_ACCOUNT_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is denormalized from the YFS_SHIPMENT.CUSTCARRIER_ACCOUNT_NO.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomsValue" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMS_VALUE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeclaredValue" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="DECLARED_VALUE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The value of the container as declared on the carrier manifest for insurance purposes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeliverBy" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="DELIVER_BY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeliveryDay" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="DELIVERY_DAY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The information returned by the carrier server, if carrier server integration is availed for the shipment. This indicates the day of the week on which the container is manifested.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DimmedFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DIMMED_FLAG" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DiscountAmount" type="yfctype:Money" use="optional">
+                <xsd:annotation yfc:columnName="DISCOUNT_AMOUNT" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExportLicenseExpDate"
+                type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="EXPORT_LICENSE_EXP_DATE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The export license expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExportLicenseNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="EXPORT_LICENSE_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The license number if the container is meant for export.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FormID" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="FORM_ID" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OversizedFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="OVERSIZED_FLAG" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentContainerNo" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_CONTAINER_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>A container that encloses the current container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RoutingCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="ROUTING_CODE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceType" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_TYPE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_DATE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SpecialServicesSurcharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SPECIAL_SERVICES_SURCHARGE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The information returned by the carrier server if carrier server integration is availed for the shipment. This indicates the special service charge levied for the special services selected.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TrackingNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="TRACKING_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>The tracking number. If carrier integration is availed for the carrier on the shipment, then this information is returned by the carrier server. This is a unique number assigned to each container that can be used to track individual containers in a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Zone" type="yfctype:Text-15" use="optional">
+                <xsd:annotation yfc:columnName="ZONE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                    <xsd:documentation>This field is not currently used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ContainerDetails">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ContainerDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ContainerDetail">
+        <xsd:annotation yfc:tableName="YFS_CONTAINER_DETAILS">
+            <xsd:documentation>Stores information about containerized shipment lines.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentLine"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentTagSerials"/>
+            </xsd:all>
+            <xsd:attribute name="ContainerDetailsKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CONTAINER_DETAILS_KEY" yfc:tableName="YFS_CONTAINER_DETAILS">
+                    <xsd:documentation>The primary key for the YFS_CONTAINER_DETAILS table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_CONTAINER_DETAILS">
+                    <xsd:documentation>The quantity of the item packed in this container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_CONTAINER_DETAILS">
+                    <xsd:documentation>The shipment line key that is associated with this container details.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLine">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+            <xsd:documentation>Stores information about shipment lines. Shipment lines are created using createShipment or changeShipment API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The identifier of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The order number corresponding to the order for the shipment line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The prime line number of the corresponding order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The product class.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReleaseNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="RELEASE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The release number of the order release for the shipment line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineNo" type="yfctype:LineNo" use="required">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>A part of the primary key . The shipment line number is unique for a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The sub line number of the corresponding order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentTagSerials">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ShipmentTagSerial"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentTagSerial">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+            <xsd:documentation>This table stores additional information related to tag number, serial number, ship by date for a shipment line or container detail. Tag information is stored only if the Node tracks tag information in inventory or the Buyer mandates tag information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Serial number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>For time sensitive items, date by which it should be shipped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentTagSerialKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_TAG_SERIAL_KEY" yfc:tableName="YFS_SHIPMENT_TAG_SERIAL">
+                    <xsd:documentation>Primary key attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instructions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Instruction"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instruction">
+        <xsd:annotation yfc:tableName="YFS_INSTRUCTION_DETAIL">
+            <xsd:documentation>Generic table used to store instructions associated with various entities in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="InstructionText"
+                type="yfctype:InstructionText" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TEXT" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Free-form text indicating any additional information related to the instruction type or otherwise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionType"
+                type="yfctype:InstructionType" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TYPE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Categorization of instructions so that they can be grouped together for reference. For example, you may have instructions of type Pick, Pack, and Ship for an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionURL" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_URL" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>The URL relating to and/or containing the instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionUsage"
+                type="yfctype:InstructionUsage" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_USAGE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Another way of categorization of instructions, over and above the instruction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>You could have an instruction exceeding the limits of a single record. Sequence number is used to provide a way to store a link between such instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttributes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AdditionalAttribute"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttribute">
+        <xsd:annotation yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+            <xsd:documentation>Stores dynamic attributes attached with an entity. Currently used to store additional attributes for item and category entities.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="NAME" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Name of the dynamic attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Text-2000" use="optional">
+                <xsd:annotation yfc:columnName="VALUE" yfc:tableName="YFS_ADDITIONAL_ATTRIBUTE">
+                    <xsd:documentation>Value of the attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SpecialServices">
+        <xsd:annotation yfc:tableName="YFS_SPECIAL_SERVICES">
+            <xsd:documentation>This table stores special services supported by various carriers that can be used when shipping packages. Examples of special services are signature required upon delivery of the package, Saturday pick-up and Saturday delivery.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SpecialService"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SpecialService">
+        <xsd:annotation yfc:tableName="YFS_SPECIAL_SERVICE_REF">
+            <xsd:documentation>This table stores various special services used for a container. Examples of special services are signature required upon delivery of the package, Saturday pick-up, Saturday delivery and so forth.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SpecialServiceSurcharge"
+                type="yfctype:Money" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SPECIAL_SERVICE_SURCHARGE" yfc:tableName="YFS_SPECIAL_SERVICE_REF">
+                    <xsd:documentation>Surcharge associated with a particular special service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SpecialServicesCode"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="SPECIAL_SERVICES_CODE" yfc:tableName="YFS_SPECIAL_SERVICE_REF">
+                    <xsd:documentation>Special services code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

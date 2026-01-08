@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/getSyncDBImportList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/getSyncDBImportList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_getSyncDBImportList_input.xsd" yfc:rootElement="SyncDBImport">
+        <xsd:appinfo source="yfc:structure">
+            <SyncDBImport hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="SyncDBImport" type="yfc:SyncDBImportXSDType">
+        <xsd:annotation yfc:tableName="YFS_SYNC_DB_IMPORT">
+            <xsd:documentation>This table holds information about database import synchronization times and types (FULL or DELTA).</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="SyncDBImportXSDType">
+        <xsd:attribute name="DBImportTime" use="optional">
+            <xsd:annotation yfc:columnName="DB_IMPORT_TIME" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>The time of last import.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:HourMinuteTimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Operation" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+							Operation to take
+							<br/>
+							Valid Values:
+							<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b>
+							- Creates a new record if it does not exist or modifies an
+							existing record if it does.
+							<br/>
+                        <b>
+                            <code>Create</code>
+                        </b>
+							- Creates a new record.
+							<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b>
+							- Changes the value of an existing record.
+							<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b>
+							- Deletes an existing record.
+							<br/>
+							The default behavior is
+							<b>
+                            <code>Manage</code>
+                        </b>
+							.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>The organization that performed the import.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProfileOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="PROFILE_ORGANIZATION_CODE" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>
+                    <div>
+					 The organization that owns the profile. 
+					 	<Validation>
+                            <Condition>The ProfileOrganizationCode is missing in the input</Condition>
+                            <Error
+                                Description="ProfileOrganizationCode is mandatory" ErrorCode="YSC921_0018"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The ProfileOrganizationCode is not a known organization code</Condition>
+                            <Error
+                                Description="ProfileOrganizationCode does not exist" ErrorCode="YSC921_0019"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SequenceNo" type="yfctype:Counter" use="optional">
+            <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>Sequence number used to identify which sync file was imported.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SyncDBImportKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SYNC_DB_IMPORT_KEY" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>The primary key of the YFS_SYNC_DB_IMPORT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SyncProfileID"
+            type="yfctype:SyncTableID-40" use="optional">
+            <xsd:annotation yfc:columnName="SYNC_PROFILE_ID" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>The ID for the SyncProfile that was imported.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SyncTargetID" type="yfctype:SyncTableID-40" use="optional">
+            <xsd:annotation yfc:columnName="SYNC_TARGET_ID" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>The ID for the SyncTarget that was imported.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SyncType" type="yfctype:ID-15" use="optional">
+            <xsd:annotation yfc:columnName="SYNC_TYPE" yfc:tableName="YFS_SYNC_DB_IMPORT">
+                <xsd:documentation>
+                    <div>
+					 The type of synchronization (FULL or DELTA). 
+						<Validation>
+                            <Condition>The SyncType is missing in the input</Condition>
+                            <Error Description="SyncType is mandatory" ErrorCode="YSC921_0005"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>SyncType is neither FULL or DELTA status.</Condition>
+                            <Error
+                                Description="Invalid SyncType passed in the input" ErrorCode="YSC921_0004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

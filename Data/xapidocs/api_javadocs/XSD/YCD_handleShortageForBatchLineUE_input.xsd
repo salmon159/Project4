@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/handleShortageForBatchLineUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/handleShortageForBatchLineUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_handleShortageForBatchLineUE_input.xsd" yfc:rootElement="StoreBatch">
+        <xsd:appinfo source="yfc:structure">
+            <StoreBatch hasAttributes="Y">
+                <Item hasAttributes="Y"/>
+                <ShipmentLines>
+                    <ShipmentLine hasAttributes="Y"/>
+                </ShipmentLines>
+            </StoreBatch>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="StoreBatch" type="yfc:StoreBatchXSDType">
+        <xsd:annotation yfc:tableName="YFS_STORE_BATCH">
+            <xsd:documentation>This table stores the batches for Web Store. A batch consists of multiple shipment lines which can be picked together.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="StoreBatchXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipmentLines"/>
+        </xsd:all>
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>The unique batch number to identify this batch in this store.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>The store's organization code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StoreBatchKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="STORE_BATCH_KEY" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>
+                    <div>
+					Unique Identifier for a Batch
+						<Validation>
+                            <Condition>
+                                <code>StoreBatchKey OR OrganizationCode,BatchNo</code> should be passed.
+							</Condition>
+                            <Error Description="Invalid Batch" ErrorCode="YCD00081"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemKey" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ShortageReason"
+                type="yfctype:CodeValue" use="required">
+                <xsd:annotation yfc:columnName="CODE_VALUE" yfc:tableName="YFS_COMMON_CODE">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>ShortageReason is not passed
+						</Condition>
+                                <Error
+                                    Description="ShortageReason is mandatory " ErrorCode="YCD00070"/>
+                            </Validation>
+                        </div>
+                        <div>
+                            <Validation>
+                                <Condition>Unique Identifiers for Item should be passed
+						</Condition>
+                                <Error Description="Item does not exist" ErrorCode="YCM711_002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ShipmentLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLine">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+            <xsd:documentation>Stores information about shipment lines. Shipment lines are created using createShipment or changeShipment API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="OrganizationCode" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The shipment key that is associated with this shipment line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineKey" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

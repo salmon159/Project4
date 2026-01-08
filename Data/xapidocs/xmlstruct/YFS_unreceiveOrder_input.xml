@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!--	unreceiveOrder Input XML	-->
+<Receipt CaseId="" DocumentType="" LocationId=""
+    OverrideModificationRules="" PalletId="" ReceiptHeaderKey=""
+    ReceiptNo="" ReceivingDock="" ReceivingNode="" ShipmentKey="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/unreceiveOrder/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+			This element should contain the receipt attributes, which will identify a receipt uniquely.
+			<Validation>
+                        <Condition>If unable to find a receipt
+			</Condition>
+                        <Error Description="Receipt Not found." ErrorCode="YFS10466"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If the receipt is already closed
+			</Condition>
+                        <Error
+                            Description="Closed receipt cannot be modified." ErrorCode="OMP10051"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>if the receipt status does not allow this operation
+			</Condition>
+                        <Error
+                            Description="Receipt modification rules do not permit modification of receipt in its current status." ErrorCode="OMP10039"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="LPNNo" Name="CaseId">
+                <Description> A CaseId. </Description>
+            </Attribute>
+            <Attribute EntityName="Document_Params" Name="DocumentType"/>
+            <Attribute DataType="LocationId" Name="LocationId">
+                <Description>
+                    <div>Optional. If provided the location inventory updates are done for this location else for the receipt's receiving dock.
+					<Validation>
+                            <Condition>If not void and not a valid location in the node.
+					</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideModificationRules">
+                <Description> Indicates whether to override the status of receipt that can be considered for modification. Valid values are Y, N and Void. Void implies N.</Description>
+            </Attribute>
+            <Attribute DataType="LPNNo" Name="PalletId">
+                <Description> A PalletId. </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Shipment DocumentType="" EnterpriseCode="" OrderHeaderKey=""
+        OrderNo="" OrderReleaseKey="" ReleaseNo=""
+        SellerOrganizationCode="" ShipNode="" ShipmentNo="">
+        <yfc:doc>
+            <Element EntityName="Shipment">
+                <Description>
+                    <div>Optional. Contains the shipment attributes, which help in finding the receipt to unreceive.
+			</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </Shipment>
+    <ReceiptLines>
+        <!--	UnreceiveQuantity is ignored if UnreceiveEntireLine="Y"	-->
+        <ReceiptLine InventoryStatus="Conditional"
+            ReceiptLineKey="Conditional" ReceiptLineNo="Conditional"
+            UnreceiveEntireLine="Y|N" UnreceiveQuantity="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Element EntityName="Receipt_Line">
+                    <Description>
+                        <div>If the same receipt line is specified twice then the unreceiving quantity is added up against that receipt line.
+				<Validation>
+                                <Condition>If receipt lines are not passed and receiving node does tracks location level inventory.
+				</Condition>
+                                <Error
+                                    Description="Lines to unreceive not specified in the input." ErrorCode="OMP10053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>if the receipt line was not received in the LPN specified in receipt element.
+				</Condition>
+                                <Error
+                                    Description="Invalid line to unreceive." ErrorCode="OMP10038"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="InventoryStatus" Name="InventoryStatus">
+                        <Description>
+                            <div>The Inventory Status of the item in the line in inventory. 
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="ReceiptLineKey">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If not a valid line Key in this receipt.
+						</Condition>
+                                    <Error
+                                    Description="Invalid line to unreceive." ErrorCode="OMP10038"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="ReceiptLineNo">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If not a valid line no in this receipt.
+						</Condition>
+                                    <Error
+                                    Description="Invalid line to unreceive." ErrorCode="OMP10038"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="UnreceiveEntireLine">
+                        <Description>
+                            <div>if <code>
+                                    <b>Y</b>
+                                </code> entire line is unreceived.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Count" Name="UnreceiveQuantity">
+                        <Description>
+                            <div>Quantity to be unreceived from the line (Ignored if UnreceiveEntireLine="Y").
+						<Validation>
+                                    <Condition>If not a positive non-zero number.
+						</Condition>
+                                    <Error
+                                    Description="YCP:Invalid Quantity." ErrorCode="YCP0035"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If quantity is greater than the received quantity.
+						</Condition>
+                                    <Error
+                                    Description=" Not enough quantity to unreceive." ErrorCode="OMP10040"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ReceiptLine>
+    </ReceiptLines>
+    <Audit ReasonCode="" ReasonText="">
+        <yfc:doc>
+            <Element EntityName="Location_Inventory_Audit"/>
+        </yfc:doc>
+    </Audit>
+</Receipt>

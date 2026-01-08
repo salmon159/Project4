@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/removeContainerFromTrailer/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/removeContainerFromTrailer/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YDM_removeContainerFromTrailer_input.xsd" yfc:rootElement="Container">
+        <xsd:appinfo source="yfc:structure">
+            <Container hasAttributes="Y">
+                <Shipment hasAttributes="Y"/>
+                <Load hasAttributes="Y"/>
+            </Container>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Container" type="yfc:ContainerXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_CONTAINER">
+            <xsd:documentation>Stores container header information. Containers are created using packShipment, createShipment or changeShipment API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ContainerXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Load"/>
+        </xsd:all>
+        <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Identifies the container that is processed by the API.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerNo" type="yfctype:ContainerNo" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The container number. This is a unique key or business key, which by itself identifies a delivery plan. If not passed as input, the system generates this number using the database sequence SEQ_YFS_CONTAINER_NO.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerScm" type="yfctype:UCC128" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_SCM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>A unique number which helps identify the shipper as well as the goods.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The load key that is associated with this shipment container.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The Location where the container should be moved for after removing container from trailer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="required">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                <xsd:documentation>The unique identifier for the ship node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Identifies the container that is processed by the API.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentContainerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_CONTAINER_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The primary key for the YFS_SHIPMENT_CONTAINER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The shipment key that is associated with this shipment container.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Load">
+        <xsd:annotation yfc:tableName="YFS_LOAD">
+            <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LoadNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

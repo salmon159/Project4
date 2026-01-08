@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/modifyActivityDemand/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/modifyActivityDemand/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_modifyActivityDemand_input.xsd" yfc:rootElement="ActivityDemand">
+        <xsd:appinfo source="yfc:structure">
+            <ActivityDemand hasAttributes="Y">
+                <Shipment hasAttributes="Y"/>
+                <WorkOrder hasAttributes="Y"/>
+                <Order hasAttributes="Y"/>
+            </ActivityDemand>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ActivityDemand" type="yfc:ActivityDemandXSDType">
+        <xsd:annotation yfc:tableName="YFS_ACTIVITY_DEMAND">
+            <xsd:documentation>
+                <div>
+			Demand on inventory may be placed for an activity from another activity group. This entity stores information about such demands placed. Following attributes together form the Unique key of the table: <code>Node</code>, <code>FromActivityGroup</code>, <code>ForActivityCode</code>, <code>ShipmentKey</code>, <code>WorkOrderKey</code>, <code>ForShipmentLineKey</code>, <code>ForWorkOrderKey</code>, <code>ForMoveRequestLineKey</code>, <code>LPNNo</code>, <code>LPNType</code>, <code>OrganizationCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code>, <code>ProductClass</code>, <code>InventoryStatus</code>, <code>SegmentType</code>, <code>Segment</code>, <code>DemandLocationId</code>, <code>OrderHeaderKey</code>, <code>OrderNo</code>, <code>DocumentType</code>.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ActivityDemandXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrder"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+        </xsd:all>
+        <xsd:attribute name="ActivityDemandKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ACTIVITY_DEMAND_KEY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Primary key attribute of <code>YFS_Activity_Demand</code> table. If not passed, then unique key of <code>YFS_Activity_Demand</code> table must be passed.
+						<Validation>
+                            <Condition>Activity demand for the passed <code>ActivityDemandKey</code> should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <code>CaseId</code> against which activity demand has been placed. <code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code> define a SKU. Pallet/Case are LPN types and <code>PalletId</code>/<code>CaseId</code> represents an LPN. Either of SKU details or (<code>PalletId</code>/<code>CaseId</code>) must be passed.
+						<Validation>
+                            <Condition>Either of (<code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code>) or (<code>PalletId</code>/<code>CaseId</code>) should be passed.
+							</Condition>
+                            <Error
+                                Description="Either of CaseId/PalletId or SKU Details must be passed." ErrorCode="WMS00051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CaseId</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DemandLocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="DEMAND_LOCATION_ID" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Location Identifier. The location Id to which the demanded product must be diverted. If passed, then during put away, location considered for the demand fulfillment would be this location.
+						<Validation>
+                            <Condition>Location Id passed should be valid location in the node.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Location Id passed should not be of type <code>INTRANSIT</code> or <code>VIRTUAL</code>.
+							</Condition>
+                            <Error Description="Invalid Location Type." ErrorCode="WMS00067"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DemandQty" type="yfctype:Quantity" use="optional">
+            <xsd:annotation yfc:columnName="DEMAND_QTY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Quantity of the product that is demanded for the activity. Required, if Item is passed.
+						<Validation>
+                            <Condition>If passed, the value passed must be greater than zero. For a <code>CaseId</code>/<code>PalletId</code>, it is defaulted to zero.
+							</Condition>
+                            <Error
+                                Description="Quantity passed cannot be negative." ErrorCode="WMS00057"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_ZONE_ENTERPRISE">
+                <xsd:documentation>
+                    <div>
+					Unique key attribute of the <code>YFS_ENTERPRISE_CODE</code> table. This is used to identify the enterprise for which the demand(<code>SKU</code>/<code>CaseId</code>/<code>PalletId</code>) is being placed. It is de-referenced to inventory organization code in <code>YFS_Activity_Demand</code> table. This is done so because put away is performed for the stock based on activity demand and the inventory picture.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> should be passed.
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> passed should be a valid node.
+							</Condition>
+                            <Error
+                                Description="Invalid Enterprise Code." ErrorCode="YCP0011"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ForActivityCode" type="yfctype:Activity" use="optional">
+            <xsd:annotation yfc:columnName="FOR_ACTIVITY_CODE" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Identifies the department/pupose for which demand was created. It is a part of the unique key of the <code>YFS_Activity_Demand</code> table.
+						<Validation>
+                            <Condition>
+                                <code>ForActivityCode</code> should be passed.
+							</Condition>
+                            <Error
+                                Description="ActivityCode not passed." ErrorCode="WMS00049"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ForActivityCode</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ForActivityCode</code> must be valid.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromActivityGroup"
+            type="yfctype:EnumActivityGroup" use="optional">
+            <xsd:annotation yfc:columnName="FROM_ACTIVITY_GROUP" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Identifies the department from which demand was requested. It is a part of the unique key of the <code>YFS_Activity_Demand</code> entity.
+						<Validation>
+                            <Condition>
+                                <code>FromActivityGroup</code> should be passed.
+							</Condition>
+                            <Error
+                                Description="Module Code must be given." ErrorCode="WMS00053"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>FromActivityGroup</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryStatus"
+            type="yfctype:InventoryStatus" use="optional">
+            <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Unique key of <code>YFS_INVENTORY_STATUS</code> table. Refers to an inventory sub classification based on the results of the inventory control processes within the warehouse.
+						<Validation>
+                            <Condition>
+                                <code>InventoryStatus</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemId" type="yfctype:ItemID" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+                        <code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code> define a SKU. Pallet/Case are LPN types and <code>PalletId</code>/<code>CaseId</code> represents an LPN. Either of SKU details or (<code>PalletId</code>/<code>CaseId</code>) must be passed.
+						<Validation>
+                            <Condition>Either of (<code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code>) or (<code>PalletId</code>/<code>CaseId</code>) should be passed.
+							</Condition>
+                            <Error
+                                Description="Either of CaseId/PalletId or SKU Details must be passed." ErrorCode="WMS00051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ItemId</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Primary key attribute of <code>YFS_SHIP_NODE</code> table. Required to uniquely identify a location within the node. It is a part of the unique key of the <code>YFS_Activity_Demand</code> entity.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> should be passed.
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed should be a valid node.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076 "/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <code>PalletId</code> against which activity demand has been placed. <code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code> define a SKU. Pallet/Case are LPN types and <code>PalletId</code>/<code>CaseId</code> represents an LPN. Either of SKU details or (<code>PalletId</code>/<code>CaseId</code>) must be passed.
+						<Validation>
+                            <Condition>Either of (<code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code>) or (<code>PalletId</code>/<code>CaseId</code>) should be passed.
+							</Condition>
+                            <Error
+                                Description="Either of CaseId/PalletId or SKU Details must be passed." ErrorCode="WMS00051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>PalletId</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Priority" type="yfctype:Priority" use="optional">
+            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					Identifies the Priority with which the demand is created. 
+						<Validation>
+                            <Condition>
+                                <code>Priority</code> if passed should be a valid value.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+                        <code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code> define a SKU. Pallet/Case are LPN types and <code>PalletId</code>/<code>CaseId</code> represents an LPN. Either of SKU details or (<code>PalletId</code>/<code>CaseId</code>) must be passed.
+						<Validation>
+                            <Condition>Either of (<code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code>) or (<code>PalletId</code>/<code>CaseId</code>) should be passed.
+							</Condition>
+                            <Error
+                                Description="Either of CaseId/PalletId or SKU Details must be passed." ErrorCode="WMS00051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ProductClass</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					When inventory is customized for a specific order, it needs to be tracked separately so that it can be allocated to that order.
+						<Validation>
+                            <Condition>
+                                <code>Segment</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+					When inventory is customized, it needs to be tracked separately. This field indicates the buyer or buyer category for who the inventory is customized.
+						<Validation>
+                            <Condition>
+                                <code>SegmentType</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+                        <code>ShipmentKey</code> helps identifying all stock attached to a shipment. Primary key attribute of <code>YFS_SHIPMENT</code> table. If <code>ShipmentKey</code> is not passed, then pass <code>ShipmentNo</code> (required), <code>ShipNode</code> (if available) and <code>SellerOrganizationCode</code>(if available). Shipment key is determined based on these passed attributes and the Node attribute in the root node as the receiving node. 
+						<Validation>
+                            <Condition>
+                                <code>ShipmentKey</code> if passed should be a valid key.
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ShipmentKey</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>
+                    <div>
+                        <code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code> define a SKU. Pallet/Case are LPN types and <code>PalletId</code>/<code>CaseId</code> represents an LPN. Either of SKU details or (<code>PalletId</code>/<code>CaseId</code>) must be passed.
+						<Validation>
+                            <Condition>Either of (<code>EnterpriseCode</code>, <code>ItemId</code>, <code>UnitOfMeasure</code> and <code>ProductClass</code>) or (<code>PalletId</code>/<code>CaseId</code>) should be passed.
+							</Condition>
+                            <Error
+                                Description="Either of CaseId/PalletId or SKU Details must be passed." ErrorCode="WMS00051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>UnitOfMeasure</code> is not allowed to change.
+							</Condition>
+                            <Error
+                                Description="Cannot modify unique key attributes." ErrorCode="WMS00076"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>if primary key (<code>ActivityDemandKey</code>) is not passed. Activity demand for this unique key should exist.
+							</Condition>
+                            <Error
+                                Description="Demand Record not found for the given Primary/Unique Key." ErrorCode="WMS00047"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_KEY" yfc:tableName="YFS_ACTIVITY_DEMAND">
+                <xsd:documentation>The primary key for the YFS_ACTIVITY_DEMAND table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+						Seller organization to which this shipment belongs. <code>ShipNode</code> and <code>SellerOrganizationCode</code> identify the origin of the shipment (i.e The place from where the shipment was shipped).
+							<Validation>
+                                <Condition>Unique key should be passed.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00171"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+                            <code>ShipNode</code> and <code>SellerOrganizationCode</code> identify the origin of the shipment (i.e The place from where the shipment was shipped).
+							<Validation>
+                                <Condition>Unique key should be passed.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00171"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+                            <code>ShipmentNo</code> is a part of unique key. 
+							<Validation>
+                                <Condition>
+                                    <code>ShipmentNo</code> should be passed.
+								</Condition>
+                                <Error
+                                    Description="Either ShipmentKey or Shipment element must be passed." ErrorCode="WMS00075"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>ShipmentNo</code> should exist in the database.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Multiple records should not exist for the passed <code>ShipmentNo</code>.
+								</Condition>
+                                <Error
+                                    Description="Record cannot be uniquely determined." ErrorCode="WMS00074"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrder">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>This table stores the information about the work orders to be done at a node on an inventory item or a license plate.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

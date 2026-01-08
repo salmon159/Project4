@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/VAS/getWorkOrderAppointmentOptions/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/VAS/getWorkOrderAppointmentOptions/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="VAS_getWorkOrderAppointmentOptions_input.xsd" yfc:rootElement="Promise">
+        <xsd:appinfo source="yfc:structure">
+            <Promise hasAttributes="Y">
+                <Overrides hasAttributes="Y"/>
+                <OmittedWorkOrderLines>
+                    <WorkOrderServiceLines>
+                        <WorkOrderServiceLine hasAttributes="Y"/>
+                    </WorkOrderServiceLines>
+                    <WorkOrderProdDeliveries>
+                        <WorkOrderProdDelivery hasAttributes="Y"/>
+                    </WorkOrderProdDeliveries>
+                </OmittedWorkOrderLines>
+            </Promise>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Promise" type="yfc:PromiseXSDType">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>
+                <div>
+					To identify the <code>Work Order</code>, pass either <code>WorkOrderKey</code> or <code>WorkOrderNo</code>, <code>NodeKey</code> and <code>EnterpriseCode</code>.
+					<Validation>
+                        <Condition>The passed attributes are unable to identify an existing work order.
+						</Condition>
+                        <Error Description="Invalid Work Order." ErrorCode="VAS00013"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PromiseXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Overrides"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OmittedWorkOrderLines"/>
+        </xsd:all>
+        <xsd:attribute name="AggregateSupplyOfNonRequestedTag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				The <code>AggregateSupplyOfNonRequestedTag</code> flag indicates that system should aggregate the supplies that are returned by the API unless specific tag information is provided in the input. If the flag is set to Y, supplies are aggregated irrespective of the tag information and displayed in the output XML. If the flag is set to N, supplies are returned in the output XML with the tag information.
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="AllocationRuleID" type="yfctype:ID-10" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						An Enterprise can configure multiple allocation rule sets with different document types.
+						If an <code>AllocationRuleID</code> is  passed, the  allocation rules associated with the <code>AllocationRuleID</code> is used to select <code>Option</code>.
+						<Validation>
+                            <Condition>The <code>AllocationRuleID</code> passed must be valid for both the Enterprise's rule set and document type of the order.
+							</Condition>
+                            <Error
+                                Description="Invalid Allocation Rule Id." ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApptSeq" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="APPT_SEQ" yfc:tableName="YFS_WORK_ORDER_APPT">
+                <xsd:documentation>This number denotes the position in the sequence when the current appointment would be executed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckCapacity" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to N, resource pool capacity will be ignored during availability check.  If not passed, assumed Y.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates if inventory should to be checked.
+						<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If  <b>
+                            <code>Y</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code> is used to obtain a distribution rule for supply and demand filtering for the availability calculations.
+						<br/>If  <b>
+                            <code>N</code>
+                        </b>, either the <code>DistributionRuleId</code> passed or the organization's default <code>DistributionRuleId</code>  is used to obtain a distribution rule for inventory availability. No supply or demand is read. Distribution drives inventory availability calculations.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderCurrentSlot" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>ConsiderCurrentSlot</code> flag indicates that system should consider the available capacity of the current slots, which the current timestamp falls under.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderSupplementalCapacity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>ConsiderSupplementalCapacity</code> flag indicates that supplemental capacity should also be considered when computing the availability of the resource pools which can serve the service lines.
+						<br/>If <code>ConsiderSupplementalCapacity</code> flag is not passed as <b>
+                            <code>Y</code>
+                        </b>, then the value of the <code>CanConsumeSupplementalCapacity</code> attribute of the customer (if existed) in the order will be used.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="DelayWindow" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The number of days specified in <code>DelayWindow</code> is counted from the day on which the API is run. If this attribute is not passed, then <code>Allowed_Shipment_Delay_Days</code> and the <code>Service_Search_Window</code> (for delivery sevice lines) specified by the allocation rules are used to determine the delay window.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreMinNotificationTime"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, minimum notification time will be ignored for product and services.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreProductLines" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for service lines.  Constraints with product lines will be ignored.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreServices" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						If set to Y, check will be made only for products being included on the work order.  If not passed, assumed N.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Count" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Determines the maximum number of possible solutions to find.  Increasing this value, might improve best solution found, but might impact the performance of this api.
+						<BR/>Default: <b>
+                            <code>10</code>
+                        </b>
+                        <Validation>
+                            <Condition>Valid positive integer.
+							</Condition>
+                            <Error
+                                Description="java.lang.NumberFormatException" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>
+                    <div>The node where the work order would be executed.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OptimizationType"
+            type="yfctype:EnumOptimizationType" use="optional">
+            <xsd:annotation yfc:columnName="OPTIMIZATION_TYPE" yfc:tableName="YFS_ALLOCATION_RULE">
+                <xsd:documentation>
+                    <div>
+				This value determines the optimization rules to be applied to the scheduling process.
+				<br/>Default: <b>
+                            <code>01</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestedCapacity" type="yfctype:Quantity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Capacity being requested. If not passed, it will be defaulted to requested capacity on existing appointment, if inquiring for an existing appointments.  For new appointment, if not passed, it will be defaulted to work order capacity that has not been allocated yet. For a single appointment work order, it is defaulted to the Requested Capacity on the work order. For a mutiple appointment work order it is set to the value getting passed. 
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestedVolume" type="yfctype:Quantity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Capacity being requested in the work order's volume unit of measure.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestedWeight" type="yfctype:Quantity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Capacity being requested in the work order's weight unit of measure.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ResourceId" type="yfctype:ID-24" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates Service Resource that should be used for capacity considerations. No other service resource will be considered if this attribute is passed.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates Resource Pool that should be used for capacity considerations. No other resource pool will be considered if this attribute is passed.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReturnMultipleSrvcSlots" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates if the API returns multiple service slots. If <code>
+                            <b>N</b>
+                        </code>is passed, the <code>Slots</code> element and its child elements are not returned.
+						<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ReturnSlotsWithUnavailableCapacity"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The <code>ReturnSlotsWithUnavailableCapacity</code> flag indicates that slots with unavailable capacity should be returned in the output XML.
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_KEY" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The primary key of the YFS_WORK_ORDER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Overrides">
+        <xsd:complexType>
+            <xsd:attribute name="ReqDeliveryDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The requested delivery date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OmittedWorkOrderLines">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			Contains information on the WorkOrder lines which are not to be considered while getting the options. 
+		</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderServiceLines"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderProdDeliveries"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLines">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			Contains information on the WorkOrder Service lines which are not to be considered while getting the options. 
+		</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderServiceLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLine">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+            <xsd:documentation>This table stores information about service lines included in the work order. Used only for PS/DS work orders.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The service line sequence number. Part of unique key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderServiceLineKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="WORK_ORDER_SERVICE_LINE_KEY" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>The primary key for the YFS_WORK_ORDER_SERVICE_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDeliveries">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			Contains information on the WorkOrder Product Delivery lines which are not to be considered while getting the options. 
+		</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderProdDelivery"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDelivery">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+            <xsd:documentation>This table stores information about service lines included in the work order. Used only for PS/DS work orders.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The product delivery sequence number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderProdDeliveryKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_PROD_DEL_KEY" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>The primary key for the YFS_WORK_ORDER_PROD_DEL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

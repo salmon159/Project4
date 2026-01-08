@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="yes" method="xml" version="1.0"/>
+    <xsl:strip-space elements="*"/>
+    <xsl:template match="/">
+        <xsl:variable name="FlowName" select="/Exception/@FlowName"/>
+        <xsl:variable name="ErrorTxnID" select="/Exception/@ERRORTXNID"/>
+        <xsl:variable
+                name="GetQuery">
+SELECT 
+  ERRORTXNID,
+  XMLCAST(XMLQUERY('$MSG/InventorySnapShot/ShipNode/Item/@ItemID'
+          PASSING XMLPARSE(DOCUMENT message) AS "MSG") AS VARCHAR(50)) AS ITEM_ID,
+  XMLCAST(XMLQUERY('$MSG/InventorySnapShot/ShipNode/Item/@LotNumber'
+          PASSING XMLPARSE(DOCUMENT message) AS "MSG") AS VARCHAR(50)) AS LOT_NUMBER,
+  XMLCAST(XMLQUERY('$MSG/InventorySnapShot/ShipNode/Item/@ItemID'
+          PASSING XMLPARSE(DOCUMENT message) AS "MSG") AS VARCHAR(50))
+  || '' ||
+  XMLCAST(XMLQUERY('$MSG/InventorySnapShot/ShipNode/Item/@LotNumber'
+          PASSING XMLPARSE(DOCUMENT message) AS "MSG") AS VARCHAR(50))
+  AS ITEMID_LOT
+FROM yfs_reprocess_error
+WHERE ERRORTXNID &gt; '<xsl:value-of
+                select="$ErrorTxnID"/>'
+  AND FLOW_NAME = '<xsl:value-of select="$FlowName"/>'
+ORDER BY createts DESC;
+        </xsl:variable>
+        <CustomSQL Query="{$GetQuery}"/>
+    </xsl:template>
+</xsl:stylesheet>

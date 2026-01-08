@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2011 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<!--getATP Input XML-->
+<!--Valid values for PeriodicalLength  0,1,2 only. -->
+<GetATP CalculateProjectedOnhandQty="" ConsiderAllNodes=""
+    ConsiderAllSegments="" ConsiderUnassignedDemand="" DemandType=""
+    DistributionRuleId="" EndDate="" ItemID="Required"
+    ItemOrganizationCode="" MinShipByDate="" OrganizationCode="Required"
+    PeriodicalLength="" ProductClass="" RequiredQty="" Segment=""
+    SegmentType="" ShipDate="" ShipNode="" UnitOfMeasure="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/getATP/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Flag" Name="CalculateProjectedOnhandQty">
+                <Description>
+                    <div>
+					Indicates whether to calculate projected OnhandQty. If <code>CalculateProjectedOnhandQty</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, projected OnhandQty  and accumulated Shortage will be calculated for each AvailableToPromiseInventory. When <code>CalculateProjectedOnhandQty</code> is passed as "Y" and the PeriodicalLength is passed as 0 - Daily, the AvailableToPromiseInventory periods will be broken down based on the date whenever there is any supply or demand.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderAllNodes">
+                <Description>
+                    <div>
+				  If passed as <b>
+                            <code>N</code>
+                        </b>, then either the <code>DistributionRuleId</code> passed or the calling organization's default <code>DistributionRuleId</code> is used for availability calculations.
+				  <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/> If passed as <code>Y</code> the availability check is done without applying any distribution rule filter.
+				  No particular distribution rule is used and all supplies and demand (even unassigned demands) for the item passed are considered.  No distribution rule is used to match supplies and demands for availability calculations.
+				  <br/> If passed as <code>Y</code>,  <code>DistributionRuleId</code> is  ignored, and <code>ConsiderUnassignedDemand</code> cannot be passed as <code>Y</code> or <code>N</code>. 
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderAllSegments">
+                <Description>
+                    <div>
+				Indicates whether all segment should be considered. If passed as Y, <code>SegmentType</code> and <code>Segment</code> are ignored.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ConsiderUnassignedDemand">
+                <Description>
+                    <div>
+					Indicates whether to use unassigned demand in the availability calculation. If <code>ConsiderUnassignedDemand</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, unassigned demands (demands without ship nodes) are also used in availability calculations. Unassigned demands are matched to supplies using the demand owner's default <code>DistributionRuleID</code> and not the calling organization's <code>DistributionRuleID</code>.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If <code>ConsiderAllNodes</code> is passed then this flag is ignored. 
+		
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="DemandType">
+                <Description>
+                    <div>
+			Each demand can be fulfilled by certain supply types. Pass <code>DemandType</code> if <code>RequiredQty</code> is passed. <code>getATP</code> checks when the specified  <code>RequiredQty</code> for the specified <code>DemandType</code> can be satisfied.   The value should be a valid <code>DemandType</code> defined in <code>YFS_INVENTORY_DEMAND_TYPE</code>.
+			<br/>Default: <b>
+                            <code>OPEN_ORDER</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Item_Ship_Node" Name="DistributionRuleId">
+                <Description>
+                    <div>
+				If passed, supplies and demands are read applying the distribution rule filter identified by this <code>DistributionRuleID</code>.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Date" Name="EndDate">
+                <Description>
+                    <div>
+			Pass <code>EndDate</code> to specify the lastest date for which availability information is required.
+			<br/>Default: ATP horizon. 
+			<Validation>
+                            <Condition>Must be a valid date
+			</Condition>
+                            <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ItemID"/>
+            <Attribute DataType="OrgCode" EntityName="Item"
+                Name="ItemOrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+			The catalog organization for the product.
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Date" Name="MinShipByDate">
+                <Description>
+                    <div>
+                The preferred minimum ship by date of the available supply.  Available supply with ship by date earlier than the minimum ship by date will not be considered. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="OrganizationCode">
+                <Description>
+                    <div>
+			Identifies an organization. Inventory rules are read for this organization's inventory consolidator.
+			<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be supplied, and must be a valid organizaton
+			</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-1" Name="PeriodicalLength">
+                <Description>
+                    <div>Indicates how availablity for the required quantity should be returned. 
+				<br/>Default: <b>
+                            <code>0</code>
+                        </b>
+                        <br/>Valid values:
+				 <br/>
+                        <b>
+                            <code>0</code>
+                        </b> -  daily, whenever there is any supply
+				 <br/>
+                        <b>
+                            <code>1</code>
+                        </b> - weekly, supply for the week is consolidated 
+				 <br/>
+                        <b>
+                            <code>2</code>
+                        </b> - monthly, supply for the whole month is consolidated
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ProductClass"/>
+            <Attribute DataType="Quantity" Name="RequiredQty">
+                <Description>
+                    <div>
+				Quantity being requested.
+				<br/>Default: <b>
+                            <code>0</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="CommonCode" Name="Segment">
+                <Description>
+                    <div>
+				Segment of inventory.   Supplies and Demands with matching <code>Segment</code> will be considered for availability calculations.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="SegmentType" Name="SegmentType">
+                <Description>
+                    <div>
+				Segment type of inventory.   Supplies and Demands with matching <code>SegmentType</code> will be considered for availability calculations.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Date" Name="ShipDate">
+                <Description>
+                    <div>
+				Not used.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ShipNode" Name="ShipNode">
+                <Description>
+                    <div>
+				Returns availability information for the <code>ShipNode</code> specified. If no <code>ShipNode</code> is passed, the <code>DistributionRuleId</code> passed is used for availability calculations (unless <code>ConsiderAllNodes</code> is set to <code>
+                            <b>Y</b>
+                        </code>)  or if the calling organization does not maintain sourcing then all nodes owned will be considered.
+				<Validation>
+                            <Condition>Must be a valid <code>ShipNode</code>
+                            </Condition>
+                            <Error Description="YFS:Invalid Ship Node." ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure"/>
+        </Attributes>
+    </yfc:doc>
+    <ItemFilter GetUnpublishedItems="N|Y" IgnoreInvalidItems="N|Y">
+        <yfc:doc>
+            <Element EntityName="Item">
+                <Description>Determines the filtering attributes when determining availability of a model item.
+				This can be used to specify the correct style, size, or color of a model item and only include
+				model children inventory whose item definition meet the required input.
+				<br/>Note: Only extended attributes of the YFS_ITEM table are supported.</Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Flag" Name="GetUnpublishedItems">
+                    <Description>Indicates if unpublished items needs to be considered.</Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="IgnoreInvalidItems">
+                    <Description>
+                        <div>
+					This flag indicates whether invalid items should be considered.
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+					Default value: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <PrimaryInformation ColorCode="" ItemType="" ManufacturerItem=""
+            ManufacturerName="" ProductLine="" SizeCode="">
+            <yfc:doc>
+                <Element EntityName="Item"/>
+            </yfc:doc>
+        </PrimaryInformation>
+        <ClassificationCodes CommodityCode="" ECCNNo=""
+            HarmonizedCode="" NAICSCode="" NMFCCode="" StorageType=""
+            TaxProductCode="" UNSPSC="" VelocityCode="">
+            <yfc:doc>
+                <Element EntityName="Item"/>
+            </yfc:doc>
+        </ClassificationCodes>
+    </ItemFilter>
+</GetATP>

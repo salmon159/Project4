@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageHoldType/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageHoldType/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageHoldType_input.xsd" yfc:rootElement="HoldType">
+        <xsd:appinfo source="yfc:structure">
+            <HoldType hasAttributes="Y">
+                <HoldTypeTransactionList>
+                    <HoldTypeTran hasAttributes="Y"/>
+                </HoldTypeTransactionList>
+                <HoldTypeModificationTypes>
+                    <HoldTypeModType hasAttributes="Y"/>
+                </HoldTypeModificationTypes>
+                <HoldTypeUserGroupList>
+                    <HoldTypeUserGroup hasAttributes="Y"/>
+                </HoldTypeUserGroupList>
+            </HoldType>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="HoldType" type="yfc:HoldTypeXSDType">
+        <xsd:annotation yfc:tableName="YFS_HOLD_TYPE">
+            <xsd:documentation>
+                <div>
+				Identify <code>HoldType</code> to be created, modified or deleted.  <code>HoldTypeKey</code> or a combination of  <code>HoldType</code>, <code>OrganizationCode</code> and <code>ProcessTypeKey</code> attributes can be used to identify a <code>HoldType</code>.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="HoldTypeXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HoldTypeTransactionList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HoldTypeModificationTypes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HoldTypeUserGroupList"/>
+        </xsd:all>
+        <xsd:attribute name="ApplyOnResolveOfHoldTypeKey"
+            type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="APPLY_ON_RESOLVE_OF_HT_KEY" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>Value of another hold type key that is being resolved. Apply this hold type when specified hold is resolved.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BaseProcessTypeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="BASE_PROCESS_TYPE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>Base Process type for which the transaction is available for the hold type. 
+				<div>
+                        <Validation>
+                            <Condition>Mandatory if creating a new hold type.</Condition>
+                            <Error
+                                Description="Invalid BaseProcessTypeKey." ErrorCode="YCP0271"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Must be a valid Base Process Type in the <code>YFS_BASE_PROCESS_TYPE</code> table.
+				</Condition>
+                            <Error
+                                Description="Invalid BaseProcessTypeKey." ErrorCode="YCP0271"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CanAllUsersCreateHoldType"
+            type="yfctype:EnumCanAllCreateHoldType" use="optional">
+            <xsd:annotation yfc:columnName="CAN_ALL_CREATE_HOLD_TYPE" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>This field indicates if all the users can create the hold type. Valid values are, Y: Indicates that any user can create the hold type, N: Indicates that only cerrtain users can create the hold type.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CanAllUsersResolveHoldType"
+            type="yfctype:EnumCanAllResolveHoldType" use="optional">
+            <xsd:annotation yfc:columnName="CAN_ALL_RESOLVE_HOLD_TYPE" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>This field indicates if all the users can resolve or reject the hold type. Valid values are, Y: Indicates that any user can resolve or reject the hold type, N: Indicates that only cerrtain users can resolve or reject the hold type.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CanResolveOnCancel" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="CAN_RESOLVE_ON_CANCEL" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>This field indicates if hold is resolved on cancellation of order,line. Valid value is N or Y. Default value is N.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:DocumentType" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Mandatory if creating a new hold type.</Condition>
+                            <Error Description="Invalid Document Type." ErrorCode="YCP0029"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Must be a valid document type in  <code>YFS_DOCUMENT_PARAMS</code> table.
+					</Condition>
+                            <Error Description="Invalid Document Type." ErrorCode="YCP0029"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldLevel" type="yfctype:HoldLevel" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_LEVEL" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>Indicates whether header level hold or line level. Possible values: ORDER, ORDER_LINE. Default value is ORDER for Base Process Type 'ORDER_FULFILLMENT'.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldType" type="yfctype:CodeType" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Mandatory if creating a new hold type.</Condition>
+                            <Error Description="Hold type is mandatory." ErrorCode="YCP0233"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldTypeDescription"
+            type="yfctype:Description-40" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_TYPE_DESCRIPTION" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>The hold type Description.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldTypeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_TYPE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>The primary key attribute of YFS_HOLD_TYPE.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					   This attribute specifies the kind of operation to be done.  
+			<br/>Valid Values: 
+				<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - To create a <code>HoldType</code>
+                        <br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+				<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - To delete a  <code>HoldType</code>
+                        <br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Mandatory if creating a new hold type.</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Must be a valid organization in the <code>YFS_ORGANIZATION</code> table.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessTransactionId"
+            type="yfctype:TransactionID" use="optional">
+            <xsd:annotation yfc:columnName="PROCESS_TRANSACTION_ID" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Must be a valid transaction in the <code>YFS_TRANSACTION</code> table.
+					</Condition>
+                            <Error Description="Invalid Transaction ID." ErrorCode="YCP0068"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RejectTransactionId"
+            type="yfctype:TransactionID" use="optional">
+            <xsd:annotation yfc:columnName="REJECT_TRANSACTION_ID" yfc:tableName="YFS_HOLD_TYPE">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>Must be a valid transaction in the <code>YFS_TRANSACTION</code> table.
+					</Condition>
+                            <Error Description="Invalid Transaction ID." ErrorCode="YCP0068"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="HoldTypeTransactionList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HoldTypeTran"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HoldTypeTran">
+        <xsd:annotation yfc:tableName="YFS_HOLD_TYPE_TRAN">
+            <xsd:documentation>
+                <div>
+				Identify <code>HoldTypeTran</code> to be created/modified/deleted for a hold type.  <code>HoldTypeTranKey</code> or  <code>TransactionId</code>can be used to identify a <code>HoldTypeTran</code>. <code>TransactionId</code> is mandatory when <code>Operation</code> is Create.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="HoldTypeTranKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_TYPE_TRAN_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_TRAN">
+                    <xsd:documentation>Primary key attribute of YFS_HOLD_TYPE_TRAN.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   This attribute specifies the kind of operation to be done.  
+			<br/>Valid Values: 
+				<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - To associate a transaction to <code>HoldType</code>
+                            <br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+				<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - To de-associate a transaction to <code>HoldType</code>
+                            <br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Purpose" type="yfctype:EnumPurpose4" use="optional">
+                <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_HOLD_TYPE_TRAN">
+                    <xsd:documentation>The purpose of the association in between the transaction and the hold type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionId"
+                type="yfctype:TransactionID" use="optional">
+                <xsd:annotation yfc:columnName="TRANSACTION_ID"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_TRAN">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>Mandatory if creating a new hold type.</Condition>
+                                <Error
+                                    Description="Invalid Transaction ID." ErrorCode="YCP0068"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Must be a valid transaction in the <code>YFS_TRANSACTION</code> table.
+					</Condition>
+                                <Error
+                                    Description="Invalid Transaction ID." ErrorCode="YCP0068"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HoldTypeModificationTypes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HoldTypeModType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HoldTypeModType">
+        <xsd:annotation yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+            <xsd:documentation>
+                <div>
+				Identify modification type for a hold type to be created/modified/deleted for a hold type.  <code>HoldTypeModTypeKey</code> or  a combination of <code>ModificationLevel</code>, <code>ModificationType</code> and <code>ProcessTypeKey</code> can be used to identify a modification type for a hold type. 
+						<Validation>
+                        <Condition>Combination of <code>ModificationLevel</code>,<code>ModificationType</code> and  <code>ProcessTypeKey</code> should be valid and should exist in <code>YFS_STATUS_MODIFICATION_TYPE</code> table. </Condition>
+                        <Error
+                            Description="Setup for order modification permissions missing." ErrorCode="YFS10136"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="HoldTypeModTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_TYPE_MOD_TYPE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+                    <xsd:documentation>Primary key attribute of YFS_HOLD_TYPE_MOD_TYPE.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModificationLevel"
+                type="yfctype:ModificationLevel" use="optional">
+                <xsd:annotation yfc:columnName="MODIFICATION_LEVEL"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+                    <xsd:documentation>The level at which a modification is defined. For example, header, line, or release.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModificationType"
+                type="yfctype:ModificationType" use="optional">
+                <xsd:annotation yfc:columnName="MODIFICATION_TYPE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+                    <xsd:documentation>Modification type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   This attribute specifies the kind of operation to be done.  
+			<br/>Valid Values: 
+				<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - To associate a modification type to <code>HoldType</code>
+                            <br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+				<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - To de-associate a modification type to <code>HoldType</code>
+                            <br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProcessTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PROCESS_TYPE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+                    <xsd:documentation>Primary key of the process type associated with a paricular modification type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Purpose" type="yfctype:EnumPurpose3" use="optional">
+                <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_HOLD_TYPE_MOD_TYPE">
+                    <xsd:documentation>The purpose of the association in between the modification type and the hold type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HoldTypeUserGroupList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:HoldTypeUserGroup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HoldTypeUserGroup">
+        <xsd:annotation yfc:tableName="YFS_HOLD_TYPE_USER_GROUP">
+            <xsd:documentation>This table stores the permissions of user groups for each hold type.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="HoldTypeUserGroupKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="HOLD_TYPE_USER_GROUP_KEY" yfc:tableName="YFS_HOLD_TYPE_USER_GROUP">
+                    <xsd:documentation>Primary key attribute of YFS_HOLD_TYPE_USER_GROUP.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   This attribute specifies the kind of operation to be done.  
+			<br/>Valid Values: 
+				<br/>
+                            <b>
+                                <code>Create</code>
+                            </b> - To define permission for a user group - hold type.
+				<br/>
+                            <b>
+                                <code>Modify</code>
+                            </b> - Change values in an existing record.
+				<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - To remove permission for a user group - hold type.
+			<br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Permission"
+                type="yfctype:EnumPermission" use="optional">
+                <xsd:annotation yfc:columnName="PERMISSION" yfc:tableName="YFS_HOLD_TYPE_USER_GROUP">
+                    <xsd:documentation>This field indicates the permission a user group has for the hold type. Valid values are, APPLY: Indicates that the user group can create this hold on transactional entity, RESOLVE: Indicates that the user group can resolve or reject the hold.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UsergroupId" type="yfctype:UserGroup" use="optional">
+                <xsd:annotation yfc:columnName="USERGROUP_ID" yfc:tableName="YFS_HOLD_TYPE_USER_GROUP">
+                    <xsd:documentation>A unique identifier to the user group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

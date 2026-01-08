@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/manageEntitlementRuleAssignment/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/manageEntitlementRuleAssignment/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YFS_manageEntitlementRuleAssignment_input.xsd" yfc:rootElement="EntitlementRuleAssignmentList">
+        <xsd:appinfo source="yfc:structure">
+            <EntitlementRuleAssignmentList hasAttributes="Y">
+                <EntitlementRuleAssignment hasAttributes="Y"/>
+            </EntitlementRuleAssignmentList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="EntitlementRuleAssignmentList" type="yfc:EntitlementRuleAssignmentListXSDType">
+        <xsd:annotation yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+            <xsd:documentation>
+                <div>List of entitlement rule assignments.
+					<Validation>
+                        <Condition>
+							Both <code>EntitlementRuleKey</code> and <code>OrganizationCode</code> must be passed.
+			            </Condition>
+                        <Error
+                            Description="Mandatory parameters for the operation are missing" ErrorCode="YCM0002"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="EntitlementRuleAssignmentListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EntitlementRuleAssignment"/>
+        </xsd:sequence>
+        <xsd:attribute name="EntitlementRuleKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="ENTITLEMENT_RULE_HDR_KEY" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div> The entitlement rule that is assigned to the customer.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                <xsd:documentation>
+                    <div> The organization that maintains the entitlement rule assignment.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> If <code>Reset</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, the old entitlement rule assignments for the organization specified in <code>OrganizationCode</code> 
+				are removed	and replaced with the new ones. If <code>Reset</code> is not passed or <code>Reset</code> is passed as
+				<b>
+                            <code>N</code>
+                        </b>, only the deltas are applied. 
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="EntitlementRuleAssignment">
+        <xsd:annotation yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+            <xsd:documentation>
+                <div>
+						Information on the assignments of item entitlement rules to customers. When creating selling entitlement rules, only <code>AssignedToOrganizationCode</code>
+						should be passed in. The customer attributes should only be passed in for customer entitlements
+						<Validation>
+                        <Condition>
+								If creating a selling entitlement rule and <code>AssignedToOrganizationCode</code> is not provided or any customer attributes are provided
+							</Condition>
+                        <Error
+                            Description="Only AssignedToOrganizationCode must be passed in for selling entitlements." ErrorCode="YCM83_009"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AssignedToOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ASSIGN_TO_ORGANIZATION_CODE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>
+                        <div>The organization that the selling entitlement rule is assigned to. 
+						<Validation>
+                                <Condition>Organization specified in <code>AssignedToOrganizationCode</code> field is not a valid sub-catalog organization of the catalog organization specified in <code>OrganizationCode</code>.
+							</Condition>
+                                <Error
+                                    Description="Invalid sub-catalog organization" ErrorCode="YCM83_007"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>AssignedToOrganizationCode</code> is the sub-catalog organization that owns the category being entitled.
+							</Condition>
+                                <Error
+                                    Description="Can't assign entitlement based on a category to a sub-catalog organization that owns the category." ErrorCode="YCM83_010"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerID" type="yfctype:CustomerId" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The identifier of the customer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerLevel" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_LEVEL" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>Level of customer membership (Gold, Tin, Platinum, etc.).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerType" type="yfctype:Text-2" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_TYPE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>
+                        <div>
+							The type of customer.
+							<br/> Valid Values:
+							<br/> 01 - for B2B customer
+							<br/> 02 - for B2C customer
+							<br/> 03 - for anonymous customer
+							<br/> 04 - for everyone
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntitlementRuleAssignmentKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ENTITLE_RULE_ASSIGNMENT_KEY" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The primary key of the YFS_ENTITLE_RULE_ASSIGNMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:ID-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							The action that is to be performed during
+							the invocation of this API.
+							<br/>
+							Valid values:
+							<b>
+                                <code>Create</code>
+                            </b>,
+							<b>
+                                <code>Modify</code>
+                            </b>, or
+							<b>
+                                <code>Delete</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Region" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REGION_KEY" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>Region to which entitlement rule is assigned.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RelationshipType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="RELATIONSHIP_TYPE" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The type of the relationship that exists between an organization and an enterprise (distributor, retailer, reseller, etc.).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Vertical" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="VERTICAL" yfc:tableName="YFS_ENTITLE_RULE_ASSIGNMENT">
+                    <xsd:documentation>The vertical customer belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

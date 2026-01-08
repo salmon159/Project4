@@ -1,0 +1,3370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<!--<xsl:param name="scwc:ValueMapsData" />
+	<xsl:output method="xml" encoding="UTF-8" indent="yes" xalan:indent-amount="2" />
+	<xsl:strip-space elements="*" />-->
+	<xsl:template match="/">
+		<!--<xsl:variable name="enterpriseCode">
+			<xsl:value-of select="/Order/@EnterpriseCode" />
+		</xsl:variable>-->
+		<!--<xsl:variable name="storeCode">
+			<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'storeIdToOrganizationCode', $enterpriseCode)" />
+		</xsl:variable>-->
+		<!--<Root>-->
+		<Order>
+			<xsl:attribute name="AuthorizedClient">
+				<xsl:value-of select="/Order/@AuthorizedClient"/>
+			</xsl:attribute>
+			<xsl:attribute name="EntryType">
+				<xsl:value-of select="/Order/@EntryType"/>
+			</xsl:attribute>
+			<!-->
+			<xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="$storeCode"/>
+			</xsl:attribute>-->
+            <xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="/Order/@EnterpriseCode"/>
+			</xsl:attribute>
+			<!--<xsl:attribute name="SellerOrganizationCode">
+					<xsl:value-of select="$storeCode" />
+				</xsl:attribute>-->
+			<xsl:attribute name="SellerOrganizationCode">
+				<xsl:value-of select="/Order/@EnterpriseCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="/Order/@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderDate">
+				<xsl:value-of select="/Order/@OrderDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderHeaderKey">
+				<xsl:value-of select="/Order/@OrderHeaderKey"/>
+			</xsl:attribute>
+			<xsl:attribute name="DocumentType">
+				<xsl:value-of select="/Order/@DocumentType"/>
+			</xsl:attribute>
+			<xsl:attribute name="OverallStatus">
+				<xsl:value-of select="/Order/@OverallStatus"/>
+			</xsl:attribute>
+			<xsl:attribute name="Modifyts">
+				<xsl:value-of select="/Order/@Modifyts"/>
+			</xsl:attribute>
+			<xsl:attribute name="Createts">
+				<xsl:value-of select="/Order/@Createts"/>
+			</xsl:attribute>
+			<!-- Status Code Changes ></!-->
+			<xsl:variable name="varMaxOrderStatus">
+				<xsl:value-of select="/Order/@MaxOrderStatus"/>
+			</xsl:variable>
+			<xsl:variable name="maxOrderStatus">
+				<xsl:choose>
+					<!--Added custom status explicitly only for Customer Picked up the Order -->
+					<xsl:when test="$varMaxOrderStatus='3700.7777.100'">3700.7779</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$varMaxOrderStatus"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="varMinOrderStatus">
+				<xsl:value-of select="/Order/@MinOrderStatus"/>
+			</xsl:variable>
+			<xsl:variable name="minOrderStatus">
+				<xsl:choose>
+					<!--Added custom status explicitly only for Customer Picked up the Order -->
+					<xsl:when test="$varMinOrderStatus='3700.7777.100'">3700.7779</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$varMinOrderStatus"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="orderStatus">
+				<xsl:value-of select="/Order/@Status"/>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="$maxOrderStatus=$minOrderStatus">
+					<xsl:if test="number($maxOrderStatus) = number(9000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.650) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Out For Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.1000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Failed Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3350.270) >  number($maxOrderStatus)) or (number(3350.300) = number($maxOrderStatus)) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Processing'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number(3350.270) =  number($maxOrderStatus)  ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Ready For Customer Pick Up'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) >= number(3700) and (number($maxOrderStatus) != number(3700.600)) and (number($maxOrderStatus) != number(3700.650)) and (number($maxOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($maxOrderStatus)  ) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Shipped'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.600) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number($maxOrderStatus) = number(3700.7777)">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Delivered'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number($maxOrderStatus) = number(3700.7779) or ($orderStatus) = 'Customer Picked Up Order'">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Customer Picked Up Order'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02) ">
+						<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+							<xsl:variable name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test=" ($OrderType)='LIT' ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Cancelled'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:if test="number($maxOrderStatus) = number(3700.01)">
+											<xsl:value-of select="'Return Created'"/>
+										</xsl:if>
+										<xsl:if test="number($maxOrderStatus) = number(3700.02)">
+											<xsl:value-of select="'Return Received'"/>
+										</xsl:if>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test=" (number($maxOrderStatus) >= number(3700) and (number($maxOrderStatus) != number(3700.600)) and (number($maxOrderStatus) != number(3700.650)) and (number($maxOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($maxOrderStatus))     or  number($minOrderStatus) >= number(3700) and (number($minOrderStatus) != number(3700.600)) and (number($minOrderStatus) != number(3700.650)) and (number($minOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($minOrderStatus) ) ) and (number($minOrderStatus) != number(3350.200))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Shipped'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<!--Bhagya-Start :Status Code changes for the defect # 71138-->
+					<xsl:if test=" number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02) and (number($minOrderStatus) != number(3700.7777))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Delivered'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<!--Bhagya-End :Status Code changes for the defect # 71138-->
+					<xsl:if test="(number(3350.270) >  number($maxOrderStatus)) or (number(3350.270) >  number($minOrderStatus)) or (number(3350.300) = number($maxOrderStatus)) or (number(3350.300) =  number($minOrderStatus))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Processing'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.650) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Out For Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.1000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Failed Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3350.270)=  number($minOrderStatus)) or ((number(3350.270)=  number($maxOrderStatus)) and (number(3350.270)=  number($minOrderStatus)))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Ready For Customer Pick Up'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3700.7779)=  number($minOrderStatus)) or ((number(3700.7779)=  number($maxOrderStatus)) and (number(3700.7779)=  number($minOrderStatus))) or ($orderStatus) = 'Customer Picked Up Order'">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Customer Picked Up Order'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.600) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" (number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02)) and (number($minOrderStatus) = number(3700.01) or number($minOrderStatus) = number(3700.02)) ">
+						<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+							<xsl:variable name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test=" ($OrderType)='LIT' ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Cancelled'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:choose>
+											<xsl:when test="number($maxOrderStatus) = number(3700.01) or number($minOrderStatus) = number(3700.01)">
+												<xsl:value-of select="'Return Created'"/>
+											</xsl:when>
+											<xsl:when test="number($maxOrderStatus) = number(3700.02) or number($minOrderStatus) = number(3700.02)">
+												<xsl:value-of select="'Return Received'"/>
+											</xsl:when>
+											<xsl:otherwise/>
+										</xsl:choose>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+			<!-- Status Code Changes ></!-->
+			<xsl:attribute name="ScacAndService">
+				<xsl:value-of select="/Order/@ScacAndService"/>
+			</xsl:attribute>
+			<xsl:attribute name="IsShipComplete">
+				<xsl:choose>
+					<xsl:when test="normalize-space(/Order/@IsShipComplete)!=''">
+						<xsl:value-of select="/Order/@IsShipComplete"/>
+					</xsl:when>
+					<xsl:otherwise/>
+				</xsl:choose>
+			</xsl:attribute>
+			<!--<xsl:attribute name="CarrierServiceCode">
+					<xsl:variable name="scCarrierServiceCode" select="/Order/@CarrierServiceCode" />
+					<xsl:variable name="tempShipModeCode">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'carrierServiceCodeToShipModeCode', $scCarrierServiceCode)" />
+					</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="string-length(normalize-space($tempShipModeCode)) &gt; 0">
+							<xsl:value-of select="$tempShipModeCode" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$scCarrierServiceCode" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>-->
+			<xsl:attribute name="CarrierServiceCode">
+				<xsl:value-of select="/Order/@CarrierServiceCode"/>
+			</xsl:attribute>
+			<!--<xsl:attribute name="SCAC">
+					<xsl:variable name="scSCAC" select="/Order/@SCAC" />
+					<xsl:variable name="tempCarrier">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scacToCarrier', $scSCAC)" />
+					</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="string-length(normalize-space($tempCarrier)) &gt; 0">
+							<xsl:value-of select="$tempCarrier" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$scSCAC" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>-->
+			<xsl:attribute name="SCAC">
+				<xsl:value-of select="/Order/@SCAC"/>
+			</xsl:attribute>
+			<PriceInfo>
+				<!--<xsl:variable name="scCurrency" select="/Order/PriceInfo/@Currency" />
+					<xsl:variable name="wcCurrency">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scCurrencyToWcCurency', $scCurrency)" />
+					</xsl:variable>
+					<xsl:attribute name="Currency">
+						<xsl:choose>
+							<xsl:when test="string-length(normalize-space($wcCurrency)) &gt; 0">
+								<xsl:value-of select="$wcCurrency" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scCurrency" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<xsl:attribute name="EnterpriseCurrency">
+						<xsl:choose>
+							<xsl:when test="string-length(normalize-space($wcCurrency)) &gt; 0">
+								<xsl:value-of select="$wcCurrency" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scCurrency" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>-->
+				<xsl:attribute name="Currency">
+					<xsl:value-of select="/Order/PriceInfo/@Currency"/>
+				</xsl:attribute>
+				<xsl:attribute name="EnterpriseCurrency">
+					<xsl:value-of select="/Order/PriceInfo/@Currency"/>
+				</xsl:attribute>
+				<xsl:attribute name="ReportingConversionDate">
+					<xsl:value-of select="/Order/PriceInfo/@ReportingConversionDate"/>
+				</xsl:attribute>
+				<xsl:attribute name="ReportingConversionRate">
+					<xsl:value-of select="/Order/PriceInfo/@ReportingConversionRate"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalAmount">
+					<xsl:value-of select="/Order/PriceInfo/@TotalAmount"/>
+				</xsl:attribute>
+			</PriceInfo>
+			<OverallTotals>
+				<xsl:copy-of select="/Order/OverallTotals/@*"/>
+			</OverallTotals>
+			<CustomAttributes>
+				<xsl:attribute name="Decimal1">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal1"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalDiscount">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal2"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalShipping">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal3"/>
+				</xsl:attribute>
+				<xsl:attribute name="OrderSubTotal">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal4"/>
+				</xsl:attribute>
+				<xsl:attribute name="OrderTotal">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal5"/>
+				</xsl:attribute>
+			</CustomAttributes>
+			<OrderLines>
+				<xsl:variable name="orderLines" select="/Order/OrderLines"/>
+				<xsl:for-each select="$orderLines/OrderLine">
+					<!--<xsl:variable name="scShipNode">
+							<xsl:value-of select="@ShipNode" />
+						</xsl:variable>
+						<xsl:variable name="wcShipNode">
+							<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcShipNodeToscShipNode', $scShipNode)" />				    	
+						</xsl:variable>
+						<xsl:variable name="shipNode">
+							<xsl:choose>
+								<xsl:when test="string-length(normalize-space($wcShipNode)) &gt; 0">
+									<xsl:value-of select="$wcShipNode" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$scShipNode" />
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>	-->
+					<OrderLine>
+						<xsl:for-each select="@*">
+							<xsl:if test="(name() != 'CarrierServiceCode' or name() != 'SCAC' or name() != 'ShipNode' or name() != 'MaxLineStatus' ) or name() != 'MinLineStatus' or name()!='Status' ">
+								<xsl:attribute name="{name()}">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:if>
+						</xsl:for-each>
+						<!-- Status Code Changes/></!-->
+						<xsl:variable name="maxLineStatus">
+							<xsl:value-of select="@MaxLineStatus"/>
+						</xsl:variable>
+						<xsl:variable name="minLineStatus">
+							<xsl:value-of select="@MinLineStatus"/>
+						</xsl:variable>
+						<xsl:variable name="cOrderLineKey">
+							<xsl:value-of select="@OrderLineKey"/>
+						</xsl:variable>
+						<xsl:variable name="orderLineStatus">
+							<xsl:value-of select="@Status"/>
+						</xsl:variable>
+						<xsl:choose>
+							<xsl:when test="$maxLineStatus=$minLineStatus">
+								<xsl:if test=" number($maxLineStatus) = number(9000) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Cancelled'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.270) >  number($maxLineStatus)">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Processing'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.270) =  number($maxLineStatus)  ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Ready For Customer Pick Up'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.300) =  number($maxLineStatus)  ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Packed'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600)) and (number($maxLineStatus) != number(3700.650)) and (number($maxLineStatus) != number(3700.1000)) and (number(3700.7777) >number($maxLineStatus)  ) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Shipped'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Cancelled'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.650) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Out For Delivery'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.1000) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Failed Delivery'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.7777)">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Delivered'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test="number($maxLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Customer Picked Up Order'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test="number($maxLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.02)">
+									<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+										<xsl:for-each select="OrderLines/OrderLine">
+											<xsl:variable name="DerivedFromOrderLineKey">
+												<xsl:value-of select="@DerivedFromOrderLineKey"/>
+											</xsl:variable>
+											<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+												<xsl:variable name="cText3">
+													<xsl:value-of select="CustomAttributes/@Text3"/>
+												</xsl:variable>
+												<xsl:choose>
+													<xsl:when test=" ($cText3)='LIT'">
+														<xsl:attribute name="Status">
+															<xsl:value-of select="'Item Cancelled'"/>
+														</xsl:attribute>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:attribute name="Status">
+															<xsl:if test="number($maxLineStatus) = number(3700.01)">
+																<xsl:value-of select="'Return Created'"/>
+															</xsl:if>
+															<xsl:if test="number($maxLineStatus) = number(3700.02)">
+																<xsl:value-of select="'Return Received'"/>
+															</xsl:if>
+														</xsl:attribute>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:if>
+										</xsl:for-each>
+									</xsl:for-each>
+								</xsl:if>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:choose>
+									<xsl:when test="number(9000) =  number($maxLineStatus)">
+										<xsl:if test="number($minLineStatus) >= number(3350.300)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Packed'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number(3350.270)  >number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Order Processing'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number(3350.270) =number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Ready For Customer Pick Up'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number($minLineStatus) >= number(3700) and (number($minLineStatus) != number(3700.600)) and (number($minLineStatus) != number(3700.650)) and number($minLineStatus) != number(3700.1000)) and (number(3700.7777) >number($minLineStatus)  ) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Shipped'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.600) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Cancelled'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.650) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Out For Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.1000) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Failed Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.7777)">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Delivered'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="number($minLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Customer Picked Up Order'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="number($minLineStatus) = number(3700.01) or number($minLineStatus) = number(3700.02)">
+											<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+												<xsl:for-each select="OrderLines/OrderLine">
+													<xsl:variable name="DerivedFromOrderLineKey">
+														<xsl:value-of select="@DerivedFromOrderLineKey"/>
+													</xsl:variable>
+													<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+														<xsl:variable name="cText3">
+															<xsl:value-of select="CustomAttributes/@Text3"/>
+														</xsl:variable>
+														<xsl:choose>
+															<xsl:when test=" ($cText3)='LIT' ">
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:when>
+															<xsl:otherwise>
+																<xsl:attribute name="Status">
+																	<xsl:if test="number($minLineStatus) = number(3700.01)">
+																		<xsl:value-of select="'Return Created'"/>
+																	</xsl:if>
+																	<xsl:if test="number($minLineStatus) = number(3700.02)">
+																		<xsl:value-of select="'Return Received'"/>
+																	</xsl:if>
+																</xsl:attribute>
+															</xsl:otherwise>
+														</xsl:choose>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:for-each>
+										</xsl:if>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:if test=" number(3350.270) >  number($maxLineStatus) or number(3350.270) >  number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Order Processing'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number(3350.270)=  number($maxLineStatus) or number(3350.270) =  number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Ready For Customer Pick Up'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number($maxLineStatus) =  number(3350.300)  and number($minLineStatus) = number(3350.300)    ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Packed'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" (number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600))     and (number(3700.7777) >= number($maxLineStatus))     and  number($minLineStatus) >= number(3700) and (number($minLineStatus) != number(3700.600))     and (number(3700.7777) >number($minLineStatus) ) ) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Shipped'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Cancelled'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="(number($minLineStatus) = number(3700.01) or number($minLineStatus) = number(3700.02)) and (number($maxLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.02))">
+											<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+												<xsl:for-each select="OrderLines/OrderLine">
+													<xsl:variable name="DerivedFromOrderLineKey">
+														<xsl:value-of select="@DerivedFromOrderLineKey"/>
+													</xsl:variable>
+													<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+														<xsl:variable name="cText3">
+															<xsl:value-of select="CustomAttributes/@Text3"/>
+														</xsl:variable>
+														<xsl:choose>
+															<xsl:when test=" ($cText3)='LIT' ">
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:when>
+															<xsl:otherwise>
+																<xsl:attribute name="Status">
+																	<xsl:if test="number($minLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.01)">
+																		<xsl:value-of select="'Return Created'"/>
+																	</xsl:if>
+																	<xsl:if test="number($minLineStatus) = number(3700.02) or number($maxLineStatus) = number(3700.02)">
+																		<xsl:value-of select="'Return Received'"/>
+																	</xsl:if>
+																</xsl:attribute>
+															</xsl:otherwise>
+														</xsl:choose>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:for-each>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.650) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Out For Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.1000) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Failed Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Customer Picked Up Order'"/>
+											</xsl:attribute>
+										</xsl:if>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:otherwise>
+						</xsl:choose>
+						<!-- Status Code Changes/></!-->
+						<xsl:attribute name="ShipNode">
+							<xsl:value-of select="@ShipNode"/>
+						</xsl:attribute>
+						<!-- <xsl:choose>
+								<xsl:when test="@DeliveryMethod = 'PICK'">
+									<xsl:attribute name="CarrierServiceCode"/>
+								</xsl:when>
+								<xsl:otherwise> 
+								Commented for defect 34258-->
+						<!--<xsl:attribute name="CarrierServiceCode">
+								<xsl:variable name="scCarrierServiceCode" select="@CarrierServiceCode" />
+								<xsl:variable name="tempShipModeCode">
+									<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'carrierServiceCodeToShipModeCode', $scCarrierServiceCode)" />
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test="string-length(normalize-space($tempShipModeCode)) &gt; 0">
+										<xsl:value-of select="$tempShipModeCode" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$scCarrierServiceCode" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>-->
+						<xsl:attribute name="CarrierServiceCode">
+							<xsl:value-of select="@CarrierServiceCode"/>
+						</xsl:attribute>
+						<!-- </xsl:otherwise>
+							</xsl:choose> -->
+						<!--<xsl:attribute name="SCAC">
+								<xsl:variable name="scSCAC" select="@SCAC" />
+								<xsl:variable name="tempCarrier">
+									<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scacToCarrier', $scSCAC)" />
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test="string-length(normalize-space($tempCarrier)) &gt; 0">
+										<xsl:value-of select="$tempCarrier" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$scSCAC" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>-->
+						<xsl:attribute name="SCAC">
+							<xsl:value-of select="@SCAC"/>
+						</xsl:attribute>
+						<xsl:attribute name="OrderItemId">
+							<xsl:value-of select="Extn/@ExtnSellerLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ParentItemId">
+							<xsl:value-of select="Extn/@ExtnParentLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="Field2">
+							<xsl:value-of select="Extn/@ExtnField2"/>
+						</xsl:attribute>
+						<!--<xsl:variable name="scMaxLineStatus">
+								<xsl:value-of select="@MaxLineStatus" />
+							</xsl:variable>
+							<xsl:variable name="wcMaxLineStatus">
+								<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, 'DEFAULT', 'scStatusToWcStatus', $scMaxLineStatus)" />
+							</xsl:variable>
+							<xsl:attribute name="MaxLineStatus">
+								<xsl:value-of select="$wcMaxLineStatus" />@MaxLineStatus
+							</xsl:attribute>-->
+						<xsl:attribute name="MaxLineStatus">
+							<xsl:value-of select="@MaxLineStatus"/>
+						</xsl:attribute>
+						<!--<xsl:variable name="scMinLineStatus">
+								<xsl:value-of select="@MinLineStatus" />
+							</xsl:variable>
+							<xsl:variable name="wcMinLineStatus">
+								<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, 'DEFAULT', 'scStatusToWcStatus', $scMinLineStatus)" />
+							</xsl:variable>
+							<xsl:attribute name="MinLineStatus">
+								<xsl:value-of select="$wcMinLineStatus" />
+							</xsl:attribute>-->
+						<xsl:attribute name="MinLineStatus">
+							<xsl:value-of select="@MinLineStatus"/>
+						</xsl:attribute>
+						<xsl:attribute name="FulfillmentType">
+							<xsl:value-of select="@FulfillmentType"/>
+						</xsl:attribute>
+						<Item>
+							<xsl:attribute name="ItemID">
+								<xsl:value-of select="Item/@ItemID"/>
+							</xsl:attribute>
+							<xsl:attribute name="ItemShortDesc">
+								<xsl:value-of select="Item/@ItemShortDesc"/>
+							</xsl:attribute>
+							<!--<xsl:attribute name="UnitOfMeasure">
+									<xsl:variable name="itemQuantityUOM" select="Item/@UnitOfMeasure" />
+									<xsl:variable name="wcitemQuantityUOM">
+										<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcUOMToscUOM', $itemQuantityUOM)" />
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="string-length(normalize-space($wcitemQuantityUOM)) &gt; 0">
+											<xsl:value-of select="$wcitemQuantityUOM" />
+										</xsl:when>
+										<xsl:otherwise>C62</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>-->
+							<xsl:attribute name="UnitOfMeasure">
+								<xsl:value-of select="Item/@UnitOfMeasure"/>
+							</xsl:attribute>
+						</Item>
+						<CustomAttributes>
+							<xsl:attribute name="LineDiscount">
+								<xsl:value-of select="CustomAttributes/@Decimal2"/>
+							</xsl:attribute>
+							<xsl:attribute name="LineShipping">
+								<xsl:value-of select="CustomAttributes/@Decimal3"/>
+							</xsl:attribute>
+							<xsl:attribute name="LineSubTotal">
+								<xsl:value-of select="CustomAttributes/@Decimal4"/>
+							</xsl:attribute>
+						</CustomAttributes>
+						<xsl:if test="PersonInfoShipTo">
+							<PersonInfoShipTo>
+								<xsl:copy-of select="PersonInfoShipTo/@*"/>
+								<Extn>
+									<xsl:copy-of select="PersonInfoShipTo/Extn/@*"/>
+								</Extn>
+							</PersonInfoShipTo>
+						</xsl:if>
+						<xsl:if test="PersonInfoMarkFor">
+							<PersonInfoMarkFor>
+								<xsl:copy-of select="PersonInfoMarkFor/@*"/>
+							</PersonInfoMarkFor>
+						</xsl:if>
+						<LinePriceInfo>
+							<xsl:copy-of select="LinePriceInfo/@*"/>
+						</LinePriceInfo>
+						<xsl:if test="LineCharges">
+							<LineCharges>
+								<xsl:for-each select="LineCharges/LineCharge">
+									<LineCharge>
+										<xsl:copy-of select="@*"/>
+										<Extn>
+											<xsl:copy-of select="Extn/@*"/>
+										</Extn>
+									</LineCharge>
+								</xsl:for-each>
+							</LineCharges>
+						</xsl:if>
+						<xsl:if test="LineTaxes">
+							<LineTaxes>
+								<xsl:for-each select="LineTaxes/LineTax">
+									<LineTax>
+										<xsl:copy-of select="@*"/>
+									</LineTax>
+								</xsl:for-each>
+								<xsl:for-each select="LineTaxes/TaxSummary">
+									<TaxSummary>
+										<xsl:for-each select="TaxSummaryDetail">
+											<TaxSummaryDetail>
+												<xsl:copy-of select="@*"/>
+											</TaxSummaryDetail>
+										</xsl:for-each>
+									</TaxSummary>
+								</xsl:for-each>
+							</LineTaxes>
+						</xsl:if>
+						<xsl:if test="Instructions">
+							<Instructions>
+								<xsl:attribute name="NumberOfInstructions">
+									<xsl:value-of select="Instructions/@NumberOfInstructions"/>
+								</xsl:attribute>
+								<xsl:for-each select="Instructions/Instruction">
+									<Instruction>
+										<xsl:copy-of select="@*"/>
+										<xsl:copy-of select="*"/>
+									</Instruction>
+								</xsl:for-each>
+							</Instructions>
+						</xsl:if>
+						<xsl:if test="ComputedPrice">
+							<ComputedPrice>
+								<xsl:copy-of select="ComputedPrice/@*"/>
+							</ComputedPrice>
+						</xsl:if>
+						<xsl:if test="Awards">
+							<Awards>
+								<xsl:for-each select="Awards/Award">
+									<Award>
+										<xsl:copy-of select="@*"/>
+									</Award>
+								</xsl:for-each>
+							</Awards>
+						</xsl:if>
+						<xsl:if test="ProductItems">
+							<ProductItems>
+								<xsl:for-each select="ProductItems/ProductItem">
+									<ProductItem>
+										<xsl:copy-of select="@*"/>
+									</ProductItem>
+								</xsl:for-each>
+							</ProductItems>
+						</xsl:if>
+						<xsl:if test="References">
+							<References>
+								<xsl:for-each select="References/Reference">
+									<Reference>
+										<xsl:copy-of select="@*"/>
+									</Reference>
+								</xsl:for-each>
+							</References>
+						</xsl:if>
+						<xsl:if test="ShipmentLines">
+							<ShipmentLines>
+								<xsl:for-each select="ShipmentLines/ShipmentLine">
+									<Reference>
+										<xsl:copy-of select="@*"/>
+										<xsl:variable name="varScac">
+											<xsl:value-of select="Extn/@ExtnSCAC"/>
+										</xsl:variable>
+										<xsl:if test="Extn">
+											<xsl:attribute name="TrackingId">
+												<xsl:value-of select="Extn/@ExtnAWBNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="DispatchedDate">
+												<xsl:value-of select="Extn/@ExtnActualShipmentDate"/>
+											</xsl:attribute>
+											<xsl:attribute name="CarrierName">
+												<xsl:choose>
+													<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="Extn/@ExtnSCAC"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>
+										</xsl:if>
+									</Reference>
+								</xsl:for-each>
+							</ShipmentLines>
+						</xsl:if>
+						<xsl:if test="BundleParentLine">
+							<BundleParentLine>
+								<xsl:copy-of select="BundleParentLine/@*"/>
+							</BundleParentLine>
+						</xsl:if>
+						<xsl:if test="KitLines">
+							<KitLines>
+								<xsl:copy-of select="KitLines/@*"/>
+								<xsl:for-each select="KitLines/KitLine">
+									<KitLine>
+										<xsl:copy-of select="@*"/>
+										<KitLineTranQuantity>
+											<xsl:copy-of select="KitLineTranQuantity/@*"/>
+										</KitLineTranQuantity>
+									</KitLine>
+								</xsl:for-each>
+							</KitLines>
+						</xsl:if>
+						<xsl:if test="OrderLineReservations">
+							<OrderLineReservations>
+								<xsl:for-each select="OrderLineReservations/OrderLineReservation">
+									<OrderLineReservation>
+										<!--<xsl:variable name="scShipNode">
+												<xsl:value-of select="@Node" />
+											</xsl:variable>
+											<xsl:variable name="wcShipNode">
+												<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcShipNodeToscShipNode', $scShipNode)" />				    	
+											</xsl:variable>
+											<xsl:attribute name="Node">
+												<xsl:choose>
+													<xsl:when test="string-length(normalize-space($wcShipNode)) &gt; 0">
+														<xsl:value-of select="$wcShipNode" />
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="$scShipNode" />
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>-->
+										<xsl:attribute name="Node">
+											<xsl:value-of select="@Node"/>
+										</xsl:attribute>
+									</OrderLineReservation>
+								</xsl:for-each>
+							</OrderLineReservations>
+						</xsl:if>
+						<xsl:if test="OrderStatuses">
+							<xsl:variable name="varNon1400StatusQty">
+								<xsl:value-of select="OrderStatuses/OrderStatus[@Status!='1400' and @StatusQty > 0]/@StatusQty"/>
+							</xsl:variable>
+							<xsl:variable name="varOrderedQty">
+								<xsl:value-of select="@OrderedQty"/>
+							</xsl:variable>
+							<OrderStatuses>
+								<xsl:for-each select="OrderStatuses/OrderStatus">
+									<OrderStatus>
+										<xsl:copy-of select="@*"/>
+										<xsl:choose>
+											<xsl:when test="number(@Status) != number(1400) or $varNon1400StatusQty = ''">
+												<xsl:attribute name="StatusQty">
+													<xsl:value-of select="@StatusQty"/>
+												</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:attribute name="StatusQty">
+													<xsl:value-of select="number($varOrderedQty) - number($varNon1400StatusQty)"/>
+												</xsl:attribute>
+											</xsl:otherwise>
+										</xsl:choose>
+										<Details>
+											<xsl:copy-of select="Details/@*"/>
+										</Details>
+									</OrderStatus>
+								</xsl:for-each>
+							</OrderStatuses>
+						</xsl:if>
+						<!-- Order Line Apportionment Prices Added -->
+						<Extn>
+							<xsl:if test="Extn">
+								<xsl:copy-of select="Extn/@*"/>
+								<TitanGCLineDetailList>
+									<xsl:for-each select="Extn/TitanGCLineDetailList/TitanGCLineDetail">
+										<TitanGCLineDetail>
+											<xsl:attribute name="Amount">
+												<xsl:value-of select="@Amount"/>
+											</xsl:attribute>
+											<xsl:attribute name="Brand">
+												<xsl:value-of select="@Brand"/>
+											</xsl:attribute>
+											<xsl:attribute name="CardExpiry">
+												<xsl:value-of select="@CardExpiry"/>
+											</xsl:attribute>
+											<xsl:attribute name="GCLineDetailKey">
+												<xsl:value-of select="@GCLineDetailKey"/>
+											</xsl:attribute>
+											<xsl:attribute name="GiftCardNo">
+												<xsl:value-of select="@GiftCardNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="GiftCardPin">
+												<xsl:value-of select="@GiftCardPin"/>
+											</xsl:attribute>
+											<xsl:attribute name="IsActivated">
+												<xsl:value-of select="@IsActivated"/>
+											</xsl:attribute>
+											<xsl:attribute name="IsRedeemed">
+												<xsl:value-of select="@IsRedeemed"/>
+											</xsl:attribute>
+											<xsl:attribute name="ItemId">
+												<xsl:value-of select="@ItemId"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderLineKey">
+												<xsl:value-of select="@OrderLineKey"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderNo">
+												<xsl:value-of select="@OrderNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OriginalBatchNo">
+												<xsl:value-of select="@OriginalBatchNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OriginalTransactionId">
+												<xsl:value-of select="@OriginalTransactionId"/>
+											</xsl:attribute>
+											<xsl:attribute name="isHistory">
+												<xsl:value-of select="@isHistory"/>
+											</xsl:attribute>
+										</TitanGCLineDetail>
+									</xsl:for-each>
+								</TitanGCLineDetailList>
+							</xsl:if>
+						</Extn>
+						<!-- Order Line Apportionment Prices Added -->
+					</OrderLine>
+				</xsl:for-each>
+			</OrderLines>
+			<!-- If the shopper is a guest, we can get the mobile phone number from _ord:Order/_ord:OrderNotificationInfo-->
+			<xsl:if test="/Order/PersonInfoShipTo">
+				<PersonInfoShipTo>
+					<xsl:copy-of select="/Order/PersonInfoShipTo/@*"/>
+					<Extn>
+						<xsl:copy-of select="/Order/PersonInfoShipTo/Extn/@*"/>
+					</Extn>
+				</PersonInfoShipTo>
+			</xsl:if>
+			<xsl:if test="/Order/PersonInfoBillTo">
+				<PersonInfoBillTo>
+					<xsl:copy-of select="/Order/PersonInfoBillTo/@*"/>
+					<Extn>
+						<xsl:copy-of select="/Order/PersonInfoBillTo/Extn/@*"/>
+					</Extn>
+				</PersonInfoBillTo>
+			</xsl:if>
+			<xsl:if test="/Order/HeaderCharges">
+				<HeaderCharges>
+					<xsl:for-each select="HeaderCharges/HeaderCharge">
+						<HeaderCharge>
+							<xsl:copy-of select="@*"/>
+						</HeaderCharge>
+					</xsl:for-each>
+				</HeaderCharges>
+			</xsl:if>
+			<xsl:if test="/Order/HeaderTaxes">
+				<HeaderTaxes>
+					<xsl:for-each select="HeaderTaxes/HeaderTax">
+						<HeaderTax>
+							<xsl:copy-of select="@*"/>
+						</HeaderTax>
+					</xsl:for-each>
+					<xsl:for-each select="HeaderTaxes/TaxSummary">
+						<TaxSummary>
+							<xsl:for-each select="TaxSummaryDetail">
+								<TaxSummaryDetail>
+									<xsl:copy-of select="@*"/>
+								</TaxSummaryDetail>
+							</xsl:for-each>
+						</TaxSummary>
+					</xsl:for-each>
+				</HeaderTaxes>
+			</xsl:if>
+			<xsl:if test="/Order/Awards">
+				<Awards>
+					<xsl:for-each select="Awards/Award">
+						<Award>
+							<xsl:copy-of select="@*"/>
+						</Award>
+					</xsl:for-each>
+				</Awards>
+			</xsl:if>
+			<!-- ShipmentLine Added -->
+			<xsl:if test="/Order/Shipments">
+				<Shipments>
+					<xsl:for-each select="/Order/Shipments/Shipment">
+						<Shipment>
+							<xsl:variable name="varScac">
+								<xsl:value-of select="@SCAC"/>
+							</xsl:variable>
+							<xsl:attribute name="ShipmentNo">
+								<xsl:value-of select="@ShipmentNo"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderNo">
+								<xsl:value-of select="@OrderNo"/>
+							</xsl:attribute>
+							<!-- START: Adding Courier and Tracking# -->
+							<xsl:attribute name="CarrierName">
+								<xsl:choose>
+									<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@SCAC"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+							<xsl:attribute name="TrackingId">
+								<xsl:value-of select="@AirwayBillNo"/>
+							</xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="/Order/@EnterpriseCode='TITAN_US'">
+									<xsl:attribute name="TrackingURL">
+										<xsl:value-of select="concat('https://','','www.ups.com/','','track?','','loc=en_US','','&amp;requester=QUIC','&amp;tracknum=','',@AirwayBillNo,'','/')"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="TrackingURL">
+										<xsl:value-of select="@TrackingURL"/>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!--SFCC CHANGES FOR SHIPMENT TYPE START-->
+							<xsl:attribute name="ShipmentType">
+								<xsl:value-of select="@ShipmentType"/>
+							</xsl:attribute>
+							<!--SFCC CHANGES FOR SHIPMENT TYPE END-->
+							<!--SFCC CHANGES FOR TOTAL SHIPMENT AMOUNT START-->
+							<Extn>
+								<xsl:attribute name="ExtnTotalNetAmount">
+									<xsl:value-of select="Extn/@ExtnTotalNetAmount"/>
+								</xsl:attribute>
+							</Extn>
+							<!--SFCC CHANGE FOR TOTAL SHIPMENT AMOUNT END-->
+							<xsl:variable name="IsReturnOrderRefund">
+								<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail/@InvoiceType='RETURN'"/>
+							</xsl:variable>
+							<xsl:variable name="ReturnOrderRefundDate">
+								<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail[@InvoiceType='RETURN']/@DateInvoiced"/>
+							</xsl:variable>
+							<!-- START: Adding Courier and Tracking# -->
+							<xsl:variable name="StatusDateForReturnReceive">
+								<xsl:value-of select="ShipmentLines/ShipmentLine/OrderLine/OrderStatuses/OrderStatus[@Status='3700.02']/@StatusDate"/>
+							</xsl:variable>
+							<ShipmentLines>
+								<xsl:for-each select="ShipmentLines/ShipmentLine">
+									<ShipmentLine>
+										<xsl:attribute name="ItemID">
+											<xsl:value-of select="@ItemID"/>
+										</xsl:attribute>
+										<xsl:attribute name="OrderItemId">
+											<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+										</xsl:attribute>
+										<OrderLine>
+											<xsl:attribute name="PrimeLineNo">
+												<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+											</xsl:attribute>
+											<!--SFCC CHANGE START-->
+											<xsl:variable name="varPrimeLineNo">
+												<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+											</xsl:variable>
+											<xsl:for-each select="/Order/OrderLines/OrderLine[@PrimeLineNo = $varPrimeLineNo]">
+												<xsl:attribute name="OrderedQty">
+													<xsl:value-of select="@OrderedQty"/>
+												</xsl:attribute>
+												<PersonInfoShipTo>
+													<xsl:copy-of select="PersonInfoShipTo/@*"/>
+												</PersonInfoShipTo>
+												<ComputedPrice>
+													<xsl:copy-of select="ComputedPrice/@*"/>
+												</ComputedPrice>
+											</xsl:for-each>
+											<!--SFCC CHANGE END-->
+											<!-- <xsl:variable name="maxLineStatus">
+													<xsl:value-of select="OrderLine/@MaxLineStatus" />
+												</xsl:variable> -->
+											<xsl:variable name="minLineStatus">
+												<xsl:value-of select="OrderLine/@MinLineStatus"/>
+											</xsl:variable>
+											<xsl:variable name="cOrderLineKey">
+												<xsl:value-of select="OrderLine/@OrderLineKey"/>
+											</xsl:variable>
+											<xsl:variable name="ReturnReceiveStatusCode">
+												<xsl:value-of select="3700.02"/>
+											</xsl:variable>
+											<xsl:variable name="IsReturnOrderExist">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@Status=number($ReturnReceiveStatusCode)"/>
+											</xsl:variable>
+											<xsl:variable name="OrderLineStatus">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@StatusDescription"/>
+											</xsl:variable>
+											<xsl:variable name="ExtnSellerLineNo">
+												<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+											</xsl:variable>
+											<xsl:variable name="varNon1400StatusQty">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus[@Status!='1400' and @StatusQty > 0]/@StatusQty"/>
+											</xsl:variable>
+											<xsl:variable name="varOrderedQty">
+												<xsl:value-of select="OrderLine/@OrderedQty"/>
+											</xsl:variable>
+											<OrderStatuses>
+												<xsl:for-each select="OrderLine/OrderStatuses/OrderStatus">
+													<xsl:variable name="maxLineStatus">
+														<xsl:value-of select="@Status"/>
+													</xsl:variable>
+													<xsl:if test=" number($maxLineStatus) != number(3700.02)">
+														<OrderStatus>
+															<xsl:variable name="orderLineStatusDesc">
+																<xsl:value-of select="@StatusDescription"/>
+															</xsl:variable>
+															<xsl:if test=" number($maxLineStatus) = number(9000) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.270) >  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Order Processing'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.270) =  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Ready For Customer Pick Up'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.300) =  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Packed'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600)) and (number($maxLineStatus) != number(3700.650)) and (number($maxLineStatus) != number(3700.1000)) and (number(3700.7777) >number($maxLineStatus)  ) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Shipped'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.650) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Out For Delivery'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.1000) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Failed Delivery'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.7777)">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Delivered'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test="number($maxLineStatus) = number(3700.7779) or ($orderLineStatusDesc)='Customer Picked Up Order' ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Customer Picked Up Order'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.01) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Return Created'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.02) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Return Received'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:attribute name="Status">
+																<xsl:value-of select="@Status"/>
+															</xsl:attribute>
+															<xsl:attribute name="StatusDate">
+																<xsl:value-of select="@StatusDate"/>
+															</xsl:attribute>
+															<xsl:attribute name="StatusQty">
+																<xsl:value-of select="@StatusQty"/>
+															</xsl:attribute>
+															<xsl:choose>
+																<xsl:when test="number(@Status) != number(1400) or $varNon1400StatusQty = ''">
+																	<xsl:attribute name="StatusQty">
+																		<xsl:value-of select="@StatusQty"/>
+																	</xsl:attribute>
+																</xsl:when>
+																<xsl:otherwise>
+																	<xsl:attribute name="StatusQty">
+																		<xsl:value-of select="number($varOrderedQty) - number($varNon1400StatusQty)"/>
+																	</xsl:attribute>
+																</xsl:otherwise>
+															</xsl:choose>
+															<xsl:attribute name="TotalQuantity">
+																<xsl:value-of select="@TotalQuantity"/>
+															</xsl:attribute>
+														</OrderStatus>
+													</xsl:if>
+												</xsl:for-each>
+												<xsl:if test="$IsReturnOrderExist = 'true'">
+													<xsl:for-each select="/Order/ReturnOrders/ReturnOrder/OrderLines/OrderLine[@DerivedFromOrderLineKey=$cOrderLineKey]">
+														<xsl:variable name="OrderLineTotalQuantity">
+															<xsl:value-of select="@StatusQuantity"/>
+														</xsl:variable>
+														<xsl:variable name="QCPassQty">
+															<xsl:value-of select="References/Reference[@Name='QC Pass']/@Value"/>
+														</xsl:variable>
+														<xsl:for-each select="References/Reference">
+															<xsl:variable name="QCStatus">
+																<xsl:value-of select="@Name"/>
+															</xsl:variable>
+															<OrderStatus>
+																<xsl:choose>
+																	<xsl:when test="$QCStatus = 'QC Pass'">
+																		<xsl:attribute name="StatusDescription">
+																			<xsl:value-of select="'Refund Initiated'"/>
+																		</xsl:attribute>
+																		<xsl:choose>
+																			<xsl:when test="$IsReturnOrderRefund = 'true'">
+																				<xsl:attribute name="StatusQty">
+																					<xsl:value-of select="'0'"/>
+																				</xsl:attribute>
+																			</xsl:when>
+																			<xsl:otherwise>
+																				<xsl:attribute name="StatusQty">
+																					<xsl:value-of select="@Value"/>
+																				</xsl:attribute>
+																			</xsl:otherwise>
+																		</xsl:choose>
+																	</xsl:when>
+																	<xsl:otherwise>
+																		<xsl:attribute name="StatusDescription">
+																			<xsl:value-of select="'Refund Cancelled '"/>
+																		</xsl:attribute>
+																		<xsl:attribute name="StatusQty">
+																			<xsl:value-of select="@Value"/>
+																		</xsl:attribute>
+																	</xsl:otherwise>
+																</xsl:choose>
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'3700.02'"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusDate">
+																	<xsl:value-of select="$StatusDateForReturnReceive"/>
+																</xsl:attribute>
+																<xsl:attribute name="TotalQuantity">
+																	<xsl:value-of select="$OrderLineTotalQuantity"/>
+																</xsl:attribute>
+															</OrderStatus>
+														</xsl:for-each>
+														<xsl:if test="$IsReturnOrderRefund = 'true'">
+															<OrderStatus>
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Refund Processed'"/>
+																</xsl:attribute>
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'3950'"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusQty">
+																	<xsl:value-of select="$QCPassQty"/>
+																</xsl:attribute>
+																<xsl:attribute name="TotalQuantity">
+																	<xsl:value-of select="$OrderLineTotalQuantity"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusDate">
+																	<xsl:value-of select="$ReturnOrderRefundDate"/>
+																</xsl:attribute>
+															</OrderStatus>
+														</xsl:if>
+													</xsl:for-each>
+												</xsl:if>
+											</OrderStatuses>
+										</OrderLine>
+									</ShipmentLine>
+								</xsl:for-each>
+							</ShipmentLines>
+						</Shipment>
+					</xsl:for-each>
+				</Shipments>
+			</xsl:if>
+			<xsl:if test="/Order/ReturnOrders/ReturnOrder">
+				<ReturnOrders>
+					<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+						<ReturnOrder>
+							<xsl:variable name="maxOrderStatusRet">
+								<xsl:value-of select="@MaxOrderStatus"/>
+							</xsl:variable>
+							<xsl:variable name="minOrderStatusRet">
+								<xsl:value-of select="@MinOrderStatus"/>
+							</xsl:variable>
+							<xsl:attribute name="OrderNo">
+								<xsl:value-of select="@OrderNo"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderHeaderKey">
+								<xsl:value-of select="@OrderHeaderKey"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="number(3700) >= number($maxOrderStatusRet) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Processing'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:value-of select="@Status"/>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!-- Status Code Changes Return Order></!-->
+							<xsl:if test=" number($maxOrderStatusRet) = number(3700.01) or number($maxOrderStatusRet) = number(3700.02) ">
+								<xsl:variable name="OrderType">
+									<xsl:value-of select="@OrderType"/>
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test=" ($OrderType)='LIT' ">
+										<xsl:attribute name="Status">
+											<xsl:value-of select="'Order Cancelled'"/>
+										</xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="Status">
+											<xsl:value-of select="'Return Created'"/>
+										</xsl:attribute>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:if>
+							<!-- Status Code Changes ></!-->
+							<xsl:if test="ShipmentList/Shipment">
+								<Shipments>
+									<xsl:for-each select="ShipmentList/Shipment">
+										<Shipment>
+											<xsl:variable name="varScac">
+												<xsl:value-of select="@SCAC"/>
+											</xsl:variable>
+											<xsl:attribute name="ShipmentNo">
+												<xsl:value-of select="@ShipmentNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderNo">
+												<xsl:value-of select="@OrderNo"/>
+											</xsl:attribute>
+											<!-- START: Adding Courier and Tracking# -->
+											<xsl:attribute name="CarrierName">
+												<xsl:choose>
+													<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@SCAC"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>
+											<xsl:attribute name="TrackingId">
+												<xsl:value-of select="@AirwayBillNo"/>
+											</xsl:attribute>
+											<xsl:variable name="IsReturnOrderRefund">
+												<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail/@InvoiceType='RETURN'"/>
+											</xsl:variable>
+											<xsl:variable name="ReturnOrderRefundDate">
+												<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail[@InvoiceType='RETURN']/@DateInvoiced"/>
+											</xsl:variable>
+											<!-- START: Adding Courier and Tracking# -->
+											<xsl:variable name="StatusDateForReturnReceive">
+												<xsl:value-of select="ShipmentLines/ShipmentLine/OrderLine/OrderStatuses/OrderStatus[@Status='3950']/@StatusDate"/>
+											</xsl:variable>
+											<ShipmentLines>
+												<xsl:for-each select="ShipmentLines/ShipmentLine">
+													<ShipmentLine>
+														<xsl:attribute name="ItemID">
+															<xsl:value-of select="@ItemID"/>
+														</xsl:attribute>
+														<xsl:attribute name="OrderItemId">
+															<xsl:value-of select="OrderLine/Extn/@ExtnSOSellerLineNo"/>
+														</xsl:attribute>
+														<OrderLine>
+															<!-- <xsl:variable name="maxLineStatus">
+													<xsl:value-of select="OrderLine/@MaxLineStatus" />
+												</xsl:variable> -->
+															<xsl:variable name="ReturnReceiveStatusCode">
+																<xsl:value-of select="3900"/>
+															</xsl:variable>
+															<xsl:variable name="IsReturnOrderExist">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@Status=number($ReturnReceiveStatusCode)"/>
+															</xsl:variable>
+															<xsl:variable name="OrderLineTotalQuantity">
+																<xsl:value-of select="@StatusQuantity"/>
+															</xsl:variable>
+															<xsl:variable name="varOrderLineTotalQuantity">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@TotalQuantity"/>
+															</xsl:variable>
+															<xsl:variable name="QCPassQty">
+																<xsl:value-of select="OrderLine/References/Reference[@Name='QC Pass']/@Value"/>
+															</xsl:variable>
+															<xsl:variable name="minLineStatus">
+																<xsl:value-of select="OrderLine/@MinLineStatus"/>
+															</xsl:variable>
+															<xsl:variable name="cOrderLineKey">
+																<xsl:value-of select="OrderLine/@OrderLineKey"/>
+															</xsl:variable>
+															<xsl:variable name="OrderLineStatus">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@StatusDescription"/>
+															</xsl:variable>
+															<xsl:variable name="ExtnSellerLineNo">
+																<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+															</xsl:variable>
+															<xsl:attribute name="PrimeLineNo">
+																<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+															</xsl:attribute>
+															<xsl:copy-of select="OrderLine/Item"/>
+															<OrderStatuses>
+																<!-- RQM  25294 Return from Website Milestone and Status Related changes START-->
+																<xsl:for-each select="OrderLine/OrderStatuses/OrderStatus">
+																	<xsl:variable name="maxLineStatus">
+																		<xsl:value-of select="@Status"/>
+																	</xsl:variable>
+																	<xsl:if test=" number($maxLineStatus) = number(3350)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Created'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3700.100) and $IsReturnOrderExist = 'false'">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Received'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3900)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Received'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3950)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Processed'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="'0'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																</xsl:for-each>
+																<xsl:if test="$IsReturnOrderExist = 'true'">
+																	<xsl:for-each select="OrderLine/References/Reference">
+																		<xsl:variable name="QCStatus">
+																			<xsl:value-of select="@Name"/>
+																		</xsl:variable>
+																		<OrderStatus>
+																			<xsl:choose>
+																				<xsl:when test="$QCStatus = 'QC Pass' or $QCStatus = 'QC Damaged Refund'">
+																					<xsl:attribute name="StatusDescription">
+																						<xsl:value-of select="'Refund Initiated'"/>
+																					</xsl:attribute>
+																					<xsl:attribute name="StatusQty">
+																						<xsl:value-of select="@Value"/>
+																					</xsl:attribute>
+																				</xsl:when>
+																				<xsl:otherwise>
+																					<xsl:attribute name="StatusDescription">
+																						<xsl:value-of select="'Refund Cancelled'"/>
+																					</xsl:attribute>
+																					<xsl:attribute name="StatusQty">
+																						<xsl:value-of select="@Value"/>
+																					</xsl:attribute>
+																				</xsl:otherwise>
+																			</xsl:choose>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="'3700.02'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="$varOrderLineTotalQuantity"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="$StatusDateForReturnReceive"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:for-each>
+																</xsl:if>
+																<!-- RQM  25294 Return from Website Milestone and Status Related changes END-->
+															</OrderStatuses>
+														</OrderLine>
+													</ShipmentLine>
+												</xsl:for-each>
+											</ShipmentLines>
+										</Shipment>
+									</xsl:for-each>
+								</Shipments>
+							</xsl:if>
+							<xsl:if test="OrderStatuses">
+								<OrderStatuses>
+									<xsl:for-each select="OrderStatuses/OrderStatus">
+										<OrderStatus>
+											<xsl:copy-of select="@*"/>
+											<Details>
+												<xsl:copy-of select="Details/@*"/>
+											</Details>
+										</OrderStatus>
+									</xsl:for-each>
+								</OrderStatuses>
+							</xsl:if>
+						</ReturnOrder>
+					</xsl:for-each>
+				</ReturnOrders>
+			</xsl:if>
+			<xsl:if test="/Order/PaymentMethods">
+				<PaymentMethods>
+					<xsl:for-each select="/Order/PaymentMethods/PaymentMethod">
+						<PaymentMethod>
+							<xsl:for-each select="@*">
+								<xsl:if test="name() != 'PaymentType'">
+									<xsl:attribute name="{name()}">
+										<xsl:value-of select="."/>
+									</xsl:attribute>
+								</xsl:if>
+							</xsl:for-each>
+							<!--<xsl:attribute name="PaymentType">
+									<xsl:variable name="paymentType">
+										<xsl:value-of select="@PaymentType"/>
+									</xsl:variable>
+									<xsl:variable name="paymentTypeForMapping" select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, 'DEFAULT', 'wcPaymentMethodToSCPaymentType', $paymentType)"/>
+									<xsl:variable name="wcPaymentMethodValue">
+										<xsl:choose>
+											<xsl:when test="string-length($paymentTypeForMapping) &gt; 0">
+												<xsl:value-of select="$paymentTypeForMapping"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:value-of select="$paymentType"/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="$paymentType = 'CREDIT_CARD'">CREDIT_CARD</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="$wcPaymentMethodValue"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>-->
+							<xsl:attribute name="PaymentType">
+								<xsl:value-of select="@PaymentType"/>
+							</xsl:attribute>
+							<xsl:if test="PersonInfoBillTo">
+								<PersonInfoBillTo>
+									<xsl:copy-of select="PersonInfoBillTo/@*"/>
+									<Extn>
+										<xsl:copy-of select="PersonInfoBillTo/Extn/@*"/>
+									</Extn>
+								</PersonInfoBillTo>
+							</xsl:if>
+						</PaymentMethod>
+					</xsl:for-each>
+				</PaymentMethods>
+			</xsl:if>
+			<xsl:if test="/Order/OrderStatuses">
+				<OrderStatuses>
+					<xsl:for-each select="/Order/OrderStatuses/OrderStatus">
+						<OrderStatus>
+							<xsl:copy-of select="@*"/>
+							<Details>
+								<xsl:copy-of select="Details/@*"/>
+							</Details>
+						</OrderStatus>
+					</xsl:for-each>
+				</OrderStatuses>
+			</xsl:if>
+			<xsl:if test="/Order/Modifications/Modification/@ModificationType">
+				<Modifications>
+					<Modification>
+						<xsl:attribute name="ModificationType">
+							<xsl:value-of select="/Order/Modifications/Modification/@ModificationType"/>
+						</xsl:attribute>
+						<xsl:attribute name="ModificationAllowed">
+							<xsl:value-of select="/Order/Modifications/Modification/@ModificationAllowed"/>
+						</xsl:attribute>
+					</Modification>
+				</Modifications>
+			</xsl:if>
+		</Order>
+		<!--</Root>-->
+	</xsl:template>
+</xsl:stylesheet>
+
+
+
+
+###################################################################################################################################################
+###################################################################################################################################################
+
+
+
+
+
+
+
+
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<!--<xsl:param name="scwc:ValueMapsData" />
+	<xsl:output method="xml" encoding="UTF-8" indent="yes" xalan:indent-amount="2" />
+	<xsl:strip-space elements="*" />-->
+	<xsl:template match="/">
+		<!--<xsl:variable name="enterpriseCode">
+			<xsl:value-of select="/Order/@EnterpriseCode" />
+		</xsl:variable>-->
+		<!--<xsl:variable name="storeCode">
+			<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'storeIdToOrganizationCode', $enterpriseCode)" />
+		</xsl:variable>-->
+		<!--<Root>-->
+		<Order>
+			<xsl:attribute name="AuthorizedClient">
+				<xsl:value-of select="/Order/@AuthorizedClient"/>
+			</xsl:attribute>
+			<xsl:attribute name="EntryType">
+				<xsl:value-of select="/Order/@EntryType"/>
+			</xsl:attribute>
+			<!-->
+			<xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="$storeCode"/>
+			</xsl:attribute>-->
+            <xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="/Order/@EnterpriseCode"/>
+			</xsl:attribute>
+			<!--<xsl:attribute name="SellerOrganizationCode">
+					<xsl:value-of select="$storeCode" />
+				</xsl:attribute>-->
+			<xsl:attribute name="SellerOrganizationCode">
+				<xsl:value-of select="/Order/@EnterpriseCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="/Order/@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderDate">
+				<xsl:value-of select="/Order/@OrderDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderHeaderKey">
+				<xsl:value-of select="/Order/@OrderHeaderKey"/>
+			</xsl:attribute>
+			<xsl:attribute name="DocumentType">
+				<xsl:value-of select="/Order/@DocumentType"/>
+			</xsl:attribute>
+			<xsl:attribute name="OverallStatus">
+				<xsl:value-of select="/Order/@OverallStatus"/>
+			</xsl:attribute>
+			<xsl:attribute name="Modifyts">
+				<xsl:value-of select="/Order/@Modifyts"/>
+			</xsl:attribute>
+			<xsl:attribute name="Createts">
+				<xsl:value-of select="/Order/@Createts"/>
+			</xsl:attribute>
+			<!-- Status Code Changes ></!-->
+			<xsl:variable name="varMaxOrderStatus">
+				<xsl:value-of select="/Order/@MaxOrderStatus"/>
+			</xsl:variable>
+			<xsl:variable name="maxOrderStatus">
+				<xsl:choose>
+					<!--Added custom status explicitly only for Customer Picked up the Order -->
+					<xsl:when test="$varMaxOrderStatus='3700.7777.100'">3700.7779</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$varMaxOrderStatus"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="varMinOrderStatus">
+				<xsl:value-of select="/Order/@MinOrderStatus"/>
+			</xsl:variable>
+			<xsl:variable name="minOrderStatus">
+				<xsl:choose>
+					<!--Added custom status explicitly only for Customer Picked up the Order -->
+					<xsl:when test="$varMinOrderStatus='3700.7777.100'">3700.7779</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$varMinOrderStatus"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="orderStatus">
+				<xsl:value-of select="/Order/@Status"/>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="$maxOrderStatus=$minOrderStatus">
+					<xsl:if test="number($maxOrderStatus) = number(9000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.650) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Out For Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.1000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Failed Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3350.270) >  number($maxOrderStatus)) or (number(3350.300) = number($maxOrderStatus)) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Processing'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number(3350.270) =  number($maxOrderStatus)  ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Ready For Customer Pick Up'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) >= number(3700) and (number($maxOrderStatus) != number(3700.600)) and (number($maxOrderStatus) != number(3700.650)) and (number($maxOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($maxOrderStatus)  ) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Shipped'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.600) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number($maxOrderStatus) = number(3700.7777)">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Delivered'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="number($maxOrderStatus) = number(3700.7779) or ($orderStatus) = 'Customer Picked Up Order'">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Customer Picked Up Order'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02) ">
+						<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+							<xsl:variable name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test=" ($OrderType)='LIT' ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Cancelled'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:if test="number($maxOrderStatus) = number(3700.01)">
+											<xsl:value-of select="'Return Created'"/>
+										</xsl:if>
+										<xsl:if test="number($maxOrderStatus) = number(3700.02)">
+											<xsl:value-of select="'Return Received'"/>
+										</xsl:if>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test=" (number($maxOrderStatus) >= number(3700) and (number($maxOrderStatus) != number(3700.600)) and (number($maxOrderStatus) != number(3700.650)) and (number($maxOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($maxOrderStatus))     or  number($minOrderStatus) >= number(3700) and (number($minOrderStatus) != number(3700.600)) and (number($minOrderStatus) != number(3700.650)) and (number($minOrderStatus) != number(3700.1000)) and (number(3700.7777) >number($minOrderStatus) ) ) and (number($minOrderStatus) != number(3350.200))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Shipped'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<!--Bhagya-Start :Status Code changes for the defect # 71138-->
+					<xsl:if test=" number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02) and (number($minOrderStatus) != number(3700.7777))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Delivered'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<!--Bhagya-End :Status Code changes for the defect # 71138-->
+					<xsl:if test="(number(3350.270) >  number($maxOrderStatus)) or (number(3350.270) >  number($minOrderStatus)) or (number(3350.300) = number($maxOrderStatus)) or (number(3350.300) =  number($minOrderStatus))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Processing'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.650) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Out For Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.1000) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Failed Delivery'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3350.270)=  number($minOrderStatus)) or ((number(3350.270)=  number($maxOrderStatus)) and (number(3350.270)=  number($minOrderStatus)))">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Ready For Customer Pick Up'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="(number(3700.7779)=  number($minOrderStatus)) or ((number(3700.7779)=  number($maxOrderStatus)) and (number(3700.7779)=  number($minOrderStatus))) or ($orderStatus) = 'Customer Picked Up Order'">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Customer Picked Up Order'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" number($maxOrderStatus) = number(3700.600) ">
+						<xsl:attribute name="Status">
+							<xsl:value-of select="'Order Cancelled'"/>
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:if test=" (number($maxOrderStatus) = number(3700.01) or number($maxOrderStatus) = number(3700.02)) and (number($minOrderStatus) = number(3700.01) or number($minOrderStatus) = number(3700.02)) ">
+						<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+							<xsl:variable name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test=" ($OrderType)='LIT' ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Cancelled'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:choose>
+											<xsl:when test="number($maxOrderStatus) = number(3700.01) or number($minOrderStatus) = number(3700.01)">
+												<xsl:value-of select="'Return Created'"/>
+											</xsl:when>
+											<xsl:when test="number($maxOrderStatus) = number(3700.02) or number($minOrderStatus) = number(3700.02)">
+												<xsl:value-of select="'Return Received'"/>
+											</xsl:when>
+											<xsl:otherwise/>
+										</xsl:choose>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+			<!-- Status Code Changes ></!-->
+			<xsl:attribute name="ScacAndService">
+				<xsl:value-of select="/Order/@ScacAndService"/>
+			</xsl:attribute>
+			<xsl:attribute name="IsShipComplete">
+				<xsl:choose>
+					<xsl:when test="normalize-space(/Order/@IsShipComplete)!=''">
+						<xsl:value-of select="/Order/@IsShipComplete"/>
+					</xsl:when>
+					<xsl:otherwise/>
+				</xsl:choose>
+			</xsl:attribute>
+			<!--<xsl:attribute name="CarrierServiceCode">
+					<xsl:variable name="scCarrierServiceCode" select="/Order/@CarrierServiceCode" />
+					<xsl:variable name="tempShipModeCode">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'carrierServiceCodeToShipModeCode', $scCarrierServiceCode)" />
+					</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="string-length(normalize-space($tempShipModeCode)) &gt; 0">
+							<xsl:value-of select="$tempShipModeCode" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$scCarrierServiceCode" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>-->
+			<xsl:attribute name="CarrierServiceCode">
+				<xsl:value-of select="/Order/@CarrierServiceCode"/>
+			</xsl:attribute>
+			<!--<xsl:attribute name="SCAC">
+					<xsl:variable name="scSCAC" select="/Order/@SCAC" />
+					<xsl:variable name="tempCarrier">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scacToCarrier', $scSCAC)" />
+					</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="string-length(normalize-space($tempCarrier)) &gt; 0">
+							<xsl:value-of select="$tempCarrier" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$scSCAC" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>-->
+			<xsl:attribute name="SCAC">
+				<xsl:value-of select="/Order/@SCAC"/>
+			</xsl:attribute>
+			<PriceInfo>
+				<!--<xsl:variable name="scCurrency" select="/Order/PriceInfo/@Currency" />
+					<xsl:variable name="wcCurrency">
+						<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scCurrencyToWcCurency', $scCurrency)" />
+					</xsl:variable>
+					<xsl:attribute name="Currency">
+						<xsl:choose>
+							<xsl:when test="string-length(normalize-space($wcCurrency)) &gt; 0">
+								<xsl:value-of select="$wcCurrency" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scCurrency" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<xsl:attribute name="EnterpriseCurrency">
+						<xsl:choose>
+							<xsl:when test="string-length(normalize-space($wcCurrency)) &gt; 0">
+								<xsl:value-of select="$wcCurrency" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scCurrency" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>-->
+				<xsl:attribute name="Currency">
+					<xsl:value-of select="/Order/PriceInfo/@Currency"/>
+				</xsl:attribute>
+				<xsl:attribute name="EnterpriseCurrency">
+					<xsl:value-of select="/Order/PriceInfo/@Currency"/>
+				</xsl:attribute>
+				<xsl:attribute name="ReportingConversionDate">
+					<xsl:value-of select="/Order/PriceInfo/@ReportingConversionDate"/>
+				</xsl:attribute>
+				<xsl:attribute name="ReportingConversionRate">
+					<xsl:value-of select="/Order/PriceInfo/@ReportingConversionRate"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalAmount">
+					<xsl:value-of select="/Order/PriceInfo/@TotalAmount"/>
+				</xsl:attribute>
+			</PriceInfo>
+			<OverallTotals>
+				<xsl:copy-of select="/Order/OverallTotals/@*"/>
+			</OverallTotals>
+			<CustomAttributes>
+				<xsl:attribute name="Decimal1">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal1"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalDiscount">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal2"/>
+				</xsl:attribute>
+				<xsl:attribute name="TotalShipping">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal3"/>
+				</xsl:attribute>
+				<xsl:attribute name="OrderSubTotal">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal4"/>
+				</xsl:attribute>
+				<xsl:attribute name="OrderTotal">
+					<xsl:value-of select="/Order/CustomAttributes/@Decimal5"/>
+				</xsl:attribute>
+			</CustomAttributes>
+			<OrderLines>
+				<xsl:variable name="orderLines" select="/Order/OrderLines"/>
+				<xsl:for-each select="$orderLines/OrderLine">
+					<!--<xsl:variable name="scShipNode">
+							<xsl:value-of select="@ShipNode" />
+						</xsl:variable>
+						<xsl:variable name="wcShipNode">
+							<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcShipNodeToscShipNode', $scShipNode)" />				    	
+						</xsl:variable>
+						<xsl:variable name="shipNode">
+							<xsl:choose>
+								<xsl:when test="string-length(normalize-space($wcShipNode)) &gt; 0">
+									<xsl:value-of select="$wcShipNode" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$scShipNode" />
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>	-->
+					<OrderLine>
+						<xsl:for-each select="@*">
+							<xsl:if test="(name() != 'CarrierServiceCode' or name() != 'SCAC' or name() != 'ShipNode' or name() != 'MaxLineStatus' ) or name() != 'MinLineStatus' or name()!='Status' ">
+								<xsl:attribute name="{name()}">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:if>
+						</xsl:for-each>
+						<!-- Status Code Changes/></!-->
+						<xsl:variable name="maxLineStatus">
+							<xsl:value-of select="@MaxLineStatus"/>
+						</xsl:variable>
+						<xsl:variable name="minLineStatus">
+							<xsl:value-of select="@MinLineStatus"/>
+						</xsl:variable>
+						<xsl:variable name="cOrderLineKey">
+							<xsl:value-of select="@OrderLineKey"/>
+						</xsl:variable>
+						<xsl:variable name="orderLineStatus">
+							<xsl:value-of select="@Status"/>
+						</xsl:variable>
+						<xsl:choose>
+							<xsl:when test="$maxLineStatus=$minLineStatus">
+								<xsl:if test=" number($maxLineStatus) = number(9000) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Cancelled'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.270) >  number($maxLineStatus)">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Processing'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.270) =  number($maxLineStatus)  ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Ready For Customer Pick Up'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number(3350.300) =  number($maxLineStatus)  ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Packed'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600)) and (number($maxLineStatus) != number(3700.650)) and (number($maxLineStatus) != number(3700.1000)) and (number(3700.7777) >number($maxLineStatus)  ) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Shipped'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Cancelled'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.650) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Out For Delivery'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.1000) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Failed Delivery'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test=" number($maxLineStatus) = number(3700.7777)">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Item Delivered'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test="number($maxLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Customer Picked Up Order'"/>
+									</xsl:attribute>
+								</xsl:if>
+								<xsl:if test="number($maxLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.02)">
+									<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+										<xsl:for-each select="OrderLines/OrderLine">
+											<xsl:variable name="DerivedFromOrderLineKey">
+												<xsl:value-of select="@DerivedFromOrderLineKey"/>
+											</xsl:variable>
+											<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+												<xsl:variable name="cText3">
+													<xsl:value-of select="CustomAttributes/@Text3"/>
+												</xsl:variable>
+												<xsl:choose>
+													<xsl:when test=" ($cText3)='LIT'">
+														<xsl:attribute name="Status">
+															<xsl:value-of select="'Item Cancelled'"/>
+														</xsl:attribute>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:attribute name="Status">
+															<xsl:if test="number($maxLineStatus) = number(3700.01)">
+																<xsl:value-of select="'Return Created'"/>
+															</xsl:if>
+															<xsl:if test="number($maxLineStatus) = number(3700.02)">
+																<xsl:value-of select="'Return Received'"/>
+															</xsl:if>
+														</xsl:attribute>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:if>
+										</xsl:for-each>
+									</xsl:for-each>
+								</xsl:if>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:choose>
+									<xsl:when test="number(9000) =  number($maxLineStatus)">
+										<xsl:if test="number($minLineStatus) >= number(3350.300)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Packed'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number(3350.270)  >number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Order Processing'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number(3350.270) =number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Ready For Customer Pick Up'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number($minLineStatus) >= number(3700) and (number($minLineStatus) != number(3700.600)) and (number($minLineStatus) != number(3700.650)) and number($minLineStatus) != number(3700.1000)) and (number(3700.7777) >number($minLineStatus)  ) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Shipped'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.600) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Cancelled'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.650) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Out For Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.1000) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Failed Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.7777)">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Delivered'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="number($minLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Customer Picked Up Order'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="number($minLineStatus) = number(3700.01) or number($minLineStatus) = number(3700.02)">
+											<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+												<xsl:for-each select="OrderLines/OrderLine">
+													<xsl:variable name="DerivedFromOrderLineKey">
+														<xsl:value-of select="@DerivedFromOrderLineKey"/>
+													</xsl:variable>
+													<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+														<xsl:variable name="cText3">
+															<xsl:value-of select="CustomAttributes/@Text3"/>
+														</xsl:variable>
+														<xsl:choose>
+															<xsl:when test=" ($cText3)='LIT' ">
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:when>
+															<xsl:otherwise>
+																<xsl:attribute name="Status">
+																	<xsl:if test="number($minLineStatus) = number(3700.01)">
+																		<xsl:value-of select="'Return Created'"/>
+																	</xsl:if>
+																	<xsl:if test="number($minLineStatus) = number(3700.02)">
+																		<xsl:value-of select="'Return Received'"/>
+																	</xsl:if>
+																</xsl:attribute>
+															</xsl:otherwise>
+														</xsl:choose>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:for-each>
+										</xsl:if>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:if test=" number(3350.270) >  number($maxLineStatus) or number(3350.270) >  number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Order Processing'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number(3350.270)=  number($maxLineStatus) or number(3350.270) =  number($minLineStatus)   ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Ready For Customer Pick Up'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="  number($maxLineStatus) =  number(3350.300)  and number($minLineStatus) = number(3350.300)    ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Packed'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" (number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600))     and (number(3700.7777) >= number($maxLineStatus))     and  number($minLineStatus) >= number(3700) and (number($minLineStatus) != number(3700.600))     and (number(3700.7777) >number($minLineStatus) ) ) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Shipped'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Item Cancelled'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="(number($minLineStatus) = number(3700.01) or number($minLineStatus) = number(3700.02)) and (number($maxLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.02))">
+											<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+												<xsl:for-each select="OrderLines/OrderLine">
+													<xsl:variable name="DerivedFromOrderLineKey">
+														<xsl:value-of select="@DerivedFromOrderLineKey"/>
+													</xsl:variable>
+													<xsl:if test=" $DerivedFromOrderLineKey = $cOrderLineKey">
+														<xsl:variable name="cText3">
+															<xsl:value-of select="CustomAttributes/@Text3"/>
+														</xsl:variable>
+														<xsl:choose>
+															<xsl:when test=" ($cText3)='LIT' ">
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:when>
+															<xsl:otherwise>
+																<xsl:attribute name="Status">
+																	<xsl:if test="number($minLineStatus) = number(3700.01) or number($maxLineStatus) = number(3700.01)">
+																		<xsl:value-of select="'Return Created'"/>
+																	</xsl:if>
+																	<xsl:if test="number($minLineStatus) = number(3700.02) or number($maxLineStatus) = number(3700.02)">
+																		<xsl:value-of select="'Return Received'"/>
+																	</xsl:if>
+																</xsl:attribute>
+															</xsl:otherwise>
+														</xsl:choose>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:for-each>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.650) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Out For Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.1000) ">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Failed Delivery'"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test=" number($minLineStatus) = number(3700.7779) or ($orderLineStatus) = 'Customer Picked Up Order'">
+											<xsl:attribute name="Status">
+												<xsl:value-of select="'Customer Picked Up Order'"/>
+											</xsl:attribute>
+										</xsl:if>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:otherwise>
+						</xsl:choose>
+						<!-- Status Code Changes/></!-->
+						<xsl:attribute name="ShipNode">
+							<xsl:value-of select="@ShipNode"/>
+						</xsl:attribute>
+						<!-- <xsl:choose>
+								<xsl:when test="@DeliveryMethod = 'PICK'">
+									<xsl:attribute name="CarrierServiceCode"/>
+								</xsl:when>
+								<xsl:otherwise> 
+								Commented for defect 34258-->
+						<!--<xsl:attribute name="CarrierServiceCode">
+								<xsl:variable name="scCarrierServiceCode" select="@CarrierServiceCode" />
+								<xsl:variable name="tempShipModeCode">
+									<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'carrierServiceCodeToShipModeCode', $scCarrierServiceCode)" />
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test="string-length(normalize-space($tempShipModeCode)) &gt; 0">
+										<xsl:value-of select="$tempShipModeCode" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$scCarrierServiceCode" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>-->
+						<xsl:attribute name="CarrierServiceCode">
+							<xsl:value-of select="@CarrierServiceCode"/>
+						</xsl:attribute>
+						<!-- </xsl:otherwise>
+							</xsl:choose> -->
+						<!--<xsl:attribute name="SCAC">
+								<xsl:variable name="scSCAC" select="@SCAC" />
+								<xsl:variable name="tempCarrier">
+									<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, '', 'scacToCarrier', $scSCAC)" />
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test="string-length(normalize-space($tempCarrier)) &gt; 0">
+										<xsl:value-of select="$tempCarrier" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$scSCAC" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>-->
+						<xsl:attribute name="SCAC">
+							<xsl:value-of select="@SCAC"/>
+						</xsl:attribute>
+						<xsl:attribute name="OrderItemId">
+							<xsl:value-of select="Extn/@ExtnSellerLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ParentItemId">
+							<xsl:value-of select="Extn/@ExtnParentLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="Field2">
+							<xsl:value-of select="Extn/@ExtnField2"/>
+						</xsl:attribute>
+						<!--<xsl:variable name="scMaxLineStatus">
+								<xsl:value-of select="@MaxLineStatus" />
+							</xsl:variable>
+							<xsl:variable name="wcMaxLineStatus">
+								<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, 'DEFAULT', 'scStatusToWcStatus', $scMaxLineStatus)" />
+							</xsl:variable>
+							<xsl:attribute name="MaxLineStatus">
+								<xsl:value-of select="$wcMaxLineStatus" />@MaxLineStatus
+							</xsl:attribute>-->
+						<xsl:attribute name="MaxLineStatus">
+							<xsl:value-of select="@MaxLineStatus"/>
+						</xsl:attribute>
+						<!--<xsl:variable name="scMinLineStatus">
+								<xsl:value-of select="@MinLineStatus" />
+							</xsl:variable>
+							<xsl:variable name="wcMinLineStatus">
+								<xsl:value-of select="ValueMaps:getMapValue($scwc:ValueMapsData, 'DEFAULT', 'scStatusToWcStatus', $scMinLineStatus)" />
+							</xsl:variable>
+							<xsl:attribute name="MinLineStatus">
+								<xsl:value-of select="$wcMinLineStatus" />
+							</xsl:attribute>-->
+						<xsl:attribute name="MinLineStatus">
+							<xsl:value-of select="@MinLineStatus"/>
+						</xsl:attribute>
+						<xsl:attribute name="FulfillmentType">
+							<xsl:value-of select="@FulfillmentType"/>
+						</xsl:attribute>
+						<Item>
+							<xsl:attribute name="ItemID">
+								<xsl:value-of select="Item/@ItemID"/>
+							</xsl:attribute>
+							<xsl:attribute name="ItemShortDesc">
+								<xsl:value-of select="Item/@ItemShortDesc"/>
+							</xsl:attribute>
+							<!--<xsl:attribute name="UnitOfMeasure">
+									<xsl:variable name="itemQuantityUOM" select="Item/@UnitOfMeasure" />
+									<xsl:variable name="wcitemQuantityUOM">
+										<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcUOMToscUOM', $itemQuantityUOM)" />
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="string-length(normalize-space($wcitemQuantityUOM)) &gt; 0">
+											<xsl:value-of select="$wcitemQuantityUOM" />
+										</xsl:when>
+										<xsl:otherwise>C62</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>-->
+							<xsl:attribute name="UnitOfMeasure">
+								<xsl:value-of select="Item/@UnitOfMeasure"/>
+							</xsl:attribute>
+						</Item>
+						<CustomAttributes>
+							<xsl:attribute name="LineDiscount">
+								<xsl:value-of select="CustomAttributes/@Decimal2"/>
+							</xsl:attribute>
+							<xsl:attribute name="LineShipping">
+								<xsl:value-of select="CustomAttributes/@Decimal3"/>
+							</xsl:attribute>
+							<xsl:attribute name="LineSubTotal">
+								<xsl:value-of select="CustomAttributes/@Decimal4"/>
+							</xsl:attribute>
+						</CustomAttributes>
+						<xsl:if test="PersonInfoShipTo">
+							<PersonInfoShipTo>
+								<xsl:copy-of select="PersonInfoShipTo/@*"/>
+								<Extn>
+									<xsl:copy-of select="PersonInfoShipTo/Extn/@*"/>
+								</Extn>
+							</PersonInfoShipTo>
+						</xsl:if>
+						<xsl:if test="PersonInfoMarkFor">
+							<PersonInfoMarkFor>
+								<xsl:copy-of select="PersonInfoMarkFor/@*"/>
+							</PersonInfoMarkFor>
+						</xsl:if>
+						<LinePriceInfo>
+							<xsl:copy-of select="LinePriceInfo/@*"/>
+						</LinePriceInfo>
+						<xsl:if test="LineCharges">
+							<LineCharges>
+								<xsl:for-each select="LineCharges/LineCharge">
+									<LineCharge>
+										<xsl:copy-of select="@*"/>
+										<Extn>
+											<xsl:copy-of select="Extn/@*"/>
+										</Extn>
+									</LineCharge>
+								</xsl:for-each>
+							</LineCharges>
+						</xsl:if>
+						<xsl:if test="LineTaxes">
+							<LineTaxes>
+								<xsl:for-each select="LineTaxes/LineTax">
+									<LineTax>
+										<xsl:copy-of select="@*"/>
+									</LineTax>
+								</xsl:for-each>
+								<xsl:for-each select="LineTaxes/TaxSummary">
+									<TaxSummary>
+										<xsl:for-each select="TaxSummaryDetail">
+											<TaxSummaryDetail>
+												<xsl:copy-of select="@*"/>
+											</TaxSummaryDetail>
+										</xsl:for-each>
+									</TaxSummary>
+								</xsl:for-each>
+							</LineTaxes>
+						</xsl:if>
+						<xsl:if test="Instructions">
+							<Instructions>
+								<xsl:attribute name="NumberOfInstructions">
+									<xsl:value-of select="Instructions/@NumberOfInstructions"/>
+								</xsl:attribute>
+								<xsl:for-each select="Instructions/Instruction">
+									<Instruction>
+										<xsl:copy-of select="@*"/>
+										<xsl:copy-of select="*"/>
+									</Instruction>
+								</xsl:for-each>
+							</Instructions>
+						</xsl:if>
+						<xsl:if test="ComputedPrice">
+							<ComputedPrice>
+								<xsl:copy-of select="ComputedPrice/@*"/>
+							</ComputedPrice>
+						</xsl:if>
+						<xsl:if test="Awards">
+							<Awards>
+								<xsl:for-each select="Awards/Award">
+									<Award>
+										<xsl:copy-of select="@*"/>
+									</Award>
+								</xsl:for-each>
+							</Awards>
+						</xsl:if>
+						<xsl:if test="ProductItems">
+							<ProductItems>
+								<xsl:for-each select="ProductItems/ProductItem">
+									<ProductItem>
+										<xsl:copy-of select="@*"/>
+									</ProductItem>
+								</xsl:for-each>
+							</ProductItems>
+						</xsl:if>
+						<xsl:if test="References">
+							<References>
+								<xsl:for-each select="References/Reference">
+									<Reference>
+										<xsl:copy-of select="@*"/>
+									</Reference>
+								</xsl:for-each>
+							</References>
+						</xsl:if>
+						<xsl:if test="ShipmentLines">
+							<ShipmentLines>
+								<xsl:for-each select="ShipmentLines/ShipmentLine">
+									<Reference>
+										<xsl:copy-of select="@*"/>
+										<xsl:variable name="varScac">
+											<xsl:value-of select="Extn/@ExtnSCAC"/>
+										</xsl:variable>
+										<xsl:if test="Extn">
+											<xsl:attribute name="TrackingId">
+												<xsl:value-of select="Extn/@ExtnAWBNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="DispatchedDate">
+												<xsl:value-of select="Extn/@ExtnActualShipmentDate"/>
+											</xsl:attribute>
+											<xsl:attribute name="CarrierName">
+												<xsl:choose>
+													<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="Extn/@ExtnSCAC"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>
+										</xsl:if>
+									</Reference>
+								</xsl:for-each>
+							</ShipmentLines>
+						</xsl:if>
+						<xsl:if test="BundleParentLine">
+							<BundleParentLine>
+								<xsl:copy-of select="BundleParentLine/@*"/>
+							</BundleParentLine>
+						</xsl:if>
+						<xsl:if test="KitLines">
+							<KitLines>
+								<xsl:copy-of select="KitLines/@*"/>
+								<xsl:for-each select="KitLines/KitLine">
+									<KitLine>
+										<xsl:copy-of select="@*"/>
+										<KitLineTranQuantity>
+											<xsl:copy-of select="KitLineTranQuantity/@*"/>
+										</KitLineTranQuantity>
+									</KitLine>
+								</xsl:for-each>
+							</KitLines>
+						</xsl:if>
+						<xsl:if test="OrderLineReservations">
+							<OrderLineReservations>
+								<xsl:for-each select="OrderLineReservations/OrderLineReservation">
+									<OrderLineReservation>
+										<!--<xsl:variable name="scShipNode">
+												<xsl:value-of select="@Node" />
+											</xsl:variable>
+											<xsl:variable name="wcShipNode">
+												<xsl:value-of select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, '', 'wcShipNodeToscShipNode', $scShipNode)" />				    	
+											</xsl:variable>
+											<xsl:attribute name="Node">
+												<xsl:choose>
+													<xsl:when test="string-length(normalize-space($wcShipNode)) &gt; 0">
+														<xsl:value-of select="$wcShipNode" />
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="$scShipNode" />
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>-->
+										<xsl:attribute name="Node">
+											<xsl:value-of select="@Node"/>
+										</xsl:attribute>
+									</OrderLineReservation>
+								</xsl:for-each>
+							</OrderLineReservations>
+						</xsl:if>
+						<xsl:if test="OrderStatuses">
+							<xsl:variable name="varNon1400StatusQty">
+								<xsl:value-of select="OrderStatuses/OrderStatus[@Status!='1400' and @StatusQty > 0]/@StatusQty"/>
+							</xsl:variable>
+							<xsl:variable name="varOrderedQty">
+								<xsl:value-of select="@OrderedQty"/>
+							</xsl:variable>
+							<OrderStatuses>
+								<xsl:for-each select="OrderStatuses/OrderStatus">
+									<OrderStatus>
+										<xsl:copy-of select="@*"/>
+										<xsl:choose>
+											<xsl:when test="number(@Status) != number(1400) or $varNon1400StatusQty = ''">
+												<xsl:attribute name="StatusQty">
+													<xsl:value-of select="@StatusQty"/>
+												</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:attribute name="StatusQty">
+													<xsl:value-of select="number($varOrderedQty) - number($varNon1400StatusQty)"/>
+												</xsl:attribute>
+											</xsl:otherwise>
+										</xsl:choose>
+										<Details>
+											<xsl:copy-of select="Details/@*"/>
+										</Details>
+									</OrderStatus>
+								</xsl:for-each>
+							</OrderStatuses>
+						</xsl:if>
+						<!-- Order Line Apportionment Prices Added -->
+						<Extn>
+							<xsl:if test="Extn">
+								<xsl:copy-of select="Extn/@*"/>
+								<TitanGCLineDetailList>
+									<xsl:for-each select="Extn/TitanGCLineDetailList/TitanGCLineDetail">
+										<TitanGCLineDetail>
+											<xsl:attribute name="Amount">
+												<xsl:value-of select="@Amount"/>
+											</xsl:attribute>
+											<xsl:attribute name="Brand">
+												<xsl:value-of select="@Brand"/>
+											</xsl:attribute>
+											<xsl:attribute name="CardExpiry">
+												<xsl:value-of select="@CardExpiry"/>
+											</xsl:attribute>
+											<xsl:attribute name="GCLineDetailKey">
+												<xsl:value-of select="@GCLineDetailKey"/>
+											</xsl:attribute>
+											<xsl:attribute name="GiftCardNo">
+												<xsl:value-of select="@GiftCardNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="GiftCardPin">
+												<xsl:value-of select="@GiftCardPin"/>
+											</xsl:attribute>
+											<xsl:attribute name="IsActivated">
+												<xsl:value-of select="@IsActivated"/>
+											</xsl:attribute>
+											<xsl:attribute name="IsRedeemed">
+												<xsl:value-of select="@IsRedeemed"/>
+											</xsl:attribute>
+											<xsl:attribute name="ItemId">
+												<xsl:value-of select="@ItemId"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderLineKey">
+												<xsl:value-of select="@OrderLineKey"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderNo">
+												<xsl:value-of select="@OrderNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OriginalBatchNo">
+												<xsl:value-of select="@OriginalBatchNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OriginalTransactionId">
+												<xsl:value-of select="@OriginalTransactionId"/>
+											</xsl:attribute>
+											<xsl:attribute name="isHistory">
+												<xsl:value-of select="@isHistory"/>
+											</xsl:attribute>
+										</TitanGCLineDetail>
+									</xsl:for-each>
+								</TitanGCLineDetailList>
+							</xsl:if>
+						</Extn>
+						<!-- Order Line Apportionment Prices Added -->
+					</OrderLine>
+				</xsl:for-each>
+			</OrderLines>
+			<!-- If the shopper is a guest, we can get the mobile phone number from _ord:Order/_ord:OrderNotificationInfo-->
+			<xsl:if test="/Order/PersonInfoShipTo">
+				<PersonInfoShipTo>
+					<xsl:copy-of select="/Order/PersonInfoShipTo/@*"/>
+					<Extn>
+						<xsl:copy-of select="/Order/PersonInfoShipTo/Extn/@*"/>
+					</Extn>
+				</PersonInfoShipTo>
+			</xsl:if>
+			<xsl:if test="/Order/PersonInfoBillTo">
+				<PersonInfoBillTo>
+					<xsl:copy-of select="/Order/PersonInfoBillTo/@*"/>
+					<Extn>
+						<xsl:copy-of select="/Order/PersonInfoBillTo/Extn/@*"/>
+					</Extn>
+				</PersonInfoBillTo>
+			</xsl:if>
+			<xsl:if test="/Order/HeaderCharges">
+				<HeaderCharges>
+					<xsl:for-each select="HeaderCharges/HeaderCharge">
+						<HeaderCharge>
+							<xsl:copy-of select="@*"/>
+						</HeaderCharge>
+					</xsl:for-each>
+				</HeaderCharges>
+			</xsl:if>
+			<xsl:if test="/Order/HeaderTaxes">
+				<HeaderTaxes>
+					<xsl:for-each select="HeaderTaxes/HeaderTax">
+						<HeaderTax>
+							<xsl:copy-of select="@*"/>
+						</HeaderTax>
+					</xsl:for-each>
+					<xsl:for-each select="HeaderTaxes/TaxSummary">
+						<TaxSummary>
+							<xsl:for-each select="TaxSummaryDetail">
+								<TaxSummaryDetail>
+									<xsl:copy-of select="@*"/>
+								</TaxSummaryDetail>
+							</xsl:for-each>
+						</TaxSummary>
+					</xsl:for-each>
+				</HeaderTaxes>
+			</xsl:if>
+			<xsl:if test="/Order/Awards">
+				<Awards>
+					<xsl:for-each select="Awards/Award">
+						<Award>
+							<xsl:copy-of select="@*"/>
+						</Award>
+					</xsl:for-each>
+				</Awards>
+			</xsl:if>
+			<!-- ShipmentLine Added -->
+			<xsl:if test="/Order/Shipments">
+				<Shipments>
+					<xsl:for-each select="/Order/Shipments/Shipment">
+						<Shipment>
+							<xsl:variable name="varScac">
+								<xsl:value-of select="@SCAC"/>
+							</xsl:variable>
+							<xsl:attribute name="ShipmentNo">
+								<xsl:value-of select="@ShipmentNo"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderNo">
+								<xsl:value-of select="@OrderNo"/>
+							</xsl:attribute>
+							<!-- START: Adding Courier and Tracking# -->
+							<xsl:attribute name="CarrierName">
+								<xsl:choose>
+									<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@SCAC"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+							<xsl:attribute name="TrackingId">
+								<xsl:value-of select="@AirwayBillNo"/>
+							</xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="/Order/@EnterpriseCode='TITAN_US'">
+									<xsl:attribute name="TrackingURL">
+										<xsl:value-of select="concat('https://','','www.ups.com/','','track?','','loc=en_US','','&amp;requester=QUIC','&amp;tracknum=','',@AirwayBillNo,'','/')"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="TrackingURL">
+										<xsl:value-of select="@TrackingURL"/>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!--SFCC CHANGES FOR SHIPMENT TYPE START-->
+							<xsl:attribute name="ShipmentType">
+								<xsl:value-of select="@ShipmentType"/>
+							</xsl:attribute>
+							<!--SFCC CHANGES FOR SHIPMENT TYPE END-->
+							<!--SFCC CHANGES FOR TOTAL SHIPMENT AMOUNT START-->
+							<Extn>
+								<xsl:attribute name="ExtnTotalNetAmount">
+									<xsl:value-of select="Extn/@ExtnTotalNetAmount"/>
+								</xsl:attribute>
+							</Extn>
+							<!--SFCC CHANGE FOR TOTAL SHIPMENT AMOUNT END-->
+							<xsl:variable name="IsReturnOrderRefund">
+								<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail/@InvoiceType='RETURN'"/>
+							</xsl:variable>
+							<xsl:variable name="ReturnOrderRefundDate">
+								<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail[@InvoiceType='RETURN']/@DateInvoiced"/>
+							</xsl:variable>
+							<!-- START: Adding Courier and Tracking# -->
+							<xsl:variable name="StatusDateForReturnReceive">
+								<xsl:value-of select="ShipmentLines/ShipmentLine/OrderLine/OrderStatuses/OrderStatus[@Status='3700.02']/@StatusDate"/>
+							</xsl:variable>
+							<ShipmentLines>
+								<xsl:for-each select="ShipmentLines/ShipmentLine">
+									<ShipmentLine>
+										<xsl:attribute name="ItemID">
+											<xsl:value-of select="@ItemID"/>
+										</xsl:attribute>
+										<xsl:attribute name="OrderItemId">
+											<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+										</xsl:attribute>
+										<OrderLine>
+											<xsl:attribute name="PrimeLineNo">
+												<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+											</xsl:attribute>
+											<!--SFCC CHANGE START-->
+											<xsl:variable name="varPrimeLineNo">
+												<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+											</xsl:variable>
+											<xsl:for-each select="/Order/OrderLines/OrderLine[@PrimeLineNo = $varPrimeLineNo]">
+												<xsl:attribute name="OrderedQty">
+													<xsl:value-of select="@OrderedQty"/>
+												</xsl:attribute>
+												<PersonInfoShipTo>
+													<xsl:copy-of select="PersonInfoShipTo/@*"/>
+												</PersonInfoShipTo>
+												<ComputedPrice>
+													<xsl:copy-of select="ComputedPrice/@*"/>
+												</ComputedPrice>
+											</xsl:for-each>
+											<!--SFCC CHANGE END-->
+											<!-- <xsl:variable name="maxLineStatus">
+													<xsl:value-of select="OrderLine/@MaxLineStatus" />
+												</xsl:variable> -->
+											<xsl:variable name="minLineStatus">
+												<xsl:value-of select="OrderLine/@MinLineStatus"/>
+											</xsl:variable>
+											<xsl:variable name="cOrderLineKey">
+												<xsl:value-of select="OrderLine/@OrderLineKey"/>
+											</xsl:variable>
+											<xsl:variable name="ReturnReceiveStatusCode">
+												<xsl:value-of select="3700.02"/>
+											</xsl:variable>
+											<xsl:variable name="IsReturnOrderExist">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@Status=number($ReturnReceiveStatusCode)"/>
+											</xsl:variable>
+											<xsl:variable name="OrderLineStatus">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@StatusDescription"/>
+											</xsl:variable>
+											<xsl:variable name="ExtnSellerLineNo">
+												<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+											</xsl:variable>
+											<xsl:variable name="varNon1400StatusQty">
+												<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus[@Status!='1400' and @StatusQty > 0]/@StatusQty"/>
+											</xsl:variable>
+											<xsl:variable name="varOrderedQty">
+												<xsl:value-of select="OrderLine/@OrderedQty"/>
+											</xsl:variable>
+											<OrderStatuses>
+												<xsl:for-each select="OrderLine/OrderStatuses/OrderStatus">
+													<xsl:variable name="maxLineStatus">
+														<xsl:value-of select="@Status"/>
+													</xsl:variable>
+													<xsl:if test=" number($maxLineStatus) != number(3700.02)">
+														<OrderStatus>
+															<xsl:variable name="orderLineStatusDesc">
+																<xsl:value-of select="@StatusDescription"/>
+															</xsl:variable>
+															<xsl:if test=" number($maxLineStatus) = number(9000) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.270) >  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Order Processing'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.270) =  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Ready For Customer Pick Up'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number(3350.300) =  number($maxLineStatus)  ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Packed'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) >= number(3700) and (number($maxLineStatus) != number(3700.600)) and (number($maxLineStatus) != number(3700.650)) and (number($maxLineStatus) != number(3700.1000)) and (number(3700.7777) >number($maxLineStatus)  ) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Shipped'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.600) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Cancelled'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.650) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Out For Delivery'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.1000) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Failed Delivery'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.7777)">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Item Delivered'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test="number($maxLineStatus) = number(3700.7779) or ($orderLineStatusDesc)='Customer Picked Up Order' ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Customer Picked Up Order'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.01) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Return Created'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:if test=" number($maxLineStatus) = number(3700.02) ">
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Return Received'"/>
+																</xsl:attribute>
+															</xsl:if>
+															<xsl:attribute name="Status">
+																<xsl:value-of select="@Status"/>
+															</xsl:attribute>
+															<xsl:attribute name="StatusDate">
+																<xsl:value-of select="@StatusDate"/>
+															</xsl:attribute>
+															<xsl:attribute name="StatusQty">
+																<xsl:value-of select="@StatusQty"/>
+															</xsl:attribute>
+															<xsl:choose>
+																<xsl:when test="number(@Status) != number(1400) or $varNon1400StatusQty = ''">
+																	<xsl:attribute name="StatusQty">
+																		<xsl:value-of select="@StatusQty"/>
+																	</xsl:attribute>
+																</xsl:when>
+																<xsl:otherwise>
+																	<xsl:attribute name="StatusQty">
+																		<xsl:value-of select="number($varOrderedQty) - number($varNon1400StatusQty)"/>
+																	</xsl:attribute>
+																</xsl:otherwise>
+															</xsl:choose>
+															<xsl:attribute name="TotalQuantity">
+																<xsl:value-of select="@TotalQuantity"/>
+															</xsl:attribute>
+														</OrderStatus>
+													</xsl:if>
+												</xsl:for-each>
+												<xsl:if test="$IsReturnOrderExist = 'true'">
+													<xsl:for-each select="/Order/ReturnOrders/ReturnOrder/OrderLines/OrderLine[@DerivedFromOrderLineKey=$cOrderLineKey]">
+														<xsl:variable name="OrderLineTotalQuantity">
+															<xsl:value-of select="@StatusQuantity"/>
+														</xsl:variable>
+														<xsl:variable name="QCPassQty">
+															<xsl:value-of select="References/Reference[@Name='QC Pass']/@Value"/>
+														</xsl:variable>
+														<xsl:for-each select="References/Reference">
+															<xsl:variable name="QCStatus">
+																<xsl:value-of select="@Name"/>
+															</xsl:variable>
+															<OrderStatus>
+																<xsl:choose>
+																	<xsl:when test="$QCStatus = 'QC Pass'">
+																		<xsl:attribute name="StatusDescription">
+																			<xsl:value-of select="'Refund Initiated'"/>
+																		</xsl:attribute>
+																		<xsl:choose>
+																			<xsl:when test="$IsReturnOrderRefund = 'true'">
+																				<xsl:attribute name="StatusQty">
+																					<xsl:value-of select="'0'"/>
+																				</xsl:attribute>
+																			</xsl:when>
+																			<xsl:otherwise>
+																				<xsl:attribute name="StatusQty">
+																					<xsl:value-of select="@Value"/>
+																				</xsl:attribute>
+																			</xsl:otherwise>
+																		</xsl:choose>
+																	</xsl:when>
+																	<xsl:otherwise>
+																		<xsl:attribute name="StatusDescription">
+																			<xsl:value-of select="'Refund Cancelled '"/>
+																		</xsl:attribute>
+																		<xsl:attribute name="StatusQty">
+																			<xsl:value-of select="@Value"/>
+																		</xsl:attribute>
+																	</xsl:otherwise>
+																</xsl:choose>
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'3700.02'"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusDate">
+																	<xsl:value-of select="$StatusDateForReturnReceive"/>
+																</xsl:attribute>
+																<xsl:attribute name="TotalQuantity">
+																	<xsl:value-of select="$OrderLineTotalQuantity"/>
+																</xsl:attribute>
+															</OrderStatus>
+														</xsl:for-each>
+														<xsl:if test="$IsReturnOrderRefund = 'true'">
+															<OrderStatus>
+																<xsl:attribute name="StatusDescription">
+																	<xsl:value-of select="'Refund Processed'"/>
+																</xsl:attribute>
+																<xsl:attribute name="Status">
+																	<xsl:value-of select="'3950'"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusQty">
+																	<xsl:value-of select="$QCPassQty"/>
+																</xsl:attribute>
+																<xsl:attribute name="TotalQuantity">
+																	<xsl:value-of select="$OrderLineTotalQuantity"/>
+																</xsl:attribute>
+																<xsl:attribute name="StatusDate">
+																	<xsl:value-of select="$ReturnOrderRefundDate"/>
+																</xsl:attribute>
+															</OrderStatus>
+														</xsl:if>
+													</xsl:for-each>
+												</xsl:if>
+											</OrderStatuses>
+										</OrderLine>
+									</ShipmentLine>
+								</xsl:for-each>
+							</ShipmentLines>
+						</Shipment>
+					</xsl:for-each>
+				</Shipments>
+			</xsl:if>
+			<xsl:if test="/Order/ReturnOrders/ReturnOrder">
+				<ReturnOrders>
+					<xsl:for-each select="/Order/ReturnOrders/ReturnOrder">
+						<ReturnOrder>
+							<xsl:variable name="maxOrderStatusRet">
+								<xsl:value-of select="@MaxOrderStatus"/>
+							</xsl:variable>
+							<xsl:variable name="minOrderStatusRet">
+								<xsl:value-of select="@MinOrderStatus"/>
+							</xsl:variable>
+							<xsl:attribute name="OrderNo">
+								<xsl:value-of select="@OrderNo"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderHeaderKey">
+								<xsl:value-of select="@OrderHeaderKey"/>
+							</xsl:attribute>
+							<xsl:attribute name="OrderType">
+								<xsl:value-of select="@OrderType"/>
+							</xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="number(3700) >= number($maxOrderStatusRet) ">
+									<xsl:attribute name="Status">
+										<xsl:value-of select="'Order Processing'"/>
+									</xsl:attribute>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:attribute name="Status">
+										<xsl:value-of select="@Status"/>
+									</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!-- Status Code Changes Return Order></!-->
+							<xsl:if test=" number($maxOrderStatusRet) = number(3700.01) or number($maxOrderStatusRet) = number(3700.02) ">
+								<xsl:variable name="OrderType">
+									<xsl:value-of select="@OrderType"/>
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test=" ($OrderType)='LIT' ">
+										<xsl:attribute name="Status">
+											<xsl:value-of select="'Order Cancelled'"/>
+										</xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="Status">
+											<xsl:value-of select="'Return Created'"/>
+										</xsl:attribute>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:if>
+							<!-- Status Code Changes ></!-->
+							<xsl:if test="ShipmentList/Shipment">
+								<Shipments>
+									<xsl:for-each select="ShipmentList/Shipment">
+										<Shipment>
+											<xsl:variable name="varScac">
+												<xsl:value-of select="@SCAC"/>
+											</xsl:variable>
+											<xsl:attribute name="ShipmentNo">
+												<xsl:value-of select="@ShipmentNo"/>
+											</xsl:attribute>
+											<xsl:attribute name="OrderNo">
+												<xsl:value-of select="@OrderNo"/>
+											</xsl:attribute>
+											<!-- START: Adding Courier and Tracking# -->
+											<xsl:attribute name="CarrierName">
+												<xsl:choose>
+													<xsl:when test="$varScac='StorePickup'">Pickup In Store</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@SCAC"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:attribute>
+											<xsl:attribute name="TrackingId">
+												<xsl:value-of select="@AirwayBillNo"/>
+											</xsl:attribute>
+											<xsl:variable name="IsReturnOrderRefund">
+												<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail/@InvoiceType='RETURN'"/>
+											</xsl:variable>
+											<xsl:variable name="ReturnOrderRefundDate">
+												<xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail/InvoiceCollectionDetails/InvoiceCollectionDetail[@InvoiceType='RETURN']/@DateInvoiced"/>
+											</xsl:variable>
+											<!-- START: Adding Courier and Tracking# -->
+											<xsl:variable name="StatusDateForReturnReceive">
+												<xsl:value-of select="ShipmentLines/ShipmentLine/OrderLine/OrderStatuses/OrderStatus[@Status='3950']/@StatusDate"/>
+											</xsl:variable>
+											<ShipmentLines>
+												<xsl:for-each select="ShipmentLines/ShipmentLine">
+													<ShipmentLine>
+														<xsl:attribute name="ItemID">
+															<xsl:value-of select="@ItemID"/>
+														</xsl:attribute>
+														<xsl:attribute name="OrderItemId">
+															<xsl:value-of select="OrderLine/Extn/@ExtnSOSellerLineNo"/>
+														</xsl:attribute>
+														<OrderLine>
+															<!-- <xsl:variable name="maxLineStatus">
+													<xsl:value-of select="OrderLine/@MaxLineStatus" />
+												</xsl:variable> -->
+															<xsl:variable name="ReturnReceiveStatusCode">
+																<xsl:value-of select="3900"/>
+															</xsl:variable>
+															<xsl:variable name="IsReturnOrderExist">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@Status=number($ReturnReceiveStatusCode)"/>
+															</xsl:variable>
+															<xsl:variable name="OrderLineTotalQuantity">
+																<xsl:value-of select="@StatusQuantity"/>
+															</xsl:variable>
+															<xsl:variable name="varOrderLineTotalQuantity">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@TotalQuantity"/>
+															</xsl:variable>
+															<xsl:variable name="QCPassQty">
+																<xsl:value-of select="OrderLine/References/Reference[@Name='QC Pass']/@Value"/>
+															</xsl:variable>
+															<xsl:variable name="minLineStatus">
+																<xsl:value-of select="OrderLine/@MinLineStatus"/>
+															</xsl:variable>
+															<xsl:variable name="cOrderLineKey">
+																<xsl:value-of select="OrderLine/@OrderLineKey"/>
+															</xsl:variable>
+															<xsl:variable name="OrderLineStatus">
+																<xsl:value-of select="OrderLine/OrderStatuses/OrderStatus/@StatusDescription"/>
+															</xsl:variable>
+															<xsl:variable name="ExtnSellerLineNo">
+																<xsl:value-of select="OrderLine/Extn/@ExtnSellerLineNo"/>
+															</xsl:variable>
+															<xsl:attribute name="PrimeLineNo">
+																<xsl:value-of select="OrderLine/@PrimeLineNo"/>
+															</xsl:attribute>
+															<xsl:copy-of select="OrderLine/Item"/>
+															<OrderStatuses>
+																<!-- RQM  25294 Return from Website Milestone and Status Related changes START-->
+																<xsl:for-each select="OrderLine/OrderStatuses/OrderStatus">
+																	<xsl:variable name="maxLineStatus">
+																		<xsl:value-of select="@Status"/>
+																	</xsl:variable>
+																	<xsl:if test=" number($maxLineStatus) = number(3350)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Created'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3700.100) and $IsReturnOrderExist = 'false'">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Received'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3900)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Received'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="@StatusQty"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																	<xsl:if test=" number($maxLineStatus) = number(3950)">
+																		<OrderStatus>
+																			<xsl:attribute name="StatusDescription">
+																				<xsl:value-of select="'Return Processed'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="@Status"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="@StatusDate"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusQty">
+																				<xsl:value-of select="'0'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="@TotalQuantity"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:if>
+																</xsl:for-each>
+																<xsl:if test="$IsReturnOrderExist = 'true'">
+																	<xsl:for-each select="OrderLine/References/Reference">
+																		<xsl:variable name="QCStatus">
+																			<xsl:value-of select="@Name"/>
+																		</xsl:variable>
+																		<OrderStatus>
+																			<xsl:choose>
+																				<xsl:when test="$QCStatus = 'QC Pass' or $QCStatus = 'QC Damaged Refund'">
+																					<xsl:attribute name="StatusDescription">
+																						<xsl:value-of select="'Refund Initiated'"/>
+																					</xsl:attribute>
+																					<xsl:attribute name="StatusQty">
+																						<xsl:value-of select="@Value"/>
+																					</xsl:attribute>
+																				</xsl:when>
+																				<xsl:otherwise>
+																					<xsl:attribute name="StatusDescription">
+																						<xsl:value-of select="'Refund Cancelled'"/>
+																					</xsl:attribute>
+																					<xsl:attribute name="StatusQty">
+																						<xsl:value-of select="@Value"/>
+																					</xsl:attribute>
+																				</xsl:otherwise>
+																			</xsl:choose>
+																			<xsl:attribute name="Status">
+																				<xsl:value-of select="'3700.02'"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="TotalQuantity">
+																				<xsl:value-of select="$varOrderLineTotalQuantity"/>
+																			</xsl:attribute>
+																			<xsl:attribute name="StatusDate">
+																				<xsl:value-of select="$StatusDateForReturnReceive"/>
+																			</xsl:attribute>
+																		</OrderStatus>
+																	</xsl:for-each>
+																</xsl:if>
+																<!-- RQM  25294 Return from Website Milestone and Status Related changes END-->
+															</OrderStatuses>
+														</OrderLine>
+													</ShipmentLine>
+												</xsl:for-each>
+											</ShipmentLines>
+										</Shipment>
+									</xsl:for-each>
+								</Shipments>
+							</xsl:if>
+							<xsl:if test="OrderStatuses">
+								<OrderStatuses>
+									<xsl:for-each select="OrderStatuses/OrderStatus">
+										<OrderStatus>
+											<xsl:copy-of select="@*"/>
+											<Details>
+												<xsl:copy-of select="Details/@*"/>
+											</Details>
+										</OrderStatus>
+									</xsl:for-each>
+								</OrderStatuses>
+							</xsl:if>
+						</ReturnOrder>
+					</xsl:for-each>
+				</ReturnOrders>
+			</xsl:if>
+			<xsl:if test="/Order/PaymentMethods">
+				<PaymentMethods>
+					<xsl:for-each select="/Order/PaymentMethods/PaymentMethod">
+						<PaymentMethod>
+							<xsl:for-each select="@*">
+								<xsl:if test="name() != 'PaymentType'">
+									<xsl:attribute name="{name()}">
+										<xsl:value-of select="."/>
+									</xsl:attribute>
+								</xsl:if>
+							</xsl:for-each>
+							<!--<xsl:attribute name="PaymentType">
+									<xsl:variable name="paymentType">
+										<xsl:value-of select="@PaymentType"/>
+									</xsl:variable>
+									<xsl:variable name="paymentTypeForMapping" select="ValueMaps:getValueForMapKey($scwc:ValueMapsData, 'DEFAULT', 'wcPaymentMethodToSCPaymentType', $paymentType)"/>
+									<xsl:variable name="wcPaymentMethodValue">
+										<xsl:choose>
+											<xsl:when test="string-length($paymentTypeForMapping) &gt; 0">
+												<xsl:value-of select="$paymentTypeForMapping"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:value-of select="$paymentType"/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="$paymentType = 'CREDIT_CARD'">CREDIT_CARD</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="$wcPaymentMethodValue"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>-->
+							<xsl:attribute name="PaymentType">
+								<xsl:value-of select="@PaymentType"/>
+							</xsl:attribute>
+							<xsl:if test="PersonInfoBillTo">
+								<PersonInfoBillTo>
+									<xsl:copy-of select="PersonInfoBillTo/@*"/>
+									<Extn>
+										<xsl:copy-of select="PersonInfoBillTo/Extn/@*"/>
+									</Extn>
+								</PersonInfoBillTo>
+							</xsl:if>
+						</PaymentMethod>
+					</xsl:for-each>
+				</PaymentMethods>
+			</xsl:if>
+			<xsl:if test="/Order/OrderStatuses">
+				<OrderStatuses>
+					<xsl:for-each select="/Order/OrderStatuses/OrderStatus">
+						<OrderStatus>
+							<xsl:copy-of select="@*"/>
+							<Details>
+								<xsl:copy-of select="Details/@*"/>
+							</Details>
+						</OrderStatus>
+					</xsl:for-each>
+				</OrderStatuses>
+			</xsl:if>
+			<xsl:if test="/Order/Modifications/Modification/@ModificationType">
+				<Modifications>
+					<Modification>
+						<xsl:attribute name="ModificationType">
+							<xsl:value-of select="/Order/Modifications/Modification/@ModificationType"/>
+						</xsl:attribute>
+						<xsl:attribute name="ModificationAllowed">
+							<xsl:value-of select="/Order/Modifications/Modification/@ModificationAllowed"/>
+						</xsl:attribute>
+					</Modification>
+				</Modifications>
+			</xsl:if>
+		</Order>
+		<!--</Root>-->
+	</xsl:template>
+</xsl:stylesheet>

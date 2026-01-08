@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="yes" method="xml"/>
+    <!-- Start at root -->
+    <xsl:template match="/">
+        <xsl:apply-templates select="/OrderList/OrderHeader"/>
+    </xsl:template>
+    <!-- Main OrderHeader -->
+    <xsl:template match="OrderHeader">
+        <!-- Calculate PaidAmount & TotalOrderValue -->
+        <xsl:variable name="totalOrderValueUS" select="/OrderList/Order/Extn/@ExtnTotalOrderValueUS"/>
+        <xsl:variable name="totalDiscountUS" select="sum(/OrderList/Order/OrderLines/OrderLine/Extn/@ExtnERPDiscountValueUS)"/>
+        <xsl:variable name="calculatedValue" select="$totalOrderValueUS - $totalDiscountUS"/>
+        <OrderHeader>
+            <!-- Always output attributes -->
+            <xsl:attribute name="TotalOrderValue">
+                <xsl:value-of select="$calculatedValue"/>
+            </xsl:attribute>
+            <xsl:attribute name="PaidAmount">
+                <xsl:value-of select="$calculatedValue"/>
+            </xsl:attribute>
+            <xsl:attribute name="ShippingCharge">
+                <xsl:value-of select="/OrderList/Order/Extn/@ExtnShippingChargeUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ShippingTax">
+                <xsl:value-of select="/OrderList/Order/Extn/@ExtnShippingChargeUS"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="@*[not(name() = 'TotalOrderValue' or name() = 'PaidAmount' or name() = 'ShippingCharge' or name() = 'ShippingTax')]"/>
+            <!-- Copy children -->
+            <xsl:apply-templates select="OrderDetails"/>
+            <xsl:apply-templates select="node()[not(self::OrderDetails)]"/>
+        </OrderHeader>
+    </xsl:template>
+    <!-- Copy OrderDetails -->
+    <xsl:template match="OrderDetails">
+        <OrderDetails>
+            <xsl:apply-templates select="OrderDetail"/>
+        </OrderDetails>
+    </xsl:template>
+    <!-- Process each OrderDetail -->
+    <!-- Process each OrderDetail -->
+    <xsl:template match="OrderDetail">
+        <xsl:variable name="itemCode" select="@ItemCode"/>
+        <xsl:variable name="lotNo" select="@LotNumber"/>
+        <xsl:variable name="matchLine" select="/OrderList/Order/OrderLines/OrderLine[Extn/@ExtnItemCode=$itemCode and Extn/@ExtnLotNo=$lotNo]"/>
+        <OrderDetail>
+            <!-- Copy existing attributes first -->
+            <xsl:apply-templates select="@*"/>
+            <!-- Now add/override new attributes -->
+            <xsl:attribute name="OrderUnitPrice">
+                <xsl:value-of select="$matchLine/Extn/@ExtnOrderUnitPriceUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="GoldRate">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRateUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="GoldValue">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldValueUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="StoneValue">
+                <xsl:value-of select="$matchLine/Extn/@ExtnStoneValueUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="MakingChargesValue">
+                <xsl:value-of select="$matchLine/Extn/@ExtnMakingChargesValueUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnTariffAmount">
+                <xsl:value-of select="$matchLine/Extn/@ExtnTariffAmountUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnMakingChargesPerGram">
+                <xsl:value-of select="$matchLine/Extn/@ExtnMakingChargesPerGramUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnMakingChargesPerUnit">
+                <xsl:value-of select="$matchLine/Extn/@ExtnMakingChargesPerUnitUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnGoldRate24KT">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRate24KTUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnGoldRate22KT">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRate22KTUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnGoldRate21KT">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRate21KTUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnGoldRate18KT">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRate18KTUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnGoldRate14KT">
+                <xsl:value-of select="$matchLine/Extn/@ExtnGoldRate14KTUS"/>
+            </xsl:attribute>
+			<xsl:attribute name="DiscountValue">
+                <xsl:value-of select="$matchLine/Extn/@ExtnDiscountValueUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="BillLevelDiscount">
+                <xsl:value-of select="$matchLine/Extn/@ExtnBillLevelDiscountUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ERPDiscountValue">
+                <xsl:value-of select="$matchLine/Extn/@ExtnERPDiscountValueUS"/>
+            </xsl:attribute>
+			
+			 <!-- Tax Values -->
+            <xsl:attribute name="ExtnCustomDutyTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnCustomDutyTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnStateTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnStateTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnCountryTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnCountryTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnSpecialTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnSpecialTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnCountyTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnCountyTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnCityTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnCityTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnTotalShippingTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnTotalShippingTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnShippingStateTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnShippingStateTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnShippingCountryTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnShippingCountryTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnShippingSpecialTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnShippingSpecialTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnShippingCountyTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnShippingCountyTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnShippingCityTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnShippingCityTaxUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnTotalShippingChargeUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnTotalShippingChargeUS"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnTotalTaxUS">
+                <xsl:value-of select="$matchLine/Extn/@ExtnTotalTaxUS"/>
+            </xsl:attribute>
+            
+            <!-- Copy all child nodes (preserve LineCharges, LineTaxes, etc.) -->
+            <xsl:apply-templates select="node()"/>
+        </OrderDetail>
+    </xsl:template>
+    <!-- TitanPaymentDetail update -->
+    <xsl:template match="TitanPaymentDetail">
+        <xsl:variable name="itemCode" select="../../@ItemCode"/>
+        <xsl:variable name="lotNo" select="../../@LotNumber"/>
+        <xsl:variable name="matchLine" select="/OrderList/Order/OrderLines/OrderLine[Extn/@ExtnItemCode=$itemCode and Extn/@ExtnLotNo=$lotNo]"/>
+        <TitanPaymentDetail>
+			 <!-- Copy existing attributes first -->
+            <xsl:apply-templates select="@*"/>
+            <xsl:attribute name="Amount">
+                <xsl:value-of select="$matchLine/Extn/@ExtnAmountUS"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()"/>
+        </TitanPaymentDetail>
+    </xsl:template>
+
+	<xsl:template match="PaymentMethod">
+        <PaymentMethod>
+			 <!-- Copy existing attributes first -->
+            <xsl:apply-templates select="@*"/>
+            <xsl:attribute name="CCAmount">
+                <xsl:value-of select="/OrderList/Order/Extn/@ExtnAmountUS"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()"/>
+        </PaymentMethod>
+    </xsl:template>
+    <xsl:template match="PaymentInfo">
+        <PaymentMethod>
+			 <!-- Copy existing attributes first -->
+            <xsl:apply-templates select="@*"/>
+            <xsl:attribute name="Amount">
+                <xsl:value-of select="/OrderList/Order/Extn/@ExtnAmountUS"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()"/>
+        </PaymentMethod>
+    </xsl:template>
+   
+   
+       <!-- Default copy -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+</xsl:stylesheet>

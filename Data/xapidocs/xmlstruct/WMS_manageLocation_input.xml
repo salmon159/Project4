@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Location AisleNumber="" AisleSuffix="" BayNumber="" CheckDigit=""
+    DockType="" FreezeMoveIn="" FreezeMoveOut="" InStagingLocationId=""
+    IsSchedulable="" LevelNumber="" LocationBarCode="" LocationId=""
+    LocationKey="" LocationSizeCode="" LocationType="" MoveInSeqNo=""
+    MoveOutSeqNo="" Node="" Operation="" OutStagingLocationId=""
+    StorageCode="" VelocityCode="" XCoOrdinate="" YCoOrdinate=""
+    ZCoOrdinate="" ZoneId="" xmlns="http://www.sterlingcommerce.com/documentation/WMS/manageLocation/input">
+    <yfc:includeInParent IncludeXMLChildNodes="N"
+        IncludeXMLFileName="YFS_Location_master.xml"
+        IncludeXMLPath="/Location" RemoveDBHouseKeeping="Y"/>
+    <yfc:doc>
+        <Element EntityName="Location"/>
+        <Attributes>
+            <Attribute EntityName="Location" Name="InStagingLocationId" NameInEntity="In_Staging_Location_Id">
+                <Description>
+                    <div>
+						In Drop off location (For moves coming into a location, they may be dropped here).
+							<Validation>
+                            <Condition>
+                                <code>InStagingLocationId</code> should be a valid location of the type <code>
+                                    <b>STAGING</b>
+                                </code> if passed. 
+								</Condition>
+                            <Error
+                                Description="Staging locations must be of type STAGING." ErrorCode="WMS00068"/>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="IsSchedulable"/>
+            <Attribute EntityName="Location" Name="LocationId" NameInEntity="Location_Id">
+                <Description>
+                    <div>
+                        <code>Location</code> Identifier. Forms unique key of the <code>YFS_LOCATION</code> table in conjunction with the <code>NODE_KEY</code>.
+							<Validation>
+                            <Condition>if <code>LocationKey</code> not passed, <code>Node</code> and <code>LocationId</code> combination should be a valid combination.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="LocationKey" NameInEntity="Location_Key">
+                <Description>
+                    <div>
+						Primary key attribute of <code>YFS_LOCATION</code> table.
+							<Validation>
+                            <Condition>
+                                <code>LocationKey</code> passed should be a valid <code>LocationKey</code>.
+								</Condition>
+                            <Error Description="Invalid LocationKey." ErrorCode="WMS00038"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="LocationSizeCode" NameInEntity="Location_Size_Code">
+                <Description>
+                    <div>
+						Defines the capacity of a location. All locations having the same size (dimensions and ability to hold the same weight) are classified under the same size code. This maps to the primary key attribute of the <code>YFS_LOCATION_SIZE_CODE</code> table.
+							<Validation>
+                            <Condition>
+                                <code>LocationSizeCode</code> passed should be a valid location size code.
+								</Condition>
+                            <Error
+                                Description="Invalid Location Size Code." ErrorCode="WMS00066"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The new capacity of the location must not become <code>FINITE</code> from <code>INFINITE</code> if the location had inventory.
+								</Condition>
+                            <Error
+                                Description="Operation not permitted on Locations having Inventory." ErrorCode="WMS00064"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="LocationType" NameInEntity="Location_Type">
+                <Description>
+                    <div>
+						System defined classification of location to aid association of locations of certain types for certain other operations with WMS. The supported types are: <code>
+                            <b>INTRANSIT</b>
+                        </code> (Mobile locations), <code>
+                            <b>STAGING</b>
+                        </code>, <code>
+                            <b>VIRTUAL</b>
+                        </code>, <code>
+                            <b>REGULAR</b>
+                        </code> and <code>
+                            <b>DOCK</b>
+                        </code>. For example, all equipment locations should be of type <code>
+                            <b>INTRANSIT</b>
+                        </code>. If LocationType is passed blank or passed unallowed values then default LocationType is taken as <code>REGULAR</code>
+                        <Validation>
+                            <Condition>
+                                <code>LocationType</code> should be one of <code>
+                                    <b>INTRANSIT</b>
+                                </code>, <code>
+                                    <b>REGULAR</b>
+                                </code>, <code>
+                                    <b>VIRTUAL</b>
+                                </code>, <code>
+                                    <b>STAGING</b>
+                                </code>, and <code>
+                                    <b>DOCK</b>
+                                </code>.
+								</Condition>
+                            <Error Description="Invalid Location Type." ErrorCode="WMS00067"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Location defined with location type <code>STAGING</code> is not modifiable, if there is a corresponding <code>REGULAR</code> location that is using it as a staging location for putaway or retrieval.
+								</Condition>
+                            <Error
+                                Description="The Staging Location has target locations." ErrorCode="WMS00080"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="Node" NameInEntity="Node_Key">
+                <Description>
+                    <div>
+                        <code>Node</code> Identifier. Primary Key of the <code>YFS_SHIP_NODE</code> table. Forms unique key of this table in conjunction with the <code>LOCATION_ID</code>.
+							<Validation>
+                            <Condition>if <code>LocationKey</code> not passed, <code>Node</code> and <code>LocationId</code> combination should be a valid combination.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Action" Name="Operation">
+                <Description>
+                    <div>
+					   This attribute specifies the kind of operation to be done.  
+			<br/>Valid Values: 
+				<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - To create a <code>Location</code>
+                        <br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+				<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - To delete a  <code>Location</code>
+                        <br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="OutStagingLocationId" NameInEntity="Out_Staging_Location_Id">
+                <Description>
+                    <div>
+						Out Drop off Location (Location where moves originated at this location, may be dropped).
+							<Validation>
+                            <Condition>
+                                <code>OutStagingLocationId</code> should be a valid location of the type <code>
+                                    <b>STAGING</b>
+                                </code> if passed. 
+								</Condition>
+                            <Error
+                                Description="Staging locations must be of type STAGING." ErrorCode="WMS00068"/>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="StorageCode" NameInEntity="Storage_Code">
+                <Description>
+                    <div>
+						It is an attribute of the location that allows the warehouse to store items that have the same storage profile as that of the location.  For example, hazardous inflammable items need locations close to fire extinguishers. In this case the locations will be marked as having a storage code, which is suitable for storing Inflammable items. This ensures that only inflammable items get to these locations.
+							<Validation>
+                            <Condition>
+                                <code>StorageCode</code> passed should be a valid location storage code for <code>Node</code>.
+								</Condition>
+                            <Error
+                                Description="The StorageCode is invalid." ErrorCode="WMS00100"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="VelocityCode" NameInEntity="Velocity_Code">
+                <Description>
+                    <div>
+						Items are classified as <code>
+                            <b>A</b>
+                        </code>, <code>
+                            <b>B</b>
+                        </code> or <code>
+                            <b>C</b>
+                        </code> class items based on whether they are fast selling, not so fast selling and low selling item. These item classifications are typically followed by all enterprises to optimize certain operations such as sourcing and stocking. The reason we have locations preferring certain velocity codes is that, we could have locations closer to dock stocking <code>
+                            <b>A</b>
+                        </code> class items, and locations furthest away from the dock stocking <code>
+                            <b>C</b>
+                        </code> class items. Velocity code is a preference on the location and not a constraint. If <code>
+                            <b>A</b>
+                        </code> class items fill up all locations meant for <code>
+                            <b>A</b>
+                        </code> class items, then they can go in to <code>
+                            <b>B</b>
+                        </code> and then <code>
+                            <b>C</b>
+                        </code>. Similarly <code>
+                            <b>C</b>
+                        </code> can go to <code>
+                            <b>B</b>
+                        </code> and then <code>
+                            <b>A</b>
+                        </code> for lack of space in the respective locations preferred for a specific velocity code. <code>
+                            <b>B</b>
+                        </code> class items go into <code>
+                            <b>C</b>
+                        </code> and then into <code>
+                            <b>A</b>
+                        </code>. If <code>VelocityCode</code> is passed blank or passed unallowed values then default <code>VelocityCode</code> is taken Last <code>VelocityCode</code> in the alphabetic sequence in common code of type <code>VELOCITY_CODE</code>. 
+							<Validation>
+                            <Condition>
+                                <code>VelocityCode</code> should be one of the valid values as identified in common code of type <code>VELOCITY_CODE</code>. 
+								</Condition>
+                            <Error Description="Invalid Velocity Code." ErrorCode="WMS00065"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="XCoOrdinate" NameInEntity="X_Co_Ordinate">
+                <Description>
+                    <div>
+							X Co-ordinates of the location.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="YCoOrdinate" NameInEntity="Y_Co_Ordinate">
+                <Description>
+                    <div>
+						Y Co-ordinates of the location.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="ZCoOrdinate" NameInEntity="Z_Co_Ordinate">
+                <Description>
+                    <div>
+						Z Co-ordinates of the location.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Location" Name="ZoneId" NameInEntity="Zone_Id">
+                <Description>
+                    <div>
+						Zone to which a location belongs. This in conjunction with the node key identifies a unique zone within the node.
+							<Validation>
+                            <Condition>
+                                <code>ZoneId</code> should be a valid Zone in the <code>Node</code>.
+								</Condition>
+                            <Error
+                                Description="Invalid Node and ZoneId combination." ErrorCode="WMS00035"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Zone Id cannot be modified if the location has inventory.
+								</Condition>
+                            <Error
+                                Description="Operation not permitted on Locations having Inventory." ErrorCode="WMS00064"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <SKUDedications Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        If Reset Flag is passed:
+                            Y =&gt; All existing sku dedications will be deleted and the currently passed ones will be created.
+                            N =&gt; The passed SKUDedication elements will be treated as a delta change.
+                        </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <SKUDedication EnterpriseCode="Required" ItemId="Required"
+            LocationId="" MaxQty="" MinQty="" Node=""
+            ProductClass="Required" SKUDedicationKey="" Segment=""
+            SegmentType="" UnitOfMeasure="Required" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="N"
+                IncludeXMLFileName="YFS_Location_master.xml"
+                IncludeXMLPath="/Location/SKUDedications/SKUDedication" RemoveDBHouseKeeping="Y"/>
+            <yfc:doc>
+                <Attributes>
+                    <Attribute Name="EnterpriseCode" NameInEntity="Enterprise_Code">
+                        <Description>
+                            <div>
+							Enterprise to which location is dedicated.
+								<Validation>
+                                    <Condition>
+                                    <code>EnterpriseCode</code> should not be void. Error if <code>EnterpriseCode</code> is void.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>Should be a valid <code>EnterpriseCode</code> participating in this <code>Node</code>/<code>Organization</code>.
+									</Condition>
+                                    <Error
+                                    Description="Invalid organization code." ErrorCode="YFS10395"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="ItemId" NameInEntity="Item_Id">
+                        <Description>
+                            <div>
+							Item Identifier of SKU.
+								<Validation>
+                                    <Condition>
+                                    <code>ItemId</code> should not be void. Error if <code>ItemId</code> is void.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="ProductClass" NameInEntity="Product_Class">
+                        <Description>
+                            <div>
+							Product Class of SKU.
+								<Validation>
+                                    <Condition>
+                                    <code>ProductClass</code> should not be void. Error if <code>ProductClass</code> is void.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="UnitOfMeasure" NameInEntity="Uom">
+                        <Description>
+                            <div>
+							Unit of Measure of SKU.
+								<Validation>
+                                    <Condition>
+                                    <code>UnitOfMeasure</code> should not be void. Error if <code>UnitOfMeasure</code> is void.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </SKUDedication>
+    </SKUDedications>
+</Location>

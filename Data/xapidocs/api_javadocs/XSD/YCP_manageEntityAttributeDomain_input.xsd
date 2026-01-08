@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageEntityAttributeDomain/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageEntityAttributeDomain/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_manageEntityAttributeDomain_input.xsd" yfc:rootElement="EntityAttributeDomain">
+        <xsd:appinfo source="yfc:structure">
+            <EntityAttributeDomain hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="EntityAttributeDomain" type="yfc:EntityAttributeDomainXSDType">
+        <xsd:annotation yfc:tableName="YFS_ENTITY_ATTRIBUTE_DOMAIN">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+                            <code>DocumentType</code>, <code>OrganizationCode</code> and <code>TableName</code> must be passed.
+						</Condition>
+                        <Error
+                            Description="Mandatory parameters for the operation are missing" ErrorCode="YFS10364"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="EntityAttributeDomainXSDType">
+        <xsd:attribute name="AttributeDomainID" type="yfctype:GroupName" use="optional">
+            <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YFS_ENTITY_ATTRIBUTE_DOMAIN">
+                <xsd:documentation>
+                    <div>The <code>AttributeDomainID</code> with which this entity attribute domain should be associated. If not passed in, a new attribute domain with <code>AttributeDomainID</code> as <b>
+                            <code>EntityAttribute</code>
+                        </b> is created. If passed in and no matching attribute domain already exists, a new <code>AttributeDomain</code> with the provided <code>AttributeDomainID</code> is created. In both the cases, <code>AttributeGroup</code> is also created with the same <code>AttributeGroupID</code> as the <code>AttributeDomainID</code>.					
+						<Validation>
+                            <Condition>
+                                <code>AttributeDomainID</code> is modified for an attribute domain that has existing attributes.
+							</Condition>
+                            <Error
+                                Description="Cannot modify attribute domain with existing attributes" ErrorCode="YSC91A_010"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ENTITY_ATTRIBUTE_DOMAIN">
+                <xsd:documentation>The DocumentType with which the AttributeDomain defined in column ATTRIBUTE_DOMAIN_ID must be associated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Operation to perform
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Action">
+                    <xsd:enumeration value="Manage"/>
+                    <xsd:enumeration value="Create"/>
+                    <xsd:enumeration value="Modify"/>
+                    <xsd:enumeration value="Delete"/>
+                    <xsd:enumeration value=""/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ENTITY_ATTRIBUTE_DOMAIN">
+                <xsd:documentation>The organization that maintains the YFS_ATTRIBUTE_DOMAIN record given in ATTRIBUTE_DOMAIN_ID column.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TableName" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="TABLE_NAME" yfc:tableName="YFS_ENTITY_ATTRIBUTE_DOMAIN">
+                <xsd:documentation>The TableName with which the AttributeDomain defined in column ATTRIBUTE_DOMAIN_ID must be associated. The allowed values are YFS_ORDER_HEADER, YFS_ORDER_LINE AND YFS_OPPORTUNITY</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

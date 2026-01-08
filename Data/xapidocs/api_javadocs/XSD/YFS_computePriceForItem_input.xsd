@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/computePriceForItem/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/computePriceForItem/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_computePriceForItem_input.xsd" yfc:rootElement="ComputePriceForItem">
+        <xsd:appinfo source="yfc:structure">
+            <ComputePriceForItem hasAttributes="Y">
+                <PersonInfo hasAttributes="Y"/>
+            </ComputePriceForItem>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ComputePriceForItem" type="yfc:ComputePriceForItemXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+						This element must be passed as the root node. If not:
+						</Condition>
+                        <Error
+                            Description="Input document is empty or contains invalid data" ErrorCode="YFS10363"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Either <code>PriceProgramKey</code> or both {<code>OrganizationCode</code> and <code>PriceProgramName</code> must be passed. If not passed:
+						</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing" ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The input criteria passed must retrieve a price program. If not:
+						</Condition>
+                        <Error Description="Price program not set up" ErrorCode="YFS10496"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ComputePriceForItemXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfo"/>
+        </xsd:all>
+        <xsd:attribute name="Currency" type="yfctype:Currency" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Currency.
+						<Validation>
+                            <Condition>
+							This attribute must be passed. If not passed:
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing" ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemGroupCode" type="yfctype:ItemGroupCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indiactes whether the price list is for a Product, Delivery or Service Line.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					An item for which a price set is maintained.
+						<Validation>
+                            <Condition>
+							This attribute must be passed. If not passed:
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing" ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>Organization for which price program is created.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceProgramKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>Primary key that identifies a price program.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceProgramName" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>The price program used for pricing the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					This is the date used by the pricing engine when pricing this line. If <code>PricingDate</code> is not passed, it is defaulted to the current system date.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Product class of an item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Quantity for which the price/item is requested</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Uom" type="yfctype:UOM" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Item's Unit of measure.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PersonInfo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>
+                <div>
+					The location for which the price is requested. The <code>queryType</code> attribute cannot be passed for any of the input attributes. If this element is passed, <code>Country</code> is mandatory.
+					<Validation>
+                        <Condition>
+						If <code>Country</code> is not passed or invalid:
+						</Condition>
+                        <Error Description="Invalid Country" ErrorCode="YCP0129"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<ResourcePool AllRegionsServiced="Y|N" AssociateRegionBySlot="Y|N"
+    CapacityInfoAvailable="Y|N" CapacityOrganizationCode="Conditional"
+    Node="Conditional" Operation="" ProvidesAllServices="Y|N" Purpose=""
+    ResourcePoolDescription="" ResourcePoolId="Conditional"
+    ResourcePoolKey="Conditional" ServiceSlotGroupId=""
+    ServiceSupervisorId="" TransactInWorkDay="" xmlns="http://www.sterlingcommerce.com/documentation/INV/CAPACITY_CHANGE/ON_CAPACITY_ADJUSTMENT">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="INV_changeResourcePool_input.xml" IncludeXMLPath="/ResourcePool"/>
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (such as regions serviced and skill sets). The capacity for providing services is maintained against a resource pool.<br>
+				Either <code>ResourcePoolKey</code> or {<code>Node</code> and <code>ResourcePoolId</code> and <code>CapacityOrganizationCode</code>} can be used to identify a Resource Pool.</br>
+                    <Validation>
+                        <Condition>
+						The Resource Pool must already be present in the system. If not present:
+						</Condition>
+                        <Error
+                            Description="Resource Pool for given criteria not found" ErrorCode="INV10014"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The root node must be ResourcePool. If not:
+						</Condition>
+                        <Error Description="Invalid Root Node" ErrorCode="INV10003"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute Name="AssociateRegionBySlot">
+                <Description>
+                    <div>
+					The flag indicates whether the resource pool is associated to the regions by using service slots.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <Validation>
+                            <Condition>
+                                <code>AssociateRegionBySlot</code> is set to <b>
+                                    <code>Y</code>
+                                </b> and <code>StartTime</code> or <code>EndTime</code> is not passed in  <code>RegionServiced</code> element.
+							</Condition>
+                            <Error
+                                Description="Resource pool is associated to regions by slots, StartTime and EndTime must be passed in the RegionServiced element." ErrorCode="INV73_001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>AssociateRegionBySlot</code> is set to <b>
+                                    <code>N</code>
+                                </b> and <code>StartTime</code> or <code>EndTime</code> is passed in  <code>RegionServiced</code> element.
+							</Condition>
+                            <Error
+                                Description="Resource pool is not associated to regions by slots, StartTime and EndTime should not be passed in the RegionServiced element." ErrorCode="INV73_002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>AssociateRegionBySlot</code> is set to <b>
+                                    <code>Y</code>
+                                </b> and all RegionServiced with the same Region are not passed as deleted when one or more are passed as to be deleted.
+							</Condition>
+                            <Error
+                                Description="Resource pool is associated to regions by slots, all RegionServiced with the same Region must be deleted if one or more are passed as to be deleted." ErrorCode="INV73_005"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>AssociateRegionBySlot</code> is set to <b>
+                                    <code>Y</code>
+                                </b> and Priority of all RegionServiced with the same Region are not the same.
+							</Condition>
+                            <Error
+                                Description="Resource pool is associated to regions by slots, Priority of all RegionServiced with the same Region must be the same." ErrorCode="INV73_006"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="CapacityOrganizationCode">
+                <Description>
+                    <div>
+					A Resource Pool is always created wihin the context of a Capacity Organization. An Organization can source services from any Resource Pools within the same Capacity Organization.
+						<Validation>
+                            <Condition>
+							The <code>CapacityOrganizationCode</code> attribute cannot be changed. If it is changed:
+							</Condition>
+                            <Error
+                                Description="CapacityOrganizationCode of resource pool cannot be changed" ErrorCode="INV10025"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="Node">
+                <Description>
+                    <div>
+					The Node that is associated with the resource pool.
+						<Validation>
+                            <Condition>
+							The <code>Node</code> attribute cannot be changed. If it is changed:
+							</Condition>
+                            <Error
+                                Description="Node of the resource pool cannot be changed" ErrorCode="INV10023"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Action" Name="Operation">
+                <Description>
+                    <div>
+                           Valid value is <b>
+                            <code>Delete</code>
+                        </b>.  Set <code>Operation</code> = "<b>
+                            <code>Delete</code>
+                        </b>" to delete the resource pool.
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="ServiceSlotGroupId">
+                <Description>
+                    <div>
+					The Id of the Service Slot.
+						<Validation>
+                            <Condition>
+							The <code>ServiceSlotGroupId</code> must be for an existing ServiceSlotGroup of CapacityOrganization. If not:
+							</Condition>
+                            <Error
+                                Description="ServiceSlotGroup not found" ErrorCode="INV10031"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+							If the resource pool maintains capacity at resource level, ServiceSlots within the ServiceSlotGroup cannot be overlapped.
+							</Condition>
+                            <Error
+                                Description="Resource pool that maintains capacity at the resource level cannot have overlapping service slots." ErrorCode="INV73_004"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="TransactInWorkDay">
+                <Description>
+                    <div>
+					Applicable for resource pools with purpose <code>
+                            <b>WMS-RP</b>
+                        </code>. The flag indicates whether the capacities are defined and returned in terms of Work Day defined at the node or not.<br>
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </br>
+					If no value is passed, the default is <b>
+                            <code>N</code>
+                        </b>.
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ResourceCalendar CalendarId="" CalendarKey="" OrganizationCode="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+					This element stores information related to a calendar. A calendar can be created for an organization or for a ship node. A calendar is created using the <code>createCalendar</code> API and managed using the  <code>changeCalendar</code> API. 
+						<Validation>
+                            <Condition>
+							If provided, the calendar should be available and must belong to the node of resource pool or its primary enterprise. Either <code>CalendarKey</code> or {<code>OrganizationCode</code> and <code>CalendarId</code>} must be passed.
+							</Condition>
+                            <Error Description="Invalid Calendar" ErrorCode="INV10001"/>
+                            <Error
+                                Description="Node or its primary enterprise does not own the Calendar" ErrorCode="INV10032"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ResourceCalendar>
+    <ProviderContactAddress AddressLine1="" AddressLine2=""
+        AddressLine3="" AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PreferredShipAddress=""
+        State="" Suffix="" TaxGeoCode="" Title="" VerificationStatus="" ZipCode=""/>
+    <RegionsServiced Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        <div>
+                  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old entities are removed and replaced with the new ones.   
+                  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+                  </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <!-- Priority: 1/2 -->
+        <RegionServiced EndTime="" FridayValid="Y|N" MondayValid="Y|N"
+            Operation="" Priority="Required" RegionKey="Required"
+            SaturdayValid="Y|N" StartTime="" SundayValid="Y|N"
+            ThursdayValid="Y|N" TuesdayValid="Y|N" WednesdayValid="Y|N" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+						 These are the regions that are serviced by a Resource Pool. If <code>RegionServiced</code> is passed, <code>RegionKey</code> is mandatory.
+							<Validation>
+                                <Condition>
+								The regions should be valid and from the same schema. If not:
+								</Condition>
+                                <Error
+                                    Description="Region should be valid (YFS_REGION)" ErrorCode="INV10002"/>
+                                <Error
+                                    Description="All regions should be from same schema" ErrorCode="INV10015"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+                           Valid value is <b>
+                                    <code>Delete</code>
+                                </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                </b>" to delete the entity.
+                          </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </RegionServiced>
+    </RegionsServiced>
+    <ServiceSkills Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        <div>
+                  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old item service skills are removed and replaced with the new ones.   
+                  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+                  </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <ServiceSkill Operation="" OrganizationCode="Required"
+            ServiceSkillId="Required" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Res_Pool_Service_Skill"/>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+                           Valid value is <b>
+                                    <code>Delete</code>
+                                </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                </b>" to delete the entity.
+                          </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ServiceSkill>
+    </ServiceSkills>
+    <ServiceResources>
+        <ServiceResource Notes="" Operation="" ServiceResourceId="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+                           Valid value is <b>
+                                    <code>Delete</code>
+                                </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                </b>" to delete the entity.
+                          </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ServiceResourceCalendar CalendarId="" CalendarKey="" OrganizationCode="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+						This element stores information related to a calendar. A calendar can be created for an organization or for a ship node. A calendar is created using the <code>createCalendar</code> API and managed using the  <code>changeCalendar</code> API. 
+							<Validation>
+                                    <Condition>
+								If provided, the calendar should be available and must belong to the node of resource pool or its primary enterprise. Either <code>CalendarKey</code> or {<code>OrganizationCode</code>  and <code>CalendarId</code>} must be passed.
+								</Condition>
+                                    <Error
+                                    Description="Invalid Calendar" ErrorCode="INV10001"/>
+                                    <Error
+                                    Description="Node or its primary enterprise does not own the Calendar" ErrorCode="INV10032"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </ServiceResourceCalendar>
+            <ServiceResourceContactAddress AddressLine1=""
+                AddressLine2="" AddressLine3="" AddressLine4=""
+                AddressLine5="" AddressLine6="" AlternateEmailID=""
+                Beeper="" City="" Company="" Country="" DayFaxNo=""
+                DayPhone="" Department="" EMailID="" ErrorTxt=""
+                EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+                IsCommercialAddress="" JobTitle="" LastName=""
+                MiddleName="" MobilePhone="" OtherPhone="" PersonID=""
+                PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+                Title="" UseCount="" VerificationStatus="" ZipCode=""/>
+            <ServiceResourceUsers>
+                <ServiceResourceUser Operation="" UserId="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>
+								   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+								  </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </ServiceResourceUser>
+            </ServiceResourceUsers>
+        </ServiceResource>
+    </ServiceResources>
+    <AdditionalCapacityLimitList>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+					The dimensions in which the resource pool's capacity is constrained, in addition to the resource pool's primary capacity dimension. Additional capacity limits can only be set for a resource pool whose capacity is not maintained at the resource level. Also, once set for a resource pool, additional capacity limits cannot be modified or deleted.
+						<Validation>
+                            <Condition>
+							If the resource pool maintains capacity at resource level, additional capacity limits should not be passed. If not:
+							</Condition>
+                            <Error
+                                Description="Resource pool cannot have additional capacity limits if it's capacity is maintained at resource level." ErrorCode="INV80_009"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <AdditionalCapacityLimit CapacityUnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute Name="CapacityUnitOfMeasure">
+                        <Description>
+                            <div>
+							The secondary capacity unit of measure in which the resource pool's capacity is limited.
+								<Validation>
+                                    <Condition>
+									If additional capacity limits are to be defined, <code>CapacityUnitOfMeasure</code> attribute is mandatory. If not:
+									</Condition>
+                                    <Error
+                                    Description="Mandatory parameter missing." ErrorCode="INV80_010"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+									The passed <code>CapacityUnitOfMeasure</code> attribute should be defined in the UOM Master table. If not:
+									</Condition>
+                                    <Error Description="Invalid UOM." ErrorCode="YFS10397"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+									The passed <code>CapacityUnitOfMeasure</code> attribute's UOM Type must either be <code>WEIGHT</code> or <code>VOLUME</code>. If not:
+									</Condition>
+                                    <Error
+                                    Description="The passed CapacityUOM must be of type WEIGHT or VOLUME only." ErrorCode="INV80_011"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+									The passed <code>CapacityUnitOfMeasure</code> attribute's UOM Type should be unique. If not:
+									</Condition>
+                                    <Error
+                                    Description="UOM type for the additional capacity limit must be unique." ErrorCode="INV80_012"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </AdditionalCapacityLimit>
+    </AdditionalCapacityLimitList>
+    <EffectiveDateRanges Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        <div>
+                  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old entities are removed and replaced with the new ones.
+                  </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <EffectiveDateRange EffectiveEndDate="Required"
+            EffectiveStartDate="Required" Operation=""
+            ResPoolStdCapacityPeriodKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Res_Pool_Std_Capacity_Period">
+                    <Description>
+                        <div>
+						 This element defines date ranges for which standard (default) capacity can be maintained for a Resource Pool. These periods cannot overlap for a given Resource Pool.<br>
+                                <b>Note:</b> In the Output XML, the <code>/ResourcePool/EffectiveDateRanges/EffectiveDateRange/DayValidity</code> element is not template controlled.</br>
+                            <Validation>
+                                <Condition>
+								The <code>EffectiveStartDate</code> and <code>EffectiveEndDate</code> attributes are mandatory. Also, <code>EffectiveStartDate</code> must be earlier than <code>EffectiveEndDate</code>. If not:
+								</Condition>
+                                <Error
+                                    Description="Invalid Dates Passed" ErrorCode="INV10010"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>CapacityMaintainAtResourceLevel</code> is set to <b>
+                                    <code>Y</code>
+                                    </b> and <code>Purpose</code> is <b>
+                                    <code>SERVICE</code>
+                                    </b> and an <code>EffectiveDateRange</code> is specified.
+								</Condition>
+                                <Error
+                                    Description="Cannot specify EffectiveDateRange for Resource Pool which maintains capacity at the resource level." ErrorCode="INV71_2"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+                           Valid value is <b>
+                                    <code>Delete</code>
+                                </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                </b>" to delete the entity.
+                          </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <CapacitiesPerSlot Reset="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+					 For every date range defined in YFS_RES_POOL_STD_CAPCTY_PERD, this table defines the standard capacity for each working day / shift combination.
+						<Validation>
+                                    <Condition>
+							If the resource pool's <code>Purpose</code> is not <code>
+                                    <b>SERVICE</b>
+                                    </code> and there are overlapping <code>CapacityPerSlot</code>.
+							</Condition>
+                                    <Error
+                                    Description="Resource Pool cannot have overlapping CapacityPerSlot" ErrorCode="INV75_003"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>
+                                <div>
+						  If <code>Reset</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b>, the old entities are removed and replaced with the new ones.   
+						  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                    <code>N</code>
+                                    </b>, only the deltas are applied. 
+						  </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <CapacityPerSlot CapacityUnitOfMeasure="" EndTime=""
+                    FridayCapacity="" FridaySupplementalCapacity=""
+                    MondayCapacity="" MondaySupplementalCapacity=""
+                    Operation="" SaturdayCapacity=""
+                    SaturdaySupplementalCapacity="" StartTime=""
+                    SundayCapacity="" SundaySupplementalCapacity=""
+                    ThursdayCapacity="" ThursdaySupplementalCapacity=""
+                    TuesdayCapacity="" TuesdaySupplementalCapacity=""
+                    WednesdayCapacity=""
+                    WednesdaySupplementalCapacity="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+								 For every date range defined in YFS_RES_POOL_STD_CAPCTY_PERD, this table defines the standard capacity for each working day / shift combination.
+									<Validation>
+                                    <Condition>
+										The <code>StartTime</code> and <code>EndTime</code> 
+										attributes are mandatory except if the 
+										resource pool serves the <code>INVENTORY</code>
+										purpose. Also, <code>StartTime</code> must be earlier than <code>EndTime</code>. If not:
+										</Condition>
+                                    <Error
+                                    Description="Invalid Time Passed" ErrorCode="INV10011"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+										If negative capacity is being passed for any of the capacity or supplemental capacity fields:
+										</Condition>
+                                    <Error
+                                    Description="Invalid capacity" ErrorCode="INV71_8"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute Name="CapacityUnitOfMeasure">
+                                <Description>
+                                    <div>
+									The capacity unit of measure for which the standard and supplemental capacities are defined for each working day / shift combination. If this attribute is not passed, it is assumed to be the resource pool's primary unit of measure.
+									</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>
+								   Valid value is <b>
+                                    <code>Delete</code>
+                                    </b>.  Set <code>Operation</code> = "<b>
+                                    <code>Delete</code>
+                                    </b>" to delete the entity.
+								  </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </CapacityPerSlot>
+            </CapacitiesPerSlot>
+        </EffectiveDateRange>
+    </EffectiveDateRanges>
+    <ResourcePoolAttributeList>
+        <ResourcePoolAttribute DeliveryMethod=""
+            ResourcePoolAttributeKey="" ResourcePoolKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Res_Pool_Attr">
+                    <Description>
+                        <div>
+						 	This element defines attributes and their values for the resource pool.
+							<Validation>
+                                <Condition>
+								If the resource pool is not of Purpose <code>INVENTORY</code>
+                                </Condition>
+                                <Error
+                                    Description="Resource pool attribute can only be defined for resource pool of Purpose INVENTORY" ErrorCode="INV93_001"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Invalid attribute value passed in input
+								</Condition>
+                                <Error
+                                    Description="Attribute value passed is not among the valid values of the resource pool attribute" ErrorCode="INV93_002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Same attribute value can not be part of different resource pools
+								</Condition>
+                                <Error
+                                    Description="Attribute value included is already part of another resource pool" ErrorCode="INV93_003"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Resource pool must cater to at least one attribute value for the specified attribute
+								</Condition>
+                                <Error
+                                    Description="No Attribute value found for the attribute in the resource pool" ErrorCode="INV93_004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="String" Name="DeliveryMethod">
+                        <Description>
+                            <div>
+								The delivery method for which the resource pool is defined. <br/>
+								Valid values: <code>SHP</code> - Shipment, <code>PICK</code> - Pickup by user
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ResourcePoolAttribute>
+    </ResourcePoolAttributeList>
+</ResourcePool>

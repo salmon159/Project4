@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getDemandSummary/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getDemandSummary/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getDemandSummary_input.xsd" yfc:rootElement="DemandSummary">
+        <xsd:appinfo source="yfc:structure">
+            <DemandSummary hasAttributes="Y">
+                <ShipNodes>
+                    <ShipNode hasAttributes="Y"/>
+                </ShipNodes>
+            </DemandSummary>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="DemandSummary" type="yfc:DemandSummaryXSDType">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_DEMAND">
+            <xsd:documentation>Stores inventory demands.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="DemandSummaryXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipNodes"/>
+        </xsd:all>
+        <xsd:attribute name="FromDemandShipDate" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				The start date of the period for which the summary is requested.
+				<br/>Default: As early as possible. The system restricts this to  no earlier than the year 1900.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Indicates the Organization.
+				<Validation>
+                            <Condition>Must be an existing <code>Organization</code>.
+					</Condition>
+                            <Error Description="Invalid organization." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_DEMAND">
+                <xsd:documentation>
+                    <div>
+			 Specifies that this <code>ShipNode</code> is used in determining <code>Options</code>.
+			<br/>If not passed, the list of ship nodes passed will be considered.  
+			<br/>By Default, a summary of unassigned demands is returned, if both the <code>list</code> and the <code>ShipNode</code> is not passed.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToDemandShipDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				The end date of the period for which the summary is requested.
+				<br/>Default: As far into the future as possible. The system restricts this to no later than the year 2500.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ShipNodes">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					List of ShipNodes 
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ShipNode"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipNode">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_DEMAND">
+            <xsd:documentation>
+                <div>
+					ShipNode 
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_DEMAND">
+                    <xsd:documentation>
+                        <div>
+						This <code>ShipNode</code> is used in determining <code>Options</code>.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

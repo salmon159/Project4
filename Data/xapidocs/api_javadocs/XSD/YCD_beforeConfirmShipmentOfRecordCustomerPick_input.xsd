@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/beforeConfirmShipmentOfRecordCustomerPick/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/beforeConfirmShipmentOfRecordCustomerPick/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_beforeConfirmShipmentOfRecordCustomerPick_input.xsd" yfc:rootElement="Shipment">
+        <xsd:appinfo source="yfc:structure">
+            <Shipment hasAttributes="Y">
+                <ShipmentLines>
+                    <ShipmentLine hasAttributes="Y"/>
+                </ShipmentLines>
+                <Notes>
+                    <Note hasAttributes="Y"/>
+                </Notes>
+            </Shipment>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Shipment" type="yfc:ShipmentXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div> The shipment to record customer pick. Pass  <code>ShipmentKey</code>
+                    <i>or</i> pass <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code> to identify the shipment.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ShipmentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:ShipmentLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Notes"/>
+        </xsd:all>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ShipmentLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:ShipmentLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipmentLine">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE">
+            <xsd:documentation>
+                <div> The shipment line to record customer pick. Pass  <code>ShipmentLineKey</code>
+                    <i>or</i> pass <code>ShipmentLineNo</code> and <code>ShipmentSubLineNo</code> to identify the shipment line.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PickedQty" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+		                		This attribute is to specify the quantity of an item picked up by the customer.
+		                		<Validation>
+                                <Condition>
+										Picked Quantity must be passed indicating the quantity picked in each line.
+									</Condition>
+                                <Error
+                                    Description="Invalid picked quantity" ErrorCode="YCD00020"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="required">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>
+                        <div>
+		                		This attribute is to specify the quantity which was originally ready for customer pick in each line.
+		                		<Validation>
+                                <Condition>
+										Quantity must be passed indicating the quantity which was originally ready for customer pick in each line.
+									</Condition>
+                                <Error
+                                    Description="Invalid shortage resolution" ErrorCode="YCD00017"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+		                		This attribute is to specify the cancellation reason if the shortage resolution is <code>cancel</code> for any shipment line.
+		                		<Validation>
+                                <Condition>
+										Reason Code must be passed whenever the shortage reason is <code>Cancel</code>.
+									</Condition>
+                                <Error
+                                    Description="Reason code should be passed when there is cancellation." ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineKey" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT_LINE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentLineNo" type="yfctype:LineNo" use="required">
+                <xsd:annotation yfc:columnName="SHIPMENT_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>A part of the primary key . The shipment line number is unique for a shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentSubLineNo"
+                type="yfctype:LineNo" use="required">
+                <xsd:annotation yfc:columnName="SHIPMENT_SUB_LINE_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>This is a part of the unique key. ShipmentSubLineNo along with the ShipmentLineNo is used to identify the logical kit component shipment line. The value of this field is zero - for kit parent shipment lines and shipment lines with items that are not kit components, and greater than zero if the the shipment line corresponds to a logical kit component item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortageQuantity" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+		                		This attribute is to specify the shortage quantity of an item in each line.
+		                		<Validation>
+                                <Condition>
+										If shortage quantity is not passed in the shipment line, it is calculated using the <code>Quantity</code> and <code>PickQty</code> attributes.
+									</Condition>
+                                <Error
+                                    Description="Invalid shortage resolution" ErrorCode="YCD00017"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortageReason" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+		                		This attribute is to specify the shortage resolution if there is any shortage in the items by the customer.
+		                		<Validation>
+                                <Condition>
+										Shortage Reason must be passed whenever there is a shortage in line. It can be one of <code>AllInventoryShortage</code>, <code>PickLater</code> or <code>Cancel</code>. The shortage quantity is processed according to the shortage resolution.
+									</Condition>
+                                <Error
+                                    Description="Invalid shortage resolution" ErrorCode="YCD00017"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Notes">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Note"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Note">
+        <xsd:annotation yfc:tableName="YFS_NOTES">
+            <xsd:documentation>Generic table used to stores notes associated with various entities in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ContactReference"
+                type="yfctype:NotesContactReference" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_REFERENCE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>If the notes were entered because of customer contact by phone, the phone no can be stored in this column. If the contact is by email, email ID can be stored here.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactTime" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_TIME" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The time at which the customer contact occurred.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactType" type="yfctype:CommonCode" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_TYPE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The contact type like Phone call, email etc. The values will be selected from common code of code type "CONTACT_TYPE"</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactUser" type="yfctype:UserId" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_USER" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The user who made the contact. The default value will the logged in user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoteText" type="yfctype:NoteText" use="optional">
+                <xsd:annotation yfc:columnName="NOTE_TEXT" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Detailed Notes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Priority"
+                type="yfctype:PriorityWithDecimal" use="optional">
+                <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Priority of the note. 1 is High, 0 is Low.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The reason for which the notes are logged. Like "CustomerContact" etc. The values will be selected from common code of code type "NOTES_REASON"</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

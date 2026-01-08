@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2016 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Shipment ActualDeliveryDate="" ActualShipmentDate="" AppointmentNo=""
+    BolNo="" BuyerOrganizationCode="Conditional" CarrierAccountNo=""
+    CarrierServiceCode="" CommercialValue="" Currency=""
+    DestinationZone="" DocumentType="Conditional" DownLoadCount=""
+    EnterpriseCode="Conditional" ExpectedDeliveryDate=""
+    ExpectedShipmentDate="" ExportTaxpayerID="" FreightTerms=""
+    FromAddressKey="" FromAppointment="" HazardousMaterialFlag=""
+    HeldForConfirmation="" ITDate="" ITNo="" IsSingleOrder=""
+    LevelOfService="" ManifestNo="" ManuallyCreated=""
+    ManuallyEntered="" NumOfCartons="" NumOfPallets=""
+    OrderAvailableOnSystem="" OrderNo="Conditional" OriginZone=""
+    PackAndHold="" PackListType="" PickListNo="" PickticketNo=""
+    PodNo="" ProNo="" ProfileID="" ReceivingNode="Conditional"
+    ReleaseNo="" RequestedCarrierServiceCode="" RequestedDeliveryDate=""
+    RequestedShipmentDate="" RequiresApptConfirmation="" SCAC=""
+    SealNo="" SellerOrganizationCode="" ShipNode="" ShipVia=""
+    ShipmentNo="" ShipmentType="" ToAddressKey="" ToAppointment=""
+    TotalVolume="" TotalVolumeUOM="" TotalWeight="" TotalWeightUOM=""
+    TrackingNo="" TrailerNo="" WorkOrderApptKey="" WorkOrderKey="" xmlns="http://www.sterlingcommerce.com/documentation/YDM/beforeChangeShipmentUE/output">
+    <yfc:doc>
+        <Element EntityName="Shipment">
+            <Description>
+                <div>
+                    <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code> form the unique key for a <code>Shipment</code>. If the <code>ShipmentNo</code> attribute is passed as blanks, then system generates a new <code>ShipmentNo</code>.
+             <Validation>
+                        <Condition>Shipment has more than one provided service line.
+                </Condition>
+                        <Error
+                            Description="A shipment can only contain one provided service line." ErrorCode="YDM00135"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Shipment contains product lines belonging to multiple delivery service lines.
+                </Condition>
+                        <Error
+                            Description="A shipment can only contain product lines belonging to single delivery service line." ErrorCode="YDM00136"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Both <Code>ShipNode</Code> and <Code>ReceivingNode</Code> are blank.
+                </Condition>
+                        <Error
+                            Description="Both Ship node and Receiving node cannot be blank." ErrorCode="YDM00116"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Both <Code>ReceivingNode</Code> and <Code>ToAddressKey</Code> are blank.
+                </Condition>
+                        <Error
+                            Description="Both Receiving node and ShipTo address cannot be blank." ErrorCode="YDM00127"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Both <Code>ShipNode</Code> and <Code>FromAddressKey</Code> are blank.
+                </Condition>
+                        <Error
+                            Description="Both Shipnode and ShipFrom address cannot be blank." ErrorCode="YDM00128"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <Code>ShipNode</Code> is blank and invalid <Code>FromAddressKey</Code>.
+                </Condition>
+                        <Error Description="From Address is invalid." ErrorCode="YDM00117"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute EntityName="Shipment"
+                Name="BuyerOrganizationCode" NameInEntity="Buyer_Organization_Code">
+                <Description>
+                    <div>
+                 Buyer organization to which this shipment belongs. 
+                 If an <code>OrderRelease</code> entity is not passed, the following attributes must be passed: 
+                 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+                 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment" Name="DocumentType" NameInEntity="Document_Type">
+                <Description>
+                    <div>
+                 Indicates a classification of data on which a particular set of business processes must be applied. If an <code>OrderRelease</code> entity is not passed, the following attributes must be passed: 
+                 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+                 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment" Name="EnterpriseCode" NameInEntity="Enterprise_Code">
+                <Description>
+                    <div>
+                 Enterprise to which this shipment belongs.  If an <code>OrderRelease</code> entity is not passed, the following attributes must be passed: 
+                 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+                 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="HeldForConfirmation"/>
+            <Attribute EntityName="Shipment" Name="IsSingleOrder" NameInEntity="Is_Single_Order">
+                <Description>
+                    <div>
+                Indicates if the shipment is for a single order. This flag is being used especially when a dummy shipment is being created with no shipment lines against an order. 
+                <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If passed as <b>
+                            <code>Y</code>
+                        </b>
+                        <br/> - <code>Shipment\OrderNo</code> or <code>Shipment\OrderReleases\OrderReleaseOrderHeaderKey</code> must be passed. 
+                <br/> - the values passed in the <code>Order</code> attributes are used to fill void attributes of the <code>Shipment</code>. 
+                <br/> - the <code>Order</code> attributes should match those of the <code>Shipment</code>.
+                <br/>
+                        <br/>If <code>Shipment\OrderNo</code> or <code>Shipment\OrderReleases\OrderReleaseOrderHeaderKey</code> is passed, the
+                <code>IsSingleOrder</code> flag is set to <b>
+                            <code>Y</code>
+                        </b>. 
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ManuallyCreated"/>
+            <Attribute EntityName="Shipment"
+                Name="OrderAvailableOnSystem" NameInEntity="Order_Available_On_System">
+                <Description>
+                    <div>
+                 Indicates if order is available on the system.  
+				 <br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If passed as <b>
+                            <code>N</code>
+                        </b> Order,OrderLine and OrderRelease validations are not done. Further defaulitng of shipment attributes from Order,OrderLine and OrderRelease are not done.
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment" Name="ProfileID" NameInEntity="Profile_Id">
+                <Description>
+                    <div>
+                 Each <code>Shipment</code> has a ProfileID which is derived based on its attributes.
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment" Name="ReceivingNode" NameInEntity="Receiving_Node">
+                <Description>
+                    <div>
+                Node to which the shipment should be made. If an <code>OrderRelease</code> is not passed, the following attributes must be passed: 
+                 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+                 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>. 
+				 If <code>OrderRelease</code> is for Return Order and <code>ReceivingNode</code> is blank then it is defaulted to  <code>OrderRelease's ShipNode</code> 
+				 else it is defaulted to  <code>OrderRelease's ReceivingNode</code>.
+				 <Validation>
+                            <Condition> Invalid <Code>ReceivingNode</Code> is passed.
+					</Condition>
+                            <Error Description="Invalid Receiving Node." ErrorCode="YFS10371"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment"
+                Name="SellerOrganizationCode" NameInEntity="Seller_Organization_Code"/>
+            <Attribute DataType="String" EntityName="Shipment"
+                Name="ShipNode" NameInEntity="Ship_Node">
+                <Description>
+                    <div>
+                 Ship node from where shipment was made. If an <code>OrderRelease</code> is not passed, the following attributes must be passed: 
+                 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+                 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>. 
+				 If <code>OrderRelease</code> is for Return Order and <code>ShipNode</code> is blank then it is defaulted to  <code>OrderRelease's ReceivingNode</code> 
+				 else  it is defaulted to <code>OrderRelease's ShipNode</code>. 
+				 <Validation>
+                            <Condition> Invalid <Code>ShipNode</Code> is passed.
+					</Condition>
+                            <Error
+                                Description="ShipNode does not exist in the system.." ErrorCode="YDM00085"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Shipment" Name="ShipmentNo" NameInEntity="Shipment_No">
+                <Description>
+                    <div>
+                Part of the information that identifies a Shipment. If passed as blanks, then the system generates a new <code>ShipmentNo</code>.
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="WorkOrderApptKey" NameInEntity="Work_Order_Appt_Key"/>
+            <Attribute Name="WorkOrderKey" NameInEntity="Work_Order_Key"/>
+        </Attributes>
+    </yfc:doc>
+    <ScacAndService CarrierServiceKey="" OrganizationCode=""
+        ScacAndService="" ScacAndServiceKey="" ScacKey="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_SCAC_And_Service_keys.xml" IncludeXMLPath="/ScacAndService"/>
+        <yfc:doc>
+            <Element EntityName="SCAC_And_Service"/>
+        </yfc:doc>
+    </ScacAndService>
+    <ToAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+                    <div>
+            Address information for where the shipment should be shipped. If <code>ToAddress</code> is not passed, the values are defaulted from the <code>ReceivingNode</code> or <code>ShipNode</code>. If <code>ReceivingNode</code> is not passed, or there are no default values, <code>ToAddress</code> must be passed.
+            </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ToAddress>
+    <FromAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+                    <div>
+                Address information for source of the shipment. If <code>FromAddress</code> is not passed, the values are defaulted from the buyer or seller organization. If <code>ShipNode</code> is not passed, or there are no default values, <code>FromAddress</code> must be passed.
+                </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </FromAddress>
+    <Containers>
+        <Container ActualFreightCharge="" AppliedWeight=""
+            AppliedWeightUOM="" AstraCode="" BarcodeDiscount=""
+            BasicFreightCharge="" CarriageValue=""
+            ContainerGrossWeight="" ContainerGrossWeightUOM=""
+            ContainerHeight="" ContainerHeightUOM="" ContainerLength=""
+            ContainerLengthUOM="" ContainerNetWeight=""
+            ContainerNetWeightUOM="" ContainerNo="" ContainerScm=""
+            ContainerSeqNo="" ContainerType="" ContainerWidth=""
+            ContainerWidthUOM="" CustomsValue="" DeclaredValue=""
+            DimmedFlag="" DiscountAmount="" ExportLicenseExpDate=""
+            ExportLicenseNo="" IsReceived="" LoadKey="" OversizedFlag=""
+            ParentContainerNo="" RoutingCode="" ShipmentContainerKey=""
+            ShipmentKey="" SpecialServicesSurcharge="" TrackingNo=""
+            Ucc128code="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Shipment_Container_tran.xml" IncludeXMLPath="/Container"/>
+            <yfc:doc>
+                <Element EntityName="Shipment_Container"/>
+            </yfc:doc>
+            <ContainerDetails>
+                <ContainerDetail ContainerDetailsKey="" Quantity=""
+                    ShipmentLineKey="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent IncludeXMLChildNodes="Y"
+                        IncludeXMLFileName="YFS_Container_Details_tran.xml" IncludeXMLPath="/ContainerDetail"/>
+                    <yfc:doc>
+                        <Element EntityName="Container_Details"/>
+                    </yfc:doc>
+                    <ShipmentTagSerials>
+                        <ShipmentTagSerial BatchNo=""
+                            ContainerDetailKey="" LotAttribute1=""
+                            LotAttribute2="" LotAttribute3=""
+                            LotKeyReference="" LotNumber=""
+                            ManufacturingDate="" Quantity=""
+                            RevisionNo="" SerialNo="" ShipByDate=""
+                            ShipmentLineKey="" ShipmentTagSerialKey="" yfc:DTDOccurrence="ZeroOrMany">
+                            <yfc:includeInParent
+                                IncludeXMLFileName="YFS_Shipment_Tag_Serial_master.xml" IncludeXMLPath="/ShipmentTagSerial"/>
+                            <yfc:doc>
+                                <Element EntityName="Shipment_Tag_Serial">
+                                    <Description>
+                                    <div>
+				Stores additional information related to tag number, serial number, ship by date for a shipment line or container detail. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+				</div>
+                                    </Description>
+                                </Element>
+                            </yfc:doc>
+                        </ShipmentTagSerial>
+                    </ShipmentTagSerials>
+                    <ShipmentLine DocumentType="" ItemID=""
+                        OrderHeaderKey="" OrderLineKey="" OrderNo=""
+                        OrderReleaseKey="" PrimeLineNo=""
+                        ProductClass="" ReleaseNo="" ShipAdviceNo=""
+                        ShipmentLineNo="" ShipmentSubLineNo=""
+                        SubLineNo="" UnitOfMeasure="">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="String"
+                                    Name="DocumentType" NameInEntity="Document_Type"/>
+                                <Attribute Name="ItemID" NameInEntity="ItemID"/>
+                                <Attribute Name="OrderHeaderKey" NameInEntity="Order_Header_Key"/>
+                                <Attribute Name="OrderLineKey" NameInEntity="Order_Line_Key"/>
+                                <Attribute Name="OrderNo" NameInEntity="Order_No"/>
+                                <Attribute Name="OrderReleaseKey" NameInEntity="Order_Release_Key"/>
+                                <Attribute Name="PrimeLineNo" NameInEntity="Prime_Line_No"/>
+                                <Attribute Name="ProductClass" NameInEntity="Product_Class"/>
+                                <Attribute Name="ReleaseNo" NameInEntity="Release_No"/>
+                                <Attribute EntityName="Order_Release"
+                                    Name="ShipAdviceNo" NameInEntity="Ship_Advice_No">
+                                    <Description>
+                                    <div>Ship advice number of the order release.  <code>ShipAdviceNo</code> will only be used when order release identifiers such as <code>OrderReleaseKey</code>
+                                    <i>or</i>
+                                    <code>ReleaseNo</code> and <code>OrderHeaderKey</code> are not provided.  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided) will be used to determine the order release in the system.  If more than one order releases are found in the system with the same <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided), the order release with a pickable status will be used. 
+				  <Validation>
+                                    <Condition>More than one order releases in a pickable status are found with the same  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Multiple order releases found with ShipAdviceNo." ErrorCode="OMP75_10000"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>System cannot find an order release with the provided <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Invalid ShipAdviceNo." ErrorCode="YDM75_00001"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute Name="ShipmentLineNo" NameInEntity="Shipment_Line_No"/>
+                                <Attribute Name="ShipmentSubLineNo" NameInEntity="Shipment_Sub_Line_No"/>
+                                <Attribute Name="SubLineNo" NameInEntity="Sub_Line_No"/>
+                                <Attribute Name="UnitOfMeasure" NameInEntity="Uom"/>
+                            </Attributes>
+                        </yfc:doc>
+                        <ShipmentLineInvAttRequest BatchNo=""
+                            LotAttribute1="" LotAttribute2=""
+                            LotAttribute3="" LotKeyReference=""
+                            LotNumber="" ManufacturingDate="" RevisionNo="">
+                            <yfc:doc>
+                                <Element EntityName="Shipment_Line_Req_Tag"/>
+                            </yfc:doc>
+                        </ShipmentLineInvAttRequest>
+                    </ShipmentLine>
+                </ContainerDetail>
+            </ContainerDetails>
+            <Instructions>
+                <Instruction InstructionDetailKey="" InstructionText=""
+                    InstructionType="" InstructionURL=""
+                    InstructionUsage="" ReferenceKey="" SequenceNo=""
+                    TableName="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+                    <yfc:doc>
+                        <Element EntityName="Instruction_Detail"/>
+                    </yfc:doc>
+                </Instruction>
+            </Instructions>
+        </Container>
+    </Containers>
+    <Instructions>
+        <Instruction InstructionDetailKey="" InstructionText=""
+            InstructionType="" InstructionURL="" InstructionUsage=""
+            ReferenceKey="" SequenceNo="" TableName="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+            <yfc:doc>
+                <Element EntityName="Instruction_Detail"/>
+            </yfc:doc>
+        </Instruction>
+    </Instructions>
+    <OrderReleases>
+        <OrderRelease OrderHeaderKey="" OrderReleaseKey="" ReleaseNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Release">
+                    <Description>
+                        <div>
+                            <br/> If an <code>OrderRelease</code> is not passed, the following attributes must be passed in the <code>Shipment</code> entity: 
+			 <code>DocumentType</code>, <code>EnterpriseCode</code>, <code>BuyerOrganizationCode</code>,
+			 <code>SellerOrganizationCode</code>, and either <code>ShipNode</code> or <code>ReceivingNode</code>.
+			 </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <Order DocumentType="Required" EnterpriseCode="Required" OrderNo="Required"/>
+        </OrderRelease>
+    </OrderReleases>
+    <Notes>
+        <Note AuditTransactionId="" ContactReference="" ContactTime=""
+            ContactType="" ContactUser="" CustomerSatIndicator=""
+            NoteText="" Priority="" ReasonCode="" SequenceNo=""
+            Tranid="" Tranname="" VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Notes"/>
+                <Attributes>
+                    <Attribute DataType="Text-50" Name="Tranname">
+                        <Description>
+							Specifies the name of the Transaction
+						</Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <User Username="" Usertype=""/>
+        </Note>
+    </Notes>
+    <ShipmentLines>
+        <ShipmentLine BatchPickPriority="" BuyerMarkForNodeId=""
+            CountryOfOrigin="" CustomerPoLineNo="" CustomerPoNo=""
+            DepartmentCode="" DocumentType="Conditional"
+            ExternalReleaseIdentifier="" FifoNo="" ItemDesc=""
+            ItemID="Conditional" KitCode="LK|| |Blanks" KitQty=""
+            LevelOfService="" NetWeight="" NetWeightUom=""
+            OrderHeaderKey="" OrderLineKey="" OrderNo="Conditional"
+            OrderReleaseKey="" PrimeLineNo="Conditional" ProductClass=""
+            Quantity="" ReleaseNo="Conditional" RequestedSerialNo=""
+            ReturnShippingLabelLevel="" Segment="" SegmentType=""
+            ShipAdviceNo="" ShipToCustomerId=""
+            ShipmentConsolidationGroupId=""
+            ShipmentLineKey="Conditional" ShipmentLineNo="Conditional"
+            ShipmentSubLineNo="Conditional" StoreBatchKey=""
+            SubLineNo="Conditional" UnitOfMeasure="Conditional" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="N"
+                IncludeXMLFileName="YFS_Shipment_Line_tran.xml" IncludeXMLPath="/ShipmentLine"/>
+            <yfc:doc>
+                <Element EntityName="Shipment_Line">
+                    <Description>
+                        <div>
+                Stores information about the <code>ShipmentLine</code>. To modify an existing <code>ShipmentLine</code>, identify the <code>ShipmentLine</code> by passing either the <code>ShipmentLineKey</code> or the <code>ShipmentKey</code>,  <code>ShipmentLineNo</code> and <code>ShipmentSubLineNo</code> or the <code>ShipmentKey</code>,  {<code>OrderNo</code>, <code>ReleaseNo</code>}/{<code>ShipAdviceNo</code>},  <code>PrimeLineNo</code>,  <code>SubLineNo</code>,  <code>ItemID</code>,  <code>UnitOfMeasure</code> and tag attributes if any under <code>ShipmentLineInvAttRequest</code> element. 
+                <br/>If given under <code>ContainerDetail</code> element, identify the <code>ShipmentLine</code> by passing either the <code>ShipmentLineKey</code> or the <code>ShipmentKey</code>, <code>ShipmentLineNo</code> and <code>ShipmentSubLineNo</code>.
+            </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="String" Name="DocumentType"/>
+                    <Attribute Name="KitQty">
+                        <Description>
+                            <div>The number of components required for one kit.  The quantity is used only for bundle components only when the order is not available for the shipment line. When order is available for the shipment line, <code>KitQty</code> is defaulted from order information.
+					  </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Release"
+                        Name="ShipAdviceNo" NameInEntity="Ship_Advice_No">
+                        <Description>
+                            <div>Ship advice number of the order release.  <code>ShipAdviceNo</code> will only be used when order release identifiers such as <code>OrderReleaseKey</code>
+                                <i>or</i>
+                                <code>ReleaseNo</code> and <code>OrderHeaderKey</code> are not provided.  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided) will be used to determine the order release in the system.  If more than one order releases are found in the system with the same <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided), the order release with a pickable status will be used. 
+				  <Validation>
+                                    <Condition>More than one order releases in a pickable status are found with the same  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Multiple order releases found with ShipAdviceNo." ErrorCode="OMP75_10000"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>System cannot find an order release with the provided <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Invalid ShipAdviceNo." ErrorCode="YDM75_00001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ShipmentLineInvAttRequest BatchNo="" LotAttribute1=""
+                LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                LotNumber="" ManufacturingDate="" RevisionNo=""/>
+            <ShipmentTagSerials>
+                <ShipmentTagSerial BatchNo="" ContainerDetailKey=""
+                    LotAttribute1="" LotAttribute2="" LotAttribute3=""
+                    LotKeyReference="" LotNumber="" ManufacturingDate=""
+                    Quantity="" RevisionNo="" SerialNo="" ShipByDate=""
+                    ShipmentLineKey="" ShipmentTagSerialKey="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Shipment_Tag_Serial_master.xml" IncludeXMLPath="/ShipmentTagSerial"/>
+                    <yfc:doc>
+                        <Element EntityName="Shipment_Tag_Serial">
+                            <Description>
+                                <div>
+                        Additional information related to tag number, serial number, ship by date for a shipment line or container detail is stored in this table. If the shipment line item is tagged, <code>ShipmentTagSerial</code> has to be specified to confirm the shipment. 
+                          <Validation>
+                                    <Condition>When sum of tagged quantity of the line and containerized quantity is greater than ShipmentLine quantity.</Condition>
+                                    <Error
+                                    Description="ShipmentLine quantity cannot be less than sum of tagged quantity of the line and containerized quantity." ErrorCode="YDM00120"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>When total tagged quantity for the Container detail is greater than Container detail quantity .</Condition>
+                                    <Error
+                                    Description="Container detail quantity cannot be less than total tagged quantity for the Container detail." ErrorCode="YDM00121"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>When tag details are not given for a shipment line with item as tag controlled.</Condition>
+                                    <Error
+                                    Description="Tag Number mandatory if Item is Tag controlled." ErrorCode="YDM00114"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute Name="SerialNo">
+                                <Description>
+                                    <div>
+                            Serial number.
+							<Validation>
+                                    <Condition>If <code>RequestedSerialNo</code> in <code>ShipmentLine</code> is not void and does not equal <code>SerialNo</code>.</Condition>
+                                    <Error
+                                    Description="Serial Number specified does not match Requested Serial number." ErrorCode="YDM00228"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If <code>SerialNo</code> is provided and <code>Quantity</code> is not equal to one.
+                                </Condition>
+                                    <Error
+                                    Description="Quantity must be equal to one because SerialNo is provided." ErrorCode="YDM00257"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </ShipmentTagSerial>
+            </ShipmentTagSerials>
+            <Instructions>
+                <Instruction InstructionDetailKey="" InstructionText=""
+                    InstructionType="" InstructionURL=""
+                    InstructionUsage="" ReferenceKey="" SequenceNo=""
+                    TableName="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+                    <yfc:doc>
+                        <Element EntityName="Instruction_Detail"/>
+                    </yfc:doc>
+                </Instruction>
+            </Instructions>
+        </ShipmentLine>
+    </ShipmentLines>
+    <ShipmentCharges>
+        <ShipmentCharge ActualCharge="" ChargeCategory="" ChargeName=""
+            EstimatedCharge="" InvoiceNo="" KeyReference1=""
+            KeyReference2="" LoadKey="" LoadShipmentChargeKey=""
+            PayeeOrganizationCode="" ShipmentKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Load_Shipment_Charge_tran.xml" IncludeXMLPath="/LoadShipmentCharge"/>
+            <yfc:doc>
+                <Element EntityName="Load_Shipment_Charge"/>
+            </yfc:doc>
+        </ShipmentCharge>
+    </ShipmentCharges>
+    <AdditionalDates>
+        <AdditionalDate ActualDate="" AdditionalDateKey="" DateTypeId=""
+            ExpectedDate="" ReferenceKey="" ReferenceType=""
+            RequestedDate="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Additional_Date_tran.xml" IncludeXMLPath="/AdditionalDate"/>
+            <yfc:doc>
+                <Element EntityName="Additional_Date"/>
+            </yfc:doc>
+        </AdditionalDate>
+    </AdditionalDates>
+</Shipment>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/inductCart/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/inductCart/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_inductCart_input.xsd" yfc:rootElement="Cart">
+        <xsd:appinfo source="yfc:structure">
+            <Cart hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Cart" type="yfc:CartXSDType">
+        <xsd:annotation yfc:tableName="YFS_CART">
+            <xsd:documentation>This table stores the cart id and its associated batch no. During the process of building a cart manually using mobile UI, a set of tasks are associated with a newly created batch. This table stores the cart along with the newly created batch.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CartXSDType">
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_CART">
+                <xsd:documentation>
+                    <div> Identifies the batch associated with the cart.
+						<Validation>
+                            <Condition>Batch with only open tasks should be passed.
+							</Condition>
+                            <Error
+                                Description="Task(s) not open for the batch." ErrorCode="WMS75100302"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CartId" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="CART_ID" yfc:tableName="YFS_CART">
+                <xsd:documentation>
+                    <div> Unique Identifier for a cart.Forms unique key of this table in conjunction with <code>NODE_KEY</code>.
+						<Validation>
+                            <Condition>Cart has open associated with it.
+							</Condition>
+                            <Error
+                                Description="Cart has open batch associated with it." ErrorCode="WMS75100301"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>No available open task to associate with cart.
+							</Condition>
+                            <Error Description="No open task to induct." ErrorCode="WMS00296"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CartId</code> must be passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>
+                    <div> 
+					Business key or unique identifier for a ship node.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> must be passed.
+							</Condition>
+                            <Error
+                                Description="Mandatory parameters not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UserId" type="yfctype:String" use="optional"/>
+    </xsd:complexType>
+</xsd:schema>

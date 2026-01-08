@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getTaskTypeList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getTaskTypeList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getTaskTypeList_output.xsd" yfc:rootElement="TaskTypeList">
+        <xsd:appinfo source="yfc:structure">
+            <TaskTypeList hasAttributes="Y">
+                <TaskType hasAttributes="Y">
+                    <BatchRule hasAttributes="Y">
+                        <EquipmentType hasAttributes="Y">
+                            <EquipmentTypeDetails>
+                                <EquipmentTypeDetail hasAttributes="Y"/>
+                            </EquipmentTypeDetails>
+                        </EquipmentType>
+                    </BatchRule>
+                </TaskType>
+            </TaskTypeList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="TaskTypeList" type="yfc:TaskTypeListXSDType"/>
+    <xsd:complexType name="TaskTypeListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:TaskType"/>
+        </xsd:sequence>
+        <xsd:attribute name="TotalNumberOfRecords" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>				Number of records returned.				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="TaskType">
+        <xsd:annotation yfc:tableName="YFS_TASK_TYPE">
+            <xsd:documentation>This table stores different types of tasks performed in a warehouse.  Different task types typically represent tasks that are physically different.  For instance, paper based putaway as opposed to RF based putaway.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:BatchRule"/>
+            </xsd:all>
+            <xsd:attribute name="ActivityCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVITY_CODE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The code of the activity within the Activity Group.  For example, STORAGE.  This is system defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActivityGroupId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVITY_GROUP_ID" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The activities performed in a warehouse are grouped in an activity group Id. For example, PUTAWAY. Activity groups are system defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BatchRequired" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_REQUIRED" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>This flag indicates whether tasks need to be batched on creation.Y:  When tasks are created, they need to be batched and printed.  This typically represents a paper based process, but it may also represent an RF based process.  N:  No batching required  This information is used by createTask API: When tasks are created, if this flag is Y, then they are 'Held for batching'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BatchRuleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_RULE_KEY" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The batch rule key that is associated with this task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecTasksThruDropoff"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXEC_TASKS_THRU_DROPOFF" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>This flag indicates whether to execute tasks through drop off locations.   Y: indicates that this type of task is physically broken up by drop off locations (on system, this does not automatically translate into multiple tasks). N: indicates that this type of task is carried out without being broken up into drop-off locations.  That is, product is carried directly from origin to destination without being stopped at drop off locations.    This information is used by createTask API:  If this is set to Y, and pick method is not 'pick to pallet', then tasks are created split by drop off location (drop off chaining).  Putaway RF screen: if this is Y, then it displays the drop off location on pick screen if that drop off location is different from the target location on the task.   updateTaskStatus API: when status is moved to PICKED, then if the task needs to be split, then internally, createTask API is called, which considers this rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HoldTaskOnCreation" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_TASK_ON_CREATION" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>This flag indicates whether tasks are held in creation. Tasks held on creation may be released manually later. This information is used by the createTask API. When tasks are created, if this flag is Y, then they are 'Held for batching'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsAdHocMove" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_AD_HOC_MOVE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>This flag indicates whether putaway can be performed on an ad hoc basis.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxUsersAllowed" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="MAX_USERS_ALLOWED" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The number of users who can be suggested tasks of this task type and primary task reference combination.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The node key that is associated with this task type. Since operations vary for each node, task type level attributes are maintained at a node level.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The owner organization of the node for which this task type is defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PickIntoInventoryContainer"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PICK_INTO_INVENTORY_CONTAINER" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The case Id or pallet Id into which products are picked directly.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PickIntoOutboundContainer"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PICK_INTO_OUTBOUND_CONTAINER" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The outbound case Id or pallet Id into which the item is picked.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimaryTaskReference"
+                type="yfctype:CommonCode" use="optional">
+                <xsd:annotation yfc:columnName="PRIMARY_TASK_REFERENCE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The smallest group of tasks that need to be kept together for a particular user.  For instance, in the case of strict order pick, user picks one shipment at a time.  In such a case, if the first task that is suggested to a user has shipment number A, then all other tasks belonging to that shipment number must be suggested only to that user.  In order to accomplish this, system automatically creates a temporary user level transaction constraint for this shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductivityType"
+                type="yfctype:ProductivityType" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCTIVITY_TYPE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The productivity type to which this Task type is associated. It is possible that a task type can not have a productivity type associated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourceIdOverride"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_ID_OVERRIDE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The unique identifier of a resource, which will be used for a task type. This resource will override the default resource associated with the task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceTaskOrderBy"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_TASK_ORDER_BY" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The sequence in which to order the source task. 01: Move-In Sequence. Typically, this is used during putaway.  02: Move-out Sequence. Typically, this is used during replenishment and order picking.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceTaskSuggestion"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_TASK_SUGGESTION" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The suggestion for the source task. 01: User sequenced User is presented with a set of tasks, and the user selects the order in which they are done  02: System sequenced System presents the user with tasks one by one, and the user has to perform them in that order (override possible).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StandardRate" type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The rate at which tasks of this task type are executed. The rate can be either the number of tasks per hour or in units per hour, as specified in standard rate unit of  measure. It is derived from allowed minutes per task column in YFS_PRODUCTIVITY_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StandardRateUom" type="yfctype:Text-4" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The unit of  measure at which tasks of this task type are executed. The rate can be either number of tasks per hour or in units per hour.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetTaskOrderBy"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_TASK_ORDER_BY" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The sequence in which to order target tasks. 01: Move-In Sequence Typically, this is used during putaway.  02: Move-out Sequence Typically, this is used during replenishment and order picking.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetTaskSuggestion"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_TASK_SUGGESTION" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The suggestion for the target task. 01: User sequenced - User is presented with a set of deposit tasks, and the user selects the order in which deposit is done  02: System sequenced - System presents the user with deposit tasks one by one, and the user has to deposit in that order (override possible).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The identifier of the task type. Typically, this would be a short two-digit code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE_KEY" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The primary key for the YFS_TASK_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskTypeName"
+                type="yfctype:TaskTypeName" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE_NAME" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The descriptive name of the task type.  This is used to display data in drop-downs in the user interface, wherever the user can select a task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskTypePriority"
+                type="yfctype:Priority" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The priority of this task type over other task types.  This priority controls the order in which tasks are suggested to a user.  Priority 1 will get suggested before Priority 2, and so on.  Tasks are suggested in ascending order of task type priority (there are several other factors that influence the order in which tasks are suggested).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VoiceWorkFlowId" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="VOICE_WORK_FLOW_ID" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>Indicates the Voice Work Flow to be used to execute the Tasks belonging to this Task Type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="BatchRule">
+        <xsd:annotation yfc:tableName="YFS_BATCH_RULE">
+            <xsd:documentation>This table stores batch rules.  Batching algorithm applies these constraints during batch creation. Batch rules can be specified at node level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EquipmentType"/>
+            </xsd:all>
+            <xsd:attribute name="BatchRuleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_RULE_KEY" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Primary key attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentType"
+                type="yfctype:EquipmentType" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_TYPE" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Equipment type is used move product within a warehouse (eg Cart).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxTasks" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="MAX_TASKS" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Maximum number of tasks that a batch can have.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxTransactions" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="MAX_TRANSACTIONS" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Maximum number of tasks for the PrimaryTaskReference that a batch can have.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxVolume" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="MAX_VOLUME" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Maximum volume that a batch can have.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Owner organization of the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimaryBatchReference"
+                type="yfctype:CommonCode" use="optional">
+                <xsd:annotation yfc:columnName="PRIMARY_BATCH_REFERENCE" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>This field is used in conjunction with Max Transactions field.  If the Max Transactions is set to n, then it results in only n shipment / wave / container (whichever is selected as the Primary Task Reference) in a batch. Invalid setup if 'max transactions' is specified but 'PrimaryTaskReference' is not defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SeparateMultiAreaBatches"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SEPARATE_MULTI_AREA_BATCHES" yfc:tableName="YFS_BATCH_RULE">
+                    <xsd:documentation>Y if separate batch needs to be created for tasks requiring picking from multiple areas. If Y, tasks requiring multiple area picking can be batched together.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EquipmentType">
+        <xsd:annotation yfc:tableName="YFS_EQUIPMENT_TYPE">
+            <xsd:documentation>All equipment types of the warehouse are defined in this table. e.g. GRABTRUCK, FORKLIFT etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:EquipmentTypeDetails"/>
+            </xsd:all>
+            <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>A brief description of the equipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentType"
+                type="yfctype:EquipmentType" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_TYPE" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>This field specifies the equipment type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentTypeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_TYPE_KEY" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>The primary key for the YFS_EQUIPMENT_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsStation" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_STATION" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>This flag indicates whether the equipment type is modeled as a station.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModeledAs" type="yfctype:EnumModeledAs" use="optional">
+                <xsd:annotation yfc:columnName="MODELED_AS" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>This field indicates whether the equipment type is modeled as Case, Pallet or Location. The three supported values are 'Case', 'Pallet', and 'Location'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_EQUIPMENT_TYPE">
+                    <xsd:documentation>The primary key for the YFS_EQUIPMENT_TYPE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EquipmentTypeDetails">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:EquipmentTypeDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="EquipmentTypeDetail">
+        <xsd:annotation yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+            <xsd:documentation>An equipment may have more than a placeholder location associated with it. The placeholder is also known as a slot. For example, a cart may have one or more locations to indicate stock in various bins. For example, left top, right bottom etc. Another example is a sortation equipment that has more than a lane associated with it.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EquipmentType"
+                type="yfctype:EquipmentType" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_TYPE" yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+                    <xsd:documentation>This field identifies the equipment type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentTypeDetailKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="EQUIPMENT_TYPE_DETAIL_KEY" yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+                    <xsd:documentation>The primary key for the YFS_EQUIPMENT_TYPE_DETAIL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationLogicalName"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_LOGICAL_NAME" yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+                    <xsd:documentation>This field indicates the logical name of the location. For example, a cart location may have various positions that may be occupied by the cartons based on the carton size. For example, right top, left bottom, A1...A4 etc.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationSizeCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+                    <xsd:documentation>This field indicates the unique key attribute of YFS_LOCATION_SIZE_CODE table assocaited with the NODE_KEY.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_EQUIPMENT_TYPE_DETAIL">
+                    <xsd:documentation>The primary key for the YFS_EQUIPMENT_TYPE_DETAIL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
+    <xsl:strip-space elements="*"/>
+
+    <!-- Identity template -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- Remove OrderList -->
+    <xsl:template match="OrderList"/>
+
+    <!-- ReturnLineDetail: update line attributes, taxes, LineTotal, and TitanPaymentDetail -->
+    <xsl:template match="ReturnLineDetail">
+        <xsl:variable name="curItem" select="@ItemCode"/>
+        <xsl:variable name="curLot"  select="@LotNumber"/>
+
+        <!-- find matching OrderLine -->
+        <xsl:variable name="matchOrderLine"
+            select="/ReturnOrderHeader/OrderList/Order/OrderLines/OrderLine
+                    [Extn/@ExtnItemCode = $curItem and Extn/@ExtnLotNo = $curLot]"/>
+
+        <!-- extract values as strings -->
+        <xsl:variable name="newTax"        select="string($matchOrderLine/Extn/@ExtnTotalTaxUS)"/>
+        <xsl:variable name="customDuty"    select="string($matchOrderLine/Extn/@ExtnCustomDutyTaxUS)"/>
+        <xsl:variable name="countryTax"    select="string($matchOrderLine/Extn/@ExtnCountryTaxUS)"/>
+        <xsl:variable name="specialTax"    select="string($matchOrderLine/Extn/@ExtnSpecialTaxUS)"/>
+        <xsl:variable name="countyTax"     select="string($matchOrderLine/Extn/@ExtnCountyTaxUS)"/>
+        <xsl:variable name="cityTax"       select="string($matchOrderLine/Extn/@ExtnCityTaxUS)"/>
+        <xsl:variable name="orderUnitPrice" select="number($matchOrderLine/Extn/@ExtnOrderUnitPriceUS)"/>
+        <xsl:variable name="extnAmount"    select="string($matchOrderLine/Extn/@ExtnAmountUS)"/>
+
+        <!-- compute LineTotal -->
+        <xsl:variable name="lineTotalSum">
+            <xsl:choose>
+                <xsl:when test="$matchOrderLine">
+                    <xsl:value-of select="format-number((number($orderUnitPrice) + number($newTax) + number($customDuty)),'0.00')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@LineTotal"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:copy>
+            <!-- update line attributes -->
+            <xsl:for-each select="@*">
+                <xsl:choose>
+                    <xsl:when test="name()='TotalLinePriceTax' or name()='TotalTax' or name()='Tax2'">
+                        <xsl:attribute name="{name()}">
+                            <xsl:value-of select="$newTax"/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="name()='LineTotal'">
+                        <xsl:attribute name="LineTotal">
+                            <xsl:value-of select="$lineTotalSum"/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+
+            <!-- copy child nodes except LineTaxes and TitanPaymentDetailList normally -->
+            <xsl:apply-templates select="node()[not(self::LineTaxes or self::TitanPaymentDetailList)]"/>
+
+            <!-- update LineTaxes -->
+            <xsl:apply-templates select="LineTaxes">
+                <xsl:with-param name="newTax" select="$newTax"/>
+                <xsl:with-param name="customDuty" select="$customDuty"/>
+                <xsl:with-param name="countryTax" select="$countryTax"/>
+                <xsl:with-param name="specialTax" select="$specialTax"/>
+                <xsl:with-param name="countyTax" select="$countyTax"/>
+                <xsl:with-param name="cityTax" select="$cityTax"/>
+            </xsl:apply-templates>
+
+            <!-- update TitanPaymentDetailList -->
+            <xsl:apply-templates select="TitanPaymentDetailList">
+                <xsl:with-param name="extnAmount" select="$extnAmount"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- LineTaxes: forward params -->
+    <xsl:template match="LineTaxes">
+        <xsl:param name="newTax"/>
+        <xsl:param name="customDuty"/>
+        <xsl:param name="countryTax"/>
+        <xsl:param name="specialTax"/>
+        <xsl:param name="countyTax"/>
+        <xsl:param name="cityTax"/>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates select="node()">
+                <xsl:with-param name="newTax" select="$newTax"/>
+                <xsl:with-param name="customDuty" select="$customDuty"/>
+                <xsl:with-param name="countryTax" select="$countryTax"/>
+                <xsl:with-param name="specialTax" select="$specialTax"/>
+                <xsl:with-param name="countyTax" select="$countyTax"/>
+                <xsl:with-param name="cityTax" select="$cityTax"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- LineTax: update Tax attribute based on category -->
+    <xsl:template match="LineTax">
+        <xsl:param name="newTax"/>
+        <xsl:param name="customDuty"/>
+        <xsl:param name="countryTax"/>
+        <xsl:param name="specialTax"/>
+        <xsl:param name="countyTax"/>
+        <xsl:param name="cityTax"/>
+        <xsl:copy>
+            <!-- copy all attributes except Tax -->
+            <xsl:for-each select="@*">
+                <xsl:if test="name() != 'Tax'">
+                    <xsl:copy-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+
+            <!-- update Tax -->
+            <xsl:choose>
+                <xsl:when test="@ChargeCategory='CustomDuty' and string-length($customDuty) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$customDuty"/></xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@ChargeCategory='Price' and string-length($newTax) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$newTax"/></xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='Country Tax' and string-length($countryTax) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$countryTax"/></xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='Special Tax' and string-length($specialTax) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$specialTax"/></xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='County Tax' and string-length($countyTax) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$countyTax"/></xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='City Tax' and string-length($cityTax) > 0">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$cityTax"/></xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:if test="@Tax">
+                        <xsl:attribute name="Tax"><xsl:value-of select="@Tax"/></xsl:attribute>
+                    </xsl:if>
+                </xsl:otherwise>
+            </xsl:choose>
+
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- TitanPaymentDetailList: update Amount for CC only -->
+    <xsl:template match="TitanPaymentDetailList">
+        <xsl:param name="extnAmount"/>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:for-each select="TitanPaymentDetail">
+                <xsl:copy>
+                    <xsl:for-each select="@*">
+                        <xsl:choose>
+                            <xsl:when test="name()='Amount' and ../@PaymentCode='CC'">
+                                <xsl:attribute name="Amount"><xsl:value-of select="$extnAmount"/></xsl:attribute>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:copy-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </xsl:copy>
+            </xsl:for-each>
+        </xsl:copy>
+    </xsl:template>
+
+</xsl:stylesheet>
+
+
+###################################################################################################################################
+###################################################################################################################################
+###################################################################################################################################
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
+    <xsl:strip-space elements="*"/>
+
+    <!-- Identity -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- remove OrderList from final output -->
+    <xsl:template match="OrderList"/>
+
+    <!-- ReturnLineDetail: compute lookup values and pass them down -->
+    <xsl:template match="ReturnLineDetail">
+        <xsl:variable name="curItem" select="@ItemCode"/>
+        <xsl:variable name="curLot"  select="@LotNumber"/>
+
+        <!-- find matching OrderLine -->
+        <xsl:variable name="matchOrderLine"
+            select="/ReturnOrderHeader/OrderList/Order/OrderLines/OrderLine
+                    [Extn/@ExtnItemCode = $curItem and Extn/@ExtnLotNo = $curLot]"/>
+
+        <!-- normalized string values -->
+        <xsl:variable name="newTax"        select="string($matchOrderLine/Extn/@ExtnTotalTaxUS)"/>
+        <xsl:variable name="customDuty"    select="string($matchOrderLine/Extn/@ExtnCustomDutyTaxUS)"/>
+        <xsl:variable name="countryTax"    select="string($matchOrderLine/Extn/@ExtnCountryTaxUS)"/>
+        <xsl:variable name="specialTax"    select="string($matchOrderLine/Extn/@ExtnSpecialTaxUS)"/>
+        <xsl:variable name="countyTax"     select="string($matchOrderLine/Extn/@ExtnCountyTaxUS)"/>
+        <xsl:variable name="cityTax"       select="string($matchOrderLine/Extn/@ExtnCityTaxUS)"/>
+
+        <xsl:copy>
+            <!-- override TotalLinePriceTax / TotalTax / Tax2 -->
+            <xsl:for-each select="@*">
+                <xsl:choose>
+                    <xsl:when test="(name() = 'TotalLinePriceTax' or name() = 'TotalTax' or name() = 'Tax2') and $newTax != ''">
+                        <xsl:attribute name="{name()}">
+                            <xsl:value-of select="$newTax"/>
+                        </xsl:attribute>
+                    </xsl:when>
+					<xsl:when test="(name() = 'TotalLinePriceTax' or name() = 'TotalTax' or name() = 'Tax2') and $newTax != ''">
+                        <xsl:attribute name="{name()}">
+                            <xsl:value-of select="$newTax"/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+
+            <xsl:apply-templates select="node()[not(self::LineTaxes)]"/>
+            <xsl:apply-templates select="LineTaxes">
+                <xsl:with-param name="newTax" select="$newTax"/>
+                <xsl:with-param name="customDuty" select="$customDuty"/>
+                <xsl:with-param name="countryTax" select="$countryTax"/>
+                <xsl:with-param name="specialTax" select="$specialTax"/>
+                <xsl:with-param name="countyTax" select="$countyTax"/>
+                <xsl:with-param name="cityTax" select="$cityTax"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- LineTaxes: forward params -->
+    <xsl:template match="LineTaxes">
+        <xsl:param name="newTax"/>
+        <xsl:param name="customDuty"/>
+        <xsl:param name="countryTax"/>
+        <xsl:param name="specialTax"/>
+        <xsl:param name="countyTax"/>
+        <xsl:param name="cityTax"/>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates select="node()">
+                <xsl:with-param name="newTax" select="$newTax"/>
+                <xsl:with-param name="customDuty" select="$customDuty"/>
+                <xsl:with-param name="countryTax" select="$countryTax"/>
+                <xsl:with-param name="specialTax" select="$specialTax"/>
+                <xsl:with-param name="countyTax" select="$countyTax"/>
+                <xsl:with-param name="cityTax" select="$cityTax"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- LineTax: override Tax when conditions match -->
+    <xsl:template match="LineTax">
+        <xsl:param name="newTax"/>
+        <xsl:param name="customDuty"/>
+        <xsl:param name="countryTax"/>
+        <xsl:param name="specialTax"/>
+        <xsl:param name="countyTax"/>
+        <xsl:param name="cityTax"/>
+
+        <xsl:copy>
+            <!-- copy all attributes except Tax -->
+            <xsl:for-each select="@*">
+                <xsl:if test="name() != 'Tax'">
+                    <xsl:copy-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+
+            <xsl:choose>
+                <!-- CustomDuty -->
+                <xsl:when test="@ChargeCategory='CustomDuty' and ($customDuty!='') and (@ChargeName='CustomDuty' or @TaxName='CustomDuty')">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$customDuty"/></xsl:attribute>
+                </xsl:when>
+                <!-- Price -->
+                <xsl:when test="@ChargeCategory='Price' and ($newTax!='') and (@ChargeName='Price' or @TaxName='Sales Tax')">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$newTax"/></xsl:attribute>
+                </xsl:when>
+                <!-- Country Tax -->
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='Country Tax' and $countryTax!=''">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$countryTax"/></xsl:attribute>
+                </xsl:when>
+                <!-- Special Tax -->
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='Special Tax' and $specialTax!=''">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$specialTax"/></xsl:attribute>
+                </xsl:when>
+                <!-- County Tax -->
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='County Tax' and $countyTax!=''">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$countyTax"/></xsl:attribute>
+                </xsl:when>
+                <!-- City Tax -->
+                <xsl:when test="@ChargeCategory='SalesTaxBreakup' and @TaxName='City Tax' and $cityTax!=''">
+                    <xsl:attribute name="Tax"><xsl:value-of select="$cityTax"/></xsl:attribute>
+                </xsl:when>
+                <!-- fallback to original -->
+                <xsl:otherwise>
+                    <xsl:if test="@Tax">
+                        <xsl:attribute name="Tax"><xsl:value-of select="@Tax"/></xsl:attribute>
+                    </xsl:if>
+                </xsl:otherwise>
+            </xsl:choose>
+
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+</xsl:stylesheet>

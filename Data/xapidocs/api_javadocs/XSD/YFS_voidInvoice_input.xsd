@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/voidInvoice/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/voidInvoice/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_voidInvoice_input.xsd" yfc:rootElement="OrderInvoice">
+        <xsd:appinfo source="yfc:structure">
+            <OrderInvoice hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderInvoice" type="yfc:OrderInvoiceXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_INVOICE">
+            <xsd:documentation>
+                <div>
+			Stores order invoices belonging to an order.
+			<Validation>
+                        <Condition>The <code>OrderInvoiceKey</code> attribute or the <code>InvoiceNo</code> attributes must be passed and must be valid.
+				</Condition>
+                        <Error
+                            Description="Blank Invoice Key And Invoice No" ErrorCode="YFS10275"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderInvoiceXSDType">
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_ORDER_INVOICE">
+                <xsd:documentation>The enterprise code. This field is a part of an order's unique key. The enterprise code and order number together uniquely identify an order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreStatusCheck" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>This flag enables voiding of an invoice irrespective of its status.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, invoice will be voided irrespective of order statuses.
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="InvoiceNo" type="yfctype:InvoiceNo" use="optional">
+            <xsd:annotation yfc:columnName="INVOICE_NO" yfc:tableName="YFS_ORDER_INVOICE">
+                <xsd:documentation>Invoice number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderInvoiceKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_INVOICE_KEY" yfc:tableName="YFS_ORDER_INVOICE">
+                <xsd:documentation>Primary key attribute of YFS_ORDER_INVOICE.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TranId" use="required">
+            <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+				The transaction should be an instance of either the <code>VOID_ORDER_INVOICE</code> or the <code>VOID_SHIPMENT_INVOICE</code> abstract transactions. Configure the transaction, including its pickup and drop statuses, and the <code>ON_VOID_INVOICE</code> event in the applicable pipeline.
+				<br/>Voiding of manually created SalesOrder adjustment invoice is not pipeline driven.				
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VoidAllInvoicesOfShipment"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>The <code>VoidAllInvoicesOfShipment</code> attribute must be passed as "Y" if the invoice is a shipment invoice and that shipment invoice has multiple orders.
+							</Condition>
+                            <Error
+                                Description="VoidAllInvoicesOfShipment not set when required" ErrorCode="OMP77_10002"/>
+                        </Validation>
+						Flag which must be set to Y to void more than one shipment. 
+						<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

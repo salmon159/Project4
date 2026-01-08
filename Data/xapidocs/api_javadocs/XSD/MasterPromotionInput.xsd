@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/MasterPromotionInput"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/MasterPromotionInput" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="MasterPromotionInput.xsd" yfc:rootElement="MasterPromotionInput">
+        <xsd:appinfo source="yfc:structure">
+            <MasterPromotionInput>
+                <Promotions hasAttributes="Y">
+                    <Promotion hasAttributes="Y">
+                        <PromotionReferences>
+                            <PromotionReference hasAttributes="Y"/>
+                        </PromotionReferences>
+                    </Promotion>
+                </Promotions>
+                <PromotionLines hasAttributes="Y">
+                    <Promotion hasAttributes="Y"/>
+                </PromotionLines>
+            </MasterPromotionInput>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="MasterPromotionInput" type="yfc:MasterPromotionInputXSDType"/>
+    <xsd:complexType name="MasterPromotionInputXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Promotions"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromotionLines"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Promotions">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Promotion">
+                    <xsd:annotation yfc:tableName="YFS_PROMOTION">
+                        <xsd:documentation>
+                            <div>
+						Promotions that are associated to an order or any of its lines. PromotionId must be passed to identify the promotion.
+						</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromotionReferences"/>
+                        </xsd:all>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Action" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+						Action to perform on this promotion.
+						<br/>Default: <code>Null</code> - if not passed, promotion will be added if it doesn't exist or modified if it does exist.
+						<br/>Valid Values: 
+							<br/>
+                                    <b>
+                                    <code>CREATE</code>
+                                    </b> - Add the specified promotion to the order.
+							<br/>
+                                    <b>
+                                    <code>REMOVE</code>
+                                    </b> - Removes the specified promotion from the order.
+						<Validation>
+                                    <Condition>If an award record is associated with this promotion, it may not be removed.</Condition>
+                                    <Error
+                                    Description="You are attempting to delete a Promotion associated with an award on the order." ErrorCode="OMP77_10004"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If a promotion already exists, can't add the same promotion twice.</Condition>
+                                    <Error
+                                    Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DenialReason"
+                            type="yfctype:Text-200" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DENIAL_REASON" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>If the promotion is denied, the reason for the denial.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ExclusivityId"
+                            type="yfctype:VARCHAR2-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EXCLUSIVITY_ID" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>ExclusivityID is used to group set of Promotions for mutual exclusivity. Exclusivity Type settings are applicable among Pricing Rules having same ExclusvityID.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ExclusivityType"
+                            type="yfctype:VARCHAR2-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EXCLUSIVITY_TYPE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>Exclusivity Type of the Promotion. Valid Values are: ALL, RULE_TYPE_ITEM, RULE_TYPE_ORDER, ONE_RULE_WITHIN_ID and GLOBAL_RULE</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsExternal"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation yfc:columnName="IS_EXTERNAL" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This flag specifies whether the promotion is external.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OverrideAdjustmentValue" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="OVERRIDE_ADJUSTMENT_VALUE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>For promotions, the overridden Adjustment value used in place of the configured Adjustment of the corresponding Pricing Rule Action.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Price"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="OverrideMaxAdjustment" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="OVERRIDE_MAX_ADJUSTMENT" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>
+                                    <div> For Coupon promotions, the overridden maximum adjustment value for the coupon pricing rule. 
+						</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Money"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Priority" use="optional">
+                            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This attribute is used to prioritize Promotion among a list of applicable Promotions with same Exclusivity settings. Higher the value of this attribute, higher the priority of Promotion, to be applied to an order/item.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:NUMBER-10"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionApplied"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_APPLIED" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>A flag indicating if the promotion is applied. When ValidateReferences=Y the value can be 'P' meaning the promotion was partially applied.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionCategory"
+                            type="yfctype:VarcharID-24" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_CATEGORY" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>Specifies category of external promotion. Valid values are ORDER,ITEM and SHIPPING</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionGroup" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_GROUP" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>The group for which this promototion belongs to. Valid values: COUPON, MANUAL.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:PromotionGroup">
+                                    <xsd:enumeration value=""/>
+                                    <xsd:enumeration value="COUPON"/>
+                                    <xsd:enumeration value="MANUAL"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionId"
+                            type="yfctype:PromoCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_ID" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This identifies the promotion that is added to this order. This will be used as the CouponID when determining the price of the order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionType"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_TYPE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>The type of promotion. Like DISCOUNT, BOGO.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ValidateReferences"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>For Coupon promotions, if <code>'Y"</code> the references will be validated and only valid references will be used</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Determines whether all Promotions, except those listed below, 
+					should be removed.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromotionReferences">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromotionReference"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromotionReference">
+        <xsd:annotation yfc:tableName="YFS_PROMOTION_REFERENCE">
+            <xsd:documentation>
+                <div>Promotion references associated to the promotion. In case of internal promotions,
+								the promotion references will be automatically associated to the generated awards
+								proportional to the awarded quantity.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="IsUnique" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_UNIQUE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                    <xsd:documentation>Specifies whether the reference is unique or not.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								Operation to perform
+								<br/>Valid Values:
+								<br/>
+                            <b>
+                                <code>Delete</code>
+                            </b> - Removes the PromotionReference. If <code>Operation</code> is not passed the PromotionReference will be created if it does not exist already.
+								 
+			                            </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceId" type="yfctype:VARCHAR2-40" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_ID" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                    <xsd:documentation>Reference value within a particular promotion. For example a unique coupon barcode.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceSequence" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_SEQUENCE" yfc:tableName="YFS_PROMOTION_REFERENCE">
+                    <xsd:documentation>Sequence number for each reference entry.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:PrecisionDigits"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromotionLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Promotion">
+                    <xsd:annotation yfc:tableName="YFS_PROMOTION">
+                        <xsd:documentation>
+                            <div>
+						Promotions that are associated to an order or any of its lines. PromotionId must be passed to identify the promotion.
+						</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Action"
+                            type="yfctype:Action" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+						Action to perform on this promotion.
+						<br/>Default: <code>Null</code> - if not passed, promotion will be added if it doesn't exist or modified if it does exist.
+						<br/>Valid Values: 
+							<br/>
+                                    <b>
+                                    <code>CREATE</code>
+                                    </b> - Add the specified promotion to the order.
+							<br/>
+                                    <b>
+                                    <code>REMOVE</code>
+                                    </b> - Removes the specified promotion from the order.
+						<Validation>
+                                    <Condition>If an award record is associated with this promotion, it may not be removed.</Condition>
+                                    <Error
+                                    Description="You are attempting to delete a Promotion associated with an award on the order." ErrorCode="OMP77_10004"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If a promotion already exists, can't add the same promotion twice.</Condition>
+                                    <Error
+                                    Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="DenialReason"
+                            type="yfctype:Text-200" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="DENIAL_REASON" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>If the promotion is denied, the reason for the denial.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ExclusivityId"
+                            type="yfctype:VARCHAR2-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EXCLUSIVITY_ID" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>ExclusivityID is used to group set of Promotions for mutual exclusivity. Exclusivity Type settings are applicable among Pricing Rules having same ExclusvityID.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ExclusivityType"
+                            type="yfctype:VARCHAR2-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="EXCLUSIVITY_TYPE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>Exclusivity Type of the Promotion. Valid Values are: ALL, RULE_TYPE_ITEM, RULE_TYPE_ORDER, ONE_RULE_WITHIN_ID and GLOBAL_RULE</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="IsExternal"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation yfc:columnName="IS_EXTERNAL" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This flag specifies whether the promotion is external.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OverrideAdjustmentValue" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="OVERRIDE_ADJUSTMENT_VALUE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>For promotions, the overridden Adjustment value used in place of the configured Adjustment of the corresponding Pricing Rule Action.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Price"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="OverrideMaxAdjustment" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="OVERRIDE_MAX_ADJUSTMENT" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>
+                                    <div> For Coupon promotions, the overridden maximum adjustment value for the coupon pricing rule. 
+						</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Money"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Priority" use="optional">
+                            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This attribute is used to prioritize Promotion among a list of applicable Promotions with same Exclusivity settings. Higher the value of this attribute, higher the priority of Promotion, to be applied to an order/item.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:NUMBER-10"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionApplied"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_APPLIED" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>A flag indicating if the promotion is applied. When ValidateReferences=Y the value can be 'P' meaning the promotion was partially applied.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionCategory"
+                            type="yfctype:VarcharID-24" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_CATEGORY" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>Specifies category of external promotion. Valid values are ORDER,ITEM and SHIPPING</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionId"
+                            type="yfctype:PromoCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_ID" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>This identifies the promotion that is added to this order. This will be used as the CouponID when determining the price of the order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="PromotionType"
+                            type="yfctype:Text-100" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="PROMOTION_TYPE" yfc:tableName="YFS_PROMOTION">
+                                <xsd:documentation>The type of promotion. Like DISCOUNT, BOGO.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ValidateReferences"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>For Coupon promotions, if <code>'Y"</code> the references will be validated and only valid references will be used</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Determines whether all Promotions, except those listed below, 
+					should be removed.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

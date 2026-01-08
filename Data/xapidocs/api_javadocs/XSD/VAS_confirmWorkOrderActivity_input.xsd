@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/VAS/confirmWorkOrderActivity/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/VAS/confirmWorkOrderActivity/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="VAS_confirmWorkOrderActivity_input.xsd" yfc:rootElement="WorkOrder">
+        <xsd:appinfo source="yfc:structure">
+            <WorkOrder hasAttributes="Y">
+                <WorkOrderActivityDtl hasAttributes="Y">
+                    <WorkOrderTag hasAttributes="Y"/>
+                    <SerialList>
+                        <SerialRangeList>
+                            <SerialRange hasAttributes="Y"/>
+                        </SerialRangeList>
+                        <SerialDetail hasAttributes="Y"/>
+                    </SerialList>
+                    <WorkOrderComponents>
+                        <WorkOrderComponent hasAttributes="Y">
+                            <WorkOrderComponentTag hasAttributes="Y"/>
+                            <SerialDetail hasAttributes="Y">
+                                <SerialRangeList>
+                                    <SerialRange hasAttributes="Y"/>
+                                </SerialRangeList>
+                            </SerialDetail>
+                        </WorkOrderComponent>
+                    </WorkOrderComponents>
+                </WorkOrderActivityDtl>
+            </WorkOrder>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="WorkOrder" type="yfc:WorkOrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>
+                <div>
+			An existing <code>WorkOrder</code> is identified by using one of the following: 
+			<code>WorkOrderKey </code> or
+			<code>WorkOrderNo</code>, <code>NodeKey</code> and <code>EnterpriseCode </code>
+			If none of them are passed VAS00013 is thrown.
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="WorkOrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderActivityDtl"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The primary key of the YFS_WORK_ORDER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="WorkOrderActivityDtl">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_ACTY_DTL">
+            <xsd:documentation>
+                <div>
+							The passed <code>SerialNo </code> , <code>ShipByDate </code> are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderTag"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderComponents"/>
+            </xsd:all>
+            <xsd:attribute name="ActivityCode" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="ACTIVITY_CODE" yfc:tableName="YFS_WORK_ORDER_ACTY_DTL">
+                    <xsd:documentation>
+                        <div>Activity Code of the work order activity. 
+					<Validation>
+                                <Condition> It should be passed.
+					</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActivityLocationId"
+                type="yfctype:LocationId" use="required">
+                <xsd:annotation yfc:columnName="ACTIVITY_LOCATION_ID" yfc:tableName="YFS_WORK_ORDER_ACTY_DTL">
+                    <xsd:documentation>
+                        <div>Location where the activity to be performed.
+					<Validation>
+                                <Condition> It should be passed.
+					</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CaseId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Case for which the work order activity is confirmed.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndTimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="END_TIME_STAMP" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>The time stamp of when the task status is changed to completed or cancelled.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Pallet for which the work order activity is confirmed.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityBeingConfirmed"
+                type="yfctype:Number" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Quantity being confirmed for work order activity. 
+					<Validation>
+                                <Condition> Quantity being confirmed should be less than or equal to allocated quantity.
+					</Condition>
+                                <Error
+                                    Description="Quantity being confirmed cannot exceed allocated quantity." ErrorCode="VAS00029"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The date before which a time-sensitive inventory must be shipped out.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartTimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="START_TIME_STAMP" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>The time stamp of when the task status is changed to InProgress.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderTag">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_TAG">
+            <xsd:documentation>
+                <div>
+				This entity stores details of the inventory tag attributes of the work order item that is tag tracked.
+				<br/>The passed tag attributes are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Stores reference information for the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_WORK_ORDER_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="SerialRangeList">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded"
+                                minOccurs="1" name="SerialRange">
+                                <xsd:complexType>
+                                    <xsd:attribute name="FromSerialNo"
+                                    type="yfctype:SerialNo" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>Staring serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ToSerialNo"
+                                    type="yfctype:SerialNo" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>Ending serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="SerialDetail">
+                    <xsd:complexType>
+                        <xsd:attribute name="SecondarySerial1"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_1" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial2"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_2" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial3"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_3" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial4"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_4" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial5"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_5" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial6"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_6" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial7"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_7" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial8"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_8" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SecondarySerial9"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SECONDARY_SERIAL_9" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                                <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SerialNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_WORK_ORDER">
+                                <xsd:documentation>This field identifies a serial number for the serialized item involved in the work order.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderComponents">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderComponent"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderComponent">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+            <xsd:documentation>
+                <div>
+							A <code>WorkOrderComponent</code> can be identified by using one of the following: 
+							<code>WorkOrderComponentKey</code> or 
+							<code>ItemID</code>, <code>Uom</code> and <code>ProductClass.</code>
+                    <br/>The passed <code>SerialNo </code> , <code>ShipByDate </code> are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+							</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderComponentTag"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="SerialDetail">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element maxOccurs="1" minOccurs="0" name="SerialRangeList">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                    <xsd:element
+                                    maxOccurs="unbounded"
+                                    minOccurs="1" name="SerialRange">
+                                    <xsd:complexType>
+                                    <xsd:attribute
+                                    name="FromSerialNo"
+                                    type="yfctype:SerialNo" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>Staring serial number of a range for item. 
+											<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+												</Condition>
+
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+												</Condition>
+
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+												</Condition>
+
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+												</Condition>
+
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+												</Condition>
+
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+												</Condition>
+
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+												</Condition>
+
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="ToSerialNo"
+                                    type="yfctype:SerialNo" use="optional">
+                                    <xsd:annotation>
+                                    <xsd:documentation>
+                                    <div>Ending serial number of a range for item. 
+											<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+												</Condition>
+
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+												</Condition>
+
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+												</Condition>
+
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+												</Condition>
+
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+												</Condition>
+
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+												</Condition>
+
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+												</Condition>
+
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    </xsd:complexType>
+                                    </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                        <xsd:attribute name="SecondarySerial1"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial2"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial3"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial4"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial5"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial6"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial7"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial8"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SecondarySerial9"
+                            type="yfctype:SerialNo" use="optional"/>
+                        <xsd:attribute name="SerialNo"
+                            type="yfctype:SerialNo" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>When Single Serial Entry is required, then this attribute needs to be populated with the Serial No of the component. This cannot be used along with Serial Range List Element. If required, Serial Range List can be provided with a separate WorkOrderComponent Element.
+									</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ItemID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>The unique identifier for the item associated with this work order component.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>ParentSerialNo is mandatory for serial tracked Kits. This is stamped on each WorkOrderComponent element carrying the Serial Number of Parent/Kit item.
+									<Validation>
+                                <Condition> If Kit item is serial tracked, then all components related to it should have ParentSerialNo stamped as the Kit Serial No.
+										</Condition>
+                                <Error
+                                    Description="ParentSerialNo is mandatory when Kit is serial tracked." ErrorCode="VAS80_003"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>The product class of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Quantity for which the component is being confirmed.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>This field identifies a serial number for the serialized item involved in the work order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>
+                        <div>Date before which a time-sensitive inventory must be must be shipped out.
+								<br/>The ShipByDate passed while confirming is not any override of the <code>ShipByDate</code> that is present on the work order, it comes to play only when the item is time sensitive and the work order was created without any <code>ShipByDate</code> (i.e High date).
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Uom" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>The unit of measure for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderComponentKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="WORK_ORDER_COMPONENT_KEY" yfc:tableName="YFS_WORK_ORDER_COMPONENT">
+                    <xsd:documentation>The primary key for the YFS_WORK_ORDER_COMPONENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderComponentTag">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+            <xsd:documentation>
+                <div>
+						This entity stores details of the inventory tag attributes of the work order item that is tag tracked.
+						<br/>The passed tag attributes are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Stores reference information for the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_WORK_ORDER_COMP_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

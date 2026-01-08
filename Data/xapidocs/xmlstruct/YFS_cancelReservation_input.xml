@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2014 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!--cancelReservation Input XML-->
+<!--ReservationID(Segment) Mandatory-->
+<!--Item Details manadatory-->
+<!--QtyToBeCancelled should be nonzero positive number-->
+<!--If ShipDate not passed system date is assumed-->
+<CancelReservation CallingOrganizationCode="" DeliveryMethod="Required"
+    DemandType="" InventoryTagKey="" ItemID="Required"
+    ItemOrganizationCode="" MinShipByDate="" OrganizationCode="Required"
+    ProductClass="" QtyToBeCancelled="Required" ReservationID="Required"
+    ReservationPool="" Segment="" ShipDate="" ShipNode="Required"
+    UnitOfMeasure="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/cancelReservation/input">
+    <yfc:doc>
+        <Element EntityName="Inventory_Reservation"/>
+        <Attributes>
+            <Attribute EntityName="Inventory_Item"
+                Name="CallingOrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					The organization used to derive the Inventory Organization code.
+				<Validation>
+                            <Condition> Must be an existing <code>OrganizationCode</code>. </Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="DeliveryMethod">
+                <Description>
+                    <div>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Demand" Name="DemandType">
+                <Description>
+                    <div>
+                        <code>DemandType</code> is used in finding the reservation to be cancelled.  It is also used in finding the inventory demand with matching <code>DemandType</code> to reduced quantity from. 
+                    <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ItemID">
+                <Description>
+                    <div>
+						The item ID associated with the reservation.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="OrgCode" Name="ItemOrganizationCode">
+                <Description>
+                    <div>
+						Organization code associated with the item.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="MinShipByDate">
+                <Description>
+                    <div>
+                        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item"
+                Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					Inventory Organization code.
+				<Validation>
+                            <Condition> Must be an existing <code>OrganizationCode</code>. </Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="ProductClass">
+                <Description>
+                    <div>
+						Product class of the item.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Quantity" Name="QtyToBeCancelled">
+                <Description>
+                    <div>
+				Quantity to be cancelled.
+				<Validation>
+                            <Condition> Must be a positive number. 	</Condition>
+                            <Error
+                                Description="Invalid Qty To Be Cancelled" ErrorCode="YFS10102"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Reservation"
+                Name="ReservationID" NameInEntity="Reservation_Id">
+                <Description>
+                    <div>
+				Identification of a reservation. 
+        <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled
+        <br/>This <code>ReservationId</code> can be either of the following
+        <br/> 1. Reservation Id of the IV reservation.
+        <br/> In this case, the reservation record corresponding to the given IV reservation Id will be fetched. The other input parameters for this api will not be used to match the reservation record obtained from IV because IV reservation Id can be used to uniquely identify a reservation record in IV. If a reservation record is found, it will be cancelled by calling IV reservation API.
+        <br/> 2. Reservation reference of the IV reservation.
+        <br/> In this case, the reservation record(s) corresponding to the given IV reservation reference will be fetched. There may be multiple reservation records corresponding to a given IV reference hence the input attributes <code>ItemId</code>, <code>ShipNode</code>, <code>ProductClass</code>, <code>UnitOfMeasure</code>, <code>Segment</code> and <code>SegmentType</code> will be used to match against the IV reservation records. The matched reservation records will be cancelled by calling IV reservation API.        
+				<Validation>
+                            <Condition> Must be an existing <code>ReservationId</code>. 	</Condition>
+                            <Error Description="Blank reservation id." ErrorCode="YFS10262"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="ReservationPool">
+                <Description>
+                    <div>
+                        <code>ReservationPool</code> is for future use.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="ShipDate">
+                <Description>
+                    <div>
+                        <code>ShipDate</code> is used in finding the reservation to be cancelled.  It is also used in finding the inventory demand with matching <code>DemandShipDate</code> to reduced quantity from.
+                    <br/>
+                        <br/>With Inventory Visibility (IV) integration enabled this attribute is ignored.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Reservation"
+                Name="ShipNode" NameInEntity="Shipnode_Key">
+                <Description>
+					The ship node for the inventory items.
+				<div>
+                        <code>ShipNode</code> is not validated when the reservation is cancelled. The <code>ShipNode</code> is validated at the time of reservation. If an invalid <code>ShipNode</code> is passed, no reservation will be cancelled. 
+				<Validation>
+                            <Condition> Must pass a <code>ShipNode</code>.</Condition>
+                            <Error Description="YFS:Void Ship Node" ErrorCode="YFS10049"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure">
+                <Description>
+                    <div>
+						Unit of measure of the item.
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+</CancelReservation>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/getSyncTargetList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/getSyncTargetList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_getSyncTargetList_output.xsd" yfc:rootElement="SyncTargetList">
+        <xsd:appinfo source="yfc:structure">
+            <SyncTargetList hasAttributes="Y">
+                <SyncTarget hasAttributes="Y">
+                    <SyncSubscription hasAttributes="Y"/>
+                </SyncTarget>
+            </SyncTargetList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="SyncTargetList" type="yfc:SyncTargetListXSDType"/>
+    <xsd:complexType name="SyncTargetListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SyncTarget"/>
+        </xsd:all>
+        <xsd:attribute name="TotalNumberOfRecords" type="yfctype:Count" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Total number of records that match the input criteria.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SyncTarget">
+        <xsd:annotation yfc:tableName="YFS_SYNC_TARGET">
+            <xsd:documentation>
+                <div>
+					This table holds information about SyncTargets.  One of SyncTargetKey or both SyncTargetID and OrganizationCode must be passed to uniquely identify this SyncTarget. 
+							<Validation>
+                        <Condition>
+                            <code>OrganizationCode</code> passed should be a valid OrganizationCode.<Code>SyncTargetKey</Code>
+                        </Condition>
+                        <Error
+                            Description="OrganizationCode does not exist." ErrorCode="YSC921_0007"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Pass either <Code>SyncTargetKey</Code>, or both <Code>SyncTargetID</Code> and <Code>OrganizationCode</Code>
+                        </Condition>
+                        <Error
+                            Description="Mandatory SyncTarget attributes missing." ErrorCode="YSC921_0008"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>TargetingOrg</code> passed must have its primary enterprise as the <Code>OrganizationCode</Code> on the SyncTarget</Condition>
+                        <Error
+                            Description="TargetingOrg passed in the input must have its PrimaryEnterprise as the OrganizationCode on the SyncTarget." ErrorCode="YSC921_0011"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SyncSubscription"/>
+            </xsd:all>
+            <xsd:attribute name="LongDescription"
+                type="yfctype:FreeDescription-1500" use="optional">
+                <xsd:annotation yfc:columnName="LONG_DESCRIPTION" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The long description of the target.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The primary Enterprise that owns this SyncTarget.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:FreeDescription-100" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The short description of the target.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SyncSubscriptionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SYNC_SUBSCRIPTION_KEY" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The SyncSubscription to which this SyncTarget belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SyncTargetID"
+                type="yfctype:SyncTableID-40" use="optional">
+                <xsd:annotation yfc:columnName="SYNC_TARGET_ID" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The ID for this Target.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SyncTargetKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SYNC_TARGET_KEY" yfc:tableName="YFS_SYNC_TARGET">
+                    <xsd:documentation>The primary key of the YFS_SYNC_TARGET table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetingOrg" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The Organization that is assigned to this SyncTarget</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SyncSubscription">
+        <xsd:annotation yfc:tableName="YFS_SYNC_SUBSCRIPTION">
+            <xsd:documentation>This table holds information about SyncSubscriptions.  One of SyncSubscriptionKey or both SyncSubscriptionID and OrganizationCode must be passed to uniquely identify this SyncSubscription.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SyncSubscriptionID"
+                type="yfctype:SyncTableID-40" use="optional">
+                <xsd:annotation yfc:columnName="SYNC_SUBSCRIPTION_ID" yfc:tableName="YFS_SYNC_SUBSCRIPTION">
+                    <xsd:documentation>The ID for this Subscription.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

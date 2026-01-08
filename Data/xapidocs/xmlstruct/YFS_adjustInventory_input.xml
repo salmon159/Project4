@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite, IBM Order Management (5737-D18)
+(C) Copyright IBM Corp. 2005, 2018 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Items xmlns="http://www.sterlingcommerce.com/documentation/YFS/adjustInventory/input">
+    <Item AccountNo="" AdjustmentType="Required" Availability=""
+        Currency="" ETA="Conditional" FromETA="Conditional"
+        FromLotNumber="" FromSegment="" FromSegmentType=""
+        FromShipByDate="" FromSupplyLineReference=""
+        FromSupplyReference="" FromSupplyReferenceType="Conditional"
+        FromSupplyType="" ItemID="Required" LotAttribute1=""
+        LotAttribute2="" LotAttribute3="" LotKeyReference=""
+        LotNumber="Conditional" ManufacturingDate="" OrganizationCode=""
+        ProductClass="" Quantity="Required" ReasonCode="" ReasonText=""
+        Reference_1="" Reference_2="" Reference_3="" Reference_4=""
+        Reference_5="" RemoveInventoryNodeControl="" Segment=""
+        SegmentType="" ShipByDate="" ShipNode="Required"
+        SupplyType="Required" UnitCost="" UnitOfMeasure=""
+        UpdateVelocity="N|Y" UseHotSKUFeature="" ValidateItem=""
+        ValidateTagInformation="" yfc:DTDOccurrence="ZeroOrMany">
+        <yfc:doc>
+            <Element EntityName="Inventory_Supply">
+                <Description>
+                    <div>
+		Information regarding inventory adjustment of an item.		
+			<Validation>
+                            <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                    <b>Y</b>
+                                </code> and the provided item does not exist in the catalog.
+				 </Condition>
+                            <Error Description="Invalid Item." ErrorCode="INV10007"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                    <b>Y</b>
+                                </code> and the provided item exists in the catalog, but is a logical kit item.
+				 </Condition>
+                            <Error
+                                Description="Cannot Adjust Inventory For A Logical Kit Item." ErrorCode="INV75_001"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Inventory_Pending_Adj" Name="AccountNo">
+                    <Description>
+                        <div>
+                            <code>AccountNo</code> is only applicable if the node that the adjustment is made for has <code>MaintainInventoryCost</code> set to <b>Y</b>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="AdjustmentType" NameInEntity="Transaction_Type">
+                    <Description>
+                        <div>
+				The type of adjustment. 
+				<br/>Valid Values: 
+				<div>
+                                <b>
+                                    <code>ADJUSTMENT</code>
+                                </b> - indicates manual inventory adjustment</div>
+                            <div>
+                                <b>
+                                    <code>RECEIPT</code>
+                                </b> - indicates a receipt of a PO or ASN.</div>
+                            <div>
+                                <b>
+                                    <code>ABSOLUTE</code>
+                                </b> - indicates the absolute inventory quantity adjustment. For Absolute AdjustInventory calls, the input is only expecting one
+				                                    update per supply record. When multiple absolute adjustments are made to the same supply record, the behavior is undefined.The <code>ABSOLUTE</code> adjustment type is not meant for supplies with <code>INFINITE</code> availability type.   </div>
+                            <Validation>
+                                <Condition>
+						Must be a valid value.
+						 </Condition>
+                                <Error
+                                    Description="Invalid Adjustment Type" ErrorCode="YFS10385"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="Availability" NameInEntity="Availability_Type">
+                    <Description>
+                        <div width="100%">
+				Defines whether the supply is infinite or tracked. 
+				<br/>Valid values: <b>
+                                <code>TRACK</code>
+                            </b> or <b>
+                                <code>INFINITE</code>
+                            </b>
+                            <br/>Default: If not passed then it defaults to Availabilty type of the shipnode. If ShipNode tracks inventory it will default to <code>TRACK</code> else it will default to <code>INFINITE</code>
+                            <br/>The behavior depends on the current configuration of the <code>ShipNode</code> and the value passed in <code>Availability</code>. 
+				<br/>
+                            <br/>
+                            <div class="innerpanel" width="30%">
+                                <table border="0" cellpadding="0"
+                                    cellspacing="0" class="table">
+                                    <thead>
+                                    <tr>
+                                    <td class="tablecolumnheader">ShipNode Configuration</td>
+                                    <td class="tablecolumnheader">Availability passed</td>
+                                    <td class="tablecolumnheader">API Behavior</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">Supply record stamped as infinite</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">No updates done</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <Validation>
+                                <Condition>
+						Input must either be <code>TRACK</code> or <code>INFINITE</code>.
+						 </Condition>
+                                <Error Description="Invalid Data." ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Pending_Adj"
+                    Name="Currency" NameInEntity="Currency">
+                    <Description>
+                        <div>
+                            <code>Currency</code> is only applicable if the node that the adjustment is made for has <code>MaintainInventoryCost</code> set to <b>Y</b>.  
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="ETA" NameInEntity="ETA">
+                    <Description>
+                        <div>
+				Estimated Time of Arrival. When <code>SupplyType</code> is of the type onhand, <code>ETA</code> is not required. Required with all other <code>SupplyType</code> values.
+					<Validation>
+                                <Condition> Date format is checked.
+						</Condition>
+                                <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ETA</code> is not provided and <code>SupplyType</code> is not of type on-hand.
+						</Condition>
+                                <Error Description="Invalid ETA Date" ErrorCode="YFS10407"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="FromETA" NameInEntity="ETA">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromETA</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>,  <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				When <code>SupplyType</code> is of the type onhand, <code>FromETA</code> is not required. If <code>FromSupplyType</code> is not of the type onhand, <code>FromETA</code> is mandatory.
+					<Validation>
+                                <Condition>
+						Date format is checked.
+						</Condition>
+                                <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag"
+                    Name="FromLotNumber" NameInEntity="Lot_number">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>FromTag/LotNumber</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSegment" NameInEntity="Segment">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSegment</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>,  <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSegmentType" NameInEntity="Segment_Type">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSegmentType</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>,  <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromShipByDate" NameInEntity="Ship_By_Date">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromShipByDate</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>,  <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				If the Item is time-sensitive, a <code>ShipByDate</code> may be provided. If <code>ShipByDate</code> is not provided, then if 
+				<ul>
+                                <li>
+                                    <code>SupplyType</code> is of the type onhand the <code>ShipByDate</code> is calculated as "today + item's default expiration days". </li>
+                                <li>
+                                    <code>SupplyType</code> is not of the type onhand the<code>ShipByDate</code> is calculated as "<code>ETA</code>  + item's default expiration days".</li>
+                            </ul>
+				If <code>ShipByDate</code> is provided, then it is used for updates.
+					<Validation>
+                                <Condition>
+							Date format is checked.
+						</Condition>
+                                <Error
+                                    Description=" Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If the item is time-sensitive, and the system rule FEFO Updates is turned off, then the <code>FromShipByDate</code> must be passed.
+						</Condition>
+                                <Error
+                                    Description="Either allow FEFO or pass ShipByDate." ErrorCode="YFSI10008"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSupplyLineReference" NameInEntity="Supply_Line_Reference">
+                    <Description>
+                        <div>
+						Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSupplyLineReference</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>, <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSupplyReference" NameInEntity="Supply_Reference">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSupplyReference</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>, <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSupplyReferenceType" NameInEntity="Supply_Reference_Type">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSupplyReferenceType</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>, <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="FromSupplyType" NameInEntity="Supply_Type">
+                    <Description>
+                        <div>
+				Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>, indicating a receipt of a PO and ASN into the <code>ShipNode</code>. If <code>FromSupplyType</code> is supplied, the <code>Quantity</code> is subtracted from the supply record that matches <code>FromSupplyType</code>, (<code>FromLotNumber</code> or <code>information in FromTag</code> element), <code>FromShipByDate</code>,  <code>FromSegment</code>, <code>FromSegmentType</code>, 
+				<code>FromSupplyReference</code>, <code>FromSupplyReferenceType</code> and <code>FromETA</code>.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="ItemID"/>
+                <Attribute EntityName="Inventory_Tag" Name="LotAttribute1">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/LotAttribute1</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag" Name="LotAttribute2">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/LotAttribute2</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag" Name="LotAttribute3">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/LotAttribute3</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag" Name="LotKeyReference">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/LotKeyReference</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag" Name="LotNumber" NameInEntity="Lot_Number">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/LotNumber</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Tag" Name="ManufacturingDate">
+                    <Description>
+                        <div>
+				This is only used for backward comparability support.   <code>Tag/ManufacturingDate</code> should be used instead.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="OrgCode" Name="OrganizationCode">
+                    <Description>
+                        <div>
+				 If <code>OrganizationCode</code> passed, the adjustment is made for the organization. 
+				 If it is not passed, the adjustment is made for the node owner's inventory organization.
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="ProductClass"/>
+                <Attribute EntityName="Inventory_Supply" Name="Quantity" NameInEntity="Quantity">
+                    <Description>
+                        <div>
+				If the <code>AdjustmentType</code> is <b>
+                                <code>ADJUSTMENT</code>
+                            </b>, and the <code>Quantity</code> is negative, the quantity for the <code>SupplyType</code> indicated is reduced.
+							
+						<Validation>
+                                <Condition>
+						Must be a valid value.
+						 </Condition>
+                                <Error
+                                    Description="Missing attribute in input" ErrorCode="YFS10460"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="ReasonCode" NameInEntity="Reason_Code"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="ReasonText" NameInEntity="Reason_Text"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_1" NameInEntity="Reference_1"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_2" NameInEntity="Reference_2"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_3" NameInEntity="Reference_3"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_4" NameInEntity="Reference_4"/>
+                <Attribute EntityName="Inventory_Audit"
+                    Name="Reference_5" NameInEntity="Reference_5"/>
+                <Attribute DataType="Flag" Name="RemoveInventoryNodeControl">
+                    <Description>
+                        <div>Indicates if inventory node controls of the item at the node should be removed if exists.<br/>
+						If value is "Y" : removes inventory node control only if the quantity to be adjusted is positive. To delete any <code>InventoryNodeControl</code>                  records, the api manageInventoryNodeControl may be used.<br/>
+						If value is "A" : Always removes inventory node control irrespective of quantity to be adjusted.<br/>
+                            <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b> or <b>
+                                <code>A</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="Segment" NameInEntity="Segment"/>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="SegmentType" NameInEntity="Segment_Type"/>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="ShipByDate" NameInEntity="Ship_By_Date">
+                    <Description>
+                        <div>
+				If item is time sensitive then a <code>ShipByDate</code> may be provided.If provided, it is used for updates. 
+				<br/>If <code>ShipByDate</code> is not provided, then if 
+				  <ul>
+                                <li>
+                                    <code>SupplyType</code> is of the type onhand the <code>ShipByDate</code> is calculated as "today + item's default expiration days".</li>
+                                <li>
+                                    <code>SupplyType</code> is not of the type onhand the <code>ShipByDate</code> is calculated as "<code>ETA</code>  + item's default expiration days".</li>
+                            </ul>
+                            <Validation>
+                                <Condition>Date format is checked. 
+					</Condition>
+                                <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply" Name="ShipNode" NameInEntity="Shipnode_Key">
+                    <Description>
+                        <div>
+				Indicates the node to adjust.
+				<Validation>
+                                <Condition>Must be a valid node in the system.
+					</Condition>
+                                <Error Description="Invalid Ship Node." ErrorCode="YFS10048"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Node with InterfaceType equals to <code>INTEGRATED_WMS</code> and <code>SupplyType</code> is of type on-hand.
+					</Condition>
+                                <Error
+                                    Description="Cannot adjust inventory for node with InterfaceType INTEGRATED_WMS." ErrorCode="INV10034"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Supply"
+                    Name="SupplyType" NameInEntity="Supply_type">
+                    <Description>
+                        <div>
+				Required.  The value should be a valid <code>SupplyType</code> defined in <code>YFS_INVENTORY_SUPPLY_TYPE</code>.   Indicates the <code>SupplyType</code> with which inventory needs to be adjusted.
+					<Validation>
+                                <Condition>
+                                    <code>SupplyType</code> must be passed.
+						</Condition>
+                                <Error Description="No supply type." ErrorCode="YFSI10006"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Pending_Adj"
+                    Name="UnitCost" NameInEntity="Unit_Cost">
+                    <Description>
+                        <div>
+                            <code>UnitCost</code> is only applicable if the node that the adjustment is made for has <code>MaintainInventoryCost</code> set to <b>Y</b>.  
+				</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Inventory_Item" Name="UnitOfMeasure"/>
+                <Attribute DataType="Flag" Name="UpdateVelocity">
+                    <Description>Indicates if the adjustment being made should be tracked as a velocity change. 
+						Default: <code>N</code>.
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="UseHotSKUFeature">
+                    <Description>
+                        <div>
+				When this flag is turned on, hot sku feature is used depending upon the parameters passed in yfs.properties. The hot sku feature is not used if the availability type is passed as <code>INFINITE</code> or if no availability type is passed and node's inventory type is <code>INFINITE</code>.
+				<br/>Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="ValidateItem">
+                    <Description>
+                        <div>Indicates if <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization should be overridden by the api. 
+				        <br/>Default: <b>
+                                <code>Null</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Flag" Name="ValidateTagInformation">
+                    <Description>
+                        <div>Indicates if tag information should be validated for a tag controlled item. If passed as 'Y' or not passed tag details should be passed for always tag controlled item.
+				<br/>Default: <b>
+                                <code>Y</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <FromTag BatchNo="" LotAttribute1="" LotAttribute2=""
+            LotAttribute3="" LotKeyReference="" LotNumber=""
+            ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Inventory_Tag">
+                    <Description>
+                        <div>
+				Stores tag information for inventory.  Used when the <code>AdjustmentType</code> value is <b>
+                                <code>RECEIPT</code>
+                            </b>. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.
+					<Validation>
+                                <Condition>
+						If Item is tag-controlled, all of the unique tag identifiers must be passed.
+						</Condition>
+                                <Error
+                                    Description="Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If Item is tag-controlled, and there is no tag number generated from the provided inventory identifier attributes.
+						</Condition>
+                                <Error Description="No Tag number" ErrorCode="YFSI10004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </FromTag>
+        <Tag BatchNo="" LotAttribute1="" LotAttribute2=""
+            LotAttribute3="" LotKeyReference="" LotNumber=""
+            ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Inventory_Tag">
+                    <Description>
+                        <div>
+				Stores tag information for inventory. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.
+					<Validation>
+                                <Condition>
+						If Item is tag-controlled, all of the unique tag identifiers must be passed.
+						</Condition>
+                                <Error
+                                    Description="Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+						If Item is tag-controlled, and there is no tag number generated from the provided inventory identifier attributes.
+						</Condition>
+                                <Error Description="No Tag number" ErrorCode="YFSI10004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </Tag>
+    </Item>
+</Items>

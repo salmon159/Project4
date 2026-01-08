@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/determineBestMultistopTransferUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/determineBestMultistopTransferUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="OMP_determineBestMultistopTransferUE_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order>
+                <Lines hasAttributes="Y">
+                    <Line hasAttributes="Y">
+                        <MultiStopTransfers hasAttributes="Y">
+                            <MultiStopTransfer hasAttributes="Y">
+                                <MultiStopTransferOptions hasAttributes="Y">
+                                    <MultiStopTransferOption>
+                                    <Stops hasAttributes="Y">
+                                    <Stop hasAttributes="Y"/>
+                                    </Stops>
+                                    </MultiStopTransferOption>
+                                </MultiStopTransferOptions>
+                            </MultiStopTransfer>
+                        </MultiStopTransfers>
+                    </Line>
+                </Lines>
+            </Order>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Lines"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Lines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Line"/>
+            </xsd:sequence>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The total number of lines.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Line">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:MultiStopTransfers"/>
+            </xsd:all>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The identifier for the item. The ITEM_ID, UOM, and PRODUCT_CLASS form the unique inventory identifier for an order line. The ITEM_ID, UOM and ORGANIZATION_CODE form the unique item identifier for the Product Management module.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineId" type="yfctype:Text-40" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Unique identifier for the line. It is mandatory to pass this attribute.
+	                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product class. This field is used as an inventory identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MultiStopTransfers">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:MultiStopTransfer"/>
+            </xsd:sequence>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Total number of routes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MultiStopTransfer">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:MultiStopTransferOptions"/>
+            </xsd:all>
+            <xsd:attribute name="DestinationNode"
+                type="yfctype:ShipNode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>The final node where inventory will be arriving.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OriginNode" type="yfctype:ShipNode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>The initial node where inventory is being shipped from.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MultiStopTransferOptions">
+        <xsd:annotation>
+            <xsd:documentation>The list of <code>MultiStopTransferOption</code>s in order from best
+								option to worst option.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:MultiStopTransferOption"/>
+            </xsd:sequence>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The total number of multistop transfer options.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MultiStopTransferOption">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Stops"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Stops">
+        <xsd:annotation>
+            <xsd:documentation>The <code>Stop</code>s that this <code>MultiStopTransferOption</code> will take.
+										The stops are garunteed to be in the correct order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Stop"/>
+            </xsd:sequence>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The total number of stops made for the multistop transfer option.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Stop">
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The node for which the stop will be made.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

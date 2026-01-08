@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getOrderReleaseList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getOrderReleaseList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getOrderReleaseList_input.xsd" yfc:rootElement="OrderRelease">
+        <xsd:appinfo source="yfc:structure">
+            <OrderRelease hasAttributes="Y">
+                <Order hasAttributes="Y"/>
+                <OrderLine hasAttributes="Y">
+                    <Item hasAttributes="Y"/>
+                    <DerivedFrom hasAttributes="Y"/>
+                </OrderLine>
+            </OrderRelease>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderRelease" type="yfc:OrderReleaseXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_RELEASE">
+            <xsd:documentation>This table stores releases made against an order.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderReleaseXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:OrderLine"/>
+        </xsd:all>
+        <xsd:attribute name="BillToID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="BILL_TO_ID" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The identifier of the customer that this order is being billed to.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BuyerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="BUYER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>
+                    <div>
+			Organization Code of the Buyer.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerRewardsNo" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The type of order document used for this order release. For example,Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromOrderReleaseKey" type="yfctype:Key" use="optional"/>
+        <xsd:attribute name="FromReleaseNo" type="yfctype:ShorterNumber" use="optional"/>
+        <xsd:attribute name="FromStatus" type="yfctype:Status" use="optional"/>
+        <xsd:attribute name="IgnoreOrdering" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				By default, the output is ordered by <code>OrderHeaderKey</code>, <code>PrimeLineNo</code>, <code>SublineNo</code>. If <code>IgnoreOrdering</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, this ordering is not performed.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LatestFirst" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Governs the order in which <code>OrderLines</code> are returned. Default is earliest first: the first <code>OrderLine</code> created is the first in the list. Pass <code>LatestFirst</code> as <b>
+                            <code>Y</code>
+                        </b> to list the most recently created <code>OrderLine</code> first.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Specifies the Maximum Number of records to be returned. Default is 500.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The order header that is associated with this order release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY"
+                yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The primary key for the YFS_ORDER_RELEASE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderReleaseKeyQryType"
+            type="yfctype:StringQryType" use="optional"/>
+        <xsd:attribute name="ReadFromHistory" type="yfctype:Text-1" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values:
+					<br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_ORDER_RELEASE table.
+					<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_ORDER_RELEASE_H table (the history table).
+					<br/>
+                        <b>
+                            <code>B</code>
+                        </b> - Returns records that satisfy the input criteria from both YFS_ORDER_RELEASE and YFS_ORDER_RELEASE_H tables. Records returned from the current table are first in the output.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceivingNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="RECEIVING_NODE" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The node that should receive the shipment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReleaseNo" type="yfctype:ShorterNumber" use="optional">
+            <xsd:annotation yfc:columnName="RELEASE_NO"
+                yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The release number. Generated as a one up number against that release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReleaseNoQryType"
+            type="yfctype:NumberQryType" use="optional"/>
+        <xsd:attribute name="SalesOrderNo"
+            type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SALES_ORDER_NO" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The sales order that is associated with this order release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>
+                    <div>
+			Organization Code of the Seller.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ServiceLineKey" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The ship node that is associated with this order release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:Status" use="optional">
+            <xsd:annotation yfc:qryTypeSupported="Y"/>
+        </xsd:attribute>
+        <xsd:attribute name="StatusQryType" type="yfctype:StringQryType" use="optional"/>
+        <xsd:attribute name="ToOrderReleaseKey" type="yfctype:Key" use="optional"/>
+        <xsd:attribute name="ToReleaseNo" type="yfctype:ShorterNumber" use="optional"/>
+        <xsd:attribute name="ToStatus" type="yfctype:Status" use="optional"/>
+    </xsd:complexType>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:UsedForIndexing="Order" yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AuthenticationKey" type="yfctype:Key" use="optional"/>
+            <xsd:attribute name="BillToID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="BILL_TO_ID"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The identifier of the bill to customer.  If a customer definition representing the buyer organization exists within the system, the BillToID can represent the CustomerID of the customer.  Otherwise, the BillToID can represent the PersonID of the bill to address or the BuyerOrganizationCode of the buyer organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BillToIDQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="BuyerUserId"
+                type="yfctype:ContactUserId" use="optional">
+                <xsd:annotation yfc:columnName="BUYER_USER_ID"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>This is the User Id of the customer for which order is created. This field maps to User_Id field of YFS_Customer_Contact.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BuyerUserIdQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="CustomerContactID"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_CONTACT_ID" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>This is the customer contact ID for the order. This field maps to contact ID field of YFS_Customer_Contact.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerEMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_EMAILID"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The E-mail ID of the customer.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerEMailIDQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="CustomerRewardsNo"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_REWARDS_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The identifier of the customer's rewards number</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromBillToID" type="yfctype:ID-40" use="optional"/>
+            <xsd:attribute name="FromBuyerUserId"
+                type="yfctype:ContactUserId" use="optional"/>
+            <xsd:attribute name="FromCustomerEMailID"
+                type="yfctype:EMailID" use="optional"/>
+            <xsd:attribute name="FromHoldReasonCode"
+                type="yfctype:HoldReasonCode" use="optional"/>
+            <xsd:attribute name="FromOrderDate" type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="FromOrderHeaderKey" type="yfctype:Key" use="optional"/>
+            <xsd:attribute name="FromOrderName" type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="FromOrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional"/>
+            <xsd:attribute name="FromPaymentStatus"
+                type="yfctype:VarcharShortStatus" use="optional"/>
+            <xsd:attribute name="FromReqDeliveryDate"
+                type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="FromReqShipDate"
+                type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="FromSearchCriteria1"
+                type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="FromSearchCriteria2"
+                type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="FromShipToID" type="yfctype:ID-40" use="optional"/>
+            <xsd:attribute name="HoldReasonCode"
+                type="yfctype:HoldReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_REASON_CODE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The reason code for putting the order on hold.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HoldReasonCodeQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="InvoiceComplete" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INVOICE_COMPLETE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>This flag indicates whether invoicing is done for the entire order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_DATE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The date on which the order was taken. If not passed during order creation, it is defaulted to current system date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderDateQryType"
+                type="yfctype:DateQryType" use="optional"/>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKeyQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="OrderName" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NAME"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The name given to the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNameQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNoQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="PaymentStatus"
+                type="yfctype:VarcharShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_STATUS"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The information about the payment status of the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentStatusQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ReqDeliveryDate" use="optional">
+                <xsd:annotation yfc:columnName="REQ_DELIVERY_DATE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The requested delivery date. This date is stamped on order lines (as requested delivery date) during order creation if no requested delivery date was passed at the order line level.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ReqDeliveryDateQryType"
+                type="yfctype:DateQryType" use="optional"/>
+            <xsd:attribute name="ReqShipDate" use="optional">
+                <xsd:annotation yfc:columnName="REQ_SHIP_DATE"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The date the customer has requested the order to be shipped on. Based on the 'Driver Date' parameter of the document type, the ship date or delivery date will be calculated based on transit time calculations (if not passed at order creation).</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ReqShipDateQryType"
+                type="yfctype:DateQryType" use="optional"/>
+            <xsd:attribute name="SearchCriteria1"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="SEARCH_CRITERIA_1"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>This field is provided for allowing custom searches. You can decide at implementation time what should be stored in this field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SearchCriteria1QryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="SearchCriteria2"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="SEARCH_CRITERIA_2"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>This field is provided for allowing custom searches. You can decide at implementation time what should be stored in this field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SearchCriteria2QryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ShipToID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_TO_ID"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The identifier of the ship to customer.  If a customer definition representing the buyer organization exists within the system, the ShipToID can represent the CustomerID of the customer.  Otherwise, the ShipToID can represent the PersonID of the ship to address or the receiving node of the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipToIDQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ToBillToID" type="yfctype:ID-40" use="optional"/>
+            <xsd:attribute name="ToBuyerUserId"
+                type="yfctype:ContactUserId" use="optional"/>
+            <xsd:attribute name="ToCustomerEMailID"
+                type="yfctype:EMailID" use="optional"/>
+            <xsd:attribute name="ToHoldReasonCode"
+                type="yfctype:HoldReasonCode" use="optional"/>
+            <xsd:attribute name="ToOrderDate" type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="ToOrderHeaderKey" type="yfctype:Key" use="optional"/>
+            <xsd:attribute name="ToOrderName" type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="ToOrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional"/>
+            <xsd:attribute name="ToPaymentStatus"
+                type="yfctype:VarcharShortStatus" use="optional"/>
+            <xsd:attribute name="ToReqDeliveryDate"
+                type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="ToReqShipDate" type="yfctype:TimeStamp" use="optional"/>
+            <xsd:attribute name="ToSearchCriteria1"
+                type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="ToSearchCriteria2"
+                type="yfctype:Text-100" use="optional"/>
+            <xsd:attribute name="ToShipToID" type="yfctype:ID-40" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="OrderLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DerivedFrom"/>
+            </xsd:all>
+            <xsd:attribute name="DerivedFromOrderHeaderKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="DERIVED_FROM_ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The order header that is associated with this derived order line. If this line was derived from another order line, this key will point to the parent order line's header record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The ship node that is associated with this order line. If provided, all releases will be made against this node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DerivedFrom">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>This table stores all order documents in the system.  These orders can be further classified into various types of documents. For example, ORDERS, PLANNED ORDERS and any other future types that the system may provide.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCodeQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="FromEnterpriseCode"
+                type="yfctype:OrgCode" use="optional"/>
+            <xsd:attribute name="FromOrderHeaderKey" type="yfctype:Key" use="optional"/>
+            <xsd:attribute name="FromOrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional"/>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKeyQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNoQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ToEnterpriseCode"
+                type="yfctype:OrgCode" use="optional"/>
+            <xsd:attribute name="ToOrderHeaderKey" type="yfctype:Key" use="optional"/>
+            <xsd:attribute name="ToOrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

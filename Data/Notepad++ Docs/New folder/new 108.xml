@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+    <xsl:template match="/">
+        <Order>
+            <xsl:attribute name="OrderNo">
+                <xsl:value-of select="/Order/@OrderNo"/>
+            </xsl:attribute>
+            <xsl:attribute name="Modifyts">
+                <xsl:value-of select="/Order/@Modifyts"/>
+            </xsl:attribute>
+            <xsl:attribute name="RefundType">
+                <xsl:value-of select="'Partial'"/>
+            </xsl:attribute>
+            <xsl:attribute name="ReferenceCode">
+                <xsl:value-of select="'order cancellation'"/>
+            </xsl:attribute>
+            <xsl:attribute name="OrderReleaseKey">
+                <xsl:value-of select="concat(/Order/@OrderNo,'_R_',substring(/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='CANCEL' and @Status='OPEN']/@ChargeTransactionKey,0,14),/Order/OrderLines/OrderLine/Extn/@ExtnSellerLineNo)"/>
+            </xsl:attribute>
+            <OrderLines>
+                <xsl:for-each select="/Order/OrderLines/OrderLine">
+                    <xsl:variable name="varShipChrgSellerLineNo">
+                        <xsl:value-of select="@ShipTogetherNo"/>
+                    </xsl:variable>
+                    <OrderLine>
+                        <Extn>
+                            <xsl:attribute name="ExtnSellerLineNo">
+                                <xsl:value-of select="Extn/@ExtnSellerLineNo"/>
+                            </xsl:attribute>
+                        </Extn>
+                    </OrderLine>
+                    <xsl:if test="LineTaxes/LineTax[@TaxName='Shipping Tax' and @Reference1 > 0]">
+                        <OrderLine>
+                            <Extn>
+                                <xsl:attribute name="ExtnSellerLineNo">
+                                    <xsl:value-of select="$varShipChrgSellerLineNo"/>
+                                </xsl:attribute>
+                            </Extn>
+                        </OrderLine>
+                    </xsl:if>
+                </xsl:for-each>
+            </OrderLines>
+        </Order>
+    </xsl:template>
+</xsl:stylesheet>

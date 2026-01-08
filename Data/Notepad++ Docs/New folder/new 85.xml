@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:template match="/">
+        <xsl:element name="Order">
+            <xsl:attribute name="OrderNo">
+                <xsl:value-of select="Order/@OrderNo"/>
+            </xsl:attribute>
+			<xsl:attribute name="OrderHeaderKey">
+                <xsl:value-of select="Order/@OrderHeaderKey"/>
+            </xsl:attribute>
+			<xsl:attribute name="EnterpriseCode">
+                <xsl:value-of select="Order/@EnterpriseCode"/>
+            </xsl:attribute>
+            <xsl:attribute name="Action">MODIFY</xsl:attribute>
+            <xsl:attribute name="DocumentType">0001</xsl:attribute>
+            <xsl:attribute name="Override">Y</xsl:attribute>
+            <xsl:element name="OrderHoldTypes">
+                <xsl:element name="OrderHoldType">
+                    <xsl:attribute name="HoldType">ENCIRCLE_RR_HOLD</xsl:attribute>
+                    <xsl:attribute name="Status">1100</xsl:attribute>
+                </xsl:element>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output indent="yes" method="xml"/>
+	<xsl:template match="@*|node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:copy>
+	</xsl:template>
+	<xsl:template match="Order">
+		<xsl:copy>
+			<xsl:apply-templates select="node()|@*"/>
+			<Checks>
+				<xsl:variable name="isRRNumber" select="/Order/OrderLines/OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@PaymentKeyReference"/>
+				<xsl:attribute name="isRRNumber">
+					<xsl:value-of select="$isRRNumber"/>
+				</xsl:attribute>
+				<xsl:attribute name="isRRNumberPresent">
+					<xsl:choose>
+						<xsl:when test="$isRRNumber !=null">
+							<xsl:value-of select="'YES' "/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="'NO'"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+			</Checks>
+		</xsl:copy>
+	</xsl:template>
+</xsl:stylesheet>
+

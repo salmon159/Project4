@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/MasterAvailabilityInformation"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/MasterAvailabilityInformation" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="MasterAvailabilityInformation.xsd" yfc:rootElement="AvailabilityInformation">
+        <xsd:appinfo source="yfc:structure">
+            <AvailabilityInformation>
+                <AvailableInventory hasAttributes="Y"/>
+            </AvailabilityInformation>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AvailabilityInformation" type="yfc:AvailabilityInformationXSDType"/>
+    <xsd:complexType name="AvailabilityInformationXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AvailableInventory"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="AvailableInventory">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+            <xsd:documentation>This table stores details about the parent alert if shipping calculation is enabled.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AvailableQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="AVAILABLE_QUANTITY" yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+                    <xsd:documentation>
+                        <div>
+							This indicates the available quantity. If inventory is not tracked, unplanned, or infinite,
+							the value may be Java's Integer.MAX_VALUE, Java's Long.MAX_VALUE, or the 
+							RealisticQuantityForInfiniteInventory property (if set).
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EffectiveStartDate" use="optional">
+                <xsd:annotation yfc:columnName="EFFECTIVE_START_DATE" yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+                    <xsd:documentation>
+							The timestamp for which the ShipDate is effective from. Calculated based on the last RTAM execution time or the last <code>EffectiveUntilDate</code>.
+					</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="EffectiveUntilDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="EFFECTIVE_UNTIL_DATE" yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+                    <xsd:documentation>
+                        <div>
+							The timestamp for which the ShipDate is effective until.This is calculated based on earliest timestamp of the computed date of each node.   The computed date of each node is computed based on the last cut-off time of the ship date and subtract back the minimum notification time based on the node's shipping calendar.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsOnhand" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_ONHAND" yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+                    <xsd:documentation>
+                        <div>
+							This flag indicates whether the AvailableQuantity is based on on-hand supply.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxShipDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MAX_SHIP_DATE" yfc:tableName="YFS_INVENTORY_ALERT_DETAIL">
+                    <xsd:documentation>
+                        <div>
+							The date when this inventory is available. 
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

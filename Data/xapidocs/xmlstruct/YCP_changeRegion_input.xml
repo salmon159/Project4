@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Region Action="" CanAggregate="" Country="Conditional"
+    ParentRegionKey="Conditional" RegionDescription="Conditional"
+    RegionKey="Conditional" RegionLevelName="" RegionName="Conditional"
+    ServicesEntireCountry="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/changeRegion/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				This table contains information about the region definition. A region schema key has to be given to indicate the schema to which the region is associated.
+					<Validation>
+                        <Condition>
+						Either <code>RegionKey</code> or {<code>RegionName</code> and <code>ParentRegionKey</code> and <code>RegionSchemaKey</code>} or {<code>RegionName</code> and <code>ParentRegionKey</code> and <code>RegionSchemaName</code> and <code>OrganizationCode</code>} should be passed to identify the region. <code>ParentRegionKey</code> can be blank if no parent region exists for a region. If not passed:
+						</Condition>
+                        <Error Description="Invalid region passed" ErrorCode="YCP0158"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="String" Name="Action">
+                <Description>
+                    <div>
+							 Indicates the action that can be perfomed on the region. 
+							<br/>Default: <b>MODIFY</b>
+                        <br/>Valid Values:
+							<br/>
+                        <b>DELETE</b>: Deletes a region. No Output XML is generated in this case.
+							<br/>
+                        <b>MODIFY</b>: Changes a region.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="CanAggregate">
+                <Description>
+                    <div>
+					A flag that indicates whether this region can be a parent of other regions. If <code>CanAggregate</code> is <code>
+                            <b>Y</b>,</code> the region cannot have zipcode ranges defined. If <code>CanAggregate</code> is <code>
+                            <b>N</b>,</code> this region cannot become the parent of any other region. Any modification to this flag is validated by checking the region's zipcode ranges as well as child regions.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="Country"/>
+            <Attribute Name="RegionLevelName">
+                <Description>
+                    <div>
+					The Region Level for the region. If <code>RegionLevelName</code> is changed, the API checks for associations of the new level with the parent Region's level and the child Regions' levels.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ServicesEntireCountry">
+                <Description>
+                    <div>
+					The flag indicates if this region applies to the entire country.
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <RegionSchema OrganizationCode="Conditional"
+        RegionSchemaKey="Conditional" RegionSchemaName="Conditional" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+				This table contains information about the region schema created for an organization.
+					<Validation>
+                            <Condition>
+						Either <code>RegionSchemaKey</code> or {<code>RegionSchemaName</code> and <code>OrganizationCode</code>} should be passed. If not passed:
+						</Condition>
+                            <Error Description="Invalid region schema" ErrorCode="YCP0109"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </RegionSchema>
+    <ZipCodeRanges ResetAll="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="String" Name="ResetAll">
+                    <Description>
+                        <div>
+						If <code>ResetAll</code> is passed as <code>
+                                <b>Y</b>,</code> all the current zipcode ranges for the region are deleted.
+						</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <ZipCodeRange Action="Conditional" Country="Conditional"
+            FromZip="Conditional" ToZip="Conditional" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Region_Detail">
+                    <Description>
+                        <div>
+                            <Validation>
+                                <Condition>
+								The <code>ToZip</code> field must be greater than or equal to the <code>FromZip</code> field. If not:
+								</Condition>
+                                <Error
+                                    Description="FromZip cannot be greater than ToZip." ErrorCode="YCP0128"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								The length of the <code>ToZip</code> field must be equal to the length of the <code>FromZip</code> field. If not:
+								</Condition>
+                                <Error
+                                    Description="Zipcode length mismatch." ErrorCode="YCP0127"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="String" Name="Action">
+                        <Description>
+                            <div>
+							If <code>Action</code> is passed with a value of <code>
+                                    <b>REMOVE</b>,</code> the zipcode range is deleted for the region. If <code>Action</code> is passed as blank or not passed, the zipcode range is created for that region.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Country">
+                        <Description>
+                            <div>
+							The country for which the region is created. 
+								<Validation>
+                                    <Condition>
+									If not passed:
+									</Condition>
+                                    <Error
+                                    Description="Invalid country." ErrorCode="YCP0129"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ZipCodeRange>
+    </ZipCodeRanges>
+</Region>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task EnterpriseKey="Required" EquipmentId=""
+    IgnoreExistingAllocations="" OrganizationCode="Required"
+    SourceLocationId="Required" SourceZoneId="" TargetLocationId=""
+    TargetZoneId="" xmlns="http://www.sterlingcommerce.com/documentation/WMS/createAdhocPutawayTasks/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+                    <Validation>
+                        <Condition>
+                            <code>OrganizationCode</code>, <code>SourceLocationId</code> and <code>EnterpriseKey</code> attributes must be passed and must be valid. 
+					</Condition>
+                        <Error Description="" ErrorCode=""/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute Name="EnterpriseKey">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseKey</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS:EnterpriseCode has to be passed in the input" ErrorCode="WMS00030"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreExistingAllocations">
+                <Description>
+					This flag is used to determine whether to obey the existing allocations or not. When passed as "Y", the system allows Sterling WMS Mobile Application user to forcefully move the products already allocated for some other tasks. When either passed as "N" or not passed, the system allows Sterling Mobile Application user to move only the products available in the system.
+				</Description>
+            </Attribute>
+            <Attribute Name="OrganizationCode">
+                <Description>
+                    <div>
+				Identifies the organization. 
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS: Organization Code not passed." ErrorCode="WMS00077"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="SourceLocationId">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>SourceLocationId</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS:LocationId has to be passed in the input." ErrorCode="WMS00034"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Inventory CountryOfOrigin="" FifoNo="" InventoryStatus="" ItemId=""
+        ProductClass="" Quantity="" ReceiptHeaderKey="" Segment=""
+        SegmentType="" SerialNo="" ShipByDate="" SourceCaseId=""
+        SourcePalletId="" UnitOfMeasure="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>SourcePalletId</code>, <code>SourceCaseId</code> OR <code>ItemId</code> attributes must be passed in the input.
+						</Condition>
+                            <Error
+                                Description="WMS:Either Item Or LPN information is required." ErrorCode="WMS00178"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>All Item Details should be passed in the input.
+						</Condition>
+                            <Error
+                                Description="WMS: Item details are not passed in input." ErrorCode="WMS00020"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Quantity should be passed in the input.
+						</Condition>
+                            <Error
+                                Description="WMS:Quantity not passed in the input." ErrorCode="WMS00021"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Non Force Move: Picked quantity should be less than or equal to available quantity in the system.
+						</Condition>
+                            <Error
+                                Description="WMS: Quantity being picked for manual move is more than the system quantity." ErrorCode="WMS00276"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Force Move: Picked quantity should be less than or equal to available quantity in the system including the allocated quantity.
+						</Condition>
+                            <Error
+                                Description="WMS: Quantity being picked for force manual move is more than the system quantity even after considering the allocated quantity." ErrorCode="WMS00277"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Inventory must exist at the Source Location for putaway.
+						</Condition>
+                            <Error
+                                Description="WMS: There is no inventory for put away at the Source Location." ErrorCode="WMS00056"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Total number of serials should be equal to the Quantity
+						</Condition>
+                            <Error
+                                Description="WMS:Total serials scanned is not equal to quantity entered." ErrorCode="WMS00009"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Item details or tag details should match with serial.
+						</Condition>
+                            <Error
+                                Description="WMS:Serial mismatch occured." ErrorCode="WMS00010"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="LPNNo" Name="SourceCaseId" NameInEntity="Source_LPN_No">
+                    <Description>
+                        <div>Source Case Id of the task</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LPNNo" Name="SourcePalletId" NameInEntity="Source_LPN_No">
+                    <Description>
+                        <div>Source Pallet Id of the task</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <TagAttributes BatchNo="" LotAttribute1="" LotAttribute2=""
+            LotAttribute3="" LotKeyReference="" LotNumber=""
+            ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Inventory_Tag"/>
+            </yfc:doc>
+        </TagAttributes>
+    </Inventory>
+    <TaskType ActivityCode="" ActivityGroupId="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+							If both ActivityCode and ActivityGroupId are not specified, ActivityCode is defaulted to <code>STORAGE</code> and ActivityGroupId defaulted to <code>RECEIPT</code> .
+						</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </TaskType>
+</Task>

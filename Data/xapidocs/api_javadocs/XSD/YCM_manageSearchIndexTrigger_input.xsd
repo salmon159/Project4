@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/manageSearchIndexTrigger/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/manageSearchIndexTrigger/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCM_manageSearchIndexTrigger_input.xsd" yfc:rootElement="SearchIndexTrigger">
+        <xsd:appinfo source="yfc:structure">
+            <SearchIndexTrigger hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="SearchIndexTrigger" type="yfc:SearchIndexTriggerXSDType">
+        <xsd:annotation yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+            <xsd:documentation>
+                <div>
+				Either the <code>SearchIndexTriggerKey</code> attribute or both the <code>OrganizationCode</code> and <code>SearchIndexTriggerID</code> attributes can be used to uniquely identify a search index trigger.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="SearchIndexTriggerXSDType">
+        <xsd:attribute name="CategoryDomain" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="CATEGORY_DOMAIN" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>
+                    <div>
+					The identifier for a category domain defined by an organization.  For a Search Index Trigger, this represents the Category Domain that the items in the index are assigned to.
+					<br/> Default Value: <code>Null</code>. 
+					<br/>If not passed, this will automatically be populated as the active selling catalog for an organization by the index build agent 
+					at the time this record is processed.
+					<Validation>
+                            <Condition>Invalid <code>CategoryDomain</code> is provided.
+						</Condition>
+                            <Error
+                                Description="Category Domain Not Found." ErrorCode="YCM0036"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DeleteAnyTriggersBeforeTimestamp"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					The timestamp for which the API should delete any search index triggers with trigger timestamp equal to or before this timestamp.  If <code>DeleteAnyTriggersBeforeTimestamp</code> is passed, other operations will be ignored and the input will be returned as output with no template controlled.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IncrementalBuildFromTriggerID"
+            type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="INC_BUILD_FROM_TRIGGER_ID" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>The unique identifier of an existing search index trigger that was re-built incrementally.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IndexPath" type="yfctype:Text-250" use="optional">
+            <xsd:annotation yfc:columnName="INDEX_PATH" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>
+                    <div> The path to the index file on the file system.  Although this value can be passed during creation of a search trigger, it will be replaced with a system generated value.  However, <code>IndexPaths</code>
+					can be modified using this attribute in the event that an Index file is moved to an alternate physical location and the database record needs to be updated.
+					<p>The system generated IndexPath is: <code>[RootPath]</code>/SearchIndex/<code>[OrganizationCode]</code>/<code>[CatalogOrganizationCode]</code>/CategoryDomain/<code>[IndexName]</code>_<code>[startTimeStamp]</code>
+                            <code>[SearchIndexTriggerID]</code>
+                        </p>
+                        <ul>
+                            <li>
+                                <code>[RootPath]</code> is derived from the <code>yfs.searchIndex.rootDirectory</code> property setting.  This setting must be configured prior to buiding an index.</li>
+                            <li>
+                                <code>[OrganizationCode]</code> is the catalog organization or sub-catalog organization that the index is being created for.</li>
+                            <li>
+                                <code>[CatalogOrganizationCode]</code> is the same as the OranizationCode if the OrganizationCode is a Catalog Organization.  Otherwise, this is the Catalog Organization that the Sub-Catalog organization belongs to.</li>
+                            <li>
+                                <code>[IndexName]</code> is the value of the Name attribute in the CatalogSearchConfigProperties.xml for the IndexSet element.</li>
+                            <li>
+                                <code>[startTimeStamp]</code> is the time that the Index build began.</li>
+                            <li>
+                                <code>[SearchIndexTriggerID]</code> is the SearchIndexTriggerID value associated with the Trigger record in the database.  This value is a sequence incremented by one for each trigger created.</li>
+                        </ul>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:ID-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					The operation that is to be performed during the invocation of this API.  
+					<br/>Valid values:  <b>
+                            <code>Create</code>
+                        </b>, <b>
+                            <code>Modify</code>
+                        </b>, or 	<b>
+                            <code>Delete</code>
+                        </b>
+                        <br/> Default Value: <b>
+                            <code>Create/Modify</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>The Organization Code of the Organization maintaining the search index trigger.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SearchIndexTriggerID"
+            type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="SEARCH_INDEX_TRIGGER_ID" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>
+                    <div>
+					The unique identifier of the search index trigger.  The value for the SearchIndexTrigger, if not passed, defaults to an incremental sequence, starting with 1.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SearchIndexTriggerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SEARCH_INDEX_TRIGGER_KEY" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>The unique key for the YFS_SEARCH_INDEX_TRIGGER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:Text-2" use="optional">
+            <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>
+                    <div> This status of the search index trigger.
+						<br/>Valid Values:
+						<br/>01 - (Scheduled)
+						<br/>03 - (Completed)
+						<br/>04 - (Active)
+						<br/>Default Value: 01 - (Scheduled)
+						<Validation>
+                            <Condition>Invalid value is provided
+							</Condition>
+                            <Error
+                                Description="Invalid Status Value for Search Index Trigger." ErrorCode="YCM85_026"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If creating, the status must be 01 - (Scheduled)  
+							</Condition>
+                            <Error
+                                Description="Invalid Status Value for Search Index Trigger." ErrorCode="YCM85_026"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If activating a search trigger, the status must be 04 - (Active) and the old status must be 03 - (Completed)
+							</Condition>
+                            <Error
+                                Description="Invalid Status Value for Search Index Trigger." ErrorCode="YCM85_026"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Deleting an active search trigger
+							</Condition>
+                            <Error
+                                Description="Cannot delete an active search index trigger." ErrorCode="YCM83_014"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TriggerTimestamp" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="TRIGGER_TIMESTAMP" yfc:tableName="YFS_SEARCH_INDEX_TRIGGER">
+                <xsd:documentation>
+                    <div>
+					The timestamp for which the API should use to determine if the trigger should be processed.  Triggers with a timestamp equal to or prior to the time that the index building agent runs will be processed.
+					<br/> Default Value: <b>
+                            <code>SYSDATE</code>
+                        </b> (current timestamp)
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

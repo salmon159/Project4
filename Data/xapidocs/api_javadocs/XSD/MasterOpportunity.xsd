@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/MasterOpportunity"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/MasterOpportunity" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="MasterOpportunity.xsd" yfc:rootElement="Opportunity">
+        <xsd:appinfo source="yfc:structure">
+            <Opportunity hasAttributes="Y">
+                <BuyerContactAddress hasAttributes="Y"/>
+                <Notes>
+                    <Note hasAttributes="Y"/>
+                </Notes>
+                <CustomAttributes/>
+            </Opportunity>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Opportunity" type="yfc:OpportunityXSDType">
+        <xsd:annotation yfc:tableName="YFS_OPPORTUNITY">
+            <xsd:documentation>
+                <div>
+			This tables stores an opportunity. An opportunity is a sales opportunity that a sales representative foresees and is used to keep track of multiple quotes that will be presented to a specific buyer. Any of these quotes can be negotiated upon but only one of these quotes can be accepted by the buyer, thereby permanently rejecting all other quotes. The opportunity will be closed once an order is created from the buyer selected quote.
+			<Validation>
+                        <Condition>Input document is invalid.
+				</Condition>
+                        <Error
+                            Description="Input document is empty or contains invalid data." ErrorCode="YFS10363"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Mandated parameters missing.
+				</Condition>
+                        <Error
+                            Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Opportunity record already existed.
+				</Condition>
+                        <Error Description="Record Already Exists" ErrorCode="YCP0051"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Event template not found.
+				</Condition>
+                        <Error
+                            Description="Template xml for raising event not found" ErrorCode="YFS10429"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OpportunityXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:BuyerContactAddress"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Notes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CustomAttributes"/>
+        </xsd:all>
+        <xsd:attribute name="BillToID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="BILL_TO_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The identifier of the bill to customer. If a customer definition representing the buyer organization exists within the system, the BillToID can represent the CustomerID of the customer. Otherwise, the BillToID can represent the PersonID of the bill to address or the BuyerOrganizationCode of the buyer organization.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BuyerContactAddressKey"
+            type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="BUYER_CONTACT_ADDRESS_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The buyer's contact address. For new records, the <code>BuyerContactAddressKey</code> is the bill to address key 
+			defaulted from the customer contact address. If customer contact is not available, the customer account address is
+			used, otherwise obtaining from the buyer organization default address.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BuyerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="BUYER_ORGANIZATION_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The buyer organization that is associated with this opportunity. This must be a valid organization defined in the system.
+			<Validation>
+                            <Condition>
+                                <code>BuyerOrganizationCode</code> must be valid in the configuration
+				</Condition>
+                            <Error
+                                Description="Invalid Buyer Organization" ErrorCode="YFS10368"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CoOwnerUserID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CO_OWNER_USER_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The co-owner user is a user who jointly owns this opportunity with the orginal owner user.
+			<Validation>
+                            <Condition>Invalid User identifiers passed.
+				</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CurrencyValue" use="optional">
+            <xsd:annotation yfc:columnName="CURRENCY_VALUE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The currency value or budget of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Amount"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerContactID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_CONTACT_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			This is the customer contact ID for the opportunity. This field maps to contact ID field of YFS_Customer_Contact.
+			<Validation>
+                            <Condition>Invalid Contact Identifier.
+				</Condition>
+                            <Error
+                                Description="YFS: Invalid Customer Id" ErrorCode="YFS10319"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The detailed description of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The document type that is associated with this opportunity. For example, Opportunity document (0020). OpportunityID, DocumentType, EnterpriseCode are required attributes to uniquely identify an opportunity.
+			<Validation>
+                            <Condition>
+                                <code>DocumentType</code> must be defined in the configuration
+				</Condition>
+                            <Error Description="Invalid Document Type" ErrorCode="YFS10367"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Opportunity record does not exist.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The enterprise code. This field is a part of an opportunity's unique key. The EnterpriseCode, DocumentType and OpportunityID together uniquely identify an opportunity. <br/>Default value: <code>DEFAULT</code>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be valid in the configuration
+				</Condition>
+                            <Error
+                                Description="YFS:Invalid Enterprise Code" ErrorCode="YFS10113"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Opportunity record does not exist.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ExpectedCloseDate" use="optional">
+            <xsd:annotation yfc:columnName="EXPECTED_CLOSE_DATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The anticipated close date for the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="LeadOrigin" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="LEAD_ORIGIN" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The original lead to creation of this opportunity. E.g. Trade Shows, Call Center, Existing Customer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LostReasonCode" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="LOST_REASON_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>If the opportunity is lost, this specifies the reason for losing this opportunity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityDate" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_DATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The date that the opportunity was created.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The identification number of the opportunity, which is required during opportunity creation. If not passed the <code>OpportunityID</code> generates based on a system rule setting or from the user exit implementation. Whenever modification is required, <code>OpportunityID</code> is mandatory. OpportunityID, DocumentType, EnterpriseCode are required attributes to uniquely identify an opportunity.
+			<Validation>
+                            <Condition>Mandatory parameter missing.
+				</Condition>
+                            <Error Description="YCP:No Record Found." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OpportunityName" type="yfctype:Text-100" use="optional">
+            <xsd:annotation yfc:columnName="OPPORTUNITY_NAME" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>A custom name given to this opportunity to help identify the record uniquely.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerUserID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_USER_ID" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>
+                    <div>
+			The user in which this opportunity is assigned to.
+			<Validation>
+                            <Condition>Invalid User identifiers passed.
+				</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PipelineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PIPELINE_KEY" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>Pipeline this opportunity belongs to. The pipeline key is determined based on the input attribute passed and the pipeline conditions in the system configuration.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProbableSuccessRate" use="optional">
+            <xsd:annotation yfc:columnName="PROBABLE_SUCCESS_RATE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>The probability of success of the opportunity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Percentage"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TeamCode"
+            type="yfctype:CodeLongDescription" use="optional">
+            <xsd:annotation yfc:columnName="TEAM_CODE" yfc:tableName="YFS_OPPORTUNITY">
+                <xsd:documentation>Indicates a team that can manage this opportunity.  Default is Null.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="BuyerContactAddress">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressID" type="yfctype:Text-256" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>A user specified label for an address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsAddressVerified" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_ADDRESS_VERIFIED" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This flag indicates whether or not the address in this record has been verified by an address verification program. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Latitude" use="optional">
+                <xsd:annotation yfc:columnName="LATITUDE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The latitude of this location.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:DecimalWithNegative"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Longitude" use="optional">
+                <xsd:annotation yfc:columnName="LONGITUDE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The longitude of this location.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:DecimalWithNegative"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary key for the YFS_PERSON_INFO table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Notes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Note"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Note">
+        <xsd:annotation yfc:tableName="YFS_NOTES">
+            <xsd:documentation>Generic table used to stores notes associated with various entities in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AuditTransactionId"
+                type="yfctype:TransactionID" use="optional">
+                <xsd:annotation yfc:columnName="AUDIT_TRANSACTION_ID" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The identifier of the order modification audit that caused this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactReference"
+                type="yfctype:NotesContactReference" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_REFERENCE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>If the notes were entered because of customer contact by phone, the phone no can be stored in this column. If the contact is by email, email ID can be stored here.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactTime" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_TIME" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The time at which the customer contact occurred.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactType" type="yfctype:CommonCode" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_TYPE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The contact type like Phone call, email etc. The values will be selected from common code of code type "CONTACT_TYPE"</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactUser" type="yfctype:UserId" use="optional">
+                <xsd:annotation yfc:columnName="CONTACT_USER" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The user who made the contact. The default value will the logged in user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CustomerSatIndicator"
+                type="yfctype:CustomerSatisfactionLevel" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_SAT_INDICATOR" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The customer satisfaction level.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoteText" type="yfctype:NoteText" use="required">
+                <xsd:annotation yfc:columnName="NOTE_TEXT" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Detailed Notes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Priority"
+                type="yfctype:PriorityWithDecimal" use="optional">
+                <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Priority of the note. 1 is High, 0 is Low.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The reason for which the notes are logged. Like "CustomerContact" etc. The values will be selected from common code of code type "NOTES_REASON"</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>The sequence of the note.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Tranid" type="yfctype:TranId" use="optional">
+                <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>Transaction for which these notes are applicable.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VisibleToAll" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="VISIBLE_TO_ALL" yfc:tableName="YFS_NOTES">
+                    <xsd:documentation>This flag determines whether the note applied should be visible to all users. This field is used for filtering. No logic is currently applied to it.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CustomAttributes">
+        <xsd:annotation yfc:tableName="YFS_OPPORTUNITY_EXTENSION">
+            <xsd:documentation>This table stores dynamic extension attributes of opportunity entity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType/>
+    </xsd:element>
+</xsd:schema>

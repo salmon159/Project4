@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed Materials - Property of IBM
+  IBM Sterling Order Management (5725-D10), IBM Order Management (5737-D18)
+  (C) Copyright IBM Corp. 2005, 2020  All Rights Reserved.
+  US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<!-- manageCustomer Input XML -->
+<Customer BuyerOrganizationCode="" CanConsumeSupplementalCapacity=""
+    CommitmentTime="" CustomerClassificationCode="" CustomerID=""
+    CustomerKey="" CustomerLevel="" CustomerRewardsNo="" CustomerType=""
+    ExternalCustomerID="" FuncAckTime="" MaxAssignRepsOrTeams=""
+    Operation="" OrganizationCode="Required" RegisteredDate=""
+    RelationshipType="" SendsAsn="" SendsCommitment="" SendsFuncAck=""
+    SlotPreferenceType="" Status="" SyncTS="" Vertical="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/manageCustomer/input">
+    <yfc:doc>
+        <Element EntityName="Customer">
+            <Description>
+                <div>
+				Specify the customer information to be created, modified or deleted.  <code>CustomerKey</code> or a combination of <code>OrganizationCode</code> and <code>CustomerID</code> can be specified to identify a customer.
+				<Validation>
+                        <Condition>If no customer matches the criteria.
+					</Condition>
+                        <Error Description="No Record Found." ErrorCode="YFS10001"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute EntityName="Customer"
+                Name="BuyerOrganizationCode" NameInEntity="Buyer_Organization_Code">
+                <Description>
+                    <div>
+                        <code>BuyerOrganizationCode</code> attribute must be passed when creating a customer representing an existing organization. If <code>BuyerOrganizationCode</code> is passed, the API will update the organization with information provided in <code>BuyerOrganization</code> element.   If <code>BuyerOrganizationCode</code> is not passed, the API will create a new organization with information provided in <code>BuyerOrganization</code> element.
+				<Validation>
+                            <Condition>Organization does not exist.
+					</Condition>
+                            <Error Description="Invalid Organization." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>BuyerOrganizationCode</code> attribute is not passed when creating a customer representing an existing organization.
+					</Condition>
+                            <Error
+                                Description="Record already exists in the database." ErrorCode="YFC0001"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="CustomerID" NameInEntity="Customer_ID">
+                <Description>
+                    <div>
+				Identifier for a customer.  If <code>CustomerID</code> is not provided and Customer is a business customer, it will be defaulted as <code>BuyerOrganizationCode</code>.  If <code>CustomerID</code> is not provided and Customer is a consumer customer, it will be defaulted as consumer's <code>BillingPersonInfo's PersonID</code>.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="CustomerType" NameInEntity="Customer_Type">
+                <Description>
+                    <div>
+				Type of customer.  Valid values are: 01-Business, 02-Consumer.  Default value is 01.  If <code>CustomerType</code> is <b>
+                            <code>01</code>
+                        </b>, <code>BuyerOrganization</code> information is required and <code>Consumer</code> element will be ignored.  If <code>CustomerType</code> is <b>
+                            <code>02</code>
+                        </b>, <code>Consumer</code> element is required and <code>BuyerOrganization</code> information will be ignored.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="MaxAssignRepsOrTeams" NameInEntity="Max_Assign_Reps_Or_Teams">
+                <Description>
+                    <div>
+				The maximum number of <code>Teams</code> or <code>Users</code> that this <code>Customer</code> can be assigned to. Only direct assignments to the <code>Customer</code> are taken into consideration to validate the maximum assignments.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Action" Name="Operation">
+                <Description>
+                    <div>Operation to perform
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+				Organization code of organization that defines this customer. Organization code is mandatory while creating a customer.  Organization code is mandatory when modifying a customer, if the Customer Key is not passed.
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not provided to create the customer.
+					</Condition>
+                            <Error Description="Missing attribute." ErrorCode="YFS10460"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> passed is not the Customer Master Organization.
+					</Condition>
+                            <Error
+                                Description="Invalid Customer Master Organization." ErrorCode="YSC91_0007"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="SlotPreferenceType" NameInEntity="Slot_Preference_Type">
+                <Description>
+                    <div>
+				Slot preference type of the customer.  Valid values are: <code>
+                            <b>HARD</b>
+                        </code> - Only the preferred slots are to be considered.  <code>
+                            <b>SOFT</b>
+                        </code> - Other slots will also be considered.  <code>
+                            <b>NONE</b>
+                        </code> - No preferences.  Default value: <code>
+                            <b>NONE</b>
+                        </code>
+                        <Validation>
+                            <Condition>
+                                <code>SlotPreferenceType</code> is not a valid value.
+					</Condition>
+                            <Error
+                                Description="Invalid SlotPreferenceType." ErrorCode="YCP73_00022"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>SlotPreferenceType</code> is <code>
+                                    <b>NONE</b>
+                                </code> and <code>CustomerSlotPreferenceList</code> is passed.
+					</Condition>
+                            <Error
+                                Description="Cannot pass CustomerSlotPreferenceList for NONE SlotPreferenceType." ErrorCode="YCP73_00023"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Customer" Name="Status" NameInEntity="Status">
+                <Description>
+                    <div>
+						Indicates the status of a customer.  Valid values are: 10-Active, 20-On Hold, 30-Inactive.  
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="SyncTS">
+                <Description>The date and time the customer was synchronized with an external system. If attribute is passed in the input without a value, the attribute will be updated to system date and time.</Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ParentCustomer CustomerID="" OrganizationCode="">
+        <yfc:doc>
+            <Element EntityName="Customer">
+                <Description>
+                    <div>
+					The parent customer of this customer.  
+					<Validation>
+                            <Condition>If <code>ParentCustomer</code> is provided, the following condition must be true.
+						<ul>
+                                    <li>It must be a valid existing customer.</li>
+                                    <li>It must be of the same CustomerType.</li>
+                                    <li>It must belong to the same organization as the child.</li>
+                                </ul>
+                            </Condition>
+                            <Error
+                                Description="Invalid Parent Customer." ErrorCode="YCP77_00001"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ParentCustomer>
+    <BuyerOrganization AccountWithHub="" AuthorityType=""
+        BillingAddressKey="" CatalogOrganizationCode=""
+        ContactAddressKey="" CorporateAddressKey=""
+        CreatorOrganizationKey="" DunsNumber=""
+        InventoryOrganizationCode="" InventoryPublished="" IsBuyer=""
+        IsLegalEntity="" IsNode="" IsSourcingKept="" IssuingAuthority=""
+        ItemXrefRule="" LocaleCode="" OrganizationCode=""
+        OrganizationKey="" OrganizationName="" OrganizationSuffix=""
+        ParentOrganizationCode="" PaymentProcessingReqd=""
+        PrimaryEnterpriseKey="Required" PrimarySicCode="" PrimaryUrl=""
+        TaxExemptFlag="" TaxExemptionCertificate="" TaxJurisdiction=""
+        TaxpayerId="" XrefAliasType="" XrefOrganizationCode="">
+        <yfc:doc>
+            <Element EntityName="Organization">
+                <Description>
+                    <div>
+				Identify the organization or node which customer represents.  <code>BuyerOrganization</code> is required if customer is a business customer. If the Organization represented by <code>BuyerOrganization</code> already exists, pass BuyerOrganizationCode attribute with <code>Customer</code>. 
+				<Validation>
+                            <Condition>If <code>BuyerOrganization</code> is not provided for creating the customer.
+					</Condition>
+                            <Error Description="Missing element in XML." ErrorCode="YFS10507"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Organization"
+                    Name="OrganizationCode" NameInEntity="Organization_Code">
+                    <Description>
+                        <div>
+					OrganizationCode which identifies an organization.
+					<Validation>
+                                <Condition>If <code>OrganizationCode</code> is not passed and Customer's Organization doesn't have an OrganizationSuffix.
+						</Condition>
+                                <Error Description="Missing attribute." ErrorCode="YFS10460"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Node AcceptanceRequired="" ActivateFlag=""
+            AdvanceNotificationTime="" AgentCriteriaGroup=""
+            CurrentBolNumber="" DcmIntegrationRealTime=""
+            DefaultDeclaredValue="" ExportLicenseExpDate=""
+            ExportLicenseNo="" GLN="" GenerateBolNumber=""
+            IdentifiedByParentAs="" InheritConfigFromShipNode=""
+            InterfaceSubType="" InterfaceSubTypeCode="" InterfaceType=""
+            InventoryTracked="" Inventorytype="" IsFulfillmentNode=""
+            IsItemBasedAllocationAllowed="" IsYard="" Latitude=""
+            Longitude="" MaintainInventoryCost=""
+            MaxDaysToScheduleBefore="" MinNotificationTime=""
+            OwnerType="" PicklistType="" ProcureToShipAllowed=""
+            ReceiptProcessingTime="" ReceivingCalendarKey=""
+            ReceivingNode="" RequiresChangeRequest=""
+            ReturnCenterFlag="" ReturnsNode="" SerialTracking=""
+            ShipNode="" ShipNodeClass="" ShipnodeType=""
+            ShippingCalendarKey="" ShippingNode="" StoreInvConfig=""
+            SupplierKey="" ThreePlNode="" TimeDiff=""
+            UseEndOfShiftTime="" XDocNode="">
+            <yfc:doc>
+                <Element EntityName="Ship_Node"/>
+                <Attributes>
+                    <Attribute DataType="NumberOfDays" Name="AdvanceNotificationTime">
+                        <Description>
+                            <div>
+                                <b>Deprecated.</b> See <code>manageNodeNotification</code> API. The number of 
+					days before which the ship node needs notification of an impending receipt or shipment.
+					</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="String" Name="InterfaceSubTypeCode"/>
+                    <Attribute DataType="Flag" Name="IsFulfillmentNode">
+                        <Description>
+                            <div>Indicates if this node is a fulfillment node.
+						<br/>Valid Values: <code>Y</code>, <code>N</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="IsYard">
+                        <Description>
+                            <div>Indicate if this node is a yard.
+						<br/>Valid Values: <code>Y</code>, <code>N</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="NumberOfDays" Name="MinNotificationTime">
+                        <Description>
+                            <div>
+                                <b>Deprecated.</b> See <code>manageNodeNotification</code> API. The number of 
+					days before which the communication to ship the order to the shipping node or supplier should be 
+					made. This field is used to determine the earliest ship date on the line.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Node>
+        <CorporatePersonInfo AddressID="" AddressLine1=""
+            AddressLine2="" AddressLine3="" AddressLine4=""
+            AddressLine5="" AddressLine6="" AlternateEmailID=""
+            Beeper="" City="" Company="" Country="" DayFaxNo=""
+            DayPhone="" Department="" EMailID="" ErrorTxt=""
+            EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+            IsCommercialAddress="" JobTitle="" LastName="" Latitude=""
+            Longitude="" MiddleName="" MobilePhone="" OtherPhone=""
+            PersonID="" PreferredShipAddress="" State="" Suffix=""
+            Title="" UseCount="" VerificationStatus="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info"/>
+            </yfc:doc>
+        </CorporatePersonInfo>
+        <ContactPersonInfo AddressID="" AddressLine1="" AddressLine2=""
+            AddressLine3="" AddressLine4="" AddressLine5=""
+            AddressLine6="" AlternateEmailID="" Beeper="" City=""
+            Company="" Country="" DayFaxNo="" DayPhone="" Department=""
+            EMailID="" ErrorTxt="" EveningFaxNo="" EveningPhone=""
+            FirstName="" HttpUrl="" IsCommercialAddress="" JobTitle=""
+            LastName="" Latitude="" Longitude="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID=""
+            PreferredShipAddress="" State="" Suffix="" Title=""
+            UseCount="" VerificationStatus="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info"/>
+            </yfc:doc>
+        </ContactPersonInfo>
+        <BillingPersonInfo AddressID="" AddressLine1="" AddressLine2=""
+            AddressLine3="" AddressLine4="" AddressLine5=""
+            AddressLine6="" AlternateEmailID="" Beeper="" City=""
+            Company="" Country="" DayFaxNo="" DayPhone="" Department=""
+            EMailID="" ErrorTxt="" EveningFaxNo="" EveningPhone=""
+            FirstName="" HttpUrl="" IsCommercialAddress="" JobTitle=""
+            LastName="" Latitude="" Longitude="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID=""
+            PreferredShipAddress="" State="" Suffix="" Title=""
+            UseCount="" VerificationStatus="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info"/>
+            </yfc:doc>
+        </BillingPersonInfo>
+    </BuyerOrganization>
+    <Consumer>
+        <yfc:doc>
+            <Element EntityName="Consumer">
+                <Description>
+                    <div>Identify the consumer which customer represents. Either <code>Consumer</code> or <code>CustomerContact</code> is required if customer is a consumer customer.  
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <BillingPersonInfo AddressID="" AddressLine1="" AddressLine2=""
+            AddressLine3="" AddressLine4="" AddressLine5=""
+            AddressLine6="" AlternateEmailID="" Beeper="" City=""
+            Company="" Country="" DayFaxNo="" DayPhone="" Department=""
+            EMailID="" ErrorTxt="" EveningFaxNo="" EveningPhone=""
+            FirstName="" HttpUrl="" IsCommercialAddress="" JobTitle=""
+            LastName="" Latitude="" Longitude="" MiddleName=""
+            MobilePhone="" OtherPhone="" PersonID=""
+            PreferredShipAddress="" State="" Suffix="" Title=""
+            UseCount="" VerificationStatus="" ZipCode="">
+            <yfc:doc>
+                <Element EntityName="Person_Info">
+                    <Description>
+                        <div>
+				Billing information of a consumer.  <code>BillingPersonInfo</code> is required for a customer.
+				<Validation>
+                                <Condition>If <code>BillingPersonInfo</code> is not provided.
+					</Condition>
+                                <Error
+                                    Description="Missing BillingPersonInfo." ErrorCode="YCP0214"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Person_Info" Name="PersonID" NameInEntity="Person_ID">
+                        <Description>
+                            <div>
+				ID identifying a person information
+				<Validation>
+                                    <Condition>If <code>CustomerID</code> is blank and <code>PersonID</code> is not provided.
+					</Condition>
+                                    <Error
+                                    Description="Missing attribute." ErrorCode="YFS10460"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </BillingPersonInfo>
+    </Consumer>
+    <CustomerSlotPreferenceList Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <CustomerSlotPreference EndTime="" FridayPreferred=""
+            MondayPreferred="" Operation="" SaturdayPreferred=""
+            StartTime="" SundayPreferred="" ThursdayPreferred=""
+            TuesdayPreferred="" WednesdayPreferred="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+					Identify the preferred day of week and time slot that the customer would like to consider for appointment planning.
+						<Validation>
+                                <Condition>
+                                    <code>StartTime</code> or <code>EndTime</code> is not passed.
+								</Condition>
+                                <Error
+                                    Description="StartTime and EndTime must be passed." ErrorCode="YCP73_00024"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+					 Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </CustomerSlotPreference>
+    </CustomerSlotPreferenceList>
+    <CustomerSchedulingPreferences CancelOrderOnBackorder="Y|N"
+        IsDropShipAllowed="Y|N" IsLineShipComplete="Y|N"
+        IsLineShipSingleNode="Y|N" IsShipComplete="Y|N"
+        IsShipSingleNode="Y|N" IsSubstitutionAllowed="Y|N" OptimizationType="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute Name="OptimizationType">
+                    <Description>This value indicates indicates what scheduling will first optimize on, for this customer.  If not specified scheduling rule will be used to determine optimization type.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </CustomerSchedulingPreferences>
+    <CustomerContactList>
+        <CustomerContact ApproverProxyUserId="" ApproverUserId=""
+            Company="" CustomerContactID="" DateOfBirth="" DayFaxNo=""
+            DayPhone="" Department="" EmailID="" EveningFaxNo=""
+            EveningPhone="" FirstName="" JobTitle="" LastName=""
+            MiddleName="" MobilePhone="" Operation="" SpendingLimit=""
+            SpendingLimitCurrency="" SpouseDateOfBirth="" Status=""
+            Title="" UserID="" WeddingAnniversaryDate="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute Name="CustomerContactID">
+                        <Description>
+                            <div>The unique identifier for the customer contact. Defaults to 
+						<code>UserID</code> if not specified.
+						<Validation>
+                                    <Condition>
+                                    <code>CustomerContactID</code> and <code>UserID</code> 
+							are not specified.</Condition>
+                                    <Error
+                                    Description="Field Mandatory." ErrorCode="YCP0046"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+		                Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+						</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <CustomerAdditionalAddressList Reset="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="YCP_manageCustomer_input.xml" IncludeXMLPath="CustomerAdditionalAddressList"/>
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <CustomerAdditionalAddress AddressType=""
+                    CustomerAdditionalAddressID="" IsBillTo=""
+                    IsDefaultBillTo="" IsDefaultShipTo=""
+                    IsDefaultSoldTo="" IsShipTo="" IsSoldTo=""
+                    Operation="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>Defines an additional address for a customer. <br/>
+						Pass either <code>CustomerAdditionalAddressID</code> or <code>CustomerAdditionalAddressKey</code> to modify an existing customer additional address reocrd, otherwise a new record will be created. <br/>
+						Attribute values in the <code>PersonInfo</code> element will be defaulted from <code>CustomerContact</code> if not passed in the input. 
+						<Validation>
+                                    <Condition>An address already exists as with either <code>IsDefaultShipTo</code>, <code>IsDefaultBillTo</code>, or <code>IsDefaultSoldTo</code> set as <code>Y</code> for this user and customer combination.</Condition>
+                                    <Error
+                                    Description="There can only be one default BillTo, ShipTo, and SoldTo address for a given combination of User and Customer." ErrorCode="YSC80_0001"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>Valid value is <b>
+                                    <code>Delete</code>
+                                    </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <PersonInfo AddressID="" AddressLine1=""
+                        AddressLine2="" AddressLine3="" AddressLine4=""
+                        AddressLine5="" AddressLine6=""
+                        AlternateEmailID="" Beeper="" City="" Company=""
+                        Country="" DayFaxNo="" DayPhone="" Department=""
+                        EMailID="" ErrorTxt="" EveningFaxNo=""
+                        EveningPhone="" FirstName="" HttpUrl=""
+                        IsCommercialAddress="" JobTitle="" LastName=""
+                        Latitude="" Longitude="" MiddleName=""
+                        MobilePhone="" OtherPhone="" PersonID=""
+                        PreferredShipAddress="" State="" Suffix=""
+                        Title="" UseCount="" VerificationStatus="" ZipCode=""/>
+                </CustomerAdditionalAddress>
+            </CustomerAdditionalAddressList>
+            <CustomerPaymentMethodList Reset="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <CustomerPaymentMethod AccountLimit=""
+                    AccountLimitCurrency="" CreditCardExpDate=""
+                    CreditCardName="" CreditCardNo="" CreditCardType=""
+                    CustomerAccountNo="" CustomerPaymentMethodKey=""
+                    DebitCardNo="" DisplayCreditCardNo=""
+                    DisplayCustomerAccountNo="" DisplayDebitCardNo=""
+                    DisplayPaymentReference1="" FirstName=""
+                    IsDefaultMethod="" LastName="" MiddleName=""
+                    Operation="" PaymentReference1=""
+                    PaymentReference2="" PaymentReference3=""
+                    PaymentType="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>This table stores payment methods of a customer. Either 
+						<code>CustomerPaymentMethodKey</code> or a combination of <code>PaymentType</code>
+						and its unique identifiers are required to identify a customer payment method.
+						</Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>
+					 Valid value is <b>
+                                    <code>Delete</code>
+                                    </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <PersonInfoBillTo AddressID="" AddressLine1=""
+                        AddressLine2="" AddressLine3="" AddressLine4=""
+                        AddressLine5="" AddressLine6=""
+                        AlternateEmailID="" Beeper="" City="" Company=""
+                        Country="" DayFaxNo="" DayPhone="" Department=""
+                        EMailID="" ErrorTxt="" EveningFaxNo=""
+                        EveningPhone="" FirstName="" HttpUrl=""
+                        IsCommercialAddress="" JobTitle="" LastName=""
+                        Latitude="" Longitude="" MiddleName=""
+                        MobilePhone="" OtherPhone="" PersonID=""
+                        PreferredShipAddress="" State="" Suffix=""
+                        Title="" UseCount="" VerificationStatus="" ZipCode=""/>
+                </CustomerPaymentMethod>
+            </CustomerPaymentMethodList>
+            <NoteList Reset="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="YCP_manageCustomer_input.xml" IncludeXMLPath="Customer/NoteList"/>
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>
+                                <div>
+                                    <code>Reset</code> flag clears all previously recorded notes and replaces them with the new notes passed in the input during this api call.<br/>
+							Valid Values: <code>Y</code>, <code>N</code>
+                                    <br/>Default Value: <code>N</code>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Note AuditTransactionId="" ContactReference=""
+                    ContactTime="" ContactType="" ContactUser=""
+                    CustomerSatIndicator="" NoteText="" Operation=""
+                    Priority="" ReasonCode="" Tranid="" VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Participant_Note"/>
+                        <Attributes>
+                            <Attribute DataType="Action" Name="Operation">
+                                <Description>
+                                    <div>
+					 Valid value is <b>
+                                    <code>Delete</code>
+                                    </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Note>
+            </NoteList>
+            <User Activateflag="" BillingaddressKey="" BusinessKey=""
+                ChangePassNext="" ContactaddressKey=""
+                CreatorOrganizationKey="" DataSecurityGroupId=""
+                DepartmentCode="" DisplayUserID="" GeneratePassword=""
+                Imagefile="" IsSupervisor="" Localecode="Required"
+                Loginid="" Longdesc="" MaxCustomerAssignments=""
+                MenuId="" NoteKey="" ParentUserKey=""
+                Password="Required" PasswordPolicyId=""
+                PasswordPolicyKey="" PreferenceKey=""
+                Pwdlastchangedon="" SessionTimeout="" SuperUser=""
+                Theme="" UserKey="" Username="Required" Usertype="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="String" Name="DepartmentCode"/>
+                        <Attribute DataType="Text-150" EntityName="User"
+                            Name="DisplayUserID" NameInEntity="Display_User_ID">
+                            <Description>
+                                <div>
+                                Indicates Display User's ID which is used for login in to the system.  Ensure that OrganizationSuffix is populated for the Organization this User belongs to if this ID is being used across multiple Enterprises.  
+                            </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="String" Name="GeneratePassword"/>
+                    </Attributes>
+                </yfc:doc>
+                <ContactPersonInfo AddressLine1="" AddressLine2=""
+                    AddressLine3="" AddressLine4="" AddressLine5=""
+                    AddressLine6="" AlternateEmailID="" Beeper=""
+                    City="" Company="" Country="" DayFaxNo=""
+                    DayPhone="" Department="" EMailID="" ErrorTxt=""
+                    EveningFaxNo="" EveningPhone="" FirstName=""
+                    HttpUrl="" IsCommercialAddress="" JobTitle=""
+                    LastName="" MiddleName="" MobilePhone=""
+                    OtherPhone="" PersonID="" PreferredShipAddress=""
+                    State="" Suffix="" TaxGeoCode="" Title=""
+                    UseCount="" VerificationStatus="" ZipCode=""/>
+                <BillingPersonInfo AddressLine1="" AddressLine2=""
+                    AddressLine3="" AddressLine4="" AddressLine5=""
+                    AddressLine6="" AlternateEmailID="" Beeper=""
+                    City="" Company="" Country="" DayFaxNo=""
+                    DayPhone="" Department="" EMailID="" ErrorTxt=""
+                    EveningFaxNo="" EveningPhone="" FirstName=""
+                    HttpUrl="" IsCommercialAddress="" JobTitle=""
+                    LastName="" MiddleName="" MobilePhone=""
+                    OtherPhone="" PersonID="" PreferredShipAddress=""
+                    State="" Suffix="" TaxGeoCode="" Title=""
+                    UseCount="" VerificationStatus="" ZipCode=""/>
+                <QueueSubscriptionList>
+                    <QueueSubscription QueueKey="Required"
+                        QueueSubscriptionKey="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </QueueSubscriptionList>
+                <ResourcePermissionList>
+                    <ResourcePermission ResourceKey="" Rights=""
+                        UserKey="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </ResourcePermissionList>
+                <UserGroupLists>
+                    <UserGroupList UserGroupListKey="" UsergroupId=""
+                        UsergroupKey="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="String" Name="UsergroupId"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </UserGroupList>
+                </UserGroupLists>
+                <AuthAnswerList Reset="">
+                    <yfc:doc>
+                        <Element EntityName="Auth_Answer"/>
+                        <Attributes>
+                            <Attribute DataType="String" Name="Reset"/>
+                        </Attributes>
+                    </yfc:doc>
+                    <AuthAnswer Answer="" AuthAnswerKey=""
+                        AuthQuestionKey="" QuestionText="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Auth_Answer">
+                                <Description>
+                                    <div> The table is used for storing answers.
+							<Validation>
+                                    <Condition>If invalid authorization question is answered</Condition>
+                                    <Error
+                                    Description="Incorrect question being answered." ErrorCode="YCP0459"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If blank authorization answer is provided</Condition>
+                                    <Error
+                                    Description="Blank authorization answer." ErrorCode="YCP0460"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If incorrect authorization answer is provided</Condition>
+                                    <Error
+                                    Description="Incorrect authorization answer." ErrorCode="YCP0461"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If blank authorization question key and question text are provided</Condition>
+                                    <Error
+                                    Description="Both authorization question key and question text are blank." ErrorCode="PLT0508"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If there is no authorization question set up for the user.</Condition>
+                                    <Error
+                                    Description="No authorization question associated with the user." ErrorCode="PLT0509"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Element>
+                        </yfc:doc>
+                    </AuthAnswer>
+                </AuthAnswerList>
+            </User>
+        </CustomerContact>
+    </CustomerContactList>
+    <CustomerAdditionalAddressList Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <CustomerAdditionalAddress AddressType=""
+            CustomerAdditionalAddressID="" IsBillTo=""
+            IsDefaultBillTo="" IsDefaultShipTo="" IsDefaultSoldTo=""
+            IsShipTo="" IsSoldTo="" Operation="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>Defines an additional address for a customer. <br/>
+						Pass either <code>CustomerAdditionalAddressID</code> or <code>CustomerAdditionalAddressKey</code> to modify an existing customer additional address reocrd, otherwise a new record will be created. <br/>
+						Attribute values in the <code>PersonInfo</code> element will be defaulted from <code>CustomerContact</code> if not passed in the input. 
+						<Validation>
+                                <Condition>An address already exists as with either <code>IsDefaultShipTo</code>, <code>IsDefaultBillTo</code>, or <code>IsDefaultSoldTo</code> set as <code>Y</code> for this user and customer combination.</Condition>
+                                <Error
+                                    Description="There can only be one default BillTo, ShipTo, and SoldTo address for a given combination of User and Customer." ErrorCode="YSC80_0001"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <PersonInfo AddressID="" AddressLine1="" AddressLine2=""
+                AddressLine3="" AddressLine4="" AddressLine5=""
+                AddressLine6="" AlternateEmailID="" Beeper="" City=""
+                Company="" Country="" DayFaxNo="" DayPhone=""
+                Department="" EMailID="" ErrorTxt="" EveningFaxNo=""
+                EveningPhone="" FirstName="" HttpUrl=""
+                IsCommercialAddress="" JobTitle="" LastName=""
+                Latitude="" Longitude="" MiddleName="" MobilePhone=""
+                OtherPhone="" PersonID="" PreferredShipAddress=""
+                State="" Suffix="" Title="" UseCount=""
+                VerificationStatus="" ZipCode=""/>
+        </CustomerAdditionalAddress>
+    </CustomerAdditionalAddressList>
+    <CustomerPaymentMethodList Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <CustomerPaymentMethod AccountLimit="" AccountLimitCurrency=""
+            CreditCardExpDate="" CreditCardName="" CreditCardNo=""
+            CreditCardType="" CustomerAccountNo=""
+            CustomerPaymentMethodKey="" DebitCardNo=""
+            DisplayCreditCardNo="" DisplayCustomerAccountNo=""
+            DisplayDebitCardNo="" DisplayPaymentReference1=""
+            FirstName="" IsDefaultMethod="" LastName="" MiddleName=""
+            Operation="" PaymentReference1="" PaymentReference2=""
+            PaymentReference3="" PaymentType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>This table stores payment methods of a customer. Either 
+				<code>CustomerPaymentMethodKey</code> or a combination of <code>PaymentType</code>
+				and its unique identifiers are required to identify a customer payment method.
+				</Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+					 Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <PersonInfoBillTo AddressID="" AddressLine1=""
+                AddressLine2="" AddressLine3="" AddressLine4=""
+                AddressLine5="" AddressLine6="" AlternateEmailID=""
+                Beeper="" City="" Company="" Country="" DayFaxNo=""
+                DayPhone="" Department="" EMailID="" ErrorTxt=""
+                EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+                IsCommercialAddress="" JobTitle="" LastName=""
+                Latitude="" Longitude="" MiddleName="" MobilePhone=""
+                OtherPhone="" PersonID="" PreferredShipAddress=""
+                State="" Suffix="" Title="" UseCount=""
+                VerificationStatus="" ZipCode=""/>
+        </CustomerPaymentMethod>
+    </CustomerPaymentMethodList>
+    <AnswerSets>
+        <AnswerSet Action="" AnswerSetMasterKey="" QuestionType="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Answer_Set_Master"/>
+                <Attributes>
+                    <Attribute DataType="Text-10" Name="Action">
+                        <Description>
+                            <div>
+							Specify <code>Action</code> = <code>
+                                    <b>REMOVE</b>
+                                </code> to remove the entity. Leave <code>Action</code> blank or don't include it for modifying or creating a new entity.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Answer_Set_Master"
+                        Name="QuestionType" NameInEntity="Question_Type">
+                        <Description>
+                            <div>The question type that this answer set is for. 
+							<Validation>
+                                    <Condition>
+                                    <code>QuestionType</code> not passed.
+									</Condition>
+                                    <Error
+                                    Description="Mandatory attributes for answer set are missing." ErrorCode="YCP73_00005"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Answers Reset="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Reset">
+                            <Description>Indicates if all existing child node definition in the database need to be scrapped and have only these definitions supplied in the XML.</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Answer Action="" AnswerMasterKey=""
+                    AnswerSetMasterKey="" AnswerValue="" QuestionID="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Answer_Master"/>
+                        <Attributes>
+                            <Attribute DataType="Text-10" Name="Action">
+                                <Description>
+                                    <div>
+								Specify <code>Action</code> = <code>
+                                    <b>REMOVE</b>
+                                    </code> to remove the entity. Leave <code>Action</code> blank or don't include it for modifying or creating a new entity.
+								</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute Name="AnswerValue">
+                                <Description>
+                                    <div>The answer for the question.
+									<Validation>
+                                    <Condition>
+                                    <code>AnswerValue</code> passed should be a valid answer for the question it belongs to.</Condition>
+                                    <Error
+                                    Description="Answer is not one of the valid pre-defined answer options." ErrorCode="YCP73_00007"/>
+                                    <Error
+                                    Description="Answer for this question should be an integer number." ErrorCode="YCP73_00020"/>
+                                    <Error
+                                    Description="Answer for this question should be a decimal number." ErrorCode="YCP73_00021"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute Name="QuestionID">
+                                <Description>
+                                    <div>"Identifier for the question that this answer is for.
+									<Validation>
+                                    <Condition>
+                                    <code>QuestionID</code> should be valid.</Condition>
+                                    <Error
+                                    Description="Question does not exist in the database." ErrorCode="YCP73_00006"/>
+                                    <Error
+                                    Description="Question should only be answered when parent answer option is selected." ErrorCode="YCP73_00009"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Answer>
+            </Answers>
+        </AnswerSet>
+    </AnswerSets>
+    <NoteList Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>
+                        <div>
+                            <code>Reset</code> flag clears all previously recorded notes and replaces them with the new notes passed in the input during this api call.<br/>
+							Valid Values: <code>Y</code>, <code>N</code>
+                            <br/>Default Value: <code>N</code>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Note AuditTransactionId="" ContactReference="" ContactTime=""
+            ContactType="" ContactUser="" CustomerSatIndicator=""
+            NoteText="" Operation="" Priority="" ReasonCode="" Tranid=""
+            VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Participant_Note"/>
+                <Attributes>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+					 Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Note>
+    </NoteList>
+    <CustomerCurrencyList Reset="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Reset">
+                    <Description>Indicates if all existing child node definition in the database need to be deleted and replace with the provided child nodes.</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <CustomerCurrency Currency="" CustomerCurrencyKey=""
+            IsDefaultCurrency="" Operation="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Customer_Currency"/>
+                <Attributes>
+                    <Attribute EntityName="Customer_Currency"
+                        Name="IsDefaultCurrency" NameInEntity="Is_Default_Currency">
+                        <Description>
+                            <div>Indicates if a currency is the default customer currency. 
+								<Validation>
+                                    <Condition>
+                                    <code>IsDefaultCurrency</code> not passed.
+									</Condition>
+                                    <Error
+                                    Description="A customer cannot have multiple default currencies." ErrorCode="YSC83_0007"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Action" Name="Operation">
+                        <Description>
+                            <div>
+								Valid value is <b>
+                                    <code>Delete</code>
+                                </b> or blank.  If not provided the information will be created or modified.
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </CustomerCurrency>
+    </CustomerCurrencyList>
+    <CustomerAnalytics CustomerAnalyticsKey="" GradeCode="" GradeDescription="">
+        <yfc:includeInParent IncludeXMLChildNodes="Y" IncludeXMLFileName="MasterCustomerAnalytics.xml"/>
+    </CustomerAnalytics>
+</Customer>

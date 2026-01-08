@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<!-- Identity template: copy everything by default -->
+	<xsl:template match="@*|node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:copy>
+	</xsl:template>
+	<!-- Override OrderHeader to update TotalOrderValue -->
+	<xsl:template match="OrderHeader">
+		<xsl:variable name="vOrdertotal">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/@OrderLineValue)"/>
+		</xsl:variable>
+		<xsl:variable name="vCustomDutyTax">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/@ExtnCustomDutyTaxUS)"/>
+		</xsl:variable>
+		<xsl:variable name="vOrderShipCharge">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/@ExtnTotalShippingChargeUS)"/>
+		</xsl:variable>
+		<xsl:variable name="vOrderShipTax">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/@ExtnTotalShippingTaxUS)"/>
+		</xsl:variable>
+		<xsl:variable name="vOrderPaidAmount">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/TitanPaymentDetailList/TitanPaymentDetail[@PaymentCode='CC']/@Amount)"/>
+		</xsl:variable>
+		<xsl:copy>
+			<!-- Copy all attributes except TotalOrderValue -->
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'TotalOrderValue'">
+						<xsl:attribute name="TotalOrderValue">
+							<xsl:value-of select="format-number((number($vOrdertotal)+number($vCustomDutyTax)+number($vOrderShipCharge)+number($vOrderShipTax)),'0.00')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="name() = 'PaidAmount'">
+						<xsl:attribute name="PaidAmount">
+							<xsl:value-of select="format-number((number($vOrderPaidAmount)),'0.00')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="name() = 'ShippingCharge'">
+						<xsl:attribute name="ShippingCharge">
+							<xsl:value-of select="format-number((number($vOrderShipCharge)),'0.00')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="name() = 'ShippingTax'">
+						<xsl:attribute name="ShippingTax">
+							<xsl:value-of select="format-number((number($vOrderShipTax)),'0.00')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:copy/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<!-- Copy children -->
+			<xsl:apply-templates select="node()"/>
+		</xsl:copy>
+	</xsl:template>
+	<!-- PaymentInfo: update Amount -->
+	<xsl:template match="PaymentMethod">
+	
+	<xsl:variable name="vOrderCCAmount">
+			<xsl:value-of select="sum(OrderDetails/OrderDetail/TitanPaymentDetailList/TitanPaymentDetail[@PaymentCode='CC']/@Amount)"/>
+		</xsl:variable>
+		<PaymentMethod>
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name()='CCAmount'">
+						<xsl:attribute name="CCAmount">
+							<xsl:value-of select="format-number((number($vOrderCCAmount)),'0.00')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:copy/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</PaymentMethod>
+	</xsl:template>
+</xsl:stylesheet>

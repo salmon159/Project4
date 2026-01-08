@@ -1,0 +1,42 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output indent="yes" method="xml"/>
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="/Shipment/Extn">
+        <xsl:variable name="var" select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+        <xsl:variable name="k">1000</xsl:variable>
+        <Extn>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="ExtnTotalNetAmount">
+                <xsl:choose>
+                    <xsl:when test="$var>1000">
+                        <xsl:value-of select="$k"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="/Shipment/Extn/@ExtnTotalNetAmount"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+        </Extn>
+    </xsl:template>
+    <xsl:template match="/Shipment/ToAddress">
+        <ToAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="DayPhone"/>
+            <xsl:attribute name="EveningPhone"/>
+            <xsl:attribute name="MobilePhone"/>
+        </ToAddress>
+		
+    </xsl:template>
+	 <xsl:template match="/Shipment/FromAddress">
+	<FromAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="EMailID">
+                        <xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/PersonInfoShipTo/@EMailID"/>
+            </xsl:attribute>
+        </FromAddress>
+		 </xsl:template>
+</xsl:stylesheet>

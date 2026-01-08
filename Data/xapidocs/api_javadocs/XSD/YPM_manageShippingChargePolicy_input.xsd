@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/manageShippingChargePolicy/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/manageShippingChargePolicy/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YPM_manageShippingChargePolicy_input.xsd" yfc:rootElement="ShippingChargePolicy">
+        <xsd:appinfo source="yfc:structure">
+            <ShippingChargePolicy hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ShippingChargePolicy" type="yfc:ShippingChargePolicyXSDType">
+        <xsd:annotation yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+            <xsd:documentation>
+                <div>
+                    Specify the pricing rule to be created, modified or deleted.  
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ShippingChargePolicyXSDType">
+        <xsd:attribute name="Description" type="yfctype:Text-2000" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Description of the shipping charge policy 
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveEndDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_END_DATE" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>After this date the shipping policy is not active.
+                <Validation>
+                            <Condition>
+                                <code>EffectiveEndDate</code> is modified to void.
+					</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EffectiveEndDate</code> is on or before <code>EffectiveStartDate</code>.
+					</Condition>
+                            <Error
+                                Description="EffectiveStartDate cannot be on or after EffectiveEndDate" ErrorCode="YPM10013"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveStartDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_START_DATE" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Date from which the shipping policy is active.
+                <Validation>
+                            <Condition>
+                                <code>EffectiveStartDate</code> is modified to void.
+					</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EffectiveStartDate</code> is on or after <code>EffectiveEndDate</code>.
+					</Condition>
+                            <Error
+                                Description="EffectiveStartDate cannot be on or after EffectiveEndDate" ErrorCode="YPM10013"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Name" type="yfctype:Text-120" use="required">
+            <xsd:annotation yfc:columnName="NAME" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Name of the shipping charge policy. 
+                        <Validation>
+                            <Condition>
+                                <code>Name</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+                            </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Name</code> is modified to void.
+                            </Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+                        <br/>Valid Values: 
+                        <br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+                        <br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+                        <br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+                        <br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+                        <br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+                        <Validation>
+                            <Condition>
+                                <code>Operation</code> Delete can not be used if the <code>Status</code> is active.
+							</Condition>
+                            <Error
+                                Description="Can not delete an active shipping charge policy" ErrorCode="YPM10158"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Pricing organization to with this policy belongs. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b>.
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+                            </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid.
+                            </Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Sequence" type="yfctype:Number-11" use="required">
+            <xsd:annotation yfc:columnName="SEQUENCE" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Sequence of the policy in comparison with other policies.
+                <Validation>
+                            <Condition>
+                                <code>Sequence</code> number is already being used by another policy.
+					</Condition>
+                            <Error
+                                Description="Sequence number is already being used" ErrorCode="YPM10157"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Sequence</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+                    </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShippingChargePolicyKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPPING_CHARGE_POLICY_KEY" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>Primary key of table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Status" type="yfctype:Status" use="required">
+            <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YPM_SHIPPING_CHARGE_POLICY">
+                <xsd:documentation>
+                    <div>Indicates the status of the shipping charge policy. It is defaulted to <b>
+                            <code>INACTIVE</code>
+                        </b> when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not passed in the input.
+                    <Validation>
+                            <Condition>
+                                <code>Status</code> is passed and not a valid value.
+                        </Condition>
+                            <Error Description="Invalid PricingStatus." ErrorCode="YPM10012"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

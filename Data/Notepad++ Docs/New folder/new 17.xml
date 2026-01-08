@@ -1,0 +1,91 @@
+  
+
+<MultiApi>
+<API Name="changeOrder"><Input>
+<Order OrderHeaderKey="2024092309412237921342" Override="Y">
+	<OrderHoldTypes>
+		<OrderHoldType HoldType="CC_REFUND_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+</Input></API>
+</MultiApi>
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+    <xsl:template match="/">
+        <RecordExternalCharges>
+            <xsl:attribute name="OrderHeaderKey">
+                <xsl:value-of select="/Order/@OrderHeaderKey"/>
+            </xsl:attribute>
+            <PaymentMethod>
+                <xsl:attribute name="PaymentKey">
+                    <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='AUTHORIZATION']/@PaymentKey"/>
+                </xsl:attribute>
+                <xsl:attribute name="PaymentType">
+                    <xsl:value-of select="/Order/PaymentMethods/PaymentMethod[@PaymentType !='Encircle']/@PaymentType"/>
+                </xsl:attribute>
+                <PaymentDetailsList>
+                    <PaymentDetails>
+                        <xsl:attribute name="AuthorizationExpirationDate">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='AUTHORIZATION']/@AuthorizationExpirationDate"/>
+                        </xsl:attribute>
+                        <xsl:attribute name="ChargeType">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='AUTHORIZATION']/@ChargeType"/>
+                        </xsl:attribute>
+                        <xsl:variable name="vRequestAmount">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='AUTHORIZATION']/@RequestAmount"/>
+                        </xsl:variable>
+                        <xsl:variable name="vAmountPerUnit">
+                            <xsl:value-of select="sum(/Order/OrderLines/OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType!='Encircle']/@AmountPerUnit)"/>
+                        </xsl:variable>
+                        <xsl:attribute name="RequestAmount">
+                            <xsl:value-of select="$vAmountPerUnit*-1"/>
+                        </xsl:attribute>
+                    </PaymentDetails>
+                </PaymentDetailsList>
+            </PaymentMethod>
+        </RecordExternalCharges>
+        <xsl:variable name="isEncircle">
+                        <xsl:value-of select="/Order/OrderLines/OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@PaymentType"/>
+                    </xsl:variable>
+        
+            <xsl:if test="$isEncircle='Encircle'">
+                <RecordExternalCharges>
+            <xsl:attribute name="OrderHeaderKey">
+                <xsl:value-of select="/Order/@OrderHeaderKey"/>
+            </xsl:attribute>
+            <PaymentMethod>
+                <xsl:attribute name="PaymentKey">
+                    <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='CHARGE']/@PaymentKey"/>
+                </xsl:attribute>
+                <xsl:attribute name="PaymentType">
+                    <xsl:value-of select="/Order/PaymentMethods/PaymentMethod[@PaymentType='Encircle']/@PaymentType"/>
+                </xsl:attribute>
+                <PaymentDetailsList>
+                    <PaymentDetails>
+                        <xsl:attribute name="AuthorizationExpirationDate">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='CHARGE']/@AuthorizationExpirationDate"/>
+                        </xsl:attribute>
+                        <xsl:attribute name="ChargeType">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='CHARGE']/@ChargeType"/>
+                        </xsl:attribute>
+                        <xsl:variable name="vRequestAmount">
+                            <xsl:value-of select="/Order/ChargeTransactionDetails/ChargeTransactionDetail[@ChargeType='CHARGE']/@RequestAmount"/>
+                        </xsl:variable>
+                        <xsl:variable name="vAmountPerUnit">
+                            <xsl:value-of select="sum(/Order/OrderLines/OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@AmountPerUnit)"/>
+                        </xsl:variable>
+                        <xsl:attribute name="RequestAmount">
+                            <xsl:value-of select="$vAmountPerUnit*-1"/>
+                        </xsl:attribute>
+                    </PaymentDetails>
+                </PaymentDetailsList>
+            </PaymentMethod>
+        </RecordExternalCharges>
+            </xsl:if>
+        
+    </xsl:template>
+</xsl:stylesheet>

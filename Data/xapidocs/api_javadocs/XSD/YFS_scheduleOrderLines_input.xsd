@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/scheduleOrderLines/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/scheduleOrderLines/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_scheduleOrderLines_input.xsd" yfc:rootElement="Promise">
+        <xsd:appinfo source="yfc:structure">
+            <Promise hasAttributes="Y">
+                <PromiseLines>
+                    <PromiseLine hasAttributes="Y"/>
+                </PromiseLines>
+            </Promise>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Promise" type="yfc:PromiseXSDType"/>
+    <xsd:complexType name="PromiseXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:PromiseLines"/>
+        </xsd:all>
+        <xsd:attribute name="AllocationRuleID" type="yfctype:ID-10" use="optional">
+            <xsd:annotation yfc:columnName="ALLOCATION_RULE_ID" yfc:tableName="YFS_ALLOCATION_RULE">
+                <xsd:documentation>
+                    <div>
+				Identifies an Allocation Rule. An Enterprise can configure multiple allocation rule sets for each document type.
+				If an <code>AllocationRuleID</code> is passed, the associated allocation rule is used for this order. 
+				<Validation>
+                            <Condition> The <code>AllocationRuleID</code> passed is invalid for the combination of document type of the order, and  Enterprise's ruleset. It may be invalid because there is no matching allocation rule for that ID.
+					</Condition>
+                            <Error
+                                Description="Invalid Scheduling Rule Id" ErrorCode="YFS10309"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckInventory" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to indicates whether inventory availability should be checked during scheduling. 
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b> - <i>Check Inventory</i>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>The document type used to describe the order. Part of the unique key for the order. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>Identifies the Enterprise.  Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10126"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreReleaseDate" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to notify the schedule process to ignore the line release dates. Setting this to <b>
+                            <code>Y</code>
+                        </b> results in line quantities being scheduled even if the date criteria for release is not met.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>Unique identifier of the Order. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10126"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>A value that identifies an order within an enterprise. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the order must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the order is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10126"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ScheduleAndRelease" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to notify the schedule process to attempt to release all releasable line quantities.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PromiseLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:PromiseLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromiseLine">
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>
+							If driver date of the order is <b>
+                                <code>DeliveryDate</code>
+                            </b> then a <code>DeliveryDate</code> must be passed. <code>OrderLine</code> is scheduled to deliver on the passed <code>DeliveryDate</code>.
+						<Validation>
+                                <Condition>
+                                    <code>DeliveryDate</code> is the driver date and not being passed.
+                </Condition>
+                                <Error
+                                    Description="Driver date is mandatory for this operation." ErrorCode="YFS10509"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromScheduleNo" type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Indicates a schedule number allocate from. One line can be in multiple schedules. Pass a valid <code>FromScheduleNo</code> to allocate quantity in a particular schedule. 
+						<Validation>
+                                <Condition>Must pass valid schedule number for this line.
+						</Condition>
+                                <Error Description="Invalid schedule." ErrorCode="YFS10378"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromStatus" type="yfctype:Status" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Specifies a status that quantity should be allocated from. If <code>FromStatus</code> is passed, allocation is done only from that status. If <code>FromStatus</code> is not passed, allocation is made from any status.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>Unique identifier of the OrderLine. Either <code>OrderLineKey</code>
+                            <i>or</i>
+                            <code>PrimeLineNo</code> and <code>SubLineNo</code> of the order must be passed.
+							<Validation>
+                                <Condition>Either <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                                    <i>or</i>
+                                    <code>OrderLineKey</code> of the order is not passed.
+							</Condition>
+                                <Error Description="Invalid order line." ErrorCode="YFS10209"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>
+						Part of a key for the <code>OrderLine</code>. Either <code>OrderLineKey</code>
+                            <i>or</i>
+                            <code>PrimeLineNo</code> and <code>SubLineNo</code> of the order must be passed.
+						<Validation>
+                                <Condition>Either <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                                    <i>or</i>
+                                    <code>OrderLineKey</code> of the order is not passed.
+							</Condition>
+                                <Error Description="Invalid order line." ErrorCode="YFS10209"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						The quantity to schedule for the <code>OrderLines</code>. If not passed, line quantity is not scheduled.
+						<Validation>
+                                <Condition>Quantity passed is zero or negative number.
+							</Condition>
+                                <Error
+                                    Description="java.lang.NumberFormatException" ErrorCode=""/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If the line item is a logical kit, and the Quantity passed is a fractional number.
+							</Condition>
+                                <Error
+                                    Description="Fractional quantity can not be passed to this attribute." ErrorCode="YFS10447"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ScheduleKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_LINE_SCHEDULE_KEY" yfc:tableName="YFS_ORDER_LINE_SCHEDULE">
+                    <xsd:documentation>The primary key for the YFS_ORDER_LINE_SCHEDULE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>
+							If driver date of the order is <b>
+                                <code>ShipDate</code>
+                            </b> then a <code>ShipDate</code> must be passed. <code>OrderLine</code> is scheduled to ship on the passed <code>ShipDate</code>.
+                <Validation>
+                                <Condition>
+                                    <code>ShipDate</code> is the driver date and not being passed.
+                </Condition>
+                                <Error
+                                    Description="Driver date is mandatory for this operation." ErrorCode="YFS10509"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						Indicates the <code>ShipNode</code> this <code>OrderLine</code> should use.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>
+						Part of a key for the <code>OrderLine</code>. Either <code>OrderLineKey</code>
+                            <i>or</i>
+                            <code>PrimeLineNo</code> and <code>SubLineNo</code> of the order must be passed.
+						<Validation>
+                                <Condition>Either <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                                    <i>or</i>
+                                    <code>OrderLineKey</code> of the order is not passed.
+							</Condition>
+                                <Error Description="Invalid order line." ErrorCode="YFS10209"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToStatus" type="yfctype:Status" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Indicates a status to which <code>OrderLines</code> are set, if the <code>OrderLines</code> are succesfully scheduled during this <code>scheduleOrderLines</code> call. If <code>ToStatus</code> is not passed, the Status is determined from the pipeline.
+							<br/>Valid Values: An equivalent status of one of these statuses:  <b>
+                                <code>1500</code>
+                            </b>,<b>
+                                <code>1600</code>
+                            </b>,<b>
+                                <code>1300</code>
+                            </b>.
+							<Validation>
+                                <Condition>Status is invalid.
+								</Condition>
+                                <Error Description="Invalid status" ErrorCode="YFS10235"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Status is no equivalent to of one of these statuses:  <b>
+                                    <code>1500</code>
+                                    </b>,<b>
+                                    <code>1600</code>
+                                    </b>,<b>
+                                    <code>1300</code>
+                                    </b>.
+								</Condition>
+                                <Error
+                                    Description="Invalid status transition." ErrorCode="YFS10308"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

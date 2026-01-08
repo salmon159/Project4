@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getShipmentListForOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getShipmentListForOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getShipmentListForOrder_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:UsedForIndexing="Order" yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+		To identify the order that shipments belong to, pass either the <code>OrderHeaderKey</code> or  the <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>.
+		<br/>To identify the release that shipments belong to, pass either the <code>OrderReleaseKey</code>, a combination of <code>ReleaseNo</code> and <code>OrderHeaderKey</code>, or a combination of <code>EnterpriseCode</code> and <code>ReleaseNo</code>.
+		<br/>To identify the order line that shipments belong to, pass either the <code>OrderLineKey</code>, <code>PrimeLineNo</code>, or <code>SubLineNo</code>.
+		<Validation>
+                        <Condition>
+                            <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> must be passed and must be valid to identify an order.
+			</Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10126"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>OrderReleaseKey</code>, a combination of <code>ReleaseNo</code> and <code>OrderHeaderKey</code>, or a combination of <code>EnterpriseCode</code> and <code>ReleaseNo</code> must be passed and must be valid to identify a release.
+			</Condition>
+                        <Error Description="No Record Found." ErrorCode="YFS10001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>OrderLineKey</code>, <code>PrimeLineNo</code>, or <code>SubLineNo</code> must be passed and must be valid to identify an order release.
+			</Condition>
+                        <Error Description="Invalid order line." ErrorCode="YFS10209"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:attribute name="ConsiderOnlyDropShippedOrders"
+            type="yfctype:Text-1" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>If set to Y then chained orders will only be considered if they are drop shipments.  Any shipments on the original order will still be considered regardless.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Specifies the Maximum Number of records to be returned. Default is 500.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_LINE_KEY" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The primary key for the YFS_ORDER_LINE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The primary key for the YFS_ORDER_RELEASE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The order line number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReadFromHistory" type="yfctype:Text-1" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <br/>Valid Values:
+                    <br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_SHIPMENT table (the current table).
+                    <br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Returns records that satisfy the input criteria from the YFS_SHIPMENT_H table (the history table).
+                    <br/>
+                        <b>
+                            <code>B</code>
+                        </b> - Returns records that satisfy the input criteria from both YFS_SHIPMENT and YFS_SHIPMENT_H tables. Records returned from the current table are first in the output.
+                    <br/>
+                        <br/>If a value is not passed, it will be defaulted based upon the order uniquely identified from the input attributes.  If the order is a history order, this value will default to "Y", else to "N". 
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReleaseNo" type="yfctype:ShorterNumber" use="optional">
+            <xsd:annotation yfc:columnName="RELEASE_NO" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>The release number. Generated as a one up number against that release.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>The sub line number.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

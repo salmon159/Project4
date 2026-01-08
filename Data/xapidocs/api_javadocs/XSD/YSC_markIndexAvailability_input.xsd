@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/markIndexAvailability/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/markIndexAvailability/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_markIndexAvailability_input.xsd" yfc:rootElement="Index">
+        <xsd:appinfo source="yfc:structure">
+            <Index hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Index" type="yfc:IndexXSDType">
+        <xsd:annotation yfc:tableName="YFS_INDEX_STATUS">
+            <xsd:documentation>This table contains the sanity of the index server with respect to index build and search operations. Both these operations read this table before attempting on index server. Besides that they update this table if any issues with the index server is found during the opearation.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="IndexXSDType">
+        <xsd:attribute name="IndexName" type="yfctype:IndexName" use="required">
+            <xsd:annotation yfc:columnName="INDEX_NAME" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>The name of the index. This is the XMLName of the corresponding entity. For eg: Indexing is enabled for Order_Header and Shipment entities. Hence name of the indices would be Order and Shipment respectively.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IndexWorking" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="INDEX_WORKING" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>This indicates that indexing operation is working for this index. <br/>In case indexing operation continuously failing, IndexWorking will be reset to <code>N</code>. This is done automatically so that no further index build attempt is made until the issue is solved. Most of these kind of issues require manual intervention and users need to set IndexWorking to <code>Y</code> when these issues are fixed so that index build operations can resume.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MarkInSyncForAllEnterprises"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>This indicates that all the enterprises want to ignore the index version change and go with the previous index definition. Passing this attribute as <code>Y</code> will mark index in sync for all the enterprises. <br/>
+                    <br/>If the indexing feature is disabled then system will mark all the enterprises are not in sync. When users enable the indexing feature at a later point of time in addition to the activities related to synchronizing the index by running the agent etc, they have to mark index in sync for all the enterprises so that the search operations start using the indexing feature.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MarkInSyncForEnterprise"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>In case an enterprise want to ignore the index version change and go with the previous index definition, pass the EnterpriseCode here. As re-indexing of existing transactional data is not required for them, passing this will mark index in sync for the enterprise. Search operations for this enterprise continue on the index with the previous definition.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MarkNotInSyncForAllEnterprises"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>In case exceptions are keep on coming for indexing or search operations and rectifying these issues are taking longer time than expected then it is better to process the search APIs in all colonies instead of depending on search index. Users can pass this attribute as <code>Y</code> to mark index <code>not in sync</code> for all the enterprises so that search APIs process parallelly in all possible colonies. This will ensure the data correctness. <br/>Other than the above scenario there is no use of this flag. <br/>Passing both <code>MarkInSyncForAllEnterprises</code> and <code>MarkNotInSyncForAllEnterprises</code> in one input document is not supported.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MarkNotInSyncForEnterprise"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>In case exceptions are keep on coming for indexing or search operations and rectifying these issues are taking longer time than expected then it is better to process the search APIs in all colonies instead of depending on search index. Passing an <code>EnterpriseCode</code> here will mark index <code>not in sync</code> for that enterprise and search APIs process parallelly in all possible colonies so that data correctness is guaranteed. <br/>Other than the above scenario there is no use of this flag. <br/>Passing both <code>MarkInSyncForEnterprise</code> and <code>MarkNotInSyncForEnterprise</code> for the same <code>EnterpriseCode</code> in one input document is not supported.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RefreshIndex" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Forces refresh so that the content indexed since the last refresh are searchable.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SearchWorking" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="SEARCH_WORKING" yfc:tableName="YFS_INDEX_STATUS">
+                <xsd:documentation>This indicates that search operation is working for this index. <br/>In case search operation continuously failing, SearchWorking will be reset to <code>N</code>. This is done automatically so that no further search attempt is made until the issue is solved. Most of these kind of issues require manual intervention and users need to set SearchWorking to <code>Y</code> when these issues are fixed so that search operations can resume.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

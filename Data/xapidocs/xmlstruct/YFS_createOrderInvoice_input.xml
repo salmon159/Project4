@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!-- createOrderInvoice Input XML. -->
+<Order DocumentType="" EnterpriseCode="" IgnoreStatusCheck="Y|N"
+    IgnoreTransactionDependencies="Y|N" LightInvoice=""
+    OrderHeaderKey="" OrderNo="" TransactionId="Required" xmlns="http://www.sterlingcommerce.com/documentation/YFS/createOrderInvoice/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+		To identify the <code>Order</code> for which the invoice is to be created, pass either the <code>OrderHeaderKey</code> or  the <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>.
+		<Validation>
+                        <Condition>
+                            <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code> must be passed and must be valid.
+			</Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Flag" Name="IgnoreStatusCheck">
+                <Description>
+                    <div>This flag enables creation of invoice for quantities passed on order lines irrespective of their status.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, invoice will be created for the quantities passed on order lines irrespective of their statuses.
+					<Validation>
+                            <Condition>If IgnoreStatusCheck is 'Y' but <code>OrderLine</code> element is not passed in the input.
+						</Condition>
+                            <Error
+                                Description="OrderLine element must be passed" ErrorCode="OMP80_0045"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreTransactionDependencies">
+                <Description>
+                    <div>Flag to override any transaction dependencies that may be defined for the transaction this API invokes.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, transaction dependencies will not be evaluated, and thus will not prevent the API from processing.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="LightInvoice">
+                <Description>
+                    <div>Flag to identify whether the invoices to be created is of IN_STORE type.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, after the invoice is created and its price computed, line level information will be discarded.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TransactionID" Name="TransactionId">
+                <Description>
+                    <div>
+				The transaction should be an instance of the <code>CREATE_ORDER_INVOICE</code> abstract transaction. Configure the transaction, including its pickup and drop statuses, and the <code>ON_INVOICE_CREATION</code> event in the applicable pipeline.
+				</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <OrderLines>
+        <!-- Either OrderLineKey or PrimeLineNo and SubLineNo must be passed to identify the order line  -->
+        <OrderLine OrderLineKey="" PrimeLineNo="" Quantity="" SubLineNo="">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Quantity" Name="Quantity">
+                        <Description>The quantity of the line for which invoice has to be created irrespective of its status.
+						<Validation>
+                                <Condition>Zero or negative <code>Quantity</code> is passed in the input.
+							</Condition>
+                                <Error Description="Invalid Quantity" ErrorCode="OMP80_0038"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If <code>Quanity</code> passed is more than invoicable quantity on the line.
+							</Condition>
+                                <Error Description="Not Enough Quantity" ErrorCode="YFS10131"/>
+                            </Validation>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </OrderLine>
+    </OrderLines>
+</Order>

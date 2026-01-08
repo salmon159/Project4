@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/getXrefItemDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/getXrefItemDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_getXrefItemDetails_input.xsd" yfc:rootElement="Item">
+        <xsd:appinfo source="yfc:structure">
+            <Item hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Item" type="yfc:ItemXSDType">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>
+                <div>
+			The Primary Item table. Stores product information.
+				<Validation>
+                        <Condition>
+                            <code>FromItemID</code>, <code>FromOrganizationCode</code>, <code>FromUOM</code>, <code>ToOrganizationCode</code> attributes must be passed. If not passed:
+					</Condition>
+                        <Error
+                            Description="Missing mandatory parameters" ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>GlobalItemId</code> should be defined for the <code>FromItem</code>. If not defined:
+					</Condition>
+                        <Error
+                            Description="GlobalItemId is not found for item" ErrorCode="YCM0056"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+					The <code>FromItem</code> and the <code>XrefItem</code> should be found. If <code>FromItem</code> or <code>XrefItem</code> not found:
+					</Condition>
+                        <Error Description="Item not found" ErrorCode="YCM0033"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemXSDType">
+        <xsd:attribute name="DisplayLocalizedFieldInLocale"
+            type="yfctype:Locale" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>
+                    <div>
+                        <code>ItemID</code> of the item that will be used to get the reference from.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromOrganizationCode"
+            type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>Organization of the item that will be used to get the reference from.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromUOM" type="yfctype:UOM" use="required">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>Unit of measure of the item that will be used to get the reference from.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InheritAttributesFromClassification"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>If the InheritAttributesFromClassification flag is passed as Y and the value of the item attribute is not defined at item level, the system will try to find the value from the classification definition for the ClassificationPurposeCode - 'Inherited Item Attributes'.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SubCatalogOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SUB_CAT_ORG_CODE" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The sub-catalog organization that maintains the item definition.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToOrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>Organization to which item's cross-referenced information has been established.  Details of the item that belongs to this organization will be retrieved.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

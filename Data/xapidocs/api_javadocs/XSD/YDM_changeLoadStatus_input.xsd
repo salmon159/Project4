@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/changeLoadStatus/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/changeLoadStatus/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_changeLoadStatus_input.xsd" yfc:rootElement="Load">
+        <xsd:appinfo source="yfc:structure">
+            <Load hasAttributes="Y">
+                <LoadStatusAudit hasAttributes="Y"/>
+            </Load>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Load" type="yfc:LoadXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOAD">
+            <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LoadXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LoadStatusAudit"/>
+        </xsd:all>
+        <xsd:attribute name="AcceptOutOfSequenceUpdates"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Indicates whether status updates can be made out of sequence from the order defined in the pipeline. 
+			<br/>Default: N
+			<br/>Valid Values: <code>Y</code> or <code>N</code>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BaseDropStatus" type="yfctype:ShortStatus" use="optional">
+            <xsd:annotation yfc:columnName="DROP_STATUS" yfc:tableName="YFS_PIPELINE_DEFINITION">
+                <xsd:documentation>
+                    <div>
+			 Value passed is used to determine the actual drop status that the transaction assigns to the load. If <code>BaseStatus</code> is not passed, then the transaction must have only one base status defined as part of the setup.
+			 </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The enterprise that created the load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The primary key for the YFS_LOAD table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskQKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TASK_Q_KEY" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>
+                    <div>
+				Identifies a task queue. Used to read the load that needs a status change.
+				If <code>TaskQKey</code> is not passed, <code>LoadNo</code> or <code>LoadKey</code> must be passed
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TranId" use="optional">
+            <xsd:annotation yfc:columnName="TRANID"
+                yfc:isConditional="Y" yfc:tableName="YFS_TRANSACTION">
+                <xsd:documentation>
+                    <div>Identifies a transaction. If <code>TransactionID</code> is passed, the transaction identified must be derived from
+			 the abstract transaction <code>CHANGE_LOAD_STATUS</code>. If <code>TaskQKey</code> is passed,  any <code>TransactionID</code> passed is ignored.
+			 </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="LoadStatusAudit">
+        <xsd:annotation yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+            <xsd:documentation>This table stores load status change audit. Each time the load status changes because of a business process, an audit is posted along with the status, timestamp, reason code and text, user ID and program ID. All transactions in the load pipeline have entries in this table upon completion of a transaction. In addition, the receiveIntransitUpdates API posts transport status updates for additional transport statuses that are not a part of the delivery (load) pipeline.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the city of the load's location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the country of the load's location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Latitude" use="optional">
+                <xsd:annotation yfc:columnName="LATITUDE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the latitude of the load's location.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Decimal"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Load for which a status change audit is written.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadStatusAuditKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_STATUS_AUDIT_KEY" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Primary key attribute of YFS_LOAD_STATUS_AUDIT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Location" type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Description of the location for which the transport status is being sent across.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Longitude" use="optional">
+                <xsd:annotation yfc:columnName="LONGITUDE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the longitude of the load's location.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Decimal"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Reason code indicating the reason for the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Free-form reason text indicating any additional information related to the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the state of the load's location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StatusDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="STATUS_DATE" yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>Date and time of the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransportStatusCode"
+                type="yfctype:ShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="TRANSPORT_STATUS_CODE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Transport status code indicating status of the load when intransit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransportStatusDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="TRANSPORT_STATUS_DATE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Status date of the load at the transport status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransportationStatusText"
+                type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_STAT_TXT" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the transportation status of the load.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIPCODE" yfc:tableName="YFS_LOAD_STATUS_AUDIT">
+                    <xsd:documentation>Indicates the country's zipcode of the load's location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/inductTote/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/inductTote/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_inductTote_input.xsd" yfc:rootElement="Tote">
+        <xsd:appinfo source="yfc:structure">
+            <Tote hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Tote" type="yfc:ToteXSDType">
+        <xsd:annotation yfc:tableName="YFS_TOTE">
+            <xsd:documentation>This table stores the tote id and the associated reference.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ToteXSDType">
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>
+                    <div> 
+					Business key or unique identifier for a ship node.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> must be passed.
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>This key identifies the reference associated with the tote for the reference type.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReferenceName" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="REFERENCE_NAME" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>
+                    <div> Reference Name. Gives the name of the primary task reference that has to be associated with the <code>ToteId</code>.
+						<Validation>
+                            <Condition>
+                                <code>ReferenceName</code> and <code>ReferenceValue</code> should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid ReferenceName and ReferenceValue combination." ErrorCode="WMS00299"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReferenceValue" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="REFERENCE_VALUE" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>
+                    <div> Value of Reference. Gives the value of the <code>ReferenceName</code> that has to be associated with the <code>ToteId</code>.
+						<Validation>
+                            <Condition>
+                                <code>ReferenceName</code> and <code>ReferenceValue</code> should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid ReferenceName and ReferenceValue combination." ErrorCode="WMS00299"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Reference already associated with another <code>ToteId</code>
+                            </Condition>
+                            <Error
+                                Description="Reference already associated with another tote." ErrorCode="WMS00298"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToteId" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="TOTE_ID" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>
+                    <div> Tote Identifier.Forms unique key of this table in conjunction with <code>NODE_KEY</code>. Indicates the tote that has to be inducted.
+						<Validation>
+                            <Condition>
+                                <code>ToteId</code> must be passed.
+							</Condition>
+                            <Error Description="ToteId not passed." ErrorCode="WMS00295"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ToteId</code> already inducted with another reference.
+							</Condition>
+                            <Error Description="Tote already inducted." ErrorCode="WMS00297"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>No available open task to associate with the tote.
+							</Condition>
+                            <Error Description="No open task to induct." ErrorCode="WMS00296"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToteKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TOTE_KEY" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>The primary key for the YFS_TOTE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

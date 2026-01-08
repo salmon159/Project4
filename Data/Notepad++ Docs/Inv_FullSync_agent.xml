@@ -1,0 +1,167 @@
+JOB_ELEMENT_NAME
+SERVICE_FOR_GET_JOBS		-	IBD_InvFullSync_GetJobs
+SERVICE_FOR_EXECUTE_JOB		-	IBD_InvFullSync_ExecuteJobs_US
+
+
+<Organization>
+<Inventory Enterprise_Code="TITAN_US" />
+</Organization>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
+	<!-- Root template -->
+	<xsl:template match="/">
+		<Organization>
+			<Root>
+				<Inventory>
+					<xsl:attribute name="Enterprise_Code">TITAN_US</xsl:attribute>
+				</Inventory>
+			</Root>
+		</Organization>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
+	<!-- Root template -->
+	<xsl:template match="/">
+		<Organization>
+			<Root>
+				<Inventory>
+					<xsl:attribute name="Enterprise_Code">TITAN_GCC</xsl:attribute>
+				</Inventory>
+			
+		</Root>
+		</Organization>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+
+sh /opt/Sterling10AWS/bin/titanagentserver.sh IBDInventoryFullsyncAgentServer "-Xms1024m -Xmx1024m" &
+
+triggerAgent
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_US"/>
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_GCC"/>
+
+
+file in OMS agent:
+/opt/dataload/Inventory/feed
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:template match="/">
+        <OrderList>
+            <xsl:for-each select="OrderList/Order">
+                <xsl:choose>
+                    <xsl:when test="@SearchCriteria1=''">
+                        <Order>
+                            <xsl:copy-of select="@* | node()"/>
+                        </Order>
+                    </xsl:when>
+                    <xsl:otherwise/>
+                </xsl:choose>
+            </xsl:for-each>
+        </OrderList>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:template match="/">
+		<Organization>
+			<xsl:for-each select="Organization/Root">
+				<Root>
+					<xsl:copy-of select="@* | node()"/>
+				</Root>
+			</xsl:for-each>
+		</Organization>
+	</xsl:template>
+</xsl:stylesheet>
+
+<Root>
+	<Organization>
+		<Inventory Enterprise_Code="TITAN_US"/>
+	</Organization>
+</Root>
+
+
+
+
+
+Hi Mohammed Salmon, Please find the SFTP details below 
+
+User Id: IBD_OMNI_US
+Password: x8Ncg!4l77hD
+Public IP: 121.240.239.167
+
+//Internal IP:172.30.5.115
+
+
+SFTP Path for UAE : -  /home/IBD_OMNI_US/UAE/ECOM_Mulesoft/mulesoft/sit/inventory/tanishq/input
+SFTP Path for US: -  /home/IBD_OMNI_US/US/ECOM_Mulesoft/mulesoft/sit/inventory/tanishq/input
+
+
+
+
+
+
+
+Processing: TITAN_US
+Output File: /opt/dataload/Inventory/feedInventoryAvailability_us.csv
+CSV file created: /opt/dataload/Inventory/feedInventoryAvailability_us.csv
+org.apache.commons.net.MalformedServerReplyException: Could not parse response code.
+Server Reply: SSH-2.0-OpenSSH_8.0
+        at org.apache.commons.net.ftp.FTP.__getReply(FTP.java:284)
+        at org.apache.commons.net.ftp.FTP._connectAction_(FTP.java:335)
+        at org.apache.commons.net.ftp.FTPClient._connectAction_(FTPClient.java:550)
+        at org.apache.commons.net.SocketClient.connect(SocketClient.java:163)
+        at com.titan.sterling.util.ExportInventoryToCSV.uploadToFTP(ExportInventoryToCSV.java:128)
+        at com.titan.sterling.util.ExportInventoryToCSV.exportInventory(ExportInventoryToCSV.java:115)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:90)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:55)
+        at java.lang.reflect.Method.invoke(Method.java:508)
+
+
+
+
+
+
+sh /opt/Sterling10AWS/bin/titanagentserver.sh IBDInventoryFullsyncAgentServer "-Xms1024m -Xmx1024m" &
+
+
+
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_US"/>
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_GCC"/>
+
+
+
+sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_US
+
+sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_GCC
+
+
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_US"/>
+<TriggerAgent CriteriaId="IBD_INVENTORY_SYNC_GCC"/>
+
+30 5 * * 1,5 sh /opt/Sterling10AWS/bin/titanagentserver.sh IBDInventoryFullSyncAgentServer "-Xms1024m -Xmx1024m" &
+35 5 * * 1,5 sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_US >> /opt/Sterling10AWS/logs/cron.log 2>&1
+00 1 * * 1,5 sh /opt/Sterling10AWS/bin/titanagentserver.sh IBDInventoryFullSyncAgentServer "-Xms1024m -Xmx1024m" &
+05 1 * * 1,5 sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_GCC >> /opt/Sterling10AWS/logs/cron.log 2>&1
+
+
+
+#Prod.
+#US Full sync - Every Friday & Monday at 4:00 PM - 5:30 server time - 30 5 * * 1,5
+35 5 * * 1,5 sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_US >> /opt/Sterling10AWS/logs/cron.log 2>&1
+#UAE Full Sync- Every Friday & Monday at 9:30 AM - 21:00 server time - 00 21 * * 1,5
+00 23 * * 7,4 sh /opt/Sterling10AWS/bin/triggeragent.sh IBD_INVENTORY_SYNC_GCC >> /opt/Sterling10AWS/logs/cron.log 2>&1

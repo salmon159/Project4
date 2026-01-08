@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/getPlannedDemandSummary/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/getPlannedDemandSummary/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="WMS_getPlannedDemandSummary_output.xsd" yfc:rootElement="Demands">
+        <xsd:appinfo source="yfc:structure">
+            <Demands>
+                <Demand hasAttributes="Y">
+                    <ResourcePool hasAttributes="Y"/>
+                    <GroupByAttributes>
+                        <GroupByAttribute hasAttributes="Y"/>
+                    </GroupByAttributes>
+                    <TransactionTotals>
+                        <TransactionTotal hasAttributes="Y"/>
+                    </TransactionTotals>
+                </Demand>
+            </Demands>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Demands" type="yfc:DemandsXSDType"/>
+    <xsd:complexType name="DemandsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Demand"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Demand">
+        <xsd:annotation yfc:tableName="YFS_PLANNED_TASK">
+            <xsd:documentation>This table holds data for all planned tasks for an entity whose execution is being planned (e.g. Shipment).</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:GroupByAttributes"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TransactionTotals"/>
+            </xsd:all>
+            <xsd:attribute name="Backlog" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Indicates if a demand is a a backlog</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DemandDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Date for which demand is being summarized.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityName" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_NAME" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies the entity being planned for.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoOfWorkingDays" type="yfctype:Number" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Number of Working Days required by the Resource Pool to fulfill the demand which is obtained by grouping ResourcePool, DemandDate and the GroupByAttribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoOfWorkingHours" type="yfctype:Number" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Number of Working Hours required by the Resource Pool to fulfill the demand which is obtained by grouping ResourcePool, DemandDate and the GroupByAttribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies the node for which planning is done.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies the resource pool from which capacity is being consumed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>This table stores information for a resource pool. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (like regions serviced and skill sets). Capacity for providing services is maintained at the Resource Pool level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GroupByAttributes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:GroupByAttribute"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GroupByAttribute">
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Name of the Attribute by which output is grouped. For example RequestedShipmentDate of Shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Value of the Attribute by which output is grouped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionTotals">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TransactionTotal"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionTotal">
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Name of the Attribute by which output is grouped. For example RequestedShipmentDate of Shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:Number" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Value of the Attribute by which output is grouped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

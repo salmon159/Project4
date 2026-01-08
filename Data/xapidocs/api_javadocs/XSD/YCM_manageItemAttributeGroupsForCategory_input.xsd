@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/manageItemAttributeGroupsForCategory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/manageItemAttributeGroupsForCategory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCM_manageItemAttributeGroupsForCategory_input.xsd" yfc:rootElement="ItemAttributeGroupType">
+        <xsd:appinfo source="yfc:structure">
+            <ItemAttributeGroupType hasAttributes="Y">
+                <ItemAttributeGroupList hasAttributes="Y">
+                    <ItemAttributeGroup hasAttributes="Y">
+                        <ItemAttributeList hasAttributes="Y">
+                            <ItemAttribute hasAttributes="Y"/>
+                        </ItemAttributeList>
+                    </ItemAttributeGroup>
+                </ItemAttributeGroupList>
+                <ItemAttributeGroupSequenceList hasAttributes="Y">
+                    <ItemAttributeGroupSequence hasAttributes="Y"/>
+                </ItemAttributeGroupSequenceList>
+            </ItemAttributeGroupType>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ItemAttributeGroupType" type="yfc:ItemAttributeGroupTypeXSDType">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+            <xsd:documentation>
+                <div>
+			Identifies the category and the <code>ItemAttributeGroupType</code> for which the <code>ItemAttributeGroup</code>s are being modified.<br/>
+			A <code>Category</code> can be identified by passing <code>CategoryKey</code>, or by passing <code>OrganizationCode</code> along with either <code>CategoryPath</code> or both <code>CategoryID</code> and <code>ParentCategoryKey</code>.
+				<Validation>
+                        <Condition>No category was identified.
+					</Condition>
+                        <Error Description="Category not found." ErrorCode="YCM0034"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+                            <code>ItemAttributeGroupType</code> was not passed, or did not identify a valid <code>ItemAttributeGroupType</code>.
+					</Condition>
+                        <Error
+                            Description="Item Attribute Group Type not found." ErrorCode="YCM75SP2_0003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The category identified is not a classification.
+					</Condition>
+                        <Error
+                            Description="Cannot specify ItemAttributeGroup for a category that is not a classification value." ErrorCode="YCM75SP2_0002"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemAttributeGroupTypeXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttributeGroupList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttributeGroupSequenceList"/>
+        </xsd:all>
+        <xsd:attribute name="CategoryID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="CATEGORY_ID" yfc:tableName="YFS_CATEGORY">
+                <xsd:documentation>The unique identifier for this category.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CategoryKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                <xsd:documentation>The primary key for the YFS_CATEGORY table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+            <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                <xsd:documentation>The path for the category.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemAttributeGroupType"
+            type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_TYPE" yfc:tableName="YFS_ITEM_ATTR_GROUP_TYPE">
+                <xsd:documentation>
+                    <div>
+					The <code>ItemAttributeGroupType</code> for which Item Attribute Groups are being defined.  Valid values are:
+					<ul>
+                            <li>
+                                <code>
+                                    <b>SPEC</b>
+                                </code> - Specifications</li>
+                            <li>
+                                <code>
+                                    <b>SEARCH</b>
+                                </code> - Searchable Attributes</li>
+                        </ul>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CATEGORY">
+                <xsd:documentation>The code for the organization this category is associated with.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ParentCategoryKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PARENT_CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                <xsd:documentation>The parent category associated with this category.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ItemAttributeGroupList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemAttributeGroup"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old Item Attribute Group records are removed and replaced with the new ones.
+					If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeGroup">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR_GROUP">
+            <xsd:documentation>This table stores specification group definitions.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemAttributeList"/>
+            </xsd:all>
+            <xsd:attribute name="CategoryKey" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemAttributeGroupDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ITEM_ATTR_GROUP_DESCRIPTION" yfc:tableName="YFS_ITEM_ATTR_GROUP">
+                    <xsd:documentation>The description of this item attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupID"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_ID" yfc:tableName="YFS_ITEM_ATTR_GROUP">
+                    <xsd:documentation>The identification of the item attribute group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_KEY" yfc:tableName="YFS_ITEM_ATTR_GROUP">
+                    <xsd:documentation>Primary key attribute of YFS_ITEM_ATTR_GROUP.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                           Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+                          </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemAttribute"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old Item Attribute records are removed and replaced with the new ones.
+							If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttribute">
+        <xsd:annotation yfc:tableName="YFS_ITEM_ATTR">
+            <xsd:documentation>This table stores item attribute definition for each item attribute group.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="IsKeyAttribute" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_KEY_ATTR" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>This flag indicates that the item attribute is a key attribute for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeDescription"
+                type="yfctype:FreeText-100" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_DESCRIPTION" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The description of specification attribute on an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_GROUP_KEY" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The specification group that this specification attribute belongs to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_KEY" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>Primary key attribute of YFS_ITEM_ATTR.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeName"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ATTR_NAME" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The name of the item attribute that the specification attribute represents.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+								  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_ITEM_ATTR">
+                    <xsd:documentation>The sequence of the specifcation attribute within the specification group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeGroupSequenceList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemAttributeGroupSequence"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old Item Attribute Group Sequence records are removed and replaced with the new ones.
+					If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemAttributeGroupSequence">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						The <code>ItemAttributeGroupSequence</code> element defines a <code>SequenceNo</code> for a category and group combination.  It is possible to define a sequence number for a group that does not belong to this category.  In that case, if <code>ItemAttributeGroupID</code> is passed instead of <code>ItemAttributeGroupKey</code>, either <code>CategoryPath</code> or both <code>CategoryID</code> and <code>ParentCategoryKey</code> should be passed to identify the category that is associated with the <code>ItemAtributeGroupID</code>.<br/>
+						Note that only <code>ItemAttributeGroupID</code> or <code>ItemAttributeGroupKey</code> is required.  Category-related attributes are only required if <code>ItemAttributeGroupID</code> is passed and the group is not owned by the category being modified.  In all cases, <code>CategoryKey</code> and <code>ItemAttributeGroupType</code> will be defaulted.
+							<Validation>
+                        <Condition>
+                            <code>CategoryID</code>, <code>ParentCategoryKey</code>, or <code>CategoryPath</code> are passed but do not identify a category.
+								</Condition>
+                        <Error Description="Category not found." ErrorCode="YCM0034"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Attributes to uniquely identify a <code>ItemAttributeGroup</code> are not passed.
+								</Condition>
+                        <Error
+                            Description="Item Attribute Group not found." ErrorCode="YCM75SP2_0001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CategoryID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_ID" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+							The <code>CategoryID</code> of the category that owns the group this sequence is defined for.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+							The <code>CategoryPath</code> of the category that owns the group this sequence is defined for.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemAttributeGroupID"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemAttributeGroupKey"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ItemAttributeGroupSequenceKey"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+					  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentCategoryKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_CATEGORY_KEY" yfc:tableName="YFS_CATEGORY">
+                    <xsd:documentation>
+                        <div>
+							The <code>ParentCategoryKey</code> of the category that owns the group this sequence is defined for.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/VAS/confirmWorkOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/VAS/confirmWorkOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="VAS_confirmWorkOrder_input.xsd" yfc:rootElement="WorkOrder">
+        <xsd:appinfo source="yfc:structure">
+            <WorkOrder hasAttributes="Y">
+                <WorkOrderStatusAudit hasAttributes="Y"/>
+                <WorkOrderAppointments>
+                    <WorkOrderAppointment hasAttributes="Y"/>
+                </WorkOrderAppointments>
+                <WorkOrderProdDeliveries hasAttributes="Y">
+                    <WorkOrderProdDelivery hasAttributes="Y"/>
+                </WorkOrderProdDeliveries>
+                <WorkOrderServiceLines hasAttributes="Y">
+                    <WorkOrderServiceLine hasAttributes="Y"/>
+                </WorkOrderServiceLines>
+            </WorkOrder>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="WorkOrder" type="yfc:WorkOrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>
+                <div>
+			An existing <code>WorkOrder</code> is identified by using one of the following: 
+			<code>WorkOrderKey </code>
+                    <i>or</i>
+                    <code>WorkOrderNo</code>, <code>NodeKey</code> and <code>EnterpriseCode </code>
+                    <Validation>
+                        <Condition>The passed attributes are unable to identify an existing work order.
+				</Condition>
+                        <Error Description="Invalid Work Order." ErrorCode="VAS00013"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="WorkOrderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderStatusAudit"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderAppointments"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderProdDeliveries"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrderServiceLines"/>
+        </xsd:all>
+        <xsd:attribute name="AttemptSuccessful" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Pass as <b>
+                            <code>Y</code>
+                        </b> to indicate that the service was executed successfully.
+				<br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QuantityBeingConfirmed"
+            type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Quantity being confirmed for work order.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The primary key of the YFS_WORK_ORDER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_WORK_ORDER">
+                <xsd:documentation>The work order number. Identifies a work order within the context of a node and enterprise.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="WorkOrderStatusAudit">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+            <xsd:documentation>This table stores work order status change audit. whenever the work order status changes because of a business process, an audit is posted along with the status, timestamp, reason code and text, user ID and program ID. All transactions in the work order pipeline in fact will have entries in this table upon completion of a transaction.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AuditTransactionId"
+                type="yfctype:TransactionID" use="optional">
+                <xsd:annotation yfc:columnName="AUDIT_TRANSACTION_ID" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>The unique identifier of an external Transaction reference.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuditUserId" type="yfctype:UserId" use="optional">
+                <xsd:annotation yfc:columnName="AUDIT_USER_ID" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>The unique identifier of a user who performed the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Comments" type="yfctype:Text-1500" use="optional">
+                <xsd:annotation yfc:columnName="COMMENTS" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>Free form comments that may be recorded during the execution of the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>Reason code indicating the reason for the status change.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_KEY" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>Primary key of YFS_WORK_ORDER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderStatusAuditKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="WORK_ORDER_STS_AUDIT_KEY" yfc:tableName="YFS_WORK_ORDER_STS_AUDIT">
+                    <xsd:documentation>Primary key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderAppointments">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderAppointment"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderAppointment">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_APPT">
+            <xsd:documentation>
+                <div>
+				This entity stores information about appointments taken on the work order.Appointments are used only for PS/DS work orders.
+				<Validation>
+                        <Condition>Appointment is not in OPEN status.
+					</Condition>
+                        <Error
+                            Description="Work order appointment modification not allowed." ErrorCode="VAS00058"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AdditionalEquipmentUsed"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ADDITIONAL_EQUIPMENT_USED" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates items that were used, which were not originally requested.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlertSales" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="ALERT_SALES" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates that the sales person has to be notified and entered information is send to the sales person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlertScheduler" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="ALERT_SCHEDULER" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates that the scheduler has to be notified and entered information is send to the scheduler.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApptSeq" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="APPT_SEQ" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>
+                        <div>Appointment sequence number. Part of unique key. 
+							<Validation>
+                                <Condition>Appointment sequence not found for work order.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttemptFailed" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						If passed as <b>
+                                <code>Y</code>
+                            </b>, the appointment status will be set as <code>FAILED</code>.  Otherwise, it will be set as <code>COMPLETE</code>. 
+					<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AttentionRequired" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="ATTENTION_REQUIRED" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This flag indicates that some problems exist with work order and it has to be looked at.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecutionBy" type="yfctype:UserId" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTION_BY" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The technician executing the work order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecutionComments"
+                type="yfctype:Text-1500" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTION_COMMENTS" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The execution comments.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecutionDuration"
+                type="yfctype:NumberOfHours" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTION_DURATION" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The amount of time took to perform the service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecutionEndTime" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTION_END_TIME" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The last date when the execution of the service was attempted. This can correspond to either a successful or failed attempt.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ExecutionStartTime" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTION_START_TIME" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The last date when the execution of the service was attempted. This can correspond to either a successful or failed attempt.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="FailureReasonCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FAILURE_REASON_CODE" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>The failure reason code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemsNotUsed" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="ITEMS_NOT_USED" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates items that were returned back and were not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NonInventoryItemsReturned"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="NON_INV_ITEMS_RETURNED" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates special tools that were used and then returned.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VehicleNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="VEHICLE_NUMBER" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates vehicle number that was used for job completion.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VehicleOdometerReading"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation
+                    yfc:columnName="VEHICLE_ODOMETER_READING" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates odometer reading at the time of appointment completion.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VehicleServiceRequest"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="VEHICLE_SERVICE_REQUEST" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>This field indicates what were the problems with the vehicle that required service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderApptKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_APPT_KEY" yfc:tableName="YFS_WORK_ORDER_APPT">
+                    <xsd:documentation>
+                        <div>Primary Key of YFS_WORK_ORDER_APPT. 
+							<Validation>
+                                <Condition>Record does not exist.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDeliveries">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderProdDelivery"/>
+            </xsd:sequence>
+            <xsd:attribute name="AllProductsDelivered"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <b>
+                                <code>Y</code>
+                            </b>: indicates that all requested quantities have been delivered. 
+					<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderProdDelivery">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+            <xsd:documentation>This table stores information about service lines included in the work order. Used only for PS/DS work orders.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>
+                        <div>The service line sequence number. Part of unique key. 
+									<Validation>
+                                <Condition>Line not found for work order.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityDelivered"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY_DELIVERED" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>
+                        <div>
+								Additional product quantity that was delivered. For example, if prior to invoking this API, <code>QuantityDelivered</code>=3, then passing 4 in the input would now update the value to 7.
+								<Validation>
+                                <Condition>Adding <code>QuantityDelivered</code> to quantity already delivered is greater than the requested quantity.</Condition>
+                                <Error
+                                    Description="Cannot confirm more than the required quantity." ErrorCode="VAS00061"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Value is negative.</Condition>
+                                <Error
+                                    Description="Cannot deliver negative quantities." ErrorCode="VAS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderProdDeliveryKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_PROD_DEL_KEY" yfc:tableName="YFS_WORK_ORDER_PROD_DEL">
+                    <xsd:documentation>
+                        <div>Primary Key of YFS_WORK_ORDER_PROD_DEL. 
+									<Validation>
+                                <Condition>Record does not exist.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:WorkOrderServiceLine"/>
+            </xsd:sequence>
+            <xsd:attribute name="AllServicesComplete"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <b>
+                                <code>Y</code>
+                            </b>: All work order service lines for Provided Service or Standalone Delivery Service order lines will be marked as complete (<code>IsComplete=Y</code>).  All others, including those passed in the input WorkOrderServiceLine XML nodes, will be ignored.
+					<br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrderServiceLine">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+            <xsd:documentation>
+                <div>
+					This entity stores information about service lines included in the work order. Used only for PS/DS work orders.  Input service lines for Provided Service or Standalone Delivery Service order lines will be marked as complete (<code>IsComplete=Y</code>), others will be ignored.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="LINE_NO" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>
+                        <div>The service line sequence number. Part of unique key. 
+							<Validation>
+                                <Condition>Line not found for work order.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderServiceLineKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="WORK_ORDER_SERVICE_LINE_KEY" yfc:tableName="YFS_WORK_ORDER_SERVICE_LINE">
+                    <xsd:documentation>
+                        <div>Primary Key of YFS_WORK_ORDER_SERVICE_LINE. 
+							<Validation>
+                                <Condition>Record does not exist.</Condition>
+                                <Error Description="No record found." ErrorCode="YFS10001"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

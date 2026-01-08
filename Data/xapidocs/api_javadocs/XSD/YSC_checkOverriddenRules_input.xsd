@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/checkOverriddenRules/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/checkOverriddenRules/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_checkOverriddenRules_input.xsd" yfc:rootElement="Validation">
+        <xsd:appinfo source="yfc:structure">
+            <Validation hasAttributes="Y">
+                <OrderApprovalRule hasAttributes="Y"/>
+                <PersonInfo hasAttributes="Y"/>
+                <Input/>
+                <TransactionInfo hasAttributes="Y"/>
+                <TransactionViolationReferenceList>
+                    <TransactionViolationReference hasAttributes="Y"/>
+                </TransactionViolationReferenceList>
+                <TransactionViolationList>
+                    <TransactionViolation hasAttributes="Y">
+                        <TransactionInfo hasAttributes="Y"/>
+                        <TransactionApproverList>
+                            <TransactionApprover hasAttributes="Y"/>
+                        </TransactionApproverList>
+                        <TransactionViolationReferenceList>
+                            <TransactionViolationReference hasAttributes="Y"/>
+                        </TransactionViolationReferenceList>
+                    </TransactionViolation>
+                </TransactionViolationList>
+            </Validation>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Validation" type="yfc:ValidationXSDType">
+        <xsd:annotation yfc:tableName="YFS_VALIDATION">
+            <xsd:documentation>
+                <div>
+             		This table stores the configuration for a validation
+             		<Validation>
+                        <Condition>ValidationID and CallingOrganizationCode must be able to indicate to a valid Validation.
+						</Condition>
+                        <Error Description="Validation Not Found" ErrorCode="OMP921_MO03"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ValidationXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:OrderApprovalRule"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PersonInfo"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Input"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="TransactionInfo">
+                <xsd:annotation yfc:tableName="YFS_TRANSACTION_INFO">
+                    <xsd:documentation>
+                        <div>
+						This element is used to pass arguments used in finding existing Violations and Approvals. Aside from TransactionInfoID, the arguments of this element will vary based on the Validation's Violation_Entity.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="OrderHeaderKey"
+                        type="yfctype:Key" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_TRANSACTION_INFO">
+                            <xsd:documentation>Primary key for YFS_ORDER_HEADER</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="TransactionInfoID"
+                        type="yfctype:VARCHAR2-10" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="TRANSACTION_INFO_ID" yfc:tableName="YFS_TRANSACTION_INFO">
+                            <xsd:documentation>Unique ID of Transaction.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="1" name="TransactionViolationReferenceList">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						This Element contains a list of applicable Transaction References that can be used in searching for existing Violations and Approvals on a Transaction.	
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="TransactionViolationReference">
+                            <xsd:annotation yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                <xsd:documentation>
+                                    <div>
+								This Element contains values for TransactionViolationReferences. These inputs must correspond to the Reference Names configured as Validation References of the Validation passed in the 
+								Input. Non-Primary Validation References must have at least one matching reference in the TransactionViolationReference input, but can have multiple instances of that reference. Primary
+								Validation References must have one and only one matching reference in the TransactionViolationReference input. If either of these conditions are not met, an exception will be thrown.
+								<Validation>
+                                    <Condition>Instances of the Reference Names of any configured Validation References for the input Validation must be present.
+									</Condition>
+                                    <Error
+                                    Description="Invalid References" ErrorCode="OMP921_MO001"/>
+                                    </Validation>
+                                    </div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="ReferenceName"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_NAME" yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>The identifier for the additional reference value.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="ReferenceValue"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_VALUE" yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>Value of the additional reference.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:TransactionViolationList"/>
+            <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+        </xsd:sequence>
+        <xsd:attribute name="AllowTransaction" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						This field is used to indicate if a previous violation check has revealed violations  (ie: checkValidationRule call). 
+					</div>
+					Valid Values:
+					<b>
+                        <code>Y</code>
+                    </b>or<b>
+                        <code>N</code>
+                    </b>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:String" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						 The base OrganizationCode of the API call. This code will be used to get the proper Validation, Domain, and Validation Rule set 
+						 based on the inheritance of the configuration.  
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Domain" type="yfctype:Text-100" use="required">
+            <xsd:annotation yfc:columnName="DOMAIN" yfc:tableName="YFS_VALIDATION">
+                <xsd:documentation>The validation domain for this configuration.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ValidationID" type="yfctype:ID-40" use="required">
+            <xsd:annotation yfc:columnName="VALIDATION_ID" yfc:tableName="YFS_VALIDATION">
+                <xsd:documentation>The unique identifier for the VALIDATION.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="OrderApprovalRule">
+        <xsd:annotation yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+            <xsd:documentation>This table stores order approval rules</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType"
+                type="yfctype:DocumentType" use="required">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                    <xsd:documentation>Document type to which this approval rule belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EvaluationDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							This field is used to specify the Date that should be used in searching for Overridden Rules based on Start and End Date.
+							In order for a Rule to apply, the Evaulation Date passed must be between the Effective Start Date and the Effective End Date of the Rule. 
+							If this field is not passed, the Current Date will be used by default.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RuleID"
+                type="yfctype:OrderApprovalRuleRuleID" use="optional">
+                <xsd:annotation yfc:columnName="RULE_ID" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                    <xsd:documentation>Approval rule identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PersonInfo">
+        <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+            <xsd:documentation>
+                <div>
+						This Elements is used to input relevant personal information and addresses. Its fields are used to determine the set of one or more RegionKeys 
+						that will be used to search for applicable Overridden Rules. Rules whose RegionKeys are contained in the set of RegionKeys generated by this input
+						will be evaluated for potential violations using the information passed in the Input Element.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AddressLine1" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE1" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 1 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine2" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE2" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 2 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine3" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE3" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 3 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine4" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE4" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 4 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine5" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE5" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 5 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AddressLine6" type="yfctype:Address" use="optional">
+                <xsd:annotation yfc:columnName="ADDRESS_LINE6" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The address line 6 field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AlternateEmailID"
+                type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="ALTERNATE_EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Beeper" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="BEEPER" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The beeper number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="City" type="yfctype:City" use="optional">
+                <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The city in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Company" type="yfctype:Company" use="optional">
+                <xsd:annotation yfc:columnName="COMPANY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The company this person is associated with.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The country in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DayPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="DAY_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The day time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Department" type="yfctype:Department" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The primary department in charge of procurement.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EMailID" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAILID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The email address at which the person or a predesignated employee of the organization referred to in the address can be contacted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningFaxNo" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_FAX_NO" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time fax at which the person or a predesignated employee of the organization referred to in the address can be notified.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EveningPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="EVENING_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The evening time phone at which the person or organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="FIRST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The first name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The URL of the person or organization referred to in this contact information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsCommercialAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_COMMERCIAL_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>Indicates whether the address is commercial, residential or none. Values of this field can be Y -Commercial address.N - Residential address. undefined for Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JobTitle" type="yfctype:Title-40" use="optional">
+                <xsd:annotation yfc:columnName="JOB_TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The job title of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastName" type="yfctype:PersonName" use="optional">
+                <xsd:annotation yfc:columnName="LAST_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The last name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MiddleName" type="yfctype:MiddleName" use="optional">
+                <xsd:annotation yfc:columnName="MIDDLE_NAME" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The middle name of the person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MobilePhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="MOBILE_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The mobile phone at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OtherPhone" type="yfctype:PhoneNo" use="optional">
+                <xsd:annotation yfc:columnName="OTHER_PHONE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The alternate phone number at which the person or a predesignated employee of the organization referred to in the address can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PersonID" type="yfctype:PersonId" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_ID" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The unique identifier for a person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreferredShipAddress"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PREFERRED_SHIP_ADDRESS" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The preferred ship address over and above the address in this record. Pointer to another record of this type in this table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="State" type="yfctype:State" use="optional">
+                <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The state in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Suffix" type="yfctype:Suffix" use="optional">
+                <xsd:annotation yfc:columnName="SUFFIX" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The suffix for a person, such as Jr., or Sr.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaxGeoCode" type="yfctype:GeoCode" use="optional">
+                <xsd:annotation yfc:columnName="TAX_GEO_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The tax geo code for this location. Intended for future use.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Title" type="yfctype:Title-10" use="optional">
+                <xsd:annotation yfc:columnName="TITLE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The title for the person such as Ms., Mr., or Dr..</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The zip code in the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Input">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						This element will accept a well-formed input xml based on the Validation's Input Template. 
+						This Element has no base attributes. 
+						The input xml will be treated as a child element to the Input element during evaluation.	
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType/>
+    </xsd:element>
+    <xsd:element name="TransactionViolationList">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						This element is used to pass a list of existing violations to the internal logic of the checkOverriddenRules framework.
+						As a part of Violation Resolution, the API searches for existing violations as part of its normal usage. This input is 
+						intended to allow the User to specify what violations should be used for this process. It is optional, and does not need
+						to be passed for the API to function, but if it is passed no rule search or evaluation will take place, and only the 
+						violations passed in the element will be used in Violation Resolution.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:TransactionViolation"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionViolation">
+        <xsd:annotation yfc:tableName="YFS_TRANSACTION_VIOLATION">
+            <xsd:documentation>Table for storing violations that occur during a transaction.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="TransactionInfo">
+                    <xsd:annotation yfc:tableName="YFS_TRANSACTION_INFO">
+                        <xsd:documentation>
+                            <div>
+								The element containing the unique fields for a given
+								Concrete Transaction Info table.
+							</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="OrderHeaderKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_TRANSACTION_INFO">
+                                <xsd:documentation>Primary key for YFS_ORDER_HEADER</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TransactionApproverList"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="TransactionViolationReferenceList">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded"
+                                minOccurs="1" name="TransactionViolationReference">
+                                <xsd:annotation yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>Table for storing additional reference information for identifying violations.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="ReferenceName"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_NAME" yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>The identifier for the additional reference value.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="ReferenceValue"
+                                    type="yfctype:VARCHAR2-40" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="REFERENCE_VALUE" yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>Value of the additional reference.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute
+                                    name="TransactionViolationReferenceKey"
+                                    type="yfctype:Key" use="optional">
+                                    <xsd:annotation
+                                    yfc:columnName="TRANS_VIOLATION_REFERENCE_KEY" yfc:tableName="YFS_TRANS_VIOLATION_REFERENCE">
+                                    <xsd:documentation>Primary Key attribute of YFS_TRANSACTION_VIOLATION_REFERENCE.</xsd:documentation>
+                                    </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ApprovalRuleID" type="yfctype:String" use="required">
+                <xsd:annotation yfc:columnName="RULE_ID" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                    <xsd:documentation>
+                        <div>
+							The ID of an Approval Rule.
+								<Validation>
+                                <Condition>The Approval Rule passed against a Violation must exist.
+									</Condition>
+                                <Error
+                                    Description="Approval Rule Not Found" ErrorCode="OMP921_MO01"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>The Approval Rule must be defined for the Validation passed.
+									</Condition>
+                                <Error
+                                    Description="Invalid Approval Rule for Validation" ErrorCode="OMP921_MO02"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType"
+                type="yfctype:VARCHAR2-40" use="required">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>Document Type of the rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Domain" type="yfctype:VARCHAR2-100" use="optional">
+                <xsd:annotation yfc:columnName="DOMAIN" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>Domain of the corresponding Validation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MessageCode"
+                type="yfctype:VARCHAR2-100" use="optional">
+                <xsd:annotation yfc:columnName="MESSAGE_CODE" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>Message code to be displayed when approval rule is violated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:CHAR-24" use="required">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>Organization Code of org that owns the rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNumber" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NUMBER" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>Number to identify the violation sequence within a transaction.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NUMBER-4"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Status" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>The status of the violation.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:ViolationStatus"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionInfoID"
+                type="yfctype:VARCHAR2-10" use="optional">
+                <xsd:annotation yfc:columnName="TRANSACTION_INFO_ID" yfc:tableName="YFS_TRANSACTION_VIOLATION">
+                    <xsd:documentation>The Reference to the transaction that resulted in a violation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionApproverList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:TransactionApprover"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionApprover">
+        <xsd:annotation yfc:tableName="YFS_TRANSACTION_APPROVER">
+            <xsd:documentation>
+                <div>
+									An individual approver.
+								</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ApproverGroupKey"
+                type="yfctype:CHAR-24" use="optional">
+                <xsd:annotation yfc:columnName="APPROVER_GROUP_KEY" yfc:tableName="YFS_TRANSACTION_APPROVER">
+                    <xsd:documentation>The reference to the Approval Group configuration.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApproverSequence" use="optional">
+                <xsd:annotation yfc:columnName="APPROVER_SEQUENCE" yfc:tableName="YFS_TRANS_APPROVAL_STATUS">
+                    <xsd:documentation>The sequence of the approver.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LongSequence"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ApproverUserGroupID"
+                type="yfctype:CHAR-25" use="optional">
+                <xsd:annotation yfc:columnName="APPROVER_USER_GROUP_ID" yfc:tableName="YFS_TRANSACTION_APPROVER">
+                    <xsd:documentation>The User Group that can approve the violation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApproverUserTeam"
+                type="yfctype:VARCHAR2-40" use="optional">
+                <xsd:annotation yfc:columnName="APPROVER_USER_TEAM" yfc:tableName="YFS_TRANSACTION_APPROVER">
+                    <xsd:documentation>The Team that can approve the violation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DelegateUserID"
+                type="yfctype:VARCHAR2-50" use="optional">
+                <xsd:annotation yfc:columnName="DELEGATE_USER_ID" yfc:tableName="YFS_TRANSACTION_APPROVER">
+                    <xsd:documentation>The UserID of the delegate that has been assigned to approve the violation on behalf on the main UserID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsMandatory" type="yfctype:CHAR-1" use="optional">
+                <xsd:annotation yfc:columnName="IS_MANDATORY" yfc:tableName="YFS_TRANS_APPROVAL_STATUS">
+                    <xsd:documentation>Indicator to determine if approval is mandatory based on the signature policy of the validation definition.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreviousApproverSequence"
+                type="yfctype:ApprovalPlanPredecessorSeq" use="optional">
+                <xsd:annotation yfc:columnName="PREVIOUS_APPROVER_SEQ" yfc:tableName="YFS_TRANS_APPROVAL_STATUS">
+                    <xsd:documentation>The sequence of the previous approver.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserID" type="yfctype:VARCHAR2-50" use="optional">
+                <xsd:annotation yfc:columnName="USER_ID" yfc:tableName="YFS_TRANSACTION_APPROVER">
+                    <xsd:documentation>The UserID of the user that can approve the violation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

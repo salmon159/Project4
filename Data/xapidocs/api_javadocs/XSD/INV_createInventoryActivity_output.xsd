@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/createInventoryActivity/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/createInventoryActivity/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_createInventoryActivity_output.xsd" yfc:rootElement="InventoryActivityList">
+        <xsd:appinfo source="yfc:structure">
+            <InventoryActivityList>
+                <InventoryActivity hasAttributes="Y"/>
+            </InventoryActivityList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="InventoryActivityList" type="yfc:InventoryActivityListXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>	
+				When <code>DistributionRuleId</code> is passed in the input XML, inventory activities will be created with the provided item for each node configured within the distribution rule.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InventoryActivityListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:InventoryActivity"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InventoryActivity">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ACTIVITY">
+            <xsd:documentation>This table stores inventory items whose supply or demand has been adjusted. The RealTimeAvailabilityMonitor agent will process the inventory item with inventory activities while running in the ActivityBased mode, and remove the processed records from this table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="InventoryActivityKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ACTIVITY_KEY" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                    <xsd:documentation>The primary key of the YFS_INVENTORY_ACTIVITY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                    <xsd:documentation>The inventory item whose supply or demand has been adjusted.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                    <xsd:documentation>The node where inventory changes occur.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProcessedFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PROCESSED_FLAG" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                    <xsd:documentation>
+						The flag indicates whether this inventory activity has been picked up for processing by the Real-Time Availability Monitor.  Valid values: [F,N] Default: N
+						<br/>Specify:<br/>
+                        <b>
+                            <code>F</code>
+                        </b> for Force Publish. Indicating that inventory activity has not been processed and the Real-Time Availability Monitor should publish the availability picture regardless whether it has changed from the previously published availability.<br/>
+                        <b>
+                            <code>N</code>
+                        </b> otherwise. 
+					</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Purpose" type="yfctype:Text-3" use="optional">
+                <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_INVENTORY_ACTIVITY">
+                    <xsd:documentation>Purpose code for creating the activity. Valid Values: [05]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

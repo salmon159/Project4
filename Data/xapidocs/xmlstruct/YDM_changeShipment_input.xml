@@ -1,0 +1,1476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2016 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Shipment Action="" ActualDeliveryDate="" ActualShipmentDate=""
+    AllowOverage="" AppointmentNo="" AssignedToUserId=""
+    BackOrderRemovedQuantity="" BolNo="" BuyerMarkForNodeId=""
+    BuyerReceivingNodeId="" CODPayMethod="" CancelRemovedQuantity=""
+    CancelShipmentOnZeroTotalQuantity="" CarrierAccountNo=""
+    CarrierServiceCode="" CarrierSortLocationId="" CommercialValue=""
+    Currency="" CustomerPoNo="" DestinationZone=""
+    DoNotMixEnterprisesInLoad="" DoNotVerifyCaseContent=""
+    DoNotVerifyPalletContent="" DownLoadCount="" EmailReturnLabel=""
+    ExpectedDeliveryDate="" ExpectedShipmentDate="" ExportTaxpayerID=""
+    FreightTerms="" FromAppointment="" GenerateBolNo=""
+    HeldForConfirmation="" HoldLocation="" ITDate="" ITNNo="" ITNo=""
+    ManifestNo="" NumOfCartons="" NumOfPallets="" OriginZone=""
+    OverrideModificationRules="" OverrideReceivingNode="" PackAndHold=""
+    PackListType="" PickListNo="" PickticketNo="" PodNo="" ProNo=""
+    ProfileID="" ReceivingNode="" RequestedCarrierServiceCode=""
+    RequestedDeliveryDate="" RequestedShipmentDate=""
+    ReturnBillingAccount="" ReturnCarrierService=""
+    ReturnFreightTerms="" SCAC="" SealNo="" SellerOrganizationCode=""
+    ShipNode="" ShipVia="" ShipmentConsolidationGroupId=""
+    ShipmentKey="" ShipmentNo="" ShipmentPackComplete=""
+    ShipmentSortLocationId="" ToAddressKey="" ToAppointment=""
+    TotalVolume="" TotalVolumeUOM="" TotalWeight="" TotalWeightUOM=""
+    TrackingNo="" TrailerNo="" UpdateSIMPickReq="" WorkOrderApptKey=""
+    WorkOrderKey="" xmlns="http://www.sterlingcommerce.com/documentation/YDM/changeShipment/input">
+    <yfc:doc>
+        <Element EntityName="Shipment">
+            <Description>
+                <div>
+	   The shipment to be changed. If <code>Action</code> is <code>Modify</code> or <code>Delete</code>, the shipment must be identified. Pass  <code>ShipmentKey</code>
+                    <i>or</i> pass <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code>  to identify the shipment.
+	   <br>In the scenario when one or more shipment lines with different information passed to the API, the order release information from the first available <code>ShipmentLine</code> will be used to derive the <code>Shipment</code> header attributes.</br>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="ID-40" Name="Action">
+                <Description>
+                    <div>
+	    Indicates the action to be perfomed on the shipment. If <code>Action</code> is <code>Modify</code>, <code>Cancel</code> or <code>Delete</code>, pass <code>ShipmentKey</code>
+                        <i>or</i>
+                        <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code> to identify the shipment. 
+	    <br/>Default: <code>Create-Modify</code>
+                        <br/>Valid Values: <code>Create</code>, <code>Modify</code>, <code>Create-Modify</code>, <code>Delete</code>, <code>Cancel</code>.
+	    <br/>
+		If <code>Action</code> is <code>Cancel</code> then except for <code>Shipment</code> and <code>ShipmentLines</code> all related entities are deleted. Shipment status moves to <code>Cancelled (9000)</code> and all the ShipmentLines' quantity becomes 0. 
+		<Validation>
+                            <Condition>
+                                <code>Action</code> is <code>Create</code> and record already exists
+		</Condition>
+                            <Error Description="" ErrorCode="YCP0051"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>Action</code> is <code>Modify</code> and record does not exist 
+			</Condition>
+                            <Error Description="" ErrorCode="YCP0045"/>
+                        </Validation>
+                        <br/>Only <code>Shipments</code> without <code>ShipmentLines</code> can be deleted.
+	    	<Validation>
+                            <Condition>Once a shipment is invoiced, it cannot be cancelled.
+				</Condition>
+                            <Error
+                                Description="Certain modifications are not allowed on invoiced shipment." ErrorCode="YDM77_00002"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="BackOrderRemovedQuantity">
+                <Description>
+                    <div>
+	    	Pass as <code>Y</code> if  removed quantity should be backordered. 
+		<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or  <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="CancelRemovedQuantity">
+                <Description>
+                    <div>Specify if removed quantity needs to be cancelled.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If the <code>BackOrderRemovedQuantity</code> flag is passed as <b>
+                            <code>Y</code>
+                        </b>, this flag is ignored.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="CancelShipmentOnZeroTotalQuantity">
+                <Description>
+                    <div>Specify if shipment needs to be cancelled when all shipment lines have zero quantity.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="CarrierSortLocationId">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>If <code>CarrierSortLocationId</code> is not void and not a valid location in the <code>Shipnode</code>.
+					</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="DoNotMixEnterprisesInLoad">
+                <Description>
+                    <div>
+			When DoNotMixEnterprisesInLoad is set to <code>Y</code> and rule <code>ALLOW_ADDITION_OF_SHIPMENT_NA_YANTRA_TO_LOAD</code> is enabled, system will NOT mix shipments belonging to different enterprises in a load.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GenerateBolNo">
+                <Description>
+                    <div>
+		    Pass as <b>
+                            <code>Y</code>
+                        </b> to generate a VICS standard <code>BolNo</code>. It is generated if <code>BolNo</code> is void using the Shipnode's <code>UCCPrefix</code> defined in YFS_Organization table, a one up sequence number and checkdigit computed using modulo 10 algorithm.
+		    <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="HeldForConfirmation"/>
+            <Attribute DataType="DocumentNo" Name="ManifestNo">
+                <Description>
+		    An attribute used to store manifest number assigned by carrier server. ManifestNo on Shipment is just a reference attribute pointing to manifest data maintained in an external system. It is not related to the manifesting process in the system.
+	       </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideModificationRules">
+                <Description>
+                    <div>
+		    Pass as <b>
+                            <code>Y</code>
+                        </b> to  overrides the statuses of shipment that can be considered for various modifications.
+		    <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideReceivingNode">
+                <Description>
+                    <div>
+                       If OverrideReceivingNode is set to <code>Y</code> then system allows user to pass receiving nodes different from receiving nodes defined on the release line during <code>changeShipment</code> call. The node passed must be a valid node.
+					   <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or  <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="ProfileID">
+                <Description>
+                    <div>
+                 Each <code>Shipment</code> has a ProfileID which is derived based on its attributes.
+                </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="SCAC">
+                <Description>
+                    <div>
+		    If changed so that <code>CarrierType</code> changes from <code>PARCEL</code> to <code>LTL</code>or<code>TL</code> then a Load is created for the shipment.
+		    </div>
+                    <Validation>
+                        <Condition>If changed and shipment is included in a load taking it to its destination. 
+		      </Condition>
+                        <Error
+                            Description="Cannot modify Shipment's carrier information after it has been included in a Load." ErrorCode="YDM00208"/>
+                    </Validation>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ShipmentPackComplete">
+                <Description>
+                    <div>If equals <b>
+                            <code>Y</code>
+                        </b> then for Shipment with Containers without contents <code>IsPackProcessComplete</code> on the shipment is computed
+			<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <Validation>
+                            <Condition>
+                                <code>ShipmentPackComplete</code> equals <b>
+                                    <code>Y</code>
+                                </b> then Shipment must require container without contents.
+			</Condition>
+                            <Error
+                                Description="Cannot use the api for marking pack process complete on shipment when shipment requires containers with contents." ErrorCode="YDM00216"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="ShipmentSortLocationId">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>If <code>ShipmentSortLocationId</code> is not void and not a valid location in the <code>Shipnode</code>.
+					</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="TotalVolume">
+                <Description>
+                    <div>
+			If passed then it is not computed by the API else it is computed using the unit volume of <code>Items</code> corresponding to the shipment lines.
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="TotalWeight">
+                <Description>
+                    <div>
+			If passed then it is not computed by the API else it is computed using the unit weights of <code>Orderlines</code> corresponding to the shipment lines when <code>Order</code> exists on system and using the unit weights of the <code>Items</code> when <code>Order</code> does not exist on system.
+			</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="UpdateSIMPickReq">
+                <Description>
+                    <div>
+                       For sales and transfer orders, if SIM is enabled and there is a shipment line quantity change, pick requests are also updated. Pass this flag as N if pick request updates are not required.
+					   <br/>Default: <b>
+                            <code>Y</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or  <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="WorkOrderApptKey" NameInEntity="Work_Order_Appt_Key"/>
+            <Attribute Name="WorkOrderKey" NameInEntity="Work_Order_Key"/>
+        </Attributes>
+    </yfc:doc>
+    <ScacAndService CarrierServiceKey="" OrganizationCode=""
+        ScacAndService="" ScacAndServiceKey="" ScacKey="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_SCAC_And_Service_keys.xml" IncludeXMLPath="/ScacAndService"/>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+	      This element is not needed if <code>Shipment/CarrierServiceCode</code> and <code>Shipment/SCAC</code> are passed in the Shipment header or those elements are passed in  any of the <code>Order</code>, <code>OrderRelease</code> or<code>OrderLine</code> associated with the Shipment. If the element <code>ScacAndService</code> is passed, it should point to a SCAC and Service on the system. 
+	      <code>ScacAndService</code>  is used to set default  values for <code>/Shipment/SCAC</code> and <code>/Shipment/CarrierServiceCode</code>.
+	      </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </ScacAndService>
+    <ToAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info"/>
+        </yfc:doc>
+    </ToAddress>
+    <BillToAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+                    <div>
+			 The billing address of the shipment. 
+            </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </BillToAddress>
+    <FromAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info"/>
+        </yfc:doc>
+    </FromAddress>
+    <MarkForAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Person_Info_tran.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+                    <div>
+				This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.<br/>
+                        <br/>
+
+				The Order Available On System flag in the configurator shipping preference screen determines whether the person info record should be inserted or updated. When enabled, person info record will not be inserted nor updated and the MarkForAddress will not be stamp on the shipment record. Otherwise, changeShipment will update both MarkforAddress on the shipment record as well as the person info record.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+    </MarkForAddress>
+    <Containers Replace="">
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>If as a result of processing Containers any Container of the Shipment gets <code>created</code>, <code>modified</code> or <code>deleted</code> and <code>Shipnode</code> is WMS node integrated with DCM. </Condition>
+                            <Error
+                                Description="Cannot use this API for processing Container or its details when Shipnode is a WMS node integrated with DCM" ErrorCode="YMD00218"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Replace">
+                    <Description>
+                        <div>
+	       Indicates if information in the database must be replaced by the <code>Containers</code> information passed. 
+	       <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: 
+		<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Replaces all existing <code>Containers</code> and their instructions in the database 
+		with the values passed in the input XML. Any new <code>Containers</code> passed in the XML are created. Existing <code>Containers</code> are deleted if they are not passed in the input XML, or modified with the attributes passed in the XML. 
+		<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Any new <code>Containers</code> passed in the XML are created. Existing <code>Containers</code> are modified.  Existing <code>Containers</code> that are in the database and not passed in the input XML are not changed.
+		<br/>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Container Action="" ActualFreightCharge="" AppliedWeight=""
+            AppliedWeightUOM="" AstraCode="" BarcodeDiscount=""
+            BasicFreightCharge="" CarriageValue=""
+            ContainerGrossWeight="" ContainerGrossWeightUOM=""
+            ContainerHeight="" ContainerHeightUOM="" ContainerLength=""
+            ContainerLengthUOM="" ContainerNetWeight=""
+            ContainerNetWeightUOM="" ContainerNo="" ContainerScm=""
+            ContainerSeqNo="" ContainerType="" ContainerWidth=""
+            ContainerWidthUOM="" CustomsValue="" DeclaredValue=""
+            DimmedFlag="" DiscountAmount="" ExportLicenseExpDate=""
+            ExportLicenseNo="" IsReceived="" LoadKey="" OversizedFlag=""
+            ParentContainerNo="" RoutingCode="" ShipmentContainerKey=""
+            ShipmentKey="" SpecialServicesSurcharge="" TrackingNo=""
+            Ucc128code="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Shipment_Container_tran.xml" IncludeXMLPath="/Container"/>
+            <yfc:doc>
+                <Element EntityName="Shipment_Container">
+                    <Description>
+                        <div>
+                            <code>ShipmentContainerKey</code> or <code>ContainerNo</code> attribute must be passed. The <code>Action</code> of  <code>Delete</code> deletes the <code>Container</code>. If a <code>Container</code> already exists, it is modified, and if it does not exist, it is created. 
+		 <br/>If a <code>ParentContainerNo</code> is passed, it must already exist in the database, or parent container details must also be passed in the input. 
+		 <br/>If a <code>Container</code> being deleted is a parent container, then the <code>ParentContainerNo</code> in all the child containers is reset to blank.
+		 <br/>The <code>ActualFreightCharge</code> of the shipment is computed from the <code>ActualFreightCharge</code> of all the containers.
+		 </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>
+		  Indicates the action that can be perfomed on the shipment container. 
+		  <br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Shipment_Container"
+                        Name="ContainerScm" NameInEntity="Container_Scm">
+                        <Description>
+                            <div>
+		  An unique number which helps identify the shipper as well as the goods. 
+		  <Validation>
+                                    <Condition>Not a unique value in the <code>YFS_SHIPMENT_CONTAINER</code> table.
+			</Condition>
+                                    <Error
+                                    Description="Container with the same SCM already exists." ErrorCode="YDM00132"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ContainerDetails Replace="">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If as a result of processing ContainerDetails any ContainerDetail gets <code>created</code>, <code>modified</code> or <code>deleted</code> and <code>Shipnode</code> is WMS node integrated with DCM. </Condition>
+                                    <Error
+                                    Description="Cannot use this API for processing Container or its details when Shipnode is a WMS node integrated with DCM" ErrorCode="YMD00218"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Replace">
+                            <Description>
+                                <div>
+	       Indicates if information in the database must be replaced by the <code>ContainerDetails</code> passed.
+	        <br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: 
+		<br/>
+                                    <b>
+                                    <code>Y</code>
+                                    </b> - Replaces all existing <code>ContainerDetails</code> in the database 
+		with the values passed in the input XML. Any new <code>ContainerDetails</code> passed in the XML are created. Existing <code>ContainerDetails</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+		<br/>
+                                    <b>
+                                    <code>N</code>
+                                    </b> - Any new <code>ContainerDetails</code> passed in the XML are created. Existing <code>ContainerDetails</code> are modified with the attributes passed in the XML.  Existing <code>ContainerDetails</code> that are in the database and not passed in the input XML are not changed.
+	       </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <ContainerDetail Action="" ContainerDetailsKey=""
+                    Quantity="" ShipmentLineKey="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent IncludeXMLChildNodes="Y"
+                        IncludeXMLFileName="YFS_Container_Details_tran.xml" IncludeXMLPath="/ContainerDetail"/>
+                    <yfc:doc>
+                        <Element EntityName="Container_Details">
+                            <Description>
+                                <div>
+			   Stores information about containerized shipment lines. <code>ContainerDetail</code>s are created using <code>packShipment</code> or <code>changeShipment</code>. To identify the <code>ContainerDetail</code>, 
+			   pass  <code>ContainerDetailsKey</code>, or <code>ShipmentLineKey</code> attribute or <code>ShipmentLine</code> element. 
+			   </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="ID-40" Name="Action">
+                                <Description>
+                                    <div>
+		  Indicates the action that can be perfomed on the container details. 
+		  <br/>Default: <code>Create-Modify</code>
+                                    <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <ShipmentTagSerials Replace="">
+                        <yfc:doc>
+                            <Element>
+                                <Description>
+                                    <div>
+                                    <Validation>
+                                    <Condition>If as a result of processing ShipmentTagSerials any ShipmentTagSerial gets <code>created</code>, <code>modified</code> or <code>deleted</code> and <code>Shipnode</code> is WMS node integrated with DCM. </Condition>
+                                    <Error
+                                    Description="Cannot use this API for processing Container or its details when Shipnode is a WMS node integrated with DCM" ErrorCode="YMD00218"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Element>
+                            <Attributes>
+                                <Attribute DataType="Flag" Name="Replace">
+                                    <Description>
+                                    <div>
+				       Indicates if information in the database must be replaced by the <code>ShipmentTagSerials</code> passed. 
+					<br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: 
+					<br/>
+                                    <b>
+                                    <code>Y</code>
+                                    </b> - Replaces all existing <code>ShipmentTagSerials</code> in the database 
+					with the values passed in the input XML. Any new <code>ShipmentTagSerials</code> passed in the XML are created. Existing <code>ShipmentTagSerials</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+					<br/>
+                                    <b>
+                                    <code>N</code>
+                                    </b> - Any new <code>ShipmentTagSerials</code> passed in the XML are created. Existing <code>ShipmentTagSerials</code> are  modified with the attributes passed in the XML.  Existing <code>ShipmentTagSerials</code> that are in the database and not passed in the input XML are not changed.
+				       </div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                        <ShipmentTagSerial Action="" BatchNo=""
+                            ContainerDetailKey="" LotAttribute1=""
+                            LotAttribute2="" LotAttribute3=""
+                            LotKeyReference="" LotNumber=""
+                            ManufacturingDate="" Quantity=""
+                            RevisionNo="" SerialNo="" ShipByDate=""
+                            ShipmentLineKey="" ShipmentTagSerialKey="" yfc:DTDOccurrence="ZeroOrMany">
+                            <yfc:includeInParent
+                                IncludeXMLFileName="YFS_Shipment_Tag_Serial_master.xml" IncludeXMLPath="/ShipmentTagSerial"/>
+                            <yfc:doc>
+                                <Element EntityName="Shipment_Tag_Serial">
+                                    <Description>
+                                    <div>
+						Additional information related to tag number, serial number, ship by date for a shipment line or container detail is stored in this table. If the shipment line item is tagged, <code>ShipmentTagSerial</code> has to be specified to confirm the shipment. To identify the <code>ShipmentTagSerial</code> pass <code>ShipmentTagSerialKey</code>, or  <code>SerialNo</code>, or <code>ShipByDate</code> or Tag Attributes: <code>LotNumber</code>, <code>LotKeyReference</code>, <code>ManufacturingDate</code>, <code>LotAttribute1</code>, <code>LotAttribute2</code>, <code>LotAttribute3</code>, <code>BatchNo</code>, <code>RevisionNo</code>. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+						  <Validation>
+                                    <Condition>When sum of tagged quantity of the line and containerized quantity is greater than ShipmentLine quantity.</Condition>
+                                    <Error
+                                    Description="ShipmentLine quantity cannot be less than sum of tagged quantity of the line and containerized quantity." ErrorCode="YDM00120"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>When total tagged quantity for the Container detail is greater than Container detail quantity .</Condition>
+                                    <Error
+                                    Description="Container detail quantity cannot be less than total tagged quantity for the Container detail." ErrorCode="YDM00121"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>When tag details are not given for the entire quantity of a shipment line with item as tag controlled.</Condition>
+                                    <Error
+                                    Description="Tag Number mandatory if Item is Tag controlled." ErrorCode="YDM00114"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>When tag details are not given for shipment line with item as tag controlled.</Condition>
+                                    <Error
+                                    Description="INV: Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Element>
+                                <Attributes>
+                                    <Attribute DataType="ID-40" Name="Action">
+                                    <Description>
+                                    <div>
+							Indicates the action that can be perfomed on the Shipment Tag Serial. 
+							<br/>Default: <code>Create-Modify</code>
+                                    <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                    <Attribute Name="SerialNo">
+                                    <Description>
+                                    <div>
+                            Serial number.
+							<Validation>
+                                    <Condition>If <code>RequestedSerialNo</code> in <code>ShipmentLine</code> is not void and does not equal <code>SerialNo</code>.</Condition>
+                                    <Error
+                                    Description="Serial Number specified does not match Requested Serial number." ErrorCode="YDM00228"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If <code>SerialNo</code> is provided and <code>Quantity</code> is not equal to one.
+                              </Condition>
+                                    <Error
+                                    Description="Quantity must be equal to one because SerialNo is provided." ErrorCode="YDM00257"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                        </ShipmentTagSerial>
+                    </ShipmentTagSerials>
+                    <ShipmentLine DocumentType="" ItemID=""
+                        OrderHeaderKey="" OrderLineKey="" OrderNo=""
+                        OrderReleaseKey="" PrimeLineNo=""
+                        ProductClass="" ReleaseNo="" ShipAdviceNo=""
+                        ShipmentLineNo="" ShipmentSubLineNo=""
+                        SubLineNo="" UnitOfMeasure="">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="String"
+                                    Name="DocumentType" NameInEntity="Document_Type"/>
+                                <Attribute Name="ItemID" NameInEntity="ItemID"/>
+                                <Attribute Name="OrderHeaderKey" NameInEntity="Order_Header_Key"/>
+                                <Attribute Name="OrderLineKey" NameInEntity="Order_Line_Key"/>
+                                <Attribute Name="OrderNo" NameInEntity="Order_No"/>
+                                <Attribute Name="OrderReleaseKey" NameInEntity="Order_Release_Key"/>
+                                <Attribute Name="PrimeLineNo" NameInEntity="Prime_Line_No"/>
+                                <Attribute Name="ProductClass" NameInEntity="Product_Class"/>
+                                <Attribute Name="ReleaseNo" NameInEntity="Release_No"/>
+                                <Attribute EntityName="Order_Release"
+                                    Name="ShipAdviceNo" NameInEntity="Ship_Advice_No">
+                                    <Description>
+                                    <div>Ship advice number of the order release.  <code>ShipAdviceNo</code> will only be used when order release identifiers such as <code>OrderReleaseKey</code>
+                                    <i>or</i>
+                                    <code>ReleaseNo</code> and <code>OrderHeaderKey</code> are not provided.  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided) will be used to determine the order release in the system.  If more than one order releases are found in the system with the same <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided), the order release with a pickable status will be used. 
+				  <Validation>
+                                    <Condition>More than one order releases in a pickable status are found with the same  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Multiple order releases found with ShipAdviceNo." ErrorCode="OMP75_10000"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>System cannot find an order release with the provided <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Invalid ShipAdviceNo." ErrorCode="YDM75_00001"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute Name="ShipmentLineNo" NameInEntity="Shipment_Line_No"/>
+                                <Attribute Name="ShipmentSubLineNo" NameInEntity="Shipment_Sub_Line_No"/>
+                                <Attribute Name="SubLineNo" NameInEntity="Sub_Line_No"/>
+                                <Attribute Name="UnitOfMeasure" NameInEntity="Uom"/>
+                            </Attributes>
+                        </yfc:doc>
+                        <ShipmentLineInvAttRequest BatchNo=""
+                            LotAttribute1="" LotAttribute2=""
+                            LotAttribute3="" LotKeyReference=""
+                            LotNumber="" ManufacturingDate="" RevisionNo="">
+                            <yfc:doc>
+                                <Element EntityName="Shipment_Line_Req_Tag"/>
+                            </yfc:doc>
+                        </ShipmentLineInvAttRequest>
+                    </ShipmentLine>
+                </ContainerDetail>
+            </ContainerDetails>
+            <Instructions Replace="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Replace">
+                            <Description>
+                                <div>
+		       Indicates if information in the database must be replaced by the Instructions information passed. 
+		       <br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: 
+			<br/>
+                                    <b>
+                                    <code>Y</code>
+                                    </b> - Replaces all existing <code>Instructions</code> 
+			with the values passed in the input XML. Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+			<br/>
+                                    <b>
+                                    <code>N</code>
+                                    </b> - Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are  modified with the attributes passed in the XML.  Existing <code>Instructions</code> that are in the database and not passed in the input XML are not changed.
+		       </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Instruction Action="" InstructionDetailKey=""
+                    InstructionText="" InstructionType=""
+                    InstructionURL="" InstructionUsage=""
+                    ReferenceKey="" SequenceNo="" TableName="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+                    <yfc:doc>
+                        <Element EntityName="Instruction_Detail">
+                            <Description>
+                                <div>
+			The <code>InstructionDetailKey</code> attribute or <code>InstructionType</code> and <code>SequenceNo</code> attributes must be passed.
+			Related shipment instructions are stored in this table. To identify the <code>Instruction</code> pass <code>InstructionDetailKey</code>, or  <code>InstructionType</code> and <code>SequenceNo</code>.
+			</div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="ID-40" Name="Action">
+                                <Description>
+                                    <div>
+		      Indicates the action that can be perfomed on the container instruction detail.
+		      <br/>Default: <code>Create-Modify</code>
+                                    <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Instruction>
+            </Instructions>
+        </Container>
+    </Containers>
+    <Instructions Replace="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Replace">
+                    <Description>
+                        <div>
+		       Indicates if information in the database must be replaced by the Instructions information passed. 
+		       <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: 
+			<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Replaces all existing <code>Instructions</code> 
+			with the values passed in the input XML. Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+			<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are  modified with the attributes passed in the XML.  Existing <code>Instructions</code> that are in the database and not passed in the input XML are not changed.
+		       </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Instruction Action="" InstructionDetailKey=""
+            InstructionText="" InstructionType="" InstructionURL=""
+            InstructionUsage="" ReferenceKey="" SequenceNo=""
+            TableName="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+            <yfc:doc>
+                <Element EntityName="Instruction_Detail">
+                    <Description>
+                        <div>
+			The <code>InstructionDetailKey</code> attribute or <code>InstructionType</code> and <code>SequenceNo</code> attributes must be passed.
+			Related shipment instructions are stored in this table. To identify the <code>Instruction</code> pass <code>InstructionDetailKey</code>, or  <code>InstructionType</code> and <code>SequenceNo</code>.
+			</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>
+		      Indicates the action that can be perfomed on the container instruction detail.
+		      <br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Instruction>
+    </Instructions>
+    <Notes>
+        <Note AuditTransactionId="" ContactReference="" ContactTime=""
+            ContactType="" ContactUser="" CustomerSatIndicator=""
+            NoteText="" Priority="" ReasonCode="" SequenceNo=""
+            Tranid="" Tranname="" VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Notes"/>
+                <Attributes>
+                    <Attribute DataType="Text-50" Name="Tranname">
+                        <Description>
+							Specifies the name of the Transaction
+						</Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <User Username="" Usertype=""/>
+        </Note>
+    </Notes>
+    <OrderReleases>
+        <OrderRelease AssociationAction="" OrderHeaderKey=""
+            OrderReleaseKey="" ReleaseNo="" ShipAdviceNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Release">
+                    <Description>
+                        <div>
+                            <Validation>
+                                <Condition>OrderRelease information is passed and <code>OrderAvailableOnSystem</code> is <code>
+                                    <b>N</b>
+                                    </code>.
+				</Condition>
+                                <Error
+                                    Description="Order release information passed when the order is not available on system for the shipment." ErrorCode="YDM80_0011"/>
+                            </Validation>
+		 Stores releases made against an order. To create Shipment for the complete Release quantity, pass the <code>OrderReleases/OrderRelease</code>.  Do not also pass <code>-ShipmentLines/ShipmentLine</code> node if you are passing this node. To identify the <code>OrderRelease</code>, pass either <code>OrderReleaseKey</code>
+                            <i>or</i>
+                            <code>ReleaseNo</code> and either <code>OrderHeaderKey</code> or the <code>Order</code> element or <code>ShipAdviceNo</code>. All of the <code>OrderReleases</code> passed in the input XML  must belong to same <code>ShipNode</code> and <code>SellerOrganizationCode</code>. 
+		 </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="AssociationAction">
+                        <Description>
+                            <div>Indicates an association action between shipment and order release.
+		  <br/>Default: <code>Add</code>
+                                <br/>Valid values: <code>Add</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Release"
+                        Name="ShipAdviceNo" NameInEntity="Ship_Advice_No">
+                        <Description>
+                            <div>Ship advice number of the order release.  <code>ShipAdviceNo</code> will only be used when order release identifiers such as <code>OrderReleaseKey</code>
+                                <i>or</i>
+                                <code>ReleaseNo</code> and <code>OrderHeaderKey</code> are not provided.  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided) will be used to determine the order release in the system.  If more than one order releases are found in the system with the same <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided), the order release with a pickable status will be used. 
+				  <Validation>
+                                    <Condition>More than one order releases in a pickable status are found with the same  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Multiple order releases found with ShipAdviceNo." ErrorCode="OMP75_10000"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>System cannot find an order release with the provided <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Invalid ShipAdviceNo." ErrorCode="YDM75_00001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Order DocumentType="Required" EnterpriseCode="Required" OrderNo="Required"/>
+        </OrderRelease>
+    </OrderReleases>
+    <ShipmentLines Replace="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Replace">
+                    <Description>
+                        <div>
+	       Indicates if information in the database must be replaced by the <code>ShipmentLines</code> information passed. 
+	       <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values:
+		<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Replaces all existing <code>ShipmentLines</code> and their instructions in the database 
+		with the values passed in the input XML. Any new <code>ShipmentLines</code> passed in the XML are created. Existing <code>ShipmentLines</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+		<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Any new <code>ShipmentLines</code> passed in the XML are created. Existing <code>ShipmentLines</code> are modified with the attributes passed in the XML.  Existing <code>ShipmentLines</code> that are in the database and not passed in the input XML are not changed.
+	       </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <ShipmentLine Action="" BatchPickPriority=""
+            BuyerMarkForNodeId="" CountryOfOrigin="" CustomerPoLineNo=""
+            CustomerPoNo="" DepartmentCode="" DocumentType="Conditional"
+            ExternalReleaseIdentifier="" FifoNo="" ItemDesc=""
+            ItemID="Conditional" KitCode="LK|| |Blanks" KitQty=""
+            LevelOfService="" NetWeight="" NetWeightUom=""
+            OrderHeaderKey="" OrderLineKey="" OrderNo="Conditional"
+            OrderReleaseKey="" PickLocation="" PickLocationSeq=""
+            PrimeLineNo="Conditional" ProductClass="" Quantity=""
+            ReleaseNo="Conditional" RequestedSerialNo=""
+            ReturnShippingLabelLevel="" Segment="" SegmentType=""
+            ShipAdviceNo="" ShipToCustomerId=""
+            ShipmentConsolidationGroupId=""
+            ShipmentLineKey="Conditional" ShipmentLineNo="Conditional"
+            ShipmentSubLineNo="Conditional" StoreBatchKey=""
+            SubLineNo="Conditional" UnitOfMeasure="Conditional" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent IncludeXMLChildNodes="N"
+                IncludeXMLFileName="YFS_Shipment_Line_tran.xml" IncludeXMLPath="/ShipmentLine"/>
+            <yfc:doc>
+                <Element EntityName="Shipment_Line">
+                    <Description>
+                        <div>
+			 Pass information in this <code>ShipmentLine</code> element to create shipment for a partial order release quantity. Do not pass any information under <code>OrderReleases/OrderRelease</code> element if  passing the  <code>ShipmentLines/ShipmentLine</code> element. To identify the <code>ShipmentLine</code>, pass <code>ShipmentLineKey</code>.
+			 <br/>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>
+				 Indicates the action that can be perfomed on the shipment line. 
+				 <br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Cancel</code>, <code>Create-Modify</code>
+                                <br/>
+				 If <code>Action</code> is <code>Delete</code> or <code>Cancel</code> and there are any open tasks associated with the <code>ShipmentLine</code> then the tasks are cancelled.
+				 <br/>
+				 If <code>Action</code> is <code>Cancel</code> then <code>Quantity</code> reduces to 0.
+	    	<Validation>
+                                    <Condition>Actions <code>Create, Delete and Cancel</code> are not allowed once a shipment is invoiced.
+				</Condition>
+                                    <Error
+                                    Description="Certain modifications are not allowed on invoiced shipment." ErrorCode="YDM77_00002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="String" Name="DocumentType"/>
+                    <Attribute Name="KitQty">
+                        <Description>
+                            <div>The number of components required for one kit.  The quantity is used only for bundle components only when the order is not available for the shipment line. When order is available for the shipment line, <code>KitQty</code> is defaulted from order information.
+					  </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Quantity">
+                        <Description>
+                            <div>If <code>Quantity</code> is reduced and there are any open tasks associated with the <code>ShipmentLine</code> then the tasks' quantity is reduced.
+				 </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="RequestedSerialNo">
+                        <Description>
+                            <div>Requested Serial Number of the item. If order is available on the system, the <Code>SerialNo</Code> is defaulted from <Code>SerialNo</Code> of the corresponding order line.
+				 </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Release"
+                        Name="ShipAdviceNo" NameInEntity="Ship_Advice_No">
+                        <Description>
+                            <div>Ship advice number of the order release.  <code>ShipAdviceNo</code> will only be used when order release identifiers such as <code>OrderReleaseKey</code>
+                                <i>or</i>
+                                <code>ReleaseNo</code> and <code>OrderHeaderKey</code> are not provided.  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided) will be used to determine the order release in the system.  If more than one order releases are found in the system with the same <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided), the order release with a pickable status will be used. 
+				  <Validation>
+                                    <Condition>More than one order releases in a pickable status are found with the same  <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Multiple order releases found with ShipAdviceNo." ErrorCode="OMP75_10000"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>System cannot find an order release with the provided <code>ShipAdviceNo</code> and <code>ShipNode</code> (if provided).
+					</Condition>
+                                    <Error
+                                    Description="Invalid ShipAdviceNo." ErrorCode="YDM75_00001"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <BundleParentLine Action="" ShipmentLineKey="" ShipmentLineNo="">
+                <yfc:doc>
+                    <Element EntityName="Shipment_Line">
+                        <Description>
+                            <div>
+                                <br/> Identifies the bundle parent shipment line for this line. This element will be considered only when order is not available on system for the shipment. When order is available on system the hierarchy of the bundle is obtained from order information. <br/>When order is not available on system and bundle item is passed without any components, then the bundle components will be defaulted from catalog. 
+							<Validation>
+                                    <Condition>When the passed shipment line attributes fails to identify a bundle shipment line.</Condition>
+                                    <Error
+                                    Description="Bundle Parent Line element is invalid." ErrorCode="YDM80_0001"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>When bundle components are not passed or present for the bundle parent item.</Condition>
+                                    <Error
+                                    Description="Either you have not passed the bundle component lines or there are no bundle components in ratio with the bundle parent." ErrorCode="YDM80_0002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Action" Name="Action">
+                            <Description>
+                                <div>
+							Action to perform
+							<br/>Valid Values:
+							<br/>
+                                    <b>
+                                    <code>Create</code>
+                                    </b> - To add a component to already existing bundle. 
+								<Validation>
+                                    <Condition>A non-bundle parent line cannot be specified as bundle parent line. 
+								</Condition>
+                                    <Error
+                                    Description="Shipment Line is not a bundle parent line" ErrorCode="YDM80_0004"/>
+                                    </Validation>
+                                    <br/>
+                                    <b>
+                                    <code>Delete</code>
+                                    </b> - To remove a component from a bundle.
+								<Validation>
+                                    <Condition>A bundle parent line must have at least one component. 
+								</Condition>
+                                    <Error
+                                    Description="Bundle must have at least one component" ErrorCode="YDM80_0005"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Shipment_Line"
+                            Name="ShipmentLineKey" NameInEntity="Shipment_Line_Key">
+                            <Description>
+                                <div>Shipment Line key of the bundle parent line. Alternatively <code>ShipmentLineNo</code> can be passed.
+							</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Shipment_Line"
+                            Name="ShipmentLineNo" NameInEntity="Shipment_Line_No">
+                            <Description>
+                                <div>Shipment Line number of the bundle parent line. Alternatively <code>ShipmentLineKey</code> can be passed.</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </BundleParentLine>
+            <ShipmentLineInvAttRequest BatchNo="" LotAttribute1=""
+                LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                LotNumber="" ManufacturingDate="" RevisionNo="">
+                <yfc:doc>
+                    <Element EntityName="Shipment_Line_Req_Tag">
+                        <Description>
+                            <div>
+			 Information related to requested tag details for the shipment line. To identify the <code>ShipmentLineInvAttRequest</code> pass the Tag Unique Attributes: <code>LotNumber</code>, <code>BatchNo</code>, <code>RevisionNo</code>.
+			 </div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </ShipmentLineInvAttRequest>
+            <ShipmentTagSerials Replace="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Replace">
+                            <Description>
+                                <div>
+				       Indicates if information in the database must be replaced by the <code>ShipmentTagSerials</code> passed. 
+					<br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: 
+					<br/>
+                                    <b>
+                                    <code>Y</code>
+                                    </b> - Replaces all existing <code>ShipmentTagSerials</code> in the database 
+					with the values passed in the input XML. Any new <code>ShipmentTagSerials</code> passed in the XML are created. Existing <code>ShipmentTagSerials</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+					<br/>
+                                    <b>
+                                    <code>N</code>
+                                    </b> - Any new <code>ShipmentTagSerials</code> passed in the XML are created. Existing <code>ShipmentTagSerials</code> are  modified with the attributes passed in the XML.  Existing <code>ShipmentTagSerials</code> that are in the database and not passed in the input XML are not changed.
+				       </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <ShipmentTagSerial Action="" BatchNo=""
+                    ContainerDetailKey="" LotAttribute1=""
+                    LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                    LotNumber="" ManufacturingDate="" Quantity=""
+                    RevisionNo="" SerialNo="" ShipByDate=""
+                    ShipmentLineKey="" ShipmentTagSerialKey="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Shipment_Tag_Serial_master.xml" IncludeXMLPath="/ShipmentTagSerial"/>
+                    <yfc:doc>
+                        <Element EntityName="Shipment_Tag_Serial">
+                            <Description>
+                                <div>
+				Stores additional information related to tag number, serial number, ship by date for a shipment line or container detail. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+				</div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute Name="Action">
+                                <Description>
+                                    <div> Indicates the action that can be perfomed on the shipment tag serial. 
+				 <br/>Default: <code>Create-Modify</code>
+                                    <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Modify</code>
+                                    <br/>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </ShipmentTagSerial>
+            </ShipmentTagSerials>
+            <Instructions Replace="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="Replace">
+                            <Description>
+                                <div>
+		       Indicates if information in the database must be replaced by the Instructions information passed. 
+		       <br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: 
+			<br/>
+                                    <b>
+                                    <code>Y</code>
+                                    </b> - Replaces all existing <code>Instructions</code> 
+			with the values passed in the input XML. Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+			<br/>
+                                    <b>
+                                    <code>N</code>
+                                    </b> - Any new <code>Instructions</code> passed in the XML are created. Existing <code>Instructions</code> are  modified with the attributes passed in the XML.  Existing <code>Instructions</code> that are in the database and not passed in the input XML are not changed.
+		       </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <Instruction Action="" InstructionDetailKey=""
+                    InstructionText="" InstructionType=""
+                    InstructionURL="" InstructionUsage=""
+                    ReferenceKey="" SequenceNo="" TableName="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:includeInParent
+                        IncludeXMLFileName="YFS_Instruction_Detail_tran.xml" IncludeXMLPath="/Instruction"/>
+                    <yfc:doc>
+                        <Element EntityName="Instruction_Detail"/>
+                    </yfc:doc>
+                </Instruction>
+            </Instructions>
+        </ShipmentLine>
+    </ShipmentLines>
+    <ShipmentCharges Replace="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Replace">
+                    <Description>
+                        <div>
+	       Indicates if information in the database must be replaced by the <code>ShipmentCharges</code> information passed. 
+	       <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: 
+		<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Replaces all existing <code>ShipmentCharges</code> and their instructions in the database 
+		with the values passed in the input XML. Any new <code>ShipmentCharges</code> passed in the XML are created. Existing <code>ShipmentCharges</code> are deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+		<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Any new <code>ShipmentCharges</code> passed in the XML are created. Existing <code>ShipmentCharges</code> are
+		 modified with the attributes passed in the XML.  Existing <code>ShipmentCharges</code> that are in the database and not passed in the input XML are not changed.
+	       </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <ShipmentCharge Action="" ActualCharge="" ChargeCategory=""
+            ChargeName="" EstimatedCharge="" InvoiceNo=""
+            KeyReference1="" KeyReference2="" LoadKey=""
+            LoadShipmentChargeKey="" PayeeOrganizationCode=""
+            ShipmentKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Load_Shipment_Charge_tran.xml" IncludeXMLPath="/LoadShipmentCharge"/>
+            <yfc:doc>
+                <Element EntityName="Load_Shipment_Charge">
+                    <Description>
+                        <div>
+	      To identify the <code>ShipmentCharge</code>, pass either <code>LoadShipmentChargeKey</code> or all of the following attributes:
+	      <br/>
+                            <code>ChargeCategory</code>, <code>ChargeName</code>, <code>PayeeOrganizationCode</code>, <code>KeyReference1</code>, <code>KeyReference2</code>.
+	      <br/>The Shipment's <code>TotalActualCharge</code> of is updated with the sum of all the <code>ActualCharge</code> values. The Shipment's  <code>TotalEstimatedCharge</code> is updated with the sum of all the <code>EstimatedCharge</code> values.
+	      </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>
+		  Indicates the action that can be perfomed on the load shipment charges. 
+		  <br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ShipmentCharge>
+    </ShipmentCharges>
+    <AdditionalDates Replace="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="Replace">
+                    <Description>
+                        <div>
+	       Indicates if information in the database must be replaced by the <code>AdditionalDates</code> information passed. 
+	       <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Valid Values: 
+		<br/>
+                            <b>
+                                <code>Y</code>
+                            </b> - Replaces all existing <code>AdditionalDates</code> and their instructions in the database 
+		with the values passed in the input XML. Any new <code>AdditionalDates</code> passed in the XML are created. Existing <code>AdditionalDates</code> are
+		deleted if they are not passed in the input XML, or  modified with the attributes passed in the XML. 
+		<br/>
+                            <b>
+                                <code>N</code>
+                            </b> - Any new <code>AdditionalDates</code> passed in the XML are created. Existing <code>AdditionalDates</code> are
+		 modified with the attributes passed in the XML.  Existing <code>AdditionalDates</code> that are in the database and not passed in the input XML are unchanged: they are neither deleted or modified. 
+	       </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <AdditionalDate Action="" ActualDate="" AdditionalDateKey=""
+            DateTypeId="" ExpectedDate="" ReferenceKey=""
+            ReferenceType="" RequestedDate="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:includeInParent
+                IncludeXMLFileName="YFS_Additional_Date_tran.xml" IncludeXMLPath="/AdditionalDate"/>
+            <yfc:doc>
+                <Element EntityName="Additional_Date">
+                    <Description>
+                        <div>
+		 Stores additional date attributes for the shipment.  <code>DateTypeId</code> must be passed. 
+		 <br/>
+                            <code>AdditionalDate</code> is used to override dates that were calculated for the <code>Shipment</code>, and occur in the <code>Shipment</code> node. For example, by setting the <code>DateTypeId</code> to <b>
+                                <code>SCHEDULE</code>
+                            </b>, and passing a value for <code>RequestedDate</code>, the value of <code>RequestedShipmentDate</code> for the <code>Shipment</code> is ignored, and the value in <code>AdditionalDate</code> is used.
+		 </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>
+		  Indicates the action that can be perfomed on the additional dates associated with the shipment. 
+		  <br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>, <code>Create-Modify</code>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </AdditionalDate>
+    </AdditionalDates>
+    <ShipmentStatusAudit ReasonCode="" ReasonText="" ShipmentKey=""
+        ShipmentStatusAuditKey="" StatusDate="">
+        <yfc:includeInParent
+            IncludeXMLFileName="YFS_Shipment_Status_Audit_tran.xml"
+            IncludeXMLPath="/ShipmentStatusAudit" RemoveDBHouseKeeping="Y"/>
+        <yfc:doc>
+            <Element EntityName="Shipment_Status_Audit">
+                <Description>
+                    <div>
+                        <code>ShipmentStatusAudit</code> will be considered only while creating or cancelling Shipment.
+		 </div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Shipment" Name="StatusDate" NameInEntity="StatusDate">
+                    <Description>Date and time of the status change.
+			</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </ShipmentStatusAudit>
+    <SpecialServices>
+        <SpecialService Action="" SpecialServicesCode="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Special_Service_Ref">
+                    <Description> Should be specified only when Order does not exist on system.</Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ID-40" Name="Action">
+                        <Description>
+                            <div>Indicates the action that can be perfomed on the Special Service associated with the shipment. 
+				<br/>Default: <code>Create-Modify</code>
+                                <br/>Valid values: <code>Create</code>, <code>Delete</code>
+                                <Validation>
+                                    <Condition>
+                                    <code>Action</code> is <code>Create</code> and <code>OrderAvailableOnSystem</code> flag is <code>Y</code>
+                                    </Condition>
+                                    <Error
+                                    Description="Cannot specify Special Service." ErrorCode="YDM00226"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>If <code>SpecialService</code> is getting modified.
+				</Condition>
+                                    <Error
+                                    Description="Cannot modify existing Special Service reference of Shipment." ErrorCode="YDM00227"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="SpecialServicesCode">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>
+                                    <code>SpecialServicesCode</code> is invalid.
+				</Condition>
+                                    <Error
+                                    Description="Special service code does not exist." ErrorCode="OMP11027"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </SpecialService>
+    </SpecialServices>
+    <OrderInvoiceList>
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YDM_createShipment_input.xml" IncludeXMLPath="/Shipment/OrderInvoiceList"/>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+					When this is passed for Shipments where <code>OrderAvailableOnSystem=N</code> or <code>OrderAvailableOnSystem=M</code>, the Shipment's Pro Forma Invoices, if any exists, will all be deleted. Each child <code>OrderInvoice</code> XML node will be used to internally invoke the <code>recordInvoiceCreation</code> API to create a Pro Forma Invoice.  None of this is applicable for Shipments where <code>OrderAvailableOnSystem=Y</code> and will be ignored.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <OrderInvoice Currency="" DateInvoiced="" InvoiceNo=""
+            MasterInvoiceNo="" OrderNo="" Reference1="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Invoice">
+                    <Description>
+                        <div>
+						When this is passed for Shipments where <code>OrderAvailableOnSystem=N</code> or <code>OrderAvailableOnSystem=M</code>, it will be used to internally invoke the <code>recordInvoiceCreation</code> API to create a Pro Forma Invoice.  This is not applicable for Shipments where <code>OrderAvailableOnSystem=Y</code> and will be ignored.
+						</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <TaxBreakupList>
+                <yfc:doc>
+                    <Element EntityName="Tax_Breakup"/>
+                </yfc:doc>
+                <TaxBreakup ChargeCategory="" ChargeName=""
+                    Reference1="" Reference2="" Reference3="" Tax=""
+                    TaxName="" TaxPercentage=""/>
+            </TaxBreakupList>
+            <LineDetails>
+                <LineDetail OrderLineKey="" PrimeLineNo="" Quantity=""
+                    SubLineNo="" UnitPrice="">
+                    <yfc:doc>
+                        <Element EntityName="Order_Invoice_Detail">
+                            <Description>
+                                <div>
+							Contains data related to an order invoice line.
+								<Validation>
+                                    <Condition>
+                                    <code>OrderLineKey</code> must be passed and must be valid.
+								</Condition>
+                                    <Error Description="" ErrorCode=""/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                    <LineDetailTranQuantity Quantity="" TransactionalUOM="">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="Quantity" Name="Quantity">
+                                    <Description>
+                                    <div>
+								  Quantity being invoiced.
+								  </div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute DataType="UOM" Name="TransactionalUOM">
+                                    <Description>
+                                    <div>
+								  UOM on which all the transactional quantities are specified.
+								  </div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                    </LineDetailTranQuantity>
+                    <LineChargeList>
+                        <LineCharge ChargeCategory="" ChargeName=""
+                            ChargePerLine="" ChargePerUnit="" Reference="">
+                            <yfc:doc>
+                                <Element EntityName="Line_Charges"/>
+                            </yfc:doc>
+                        </LineCharge>
+                    </LineChargeList>
+                </LineDetail>
+            </LineDetails>
+            <HeaderChargeList>
+                <HeaderCharge ChargeAmount="" ChargeCategory=""
+                    ChargeName="" Reference="">
+                    <yfc:doc>
+                        <Element EntityName="Header_Charges"/>
+                    </yfc:doc>
+                </HeaderCharge>
+            </HeaderChargeList>
+        </OrderInvoice>
+    </OrderInvoiceList>
+    <ShipmentHoldTypes>
+        <ShipmentHoldType HoldType="Required" ReasonText="" Status="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Shipment_Hold_Type">
+                    <Description>
+                        <div>
+			Optional. Stores hold type information. Multiple <code>HoldType</code>s can be applied/ removed for a single shipment.
+			</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute Name="HoldType">
+                        <Description>
+                            <div>
+					The code identifying the hold type to be applied/ removed for a Shipment.
+					<Validation>
+                                    <Condition>
+                                    <code>HoldType</code> must be defined in the configuration
+						</Condition>
+                                    <Error
+                                    Description="No record found." ErrorCode="YDM00166"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Status">
+                        <Description>
+                            <div>
+					   This attribute specifies the status of the shipment hold type.  
+			<br/>Valid Values: 
+				<br/>
+                                <b>
+                                    <code>1100</code>
+                                </b> - To apply a <code>HoldType</code> to shipment.
+				<br/>
+                                <b>
+                                    <code>1200</code>
+                                </b> - To reject a  <code>HoldType</code> from shipment.
+				<br/>
+                                <b>
+                                    <code>1300</code>
+                                </b> - To resolve a  <code>HoldType</code> from shipment.
+			<br/>Default: Hold type is always created in '1100' status.
+					</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ShipmentHoldType>
+    </ShipmentHoldTypes>
+</Shipment>

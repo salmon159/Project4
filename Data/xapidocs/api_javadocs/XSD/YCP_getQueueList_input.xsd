@@ -1,0 +1,1349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getQueueList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getQueueList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getQueueList_input.xsd" yfc:rootElement="Queue">
+        <xsd:appinfo source="yfc:structure">
+            <Queue hasAttributes="Y">
+                <ActionHoursAsignExceed hasAttributes="Y"/>
+                <ActionMaxSizeExceed hasAttributes="Y"/>
+                <ActionResolveExceed hasAttributes="Y"/>
+                <ActionList>
+                    <Action hasAttributes="Y">
+                        <Queue hasAttributes="Y"/>
+                    </Action>
+                </ActionList>
+                <QueueSubscriptionList>
+                    <QueueSubscription hasAttributes="Y">
+                        <User hasAttributes="Y"/>
+                        <Queue hasAttributes="Y"/>
+                    </QueueSubscription>
+                </QueueSubscriptionList>
+            </Queue>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Queue" type="yfc:QueueXSDType">
+        <xsd:annotation yfc:tableName="YFS_QUEUE">
+            <xsd:documentation>Master table for exception queues.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="QueueXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ActionHoursAsignExceed"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ActionMaxSizeExceed"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ActionResolveExceed"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ActionList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:QueueSubscriptionList"/>
+        </xsd:all>
+        <xsd:attribute name="AuditThisQueue" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="AUDIT_THIS_QUEUE" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>'Y' if assignments needs to be audited</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				If CallingOrganizationCode is passed, then it will
+				be used as the context organization. This, combined
+				with the configuration data setup for queues,
+				will result in a list filtered for access by the given organization.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursAssignExceedAction" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_ASSIGN_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Action to be raised if exception is not assigned within the defined hour limit</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursForAssignRealert"
+            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_FOR_ASSIGN_REALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Number of hours in which unassign alerts should be raised again</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursForAssignment"
+            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_FOR_ASSIGNMENT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Any exception in this queue must be assigned within this many hours</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursForExceedRealert"
+            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_FOR_EXCEED_REALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Number of hours in which a re-alert should be raised for queue overflows</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursForResolution"
+            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_FOR_RESOLUTION" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Any exception in this queue should be resolved within this many hours</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursForResolveRealert"
+            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_FOR_RESOLVE_REALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Number of hours in which unresolved alerts should be raised again</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoursResolveExceedAction"
+            type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="HOURS_RESOLVE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Action to be raised if exception is not resolved within the defined hour limit</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LastQueueExceedAlert"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="LAST_QUEUE_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Date when last overflow exception was raised for the queue</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumActiveSize" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="MAXIMUM_ACTIVE_SIZE" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Maximum # of active exceptions that can be posted in the queue</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumSizeExceedAction" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="MAXIMUM_SIZE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Action to be performed if the active exceptions exceed the limit</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Organization code that owns the queue</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OwnerType" type="yfctype:OwnerType" use="optional">
+            <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Not used</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Priority"
+            type="yfctype:PriorityWithDecimal" use="optional">
+            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Queue priority</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QKeyForAssignAlert" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="Q_KEY_FOR_ASSIGN_ALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Queue to which unassignment exception should be raised</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QKeyForExceedAlert" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="Q_KEY_FOR_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Queue to which overflow exceptions should be raised</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QKeyForResolveAlert" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="Q_KEY_FOR_RESOLVE_ALERT" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Queue to which unresolve exceptions should be raised</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QueueDescription"
+            type="yfctype:Description" use="optional">
+            <xsd:annotation yfc:columnName="QUEUE_DESCRIPTION" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Description of a Queue.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QueueGroup" type="yfctype:QueueGroupId" use="optional">
+            <xsd:annotation yfc:columnName="QUEUE_GROUP" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Group id. Can be used for better organization of queues</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QueueId" type="yfctype:Identifier" use="optional">
+            <xsd:annotation yfc:columnName="QUEUE_ID" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Unique id</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Primary key attribute of YFS_QUEUE.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QueueName" type="yfctype:QueueName" use="optional">
+            <xsd:annotation yfc:columnName="QUEUE_NAME" yfc:tableName="YFS_QUEUE">
+                <xsd:documentation>Name for queue</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ActionHoursAsignExceed">
+        <xsd:annotation yfc:tableName="YFS_ACTION">
+            <xsd:documentation>Stores the definition for Actions. These actions can be attached to events to create alerts, send mail, invoke services etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ActionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ACTION_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Primary key attribute of YFS_ACTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actioncode" type="yfctype:ActionCode" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONCODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Unique identifier for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actionname" type="yfctype:ActionName" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONNAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>User name for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actiontype" type="yfctype:ActionType" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONTYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Indicates if an action is system defined or user defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a COM API needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>COM API name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a stored procedure needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionSpName"
+                type="yfctype:ProcedureName" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_SP_NAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Stored procedure name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailAddress" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_ADDRESS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Address to which e-mail should be sent. Can be blanks. Template can pick the e-mail address dynamically from published data.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if e-mail needs to be sent when action is raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailTemplateFile"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_TEMPLATE_FILE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template file name for sending e-mail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if an executable needs to be run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteProgram"
+                type="yfctype:ExecuteProgram" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_PROGRAM" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Executable program run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendableCode"
+                type="yfctype:ExtendableCode" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDABLE_CODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not Used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FAX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxStylesheet"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="FAX_STYLESHEET" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GroupId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="GROUP_ID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Identifies group/category of an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a URL is invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>URL invoked as a result of HTTP action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if exception needs to be raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxTemplate"
+                type="yfctype:ExceptionTemplate" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_TEMPLATE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template for raising exceptions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxUserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_USER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>If exception needs to be sent to a particular user, link to the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a JAVA API is called</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>JAVA API name to be invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Organization code defining this action</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerType" type="yfctype:OwnerType" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if event data needs to be put into export tables.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishReceivers"
+                type="yfctype:PublishReceivers" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_RECEIVERS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>System Ids which would receive published message.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Exception queue to which exception should be routed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RealtimeFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REALTIME_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Currently must be set to 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>A reference that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceType"
+                type="yfctype:ReferenceType" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Categorization of references that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ActionMaxSizeExceed">
+        <xsd:annotation yfc:tableName="YFS_ACTION">
+            <xsd:documentation>Stores the definition for Actions. These actions can be attached to events to create alerts, send mail, invoke services etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ActionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ACTION_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Primary key attribute of YFS_ACTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actioncode" type="yfctype:ActionCode" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONCODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Unique identifier for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actionname" type="yfctype:ActionName" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONNAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>User name for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actiontype" type="yfctype:ActionType" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONTYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Indicates if an action is system defined or user defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a COM API needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>COM API name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a stored procedure needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionSpName"
+                type="yfctype:ProcedureName" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_SP_NAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Stored procedure name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailAddress" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_ADDRESS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Address to which e-mail should be sent. Can be blanks. Template can pick the e-mail address dynamically from published data.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if e-mail needs to be sent when action is raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailTemplateFile"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_TEMPLATE_FILE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template file name for sending e-mail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if an executable needs to be run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteProgram"
+                type="yfctype:ExecuteProgram" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_PROGRAM" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Executable program run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendableCode"
+                type="yfctype:ExtendableCode" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDABLE_CODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not Used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FAX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxStylesheet"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="FAX_STYLESHEET" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GroupId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="GROUP_ID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Identifies group/category of an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a URL is invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>URL invoked as a result of HTTP action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if exception needs to be raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxTemplate"
+                type="yfctype:ExceptionTemplate" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_TEMPLATE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template for raising exceptions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxUserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_USER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>If exception needs to be sent to a particular user, link to the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a JAVA API is called</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>JAVA API name to be invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Organization code defining this action</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerType" type="yfctype:OwnerType" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if event data needs to be put into export tables.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishReceivers"
+                type="yfctype:PublishReceivers" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_RECEIVERS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>System Ids which would receive published message.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Exception queue to which exception should be routed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RealtimeFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REALTIME_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Currently must be set to 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>A reference that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceType"
+                type="yfctype:ReferenceType" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Categorization of references that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ActionResolveExceed">
+        <xsd:annotation yfc:tableName="YFS_ACTION">
+            <xsd:documentation>Stores the definition for Actions. These actions can be attached to events to create alerts, send mail, invoke services etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ActionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ACTION_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Primary key attribute of YFS_ACTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actioncode" type="yfctype:ActionCode" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONCODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Unique identifier for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actionname" type="yfctype:ActionName" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONNAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>User name for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actiontype" type="yfctype:ActionType" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONTYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Indicates if an action is system defined or user defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a COM API needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>COM API name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a stored procedure needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionSpName"
+                type="yfctype:ProcedureName" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_SP_NAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Stored procedure name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailAddress" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_ADDRESS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Address to which e-mail should be sent. Can be blanks. Template can pick the e-mail address dynamically from published data.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if e-mail needs to be sent when action is raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailTemplateFile"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_TEMPLATE_FILE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template file name for sending e-mail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if an executable needs to be run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteProgram"
+                type="yfctype:ExecuteProgram" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_PROGRAM" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Executable program run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendableCode"
+                type="yfctype:ExtendableCode" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDABLE_CODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not Used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FAX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxStylesheet"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="FAX_STYLESHEET" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GroupId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="GROUP_ID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Identifies group/category of an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a URL is invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>URL invoked as a result of HTTP action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if exception needs to be raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxTemplate"
+                type="yfctype:ExceptionTemplate" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_TEMPLATE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template for raising exceptions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxUserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_USER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>If exception needs to be sent to a particular user, link to the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a JAVA API is called</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>JAVA API name to be invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Organization code defining this action</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerType" type="yfctype:OwnerType" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if event data needs to be put into export tables.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishReceivers"
+                type="yfctype:PublishReceivers" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_RECEIVERS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>System Ids which would receive published message.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Exception queue to which exception should be routed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RealtimeFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REALTIME_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Currently must be set to 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>A reference that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceType"
+                type="yfctype:ReferenceType" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Categorization of references that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ActionList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Action"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Action">
+        <xsd:annotation yfc:tableName="YFS_ACTION">
+            <xsd:documentation>Stores the definition for Actions. These actions can be attached to events to create alerts, send mail, invoke services etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Queue">
+                    <xsd:annotation yfc:tableName="YFS_QUEUE">
+                        <xsd:documentation>Master table for exception queues.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="AuditThisQueue"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="AUDIT_THIS_QUEUE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>'Y' if assignments needs to be audited</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursAssignExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_ASSIGN_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be raised if exception is not assigned within the defined hour limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForAssignRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_ASSIGN_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which unassign alerts should be raised again</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForAssignment"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_ASSIGNMENT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Any exception in this queue must be assigned within this many hours</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForExceedRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_EXCEED_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which a re-alert should be raised for queue overflows</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForResolution"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_RESOLUTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Any exception in this queue should be resolved within this many hours</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForResolveRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_RESOLVE_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which unresolved alerts should be raised again</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursResolveExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_RESOLVE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be raised if exception is not resolved within the defined hour limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LastQueueExceedAlert"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LAST_QUEUE_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Date when last overflow exception was raised for the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaximumActiveSize"
+                            type="yfctype:Integer" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MAXIMUM_ACTIVE_SIZE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Maximum # of active exceptions that can be posted in the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaximumSizeExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MAXIMUM_SIZE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be performed if the active exceptions exceed the limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OwnerKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Organization code that owns the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OwnerType"
+                            type="yfctype:OwnerType" use="optional">
+                            <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Not used</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Priority"
+                            type="yfctype:PriorityWithDecimal" use="optional">
+                            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue priority</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForAssignAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_ASSIGN_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which unassignment exception should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForExceedAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which overflow exceptions should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForResolveAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_RESOLVE_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which unresolve exceptions should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueDescription"
+                            type="yfctype:Description" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="QUEUE_DESCRIPTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Description of a Queue.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueGroup"
+                            type="yfctype:QueueGroupId" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_GROUP" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Group id. Can be used for better organization of queues</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueId"
+                            type="yfctype:Identifier" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_ID" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Unique id</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Primary key attribute of YFS_QUEUE.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueName"
+                            type="yfctype:QueueName" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_NAME" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Name for queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="ActionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ACTION_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Primary key attribute of YFS_ACTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actioncode" type="yfctype:ActionCode" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONCODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Unique identifier for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actionname" type="yfctype:ActionName" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONNAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>User name for the action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Actiontype" type="yfctype:ActionType" use="optional">
+                <xsd:annotation yfc:columnName="ACTIONTYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Indicates if an action is system defined or user defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a COM API needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="COM_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>COM API name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a stored procedure needs to be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DbExtensionSpName"
+                type="yfctype:ProcedureName" use="optional">
+                <xsd:annotation yfc:columnName="DB_EXTENSION_SP_NAME" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Stored procedure name.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailAddress" type="yfctype:EMailID" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_ADDRESS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Address to which e-mail should be sent. Can be blanks. Template can pick the e-mail address dynamically from published data.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if e-mail needs to be sent when action is raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EmailTemplateFile"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="EMAIL_TEMPLATE_FILE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template file name for sending e-mail.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if an executable needs to be run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExecuteProgram"
+                type="yfctype:ExecuteProgram" use="optional">
+                <xsd:annotation yfc:columnName="EXECUTE_PROGRAM" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Executable program run.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendableCode"
+                type="yfctype:ExtendableCode" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDABLE_CODE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not Used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FAX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FaxStylesheet"
+                type="yfctype:LongFileName" use="optional">
+                <xsd:annotation yfc:columnName="FAX_STYLESHEET" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GroupId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="GROUP_ID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Identifies group/category of an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a URL is invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HttpUrl" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="HTTP_URL" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>URL invoked as a result of HTTP action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if exception needs to be raised.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxTemplate"
+                type="yfctype:ExceptionTemplate" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_TEMPLATE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Template for raising exceptions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InboxUserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INBOX_USER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>If exception needs to be sent to a particular user, link to the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if a JAVA API is called</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="JavaExtensionProgid"
+                type="yfctype:ApiName-255" use="optional">
+                <xsd:annotation yfc:columnName="JAVA_EXTENSION_PROGID" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>JAVA API name to be invoked</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Organization code defining this action</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OwnerType" type="yfctype:OwnerType" use="optional">
+                <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Not used</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Set to 'Y' if event data needs to be put into export tables.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PublishReceivers"
+                type="yfctype:PublishReceivers" use="optional">
+                <xsd:annotation yfc:columnName="PUBLISH_RECEIVERS" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>System Ids which would receive published message.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Exception queue to which exception should be routed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RealtimeFlag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="REALTIME_FLAG" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Currently must be set to 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_KEY" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>A reference that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReferenceType"
+                type="yfctype:ReferenceType" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_TYPE" yfc:tableName="YFS_ACTION">
+                    <xsd:documentation>Categorization of references that may be associated with an action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="QueueSubscriptionList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:QueueSubscription"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="QueueSubscription">
+        <xsd:annotation yfc:tableName="YFS_QUEUE_SUBSCRIPTION">
+            <xsd:documentation>Maintains Subscription of users to various queues. Users may subscribe to more than one Queue.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:User"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Queue">
+                    <xsd:annotation yfc:tableName="YFS_QUEUE">
+                        <xsd:documentation>Master table for exception queues.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="AuditThisQueue"
+                            type="yfctype:Flag" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="AUDIT_THIS_QUEUE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>'Y' if assignments needs to be audited</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursAssignExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_ASSIGN_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be raised if exception is not assigned within the defined hour limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForAssignRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_ASSIGN_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which unassign alerts should be raised again</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForAssignment"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_ASSIGNMENT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Any exception in this queue must be assigned within this many hours</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForExceedRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_EXCEED_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which a re-alert should be raised for queue overflows</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForResolution"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_RESOLUTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Any exception in this queue should be resolved within this many hours</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursForResolveRealert"
+                            type="yfctype:NumberOfHoursWithDecimal" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_FOR_RESOLVE_REALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Number of hours in which unresolved alerts should be raised again</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="HoursResolveExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="HOURS_RESOLVE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be raised if exception is not resolved within the defined hour limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LastQueueExceedAlert"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LAST_QUEUE_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Date when last overflow exception was raised for the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaximumActiveSize"
+                            type="yfctype:Integer" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MAXIMUM_ACTIVE_SIZE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Maximum # of active exceptions that can be posted in the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="MaximumSizeExceedAction"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="MAXIMUM_SIZE_EXCEED_ACTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Action to be performed if the active exceptions exceed the limit</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OwnerKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation yfc:columnName="OWNER_KEY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Organization code that owns the queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="OwnerType"
+                            type="yfctype:OwnerType" use="optional">
+                            <xsd:annotation yfc:columnName="OWNER_TYPE" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Not used</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Priority"
+                            type="yfctype:PriorityWithDecimal" use="optional">
+                            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue priority</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForAssignAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_ASSIGN_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which unassignment exception should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForExceedAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_EXCEED_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which overflow exceptions should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QKeyForResolveAlert"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="Q_KEY_FOR_RESOLVE_ALERT" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Queue to which unresolve exceptions should be raised</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueDescription"
+                            type="yfctype:Description" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="QUEUE_DESCRIPTION" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Description of a Queue.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueGroup"
+                            type="yfctype:QueueGroupId" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_GROUP" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Group id. Can be used for better organization of queues</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueId"
+                            type="yfctype:Identifier" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_ID" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Unique id</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueKey"
+                            type="yfctype:Key" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Primary key attribute of YFS_QUEUE.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="QueueName"
+                            type="yfctype:QueueName" use="optional">
+                            <xsd:annotation yfc:columnName="QUEUE_NAME" yfc:tableName="YFS_QUEUE">
+                                <xsd:documentation>Name for queue</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="QueueKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_KEY" yfc:tableName="YFS_QUEUE_SUBSCRIPTION">
+                    <xsd:documentation>A Queue for which subscription is maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QueueSubscriptionKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="QUEUE_SUBSCRIPTION_KEY" yfc:tableName="YFS_QUEUE_SUBSCRIPTION">
+                    <xsd:documentation>Primary key attribute of YFS_QUEUE_SUBSCRIPTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="USER_KEY" yfc:tableName="YFS_QUEUE_SUBSCRIPTION">
+                    <xsd:documentation>A user who has subscribed to a queue.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="User">
+        <xsd:annotation yfc:tableName="YFS_USER">
+            <xsd:documentation>This table stores information on users in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Activateflag" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVATEFLAG" yfc:tableName="YFS_USER">
+                    <xsd:documentation>This flag indicates whether a user is active.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BillingaddressKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BILLINGADDRESS_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The billing address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BusinessKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="BUSINESS_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The business associated with this user. Identifies a ship node when filled.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ContactaddressKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CONTACTADDRESS_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The contact address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CreatorOrganizationKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CREATOR_ORGANIZATION_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The organization that created the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Imagefile" type="yfctype:FileName" use="optional">
+                <xsd:annotation yfc:columnName="IMAGEFILE" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The image associated with a user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Localecode" type="yfctype:Locale" use="optional">
+                <xsd:annotation yfc:columnName="LOCALECODE" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The locale of a user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Loginid" type="yfctype:LoginId" use="optional">
+                <xsd:annotation yfc:columnName="LOGINID" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The login ID for the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Longdesc"
+                type="yfctype:Description-255" use="optional">
+                <xsd:annotation yfc:columnName="LONGDESC" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The long description for the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MenuId" type="yfctype:Identifier" use="optional">
+                <xsd:annotation yfc:columnName="MENU_ID" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The menu ID associated with the user. This is used to display the menus in various applications to which this user has access.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoteKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NOTE_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>A generic note for the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The organization to which a user belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentUserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_USER_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The parent user associated with this user. May be used to capture reporting hierarchy. A user has only one parent but may have many children.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Password" type="yfctype:Password" use="optional">
+                <xsd:annotation yfc:columnName="PASSWORD" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The password for the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PreferenceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PREFERENCE_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>Not used.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Pwdlastchangedon"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="PWDLASTCHANGEDON" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The last date on which the user's password was changed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Theme" type="yfctype:PresentationTheme" use="optional">
+                <xsd:annotation yfc:columnName="THEME" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The presentation theme for a user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UserKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="USER_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The primary key for the YFS_USER table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UsergroupKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="USERGROUP_KEY" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The user group associated with this user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Username" type="yfctype:UserName" use="optional">
+                <xsd:annotation yfc:columnName="USERNAME" yfc:tableName="YFS_USER">
+                    <xsd:documentation>The name of the user.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Usertype" type="yfctype:EnumUserType" use="optional">
+                <xsd:annotation yfc:columnName="USERTYPE" yfc:tableName="YFS_USER">
+                    <xsd:documentation>This field indicates the user type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

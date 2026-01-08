@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/raiseEvent/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/raiseEvent/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_raiseEvent_input.xsd" yfc:rootElement="RaiseEvent">
+        <xsd:appinfo source="yfc:structure">
+            <RaiseEvent hasAttributes="Y">
+                <KeyMap>
+                    <Key hasAttributes="Y"/>
+                </KeyMap>
+                <DataType/>
+                <XMLData/>
+                <DataMap>
+                    <Data hasAttributes="Y"/>
+                </DataMap>
+            </RaiseEvent>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="RaiseEvent" type="yfc:RaiseEventXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			 The event consists of an <code>EventId</code> and <code>TransactionId</code>, which is used to by event handlers to determine if it should process the event. The event can contain data which can be used by the event handler. This data can be passed as name/value pairs in the <code>DataMap</code>, or as XMLData.
+			 <br/>Pass <code>DataType</code> as <b>
+                        <code>0</code>
+                    </b> to supply <code>DataMaps</code>, or pass <b>
+                        <code>1</code>
+                    </b> to supply <code>XMLData</code>. 
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="RaiseEventXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:KeyMap"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DataType"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:XMLData"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DataMap"/>
+        </xsd:all>
+        <xsd:attribute name="EventId" type="yfctype:Identifier" use="optional">
+            <xsd:annotation yfc:columnName="EVENTID" yfc:tableName="YFS_EVENT">
+                <xsd:documentation>
+                    <div>
+					Identifies the event being raised by the transaction.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                <xsd:documentation>
+                    <div>
+				Optionally identifies a ship node associated with this event.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TranId" use="optional">
+            <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+				Identifies the transaction raising the event.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="KeyMap">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Key"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Key">
+        <xsd:annotation>
+            <xsd:documentation>This element is used to evaluate conditions. The condition value is given in terms of the name and the value to be considered for evaluation.
+			<p/>
+			Note if the event is enterprise-specific, then the EnterpriseCode for the event must be given as a Key. For example:
+			<br/>
+			&lt;Key Name="EnterpriseCode" Value="MyEnterprise"/&gt;
+		  		</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:CLOB" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Name of an attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:CLOB" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Value of an attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DataType">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="xsd:string"/>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="XMLData">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="xsd:string"/>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DataMap">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Data"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Data">
+        <xsd:annotation>
+            <xsd:documentation>This element contains the data being passed to the configured action for the event. If the value of DataType element is "0" then the name, value in this element is considered. If the value of DataType element is "1" then the data under the XMLData is considered. The data under XMLData element should be a well formed xml string.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:CLOB" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Name of an attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:CLOB" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Value of an attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

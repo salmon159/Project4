@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wave AcceptImmediately="" Node="Required" OverrideConcurrentWave=""
+    OverrideReleaseDate="" ReleaseNoEarlierThan="" ReleaseNoLaterThan=""
+    ShipmentGroupId="Required" xmlns="http://www.sterlingcommerce.com/documentation/WMS/beforeCreateWaveUE/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Flag" Name="AcceptImmediately">
+                <Description>
+                    <div>
+						If passed as <code>Y</code>
+                        <code>Wave</code> will be accepted at the time of creation itself. 
+						<br/>Default:<b>
+                            <code>N</code>
+                        </b> - Auto acceptance rules specified in <code>ShipmentGroup</code> are applied.
+						<br/>Valid Values:
+						<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Wave is created in  <code> Accepted(1100.20)</code>. 
+						<br/>
+                        <b>
+                            <code>N</code>
+                        </b> - Wave can be created in <code>Created (1100)</code> or in <code>Auto Accepted (1100.10)</code> status depending on <code>ShipmentGroup</code>.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Key" Name="Node">
+                <Description>
+                    <div>
+                        <Validation>
+                            <Condition>Must be a valid <code>Node</code> , in the table <code>YFS_SHIP_NODE</code>.
+					</Condition>
+                            <Error
+                                Description="WMS:Node passed does not exist." ErrorCode="WMS00042"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> must be passed.
+					</Condition>
+                            <Error Description="WMS: Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideConcurrentWave">
+                <Description>
+                    <div>
+						Pass this to override<code>NoOfConcurrentWaves</code> attribute of the <code>ShipmentGroup</code> wave belongs to.
+						<br/>Default:<b>
+                            <code>N</code>
+                        </b> - Wave will be released according to <code>NoOfConcurrentWaves</code>attribute of the <code>ShipmentGroup</code>. 
+						<br/>Valid Values:
+						<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - <code>NoOfConcurrentWaves</code> attribute of the <code>ShipmentGroup</code> will be ignored.
+						<br/>
+                        <b>
+                            <code>N</code>
+                        </b>.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideReleaseDate">
+                <Description>
+                    <div>
+						Pass this to override wave release schedule.
+						<br/>Default:<b>
+                            <code>N</code>
+                        </b> - Wave will be released according to <code>ReleaseNoEarlierThan</code> and <code>ReleaseNoLaterThan</code> attributes on the <code> wave</code>.
+						<br/>Valid Values:
+						<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - <code>ReleaseNoEarlierThan</code> and <code>ReleaseNoLaterThan</code> attributes on the <code> wave</code> will be ignored.
+						<br/>
+                        <b>
+                            <code>N</code>
+                        </b>.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="ID-10" Name="ShipmentGroupId">
+                <Description>
+                    <div>
+				Must be a valid <code>ShipmentGroupId</code> for the Node, in the table <code>YFS_SHIPMENT_GROUP</code>.
+				<Validation>
+                            <Error Description="Invalid Shipment Group." ErrorCode="WMS00128"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If not passed: 
+						  </Condition>
+                            <Error
+                                Description="WMS: Shipment Group is not passed and it is mandatory for this operation." ErrorCode="WMS00127"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ShipmentList>
+        <Shipment SellerOrganizationCode="" ShipmentKey="" ShipmentNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+			Required. Multiple <code>ShipmentLine</code>s can be associated with single wave. At least one <code>ShipmentLine</code> must exist for a wave. Pass a <code>Shipment</code> to associate or disassociate its lines from a <code>Wave</code>. <code>Shipment</code> attributes cannot be modified using this API. 
+						<Validation>
+                                <Condition>No <code>Shipment</code> passed for a new <code>Wave</code>.</Condition>
+                                <Error
+                                    Description="WMS: Wave cannot be created without shipment lines." ErrorCode="WMS00130"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ShipmentKey</code> attribute OR <code>ShipmentNo</code> and <code>SellerOrganizationCode</code> must be passed and must be valid. 
+					</Condition>
+                                <Error
+                                    Description="ShipmentKey or combination of ShipmentNo, SellerOrganizationCode and Node points to an invalid shipment" ErrorCode="YDM00017"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </Shipment>
+    </ShipmentList>
+</Wave>

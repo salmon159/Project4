@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Item AuthenticationKey="" CallingOrganizationCode="Required"
+    CanUseAsServiceTool="" Currency="" DeliveryMethod="" DemandType=""
+    DisplayLocalizedFieldInLocale="" DistributionRuleId=""
+    EntitlementDate="" ExcludeChildItemsOfModelItems=""
+    ExcludeItemsInPriceList="" ExecuteQueries="" FromGlobalItemID=""
+    FromItemGroupCode="" FromItemID="" FromUnitOfMeasure=""
+    FulfillmentType="" GetAvailabilityFromCache="Y|N"
+    GetUnpublishedItems="" GlobalItemID="" GlobalItemIDQryType=""
+    IgnoreInvalidItems="" IgnoreIsSoldSeparately="" IgnoreOrdering=""
+    InheritAttributesFromClassification="" IsForOrdering=""
+    ItemGroupCode="" ItemGroupCodeQryType="" ItemID="" ItemIDQryType=""
+    MaximumRecords="" OrganizationCode="" PriceProgramKey=""
+    PriceProgramName="" PricingDate=""
+    PurposeForDisplayClassification="" RequiresDGOverride=""
+    SellerOrganizationCode="" ShowAttributesWithDifferentValuesOnly=""
+    ShowFinalSupersededItemOnly="" ShowKeyItemAttributesOnly=""
+    StartItemKey="" SubCatalogOrganizationCode="" ToGlobalItemID=""
+    ToItemGroupCode="" ToItemID="" ToUnitOfMeasure="" UnitOfMeasure=""
+    UnitOfMeasureQryType="" UserOrganizationCode=""
+    xmlns="http://www.sterlingcommerce.com/documentation/YFS/getItemListForOrdering/input" yfc:ComplexQuerySupported="Y">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="YCM_ItemList_input.xml" IncludeXMLPath="/Item"/>
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Key" Name="AuthenticationKey">
+                <Description>Not used.</Description>
+            </Attribute>
+            <Attribute EntityName="Organization"
+                Name="CallingOrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					The organization code that the API is being invoked for.  This organization will be used to retrieve pricing data and availability.
+					<Validation>
+                            <Condition>
+                                <code>CallingOrganizationCode</code> is not passed.
+						</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>CallingOrganizationCode</code> does not identify a valid organization.</Condition>
+                            <Error
+                                Description="YFS:Invalid organization code" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Price_Program_Defn" Name="Currency" NameInEntity="Currency">
+                <Description>
+					The currency to return prices in.  If not passed, this is defaulted to the currency of the <code>CallingOrganizationCode</code>'s primary enterprise's locale.
+				</Description>
+            </Attribute>
+            <Attribute DataType="String" Name="DeliveryMethod"/>
+            <Attribute EntityName="Inventory_Demand_Type"
+                Name="DemandType" NameInEntity="Demand_Type">
+                <Description>
+					The demand type to be used when determining availability for items.  If not passed, <code>OPEN_ORDER</code> demand type is assumed.
+				</Description>
+            </Attribute>
+            <Attribute DataType="Locale" Name="DisplayLocalizedFieldInLocale">
+                <Description>
+                    <div>
+						The locale for which output should be returned in. Locale should be passed in the standard format of "language_country_variant" (e.g., "fr_FR", "en_US_CA", etc.).
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="DistributionRuleId" Name="DistributionRuleId">
+                <Description>The distribution rule ID to be used to determine the node(s) that 
+				will be used for availability checks. 
+				</Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" Name="EntitlementDate">
+                <Description>
+					The date to be used when reading entitlements.  If not passed, this date defaults to the current date.
+				</Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ExcludeChildItemsOfModelItems">
+                <Description>
+                    <div>
+			This flag indicates whether child items of an item with variations should be returned in the search results.
+			Valid values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+			Default value: <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="String" Name="ExcludeItemsInPriceList">
+                <Description>
+                    <div>Items within this Pricelist will be excluded from the search results.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ExecuteQueries">
+                <Description>
+					Indicates that query-based associations should be executed, and a list of matching items should be returned under the <code>Association</code> element.  If this flag is passed as <code>
+                        <b>N</b>
+                    </code>, query-based associations will not be returned.<br/>
+					The default value is <code>
+                        <b>N</b>
+                    </code>.
+				</Description>
+            </Attribute>
+            <Attribute EntityName="Sourcing_Rule_Header"
+                Name="FulfillmentType" NameInEntity="Fulfillment_Type">
+                <Description>
+					The fulfillment type to be used when determining availability for items.  If not passed, the <code>CallingOrganizationCode</code>'s primary enterprise's default distribution rule will be used.
+				</Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetAvailabilityFromCache">
+                <Description>
+                    <div>
+			This flag indicates whether the available quantity for the item must be computed or obtained from cache. When <code>GetAvailabilityFromCache</code> is not passed or is passed as <code>N</code>, the output for the <code>Availability</code> element will only contain the attribute <code>CurrentAvailableQty</code>, if passed in the template.
+			Valid values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+			Default value: <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="GetUnpublishedItems">
+                <Description>Indicates if unpublished items needs to be listed. The default value is <code>
+                        <b>N</b>
+                    </code>.</Description>
+            </Attribute>
+            <Attribute Name="GlobalItemID" NameInEntity="Global_Item_ID">
+                <Description>Unique Global identifier used to cross reference an item with another catalog organization.</Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreInvalidItems">
+                <Description>
+                    <div>
+						This flag indicates whether invalid items should be returned in the search results.
+						Valid values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+						Default value: <b>
+                            <code>Y</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreIsSoldSeparately">
+                <Description>
+                    <div>
+						Set this flag to consider all items regardlessly of the <code>IsSoldSeparately</code> flag.
+						Valid values: <b>
+                            <code>Y</code>
+                        </b>, <b>
+                            <code>NULL</code>
+                        </b>, or <b>
+                            <code>N</code>
+                        </b>
+						Default value: <b>
+                            <code>NULL</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreOrdering">
+                <Description>
+                    <div>
+				By default, the output is ordered by <code>ORGANIZATION_CODE</code>, <code>ITEM_ID</code>, and <code>UNIT_OF_MEASURE</code>. Pass <code>IgnoreOrdering</code> as <b>
+                            <code>Y</code>
+                        </b> to omit ordering.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Item"
+                Name="InheritAttributesFromClassification" NameInEntity="Inherit_Attrs_From_Classification"/>
+            <Attribute DataType="Flag" Name="IsForOrdering">
+                <Description>
+                    <div>
+			This flag indicates whether the item search is for ordering purpose. It must be set to <code>Y</code> to apply customer entitlements.
+			Valid values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+			Default value: <b>
+                            <code>Y</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-20" Name="ItemGroupCode">
+                <Description>
+                    <div>
+					Valid values: <b>
+                            <code>PS</code>
+                        </b> - Provided Service, <b>
+                            <code>DS</code>
+                        </b> - Delivery Service, <b>
+                            <code>PROD</code>
+                        </b> - Product Item
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Count" Name="MaximumRecords">
+                <Description>Maximum records requested for output. Defaults to 5000.</Description>
+            </Attribute>
+            <Attribute EntityName="Organization" Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+					The <code>OrganizationCode</code> attribute can be passed to override the catalog organization.  By default, the <code>CallingOrganizationCode</code>'s catalog organization code is used.  The catalog organization code corresponds to the <code>OrganizationCode</code> attribute of the items, and will be used to query the YFS_ITEM table.
+				</Description>
+            </Attribute>
+            <Attribute EntityName="Price_Program" Name="PriceProgramKey" NameInEntity="Price_Program_Key">
+                <Description>
+					The key of the price program to use to compute prices.  If not passed, this will be defaulted to the <code>CallingOrganizationCode</code>'s default price program if specified.
+					<br/>In order to compute prices, the <code>PriceProgramKey</code> or <code>PriceProgramName</code> and <code>CallingOrganizationCode</code> must be passed, if the <code>CallingOrganizationCode</code> does not define a default price program.
+				</Description>
+            </Attribute>
+            <Attribute EntityName="Price_Program"
+                Name="PriceProgramName" NameInEntity="Price_Program_Name">
+                <Description>
+					The name of the price program to use to compute prices.  This value is used along with <code>CallingOrganizationCode</code> to identify a price program.  If not passed, this will be defaulted to the <code>CallingOrganizationCode</code>'s default price program if specified.
+					<br/>In order to compute prices, the <code>PriceProgramKey</code> or <code>PriceProgramName</code> and <code>CallingOrganizationCode</code> must be passed, if the <code>CallingOrganizationCode</code> does not define a default price program.
+				</Description>
+            </Attribute>
+            <Attribute DataType="TimeStamp" Name="PricingDate">
+                <Description>
+					The date to be used when computing prices.  If not passed, this date defaults to the current date.
+				</Description>
+            </Attribute>
+            <Attribute EntityName="Classification_Purpose"
+                Name="PurposeForDisplayClassification" NameInEntity="Classification_Purpose_Code">
+                <Description>
+					If passed, the corresponding classification path of each item for the specified purpose will be returned in the output as <code>DisplayClassification</code> on the <code>Item</code>'s <code>PrimaryInformation</code> element.  The value passed as <code>PurposeForDisplayClassification</code> should correspond to a valid <code>ClassificationPurposeCode</code> for a classification purpose in the system.  A list of valid <code>ClassificationPurposeCode</code> values can be obtained from the <code>getClassificationPurposeList</code> API.
+				</Description>
+            </Attribute>
+            <Attribute EntityName="Organization"
+                Name="SellerOrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					The organization code of the Seller Organization.
+					<Validation>
+                            <Condition>
+                                <code>SellerOrganizationCode</code> does not identify a valid organization.</Condition>
+                            <Error
+                                Description="YFS:Invalid organization code" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ShowAttributesWithDifferentValuesOnly">
+                <Description>
+					Flag indicating that only attributes that have different values for different items should be returned when calling the API for item comparison.
+					Valid values: <b>
+                        <code>Y</code>
+                    </b> or <b>
+                        <code>N</code>
+                    </b>
+						Default value: <b>
+                        <code>N</code>
+                    </b>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ShowFinalSupersededItemOnly">
+                <Description>When set to <code>Y</code>, only the final valid superseded item will be returned as the superseded item.
+				<br/>Default: <code>N</code>
+                    <br/>Valid values: <code>Y</code>, <code>N</code>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="ShowKeyItemAttributesOnly">
+                <Description>
+					Flag indicating that only key item attributes should be returned when the API is called to get items for comparison.
+					Valid values: <b>
+                        <code>Y</code>
+                    </b> or <b>
+                        <code>N</code>
+                    </b>
+						Default value: <b>
+                        <code>N</code>
+                    </b>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Item" Name="StartItemKey" NameInEntity="Item_Key">
+                <Description>To start from a particular Item key.</Description>
+            </Attribute>
+            <Attribute EntityName="Organization"
+                Name="UserOrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+						Not used by <code>getItemListForOrdering</code>.  <code>CallingOrganizationCode</code> should be used instead.
+					</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ServiceType IsInStoreService="">
+        <yfc:doc>
+            <Element EntityName="Service_Type"/>
+        </yfc:doc>
+    </ServiceType>
+    <CustomerInformation BuyerUserId="" CustomerContactID=""
+        CustomerID="" CustomerLevel="" CustomerType="" Region=""
+        RelationshipType="" Vertical="">
+        <yfc:doc>
+            <Element EntityName="Entitle_Rule_Assignment">
+                <Description>This is used to provide information about the customer for which items are being retrieved when entitlements need to be applied. CustomerID is used to get 
+				customer information from the system. If both CustomerID and CustomerType are not populated, CustomerType is
+				defaulted to <code>03 - Anonymous</code>. All other attributes are used as an override to apply corresponding entitlements. </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="ContactUserId" Name="BuyerUserId">
+                    <Description>
+                        <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="ID-40" Name="CustomerContactID">
+                    <Description>
+                        <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                    </Description>
+                </Attribute>
+                <Attribute Name="CustomerID" NameInEntity="Customer_Id"/>
+                <Attribute Name="CustomerLevel" NameInEntity="Customer_Level"/>
+                <Attribute Name="CustomerType">
+                    <Description>
+                        <div> The type of customer.
+							<br/>Valid Values:
+							<br/>01 - for B2B customer
+							<br/>02 - for B2C customer
+							<br/>03 - for anonymous customer 
+							<br/>04 - for everyone
+						</div>
+                    </Description>
+                </Attribute>
+                <Attribute Name="Region">
+                    <Description>
+                        <div> Region to which entitlement rule is assigned. </div>
+                    </Description>
+                </Attribute>
+                <Attribute Name="RelationshipType" NameInEntity="Relationship_Type"/>
+                <Attribute Name="Vertical" NameInEntity="Vertical"/>
+            </Attributes>
+        </yfc:doc>
+    </CustomerInformation>
+    <ShipToAddress AddressLine1="" AddressLine2="" AddressLine3=""
+        AddressLine4="" AddressLine5="" AddressLine6=""
+        AlternateEmailID="" Beeper="" City="" Company="" Country=""
+        DayFaxNo="" DayPhone="" Department="" EMailID="" ErrorTxt=""
+        EveningFaxNo="" EveningPhone="" FirstName="" HttpUrl=""
+        IsCommercialAddress="" JobTitle="" LastName="" MiddleName=""
+        MobilePhone="" OtherPhone="" PersonID="" PersonInfoKey=""
+        PreferredShipAddress="" State="" Suffix="" TaxGeoCode=""
+        Title="" UseCount="" VerificationStatus="" ZipCode="">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YFS_Person_Info_master.xml" IncludeXMLPath="/Address"/>
+        <yfc:doc>
+            <Element EntityName="Person_Info">
+                <Description>
+					The address to be used when computing prices.  This address will be used to determine a pricing region.  Additionally, this address will be used when determining availability.  If this address is not passed, no region information will be available to determine pricing or availability.
+				</Description>
+            </Element>
+        </yfc:doc>
+    </ShipToAddress>
+    <ShipNodes>
+        <ShipNode Node="">
+            <yfc:doc>
+                <Element EntityName="Ship_Node">
+                    <Description>
+						This element can be used to indicate a specific set of nodes that <code>getItemListForOrdering</code> should use when determining availability.
+					</Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Ship_Node" Name="Node" NameInEntity="Ship_Node"/>
+                </Attributes>
+            </yfc:doc>
+        </ShipNode>
+    </ShipNodes>
+    <ItemAssociationTypeList MaximumRecords="" OrderBy="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Count" Name="MaximumRecords">
+                    <Description>Maximum records requested for output. Defaults to 1000.</Description>
+                </Attribute>
+                <Attribute DataType="Text-32" Name="OrderBy">
+                    <Description>Name of the attribute to use for sorting associations. Presently, value is defaulted to <code>Priority</code>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <ItemAssociationType Type="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="String" Name="Type"/>
+                </Attributes>
+            </yfc:doc>
+        </ItemAssociationType>
+    </ItemAssociationTypeList>
+    <ItemLocaleList>
+        <ItemLocale Country="" Language="" Variant="">
+            <PrimaryInformation Description="" ShortDescription=""/>
+        </ItemLocale>
+    </ItemLocaleList>
+    <ItemServiceAssoc ServiceItemGroupCode="" ServiceItemId=""
+        ServiceOrganizationCode="" ServiceUOM="">
+        <yfc:doc>
+            <Element EntityName="Item_Service_Assoc"/>
+        </yfc:doc>
+    </ItemServiceAssoc>
+    <PrimaryInformation AssumeInfiniteInventory="" ColorCode=""
+        ConfiguredModelKey="" CostCurrency="" CostCurrencyQryType=""
+        CountryOfOrigin="" CountryOfOriginQryType=""
+        DefaultProductClass="" DefaultProductClassQryType=""
+        Description="" DescriptionQryType="" FromCostCurrency=""
+        FromCountryOfOrigin="" FromDefaultProductClass=""
+        FromDescription="" FromIsAirShippingAllowed=""
+        FromIsForwardingAllowed="" FromIsFreezerRequired=""
+        FromIsHazmat="" FromIsProcurementAllowed="" FromItemType=""
+        FromKitCode="" FromManufacturerItem=""
+        FromManufacturerItemDesc="" FromManufacturerName=""
+        FromMasterCatalogID="" FromMaxOrderQuantity=""
+        FromMinOrderQuantity="" FromMinimumCapacityQuantity=""
+        FromPricingQuantityConvFactor="" FromPricingQuantityStrategy=""
+        FromPricingUOM="" FromPricingUOMStrategy="" FromProductLine=""
+        FromServiceTypeID="" FromShipmentConsolidationWindow=""
+        FromShortDescription="" FromStatus="" FromUnitCost=""
+        FromUnitHeight="" FromUnitHeightUOM="" FromUnitLength=""
+        FromUnitLengthUOM="" FromUnitWeight="" FromUnitWeightUOM=""
+        FromUnitWidth="" FromUnitWidthUOM="" IsAirShippingAllowed=""
+        IsAirShippingAllowedQryType="" IsConfigurable=""
+        IsDeliveryAllowed="" IsForwardingAllowed=""
+        IsForwardingAllowedQryType="" IsFreezerRequired=""
+        IsFreezerRequiredQryType="" IsHazmat="" IsHazmatQryType=""
+        IsModelItem="" IsParcelShippingAllowed="" IsPickupAllowed=""
+        IsPreConfigured="" IsProcurementAllowed=""
+        IsProcurementAllowedQryType="" IsReturnService=""
+        IsReturnable="" IsShippingAllowed="" IsStandaloneService=""
+        IsSubOnOrderAllowed="" ItemType="" ItemTypeQryType="" KitCode=""
+        KitCodeQryType="" ManufacturerItem="" ManufacturerItemDesc=""
+        ManufacturerItemDescQryType="" ManufacturerItemQryType=""
+        ManufacturerName="" ManufacturerNameQryType=""
+        MasterCatalogID="" MasterCatalogIDQryType="" MaxOrderQuantity=""
+        MaxOrderQuantityQryType="" MinOrderQuantity=""
+        MinOrderQuantityQryType="" MinimumCapacityQuantity=""
+        MinimumCapacityQuantityQryType="" ModelItemUnitOfMeasure=""
+        NumSecondarySerials="" PricingQuantityConvFactor=""
+        PricingQuantityConvFactorQryType="" PricingQuantityStrategy=""
+        PricingQuantityStrategyQryType="" PricingUOM=""
+        PricingUOMQryType="" PricingUOMStrategy=""
+        PricingUOMStrategyQryType="" ProductLine=""
+        ProductLineQryType="" RequiresProdAssociation=""
+        ServiceTypeID="" ServiceTypeIDQryType=""
+        ShipmentConsolidationWindow=""
+        ShipmentConsolidationWindowQryType="" ShortDescription=""
+        ShortDescriptionQryType="" SizeCode="" Status=""
+        StatusQryType="" TaxableFlag="" ToCostCurrency=""
+        ToCountryOfOrigin="" ToDefaultProductClass="" ToDescription=""
+        ToIsAirShippingAllowed="" ToIsForwardingAllowed=""
+        ToIsFreezerRequired="" ToIsHazmat="" ToIsProcurementAllowed=""
+        ToItemType="" ToKitCode="" ToManufacturerItem=""
+        ToManufacturerItemDesc="" ToManufacturerName=""
+        ToMasterCatalogID="" ToMaxOrderQuantity="" ToMinOrderQuantity=""
+        ToMinimumCapacityQuantity="" ToPricingQuantityConvFactor=""
+        ToPricingQuantityStrategy="" ToPricingUOM=""
+        ToPricingUOMStrategy="" ToProductLine="" ToServiceTypeID=""
+        ToShipmentConsolidationWindow="" ToShortDescription=""
+        ToStatus="" ToUnitCost="" ToUnitHeight="" ToUnitHeightUOM=""
+        ToUnitLength="" ToUnitLengthUOM="" ToUnitWeight=""
+        ToUnitWeightUOM="" ToUnitWidth="" ToUnitWidthUOM="" UnitCost=""
+        UnitCostQryType="" UnitHeight="" UnitHeightQryType=""
+        UnitHeightUOM="" UnitHeightUOMQryType="" UnitLength=""
+        UnitLengthQryType="" UnitLengthUOM="" UnitLengthUOMQryType=""
+        UnitWeight="" UnitWeightQryType="" UnitWeightUOM=""
+        UnitWeightUOMQryType="" UnitWidth="" UnitWidthQryType=""
+        UnitWidthUOM="" UnitWidthUOMQryType=""/>
+    <InventoryParameters ATPRule="" ATPRuleQryType=""
+        AdvanceNotificationTime="" AdvanceNotificationTimeQryType=""
+        CapacityQuantityStrategy="" CapacityQuantityStrategyQryType=""
+        DefaultExpirationDays="" DefaultExpirationDaysQryType=""
+        FromATPRule="" FromAdvanceNotificationTime=""
+        FromCapacityQuantityStrategy="" FromDefaultExpirationDays=""
+        FromFutureSafetyFactorPercentage="" FromInventoryMonitorRule=""
+        FromLeadTime="" FromMaximumNotificationTime=""
+        FromMinNotificationTime="" FromNodeLevelInventoryMonitorRule=""
+        FromOnhandSafetyFactorPercentage=""
+        FromOnhandSafetyFactorQuantity="" FromProcessingTime=""
+        FromTimeSensitive="" FutureSafetyFactorPercentage=""
+        FutureSafetyFactorPercentageQryType="" InventoryMonitorRule=""
+        InventoryMonitorRuleQryType="" IsFifoTracked=""
+        IsItemBasedAllocationAllowed="" IsSerialTracked="" LeadTime=""
+        LeadTimeQryType="" MaximumNotificationTime=""
+        MaximumNotificationTimeQryType="" MinNotificationTime=""
+        MinNotificationTimeQryType="" NodeLevelInventoryMonitorRule=""
+        NodeLevelInventoryMonitorRuleQryType=""
+        OnhandSafetyFactorPercentage=""
+        OnhandSafetyFactorPercentageQryType=""
+        OnhandSafetyFactorQuantity=""
+        OnhandSafetyFactorQuantityQryType="" ProcessingTime=""
+        ProcessingTimeQryType="" SerializedFlag="" TagControlFlag=""
+        TimeSensitive="" TimeSensitiveQryType="" ToATPRule=""
+        ToAdvanceNotificationTime="" ToCapacityQuantityStrategy=""
+        ToDefaultExpirationDays="" ToFutureSafetyFactorPercentage=""
+        ToInventoryMonitorRule="" ToLeadTime=""
+        ToMaximumNotificationTime="" ToMinNotificationTime=""
+        ToNodeLevelInventoryMonitorRule=""
+        ToOnhandSafetyFactorPercentage=""
+        ToOnhandSafetyFactorQuantity="" ToProcessingTime=""
+        ToTimeSensitive="" UseUnplannedInventory=""/>
+    <ClassificationCodes CommodityCode="" CommodityCodeQryType=""
+        ECCNNo="" ECCNNoQryType="" FromCommodityCode="" FromECCNNo=""
+        FromHarmonizedCode="" FromHazmatClass="" FromNAICSCode=""
+        FromNMFCClass="" FromNMFCCode="" FromPickingType=""
+        FromPostingClassification="" FromSchedule_B_Code=""
+        FromStorageType="" FromTaxProductCode="" FromUNSPSC=""
+        HarmonizedCode="" HarmonizedCodeQryType="" HazmatClass=""
+        HazmatClassQryType="" Model="" NAICSCode="" NAICSCodeQryType=""
+        NMFCClass="" NMFCClassQryType="" NMFCCode="" NMFCCodeQryType=""
+        OperationalConfigurationComplete="" PickingType=""
+        PickingTypeQryType="" PostingClassification=""
+        PostingClassificationQryType="" Schedule_B_Code=""
+        Schedule_B_CodeQryType="" StorageType="" StorageTypeQryType=""
+        TaxProductCode="" TaxProductCodeQryType="" ToCommodityCode=""
+        ToECCNNo="" ToHarmonizedCode="" ToHazmatClass="" ToNAICSCode=""
+        ToNMFCClass="" ToNMFCCode="" ToPickingType=""
+        ToPostingClassification="" ToSchedule_B_Code="" ToStorageType=""
+        ToTaxProductCode="" ToUNSPSC="" UNSPSC="" UNSPSCQryType=""/>
+    <ItemAliasList>
+        <ItemAlias AliasName="" AliasValue="" AliasValueQryType=""
+            FromAliasValue="" ToAliasValue="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </ItemAliasList>
+    <ItemExclusionList>
+        <ItemExclusion ExclusionCode="" ExclusionCodeQryType=""
+            FromExclusionCode="" ToExclusionCode="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>Used to store exclusion codes associated with an item. Can be used to store list of countries, customers etc that are excluded from ordering an item. This element is not enabled for complex query.</Description>
+                </Element>
+            </yfc:doc>
+        </ItemExclusion>
+    </ItemExclusionList>
+    <AdditionalAttributeList>
+        <AdditionalAttribute DoubleValue="" FromValue="" IntegerValue=""
+            IsInherited="" Name="" ToValue="" Value="" ValueQryType="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </AdditionalAttributeList>
+    <CategoryFilter CategoryPath="" CategoryPathQryType=""
+        FromCategoryPath="" OrganizationCode="" ToCategoryPath="">
+        <yfc:doc>
+            <Element EntityName="Category">
+                <Description>Used to filter items based on category. This element is not enabled for complex query.</Description>
+            </Element>
+        </yfc:doc>
+    </CategoryFilter>
+    <Components>
+        <Component ComponentItemID="Required" ComponentItemKey=""
+            ComponentItemKeyQryType="" ComponentOrganizationCode=""
+            ComponentUnitOfMeasure="" FromComponentItemKey=""
+            ToComponentItemKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Kit_Item">
+                    <Description>A Component Definition.  In order to correctly identify a component item, either <code>ComponentOrganizationCode</code>, <code>ComponentItemID</code> and <code>ComponentUnitOfMeasure</code> (if not blank) must be passed, or <code>ComponentItemKey</code> must be passed.</Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Item" Name="ComponentItemID" NameInEntity="Item_Id">
+                        <Description>Along with ComponentOrganizationCode and ComponentUnitOfMeasure, it identifies a component item.</Description>
+                    </Attribute>
+                    <Attribute EntityName="Item" Name="ComponentItemKey" NameInEntity="Item_Key">
+                        <Description>Component item's primary key</Description>
+                    </Attribute>
+                    <Attribute EntityName="Item"
+                        Name="ComponentOrganizationCode" NameInEntity="Organization_Code">
+                        <Description>Organization that maintains catalog.</Description>
+                    </Attribute>
+                    <Attribute EntityName="Item"
+                        Name="ComponentUnitOfMeasure" NameInEntity="Uom">
+                        <Description>Unit of measure for the Component Item</Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Component>
+    </Components>
+    <LanguageDescriptionList>
+        <LanguageDescription FromLocaleCode="" LocaleCode=""
+            LocaleCodeQryType="" ToLocaleCode="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </LanguageDescriptionList>
+    <InventoryTagAttributes BatchNo="" BatchNoQryType="" FromBatchNo=""
+        FromItemTagKey="" FromLotAttribute1="" FromLotAttribute2=""
+        FromLotAttribute3="" FromLotKeyReference="" FromLotNumber=""
+        FromManufacturingDate="" FromRevisionNo="" ItemTagKey=""
+        ItemTagKeyQryType="" LotAttribute1="" LotAttribute1QryType=""
+        LotAttribute2="" LotAttribute2QryType="" LotAttribute3=""
+        LotAttribute3QryType="" LotKeyReference=""
+        LotKeyReferenceQryType="" LotNumber="" LotNumberQryType=""
+        ManufacturingDate="" ManufacturingDateQryType="" RevisionNo=""
+        RevisionNoQryType="" ToBatchNo="" ToItemTagKey=""
+        ToLotAttribute1="" ToLotAttribute2="" ToLotAttribute3=""
+        ToLotKeyReference="" ToLotNumber="" ToManufacturingDate="" ToRevisionNo="">
+        <yfc:doc>
+            <Element EntityName="Item_Tag"/>
+        </yfc:doc>
+    </InventoryTagAttributes>
+    <ItemAttributeGroupTypeList>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+				A list of ItemAttributeGroupType can be passed to be used as filter criteria to control the item attribute group types to return in the output XML.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <ItemAttributeGroupType ClassificationPurposeCode=""
+            ItemAttributeGroupType="" yfc:DTDOccurrence="ZeroOrMany"/>
+    </ItemAttributeGroupTypeList>
+    <OrderBy>
+        <yfc:doc>
+            <Element>
+                <Description>
+                    <div>
+				If OrderBy element is passed, items returned by the API are sorted in the same order as Attribute elements passed.
+				</div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <Attribute Desc="" Name="Required" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="Flag" Name="Desc">
+                        <Description>Sort in decending order.
+						Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+						Default value: <b>
+                                <code>N</code>
+                            </b>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-32" Name="Name">
+                        <Description>Name of the attribute to use for sorting the results.</Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Attribute>
+    </OrderBy>
+</Item>

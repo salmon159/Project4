@@ -1,0 +1,70 @@
+## IBM Confidential
+## OCO Source Materials
+## 5725-D10
+## (C) Copyright IBM Corp. 2015, 2016
+
+# Graphite hostname/IP and port configuration
+graphite.host=
+graphite.port=
+
+# Enable verbose logging for exporter. Default: false
+#logging.verbose=true
+
+# Common prefix for all metrics submitted to graphtie. Each metrics submitted
+# to graphite will be prefixed with the string specified here. Optional. 
+#metrics.common.prefix=
+
+# Categorization allows defining different policies for different types 
+# of statistical data. For example, for response-time related statistics, one might
+# be more interested in min, max, average etc., whereas for statistics
+# of the form 'number of order lines', one might be interested in the total 
+# count of the data for a given period of time. Define categories and their 
+# policies in the following set of properties: 
+
+# Define names of categories here. Each category needs to be given 
+# a unique name. Note that the category with the name 'default' is reserved, 
+# and is configured explicitly later in this configuration file. 
+statistics.categories=timers,counters,jvmstat
+
+# Use the following properties to define policies for each category defined above 
+# (where <name> is the name of the category):
+# 
+# 1. The kinds of digests to be calculated for the category.
+#	statistics.category.<name>.digests=<a comma list of digests>
+# Digests available are min, max, avg, count, sum and lastval. For each digest configured, 
+# a different metric is submitted to graphite, the name of the metric being derived 
+# from the name of the statistic followed by a postfix defined by the digest. The 
+# postfix for min, max, count, avg, sum and lastval are respectively: lower, upper, count, avg, 
+# sum and value. For example, the statistic data point with name ResponseTime will generate the following 
+# metrics: RespnonseTime.lower, ResponseTime.upper, ResponseTime.count etc. depending upon 
+# the configured digests.  
+# 
+# 2. The names of statistical data that are part of this category.
+# 	statistics.category.<name>.statnames=<a comma separated list of statistical names>
+# 
+# 3. (Optionally) prefix the metric names that fall into this category with the string
+#  defined here. 
+# 	statistics.category.<name>.prefix=<a string used to prefix the metric>
+# This can be useful for creating regex based rules in graphite.  
+
+# Configuration for 'timers' category:
+statistics.category.timers.digests=min,max,sum,count,avg
+statistics.category.timers.statnames=ResponseTime
+statistics.category.timers.prefix=timer
+
+# Configuration for 'counters' category:
+statistics.category.counters.digests=sum
+statistics.category.counters.statnames=AgentPendingJobsCollected,AppServerStatsCollected,ExecuteMessageCreated,ExecuteMessageError,ExecuteMessageSuccess,GetJobsProcessed,HeartBeatsMonitored,HeartbeatRecordsPurged,NumAlertsProcessed,NumChargeReqsCreated,NumChargeTransProcessed,NumChargeTransSuccessfullyProcessed,NumFutureDateFailures,NumInventorySupplyAddnlsProcessed,NumManifestsClosed,NumManifestsErrored,NumOrderLinesBackOrdered,NumOrderLinesCreated,NumOrderLinesReleased,NumOrderLinesScheduled,NumOrderReleasesConsolidated,NumOrdersAttempted,NumOrdersBackOrdered,NumOrdersCannotBeProcessedFailures,NumOrdersClosed,NumOrdersCreated,NumOrdersReleased,NumOrdersScheduled,NumReleasesCreated,NumReleasesProcessed,NumReleasesSent,NumRouted,NumShipmentInvoicesCreated,NumShipmentsClosed,NumShipmentsConfirmed,NumShipmentsErrored,NumShipmentsMonitored,NumberOfOrderLinesShipped,SnapshotRecordsPurged
+statistics.category.counters.prefix=counter
+
+# Configuration for 'jvmstat' category:
+statistics.category.jvmstat.digests=lastval
+statistics.category.jvmstat.statnames=UsedMemory,TotalMemory,GarbageCollectionCount,GarbageCollectionTime
+statistics.category.jvmstat.prefix=jvmstat
+
+# The 'default' category captures all statistical data that are not captured by the 'statnames'
+# properties of any of the above categories. The following property is mandatory. 
+statistics.category.default.digests=min,max,sum,count,avg
+
+# The following prefix for the default category is optional. 
+statistics.category.default.prefix=default

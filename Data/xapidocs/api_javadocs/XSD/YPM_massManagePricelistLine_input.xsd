@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/massManagePricelistLine/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/massManagePricelistLine/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_massManagePricelistLine_input.xsd" yfc:rootElement="MassManage">
+        <xsd:appinfo source="yfc:structure">
+            <MassManage hasAttributes="Y">
+                <SearchCriteria>
+                    <PricelistLine hasAttributes="Y">
+                        <Item>
+                            <PrimaryInformation hasAttributes="Y"/>
+                            <CategoryFilter hasAttributes="Y"/>
+                        </Item>
+                        <PricelistHeader hasAttributes="Y"/>
+                    </PricelistLine>
+                </SearchCriteria>
+                <PricelistLineUpdate hasAttributes="Y"/>
+            </MassManage>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="MassManage" type="yfc:MassManageXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>The price list line mass manage.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="MassManageXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ComplexQuery"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SearchCriteria"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricelistLineUpdate"/>
+        </xsd:all>
+        <xsd:attribute name="MassAuditID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="MASS_AUDIT_ID" yfc:tableName="YPM_PRICELIST_LINE">
+                <xsd:documentation>
+                    <div> The unique identifier for the mass audit record. If specified the passed <code>MassAuditID</code> is used else a new one is generated. This is stamped on all the price list lines that got updated as part of this mass manage operation.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                        <b>
+                            <code>Update</code>
+                        </b> - Update the price list lines with values specified in <code>Update</code> element that matches the criteria specified under <code>SearchCriteria</code> element. 
+						<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Delete the price list lines that matches the criteria specified under <code>SearchCriteria</code> element. 
+						<Validation>
+                            <Condition>
+                                <code>Operation</code> must be passed in the input.
+							</Condition>
+                            <Error Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Pricing organization to which the configuration belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SuppressAudit" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Pass as <b>
+                            <code>Y</code>
+                        </b> to suppress generation of audits in <code>YFS_AUDIT</code> for price list line mass manage operation.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SearchCriteria">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Search criteria for the mass manage operation, If not specified the mass manage operation is applicable to all price list lines for the <code>OrganziationCode</code>.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricelistLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistLine">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_LINE">
+            <xsd:documentation>This table stores the price associated with the item and quantity tiered prices.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricelistHeader"/>
+            </xsd:all>
+            <xsd:attribute name="EndDateActive" use="optional">
+                <xsd:annotation yfc:columnName="END_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>After this date the price list line is not active.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="FromQuantity" use="optional">
+                <xsd:annotation yfc:columnName="FROM_QUANTITY" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>The quantity from which the tier begins.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="HasItemAttributes" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="HAS_ITEM_ATTRIBUTES" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>
+                        <div>
+                            <br>This field is a boolean.</br>
+                            <br>If HasItemAttributes is Yes and AttributeBasedPricing rule is Yes then PricelistlineAttr records are removed when PricelistLine is deleted.</br>
+                            <br>If HasItemAttributes is Yes and AttributeBasedPricing rule is No then exception is thrown.</br>
+                            <br>If HasItemAttributes is No and AttributeBasedPricing rule is Yes then only PricelistLine records are removed(there wont 	be any PricelistLineAttr records).</br>
+                            <br>If HasItemAttributes is No and AttributeBasedPricing rule is No then only PricelistLine records are removed.</br>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>Item for which the price is defined in this price list line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PriceTypeName"
+                type="yfctype:PriceTypeName" use="optional">
+                <xsd:annotation yfc:columnName="PRICE_TYPE_NAME" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>Price Type for this Pricelist Line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingStatus"
+                type="yfctype:PricingStatus" use="optional">
+                <xsd:annotation yfc:columnName="PRICING_STATUS" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>Indicates the status of the price list line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartDateActive" use="optional">
+                <xsd:annotation yfc:columnName="START_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>Date from which the price list line is active.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ToQuantity" use="optional">
+                <xsd:annotation yfc:columnName="TO_QUANTITY" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>Upper limit of the quantity tier. A quanity x belongs to the tier only if (FromQuatity &lt;= x &lt; ToQuantity).</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>The unit of measure of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YPM_ITEM_VW">
+            <xsd:documentation>
+                <div>The view is a subset of YFS_ITEM table. Passing this element results in check for existense of item in catalog.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PrimaryInformation"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CategoryFilter"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PrimaryInformation">
+        <xsd:annotation yfc:tableName="YPM_ITEM_VW">
+            <xsd:documentation>The view is a subset of YFS_ITEM table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YPM_ITEM_VW">
+                    <xsd:documentation>The short description of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CategoryFilter">
+        <xsd:annotation yfc:tableName="YPM_CATEGORY_ITEM_VW">
+            <xsd:documentation>Used to filter items based on category. This element is not enabled for complex query.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CategoryPath" type="yfctype:Text-800" use="optional">
+                <xsd:annotation yfc:columnName="CATEGORY_PATH" yfc:tableName="YPM_CATEGORY_ITEM_VW">
+                    <xsd:documentation>The path for the category.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistHeader">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_HDR">
+            <xsd:documentation>This table stores the price list.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AbsoluteAdjustmentOverride" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ABSOLUTE_ADJUSTMENT_OVERRIDE" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Absolute override valid only for a child price list. This adjustment is applied over the unit price obtained from the parent price list.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Price"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+                <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Prices in this price list are applicable in this currency.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-240" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Description of the price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndDateActive" use="optional">
+                <xsd:annotation yfc:columnName="END_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>After this date the price list is not active.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="InheritFromPricelistHeaderKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="INHERIT_FROM_PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>The pricelist header key of the price list from which this price list inherits its prices from.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MarkedForListPrice" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="MARKED_FOR_LIST_PRICE" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Indicates this price list is marked for listing prices. Applicable only for master price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PercentAdjustmentOverride" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PERCENT_ADJUSTMENT_OVERRIDE" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Percentage override valid only for a child price list. This adjustment is applied over the unit price obtained from the parent price list.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:PercentAdjustment"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="PricelistHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Primary key attribute of YPM_PRICELIST_HDR table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricelistName"
+                type="yfctype:PricelistName" use="optional">
+                <xsd:annotation yfc:columnName="PRICELIST_NAME" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Name of the price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingStatus"
+                type="yfctype:PricingStatus" use="optional">
+                <xsd:annotation yfc:columnName="PRICING_STATUS" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Indicates the status of the price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartDateActive" use="optional">
+                <xsd:annotation yfc:columnName="START_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Date from which the price list is active.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistLineUpdate">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Contains the attributes on the price list line to update. Required if the mass manage <code>Operation</code> is <b>
+                        <code>Update</code>
+                    </b>. This update is applied to all the price list lines that matches the price list line search criteria specified under the <code>SearchCriteria</code> element.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AbsoluteAdjustment" use="optional">
+                <xsd:annotation yfc:columnName="ABSOLUTE_ADJUSTMENT" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>
+                        <div> Absolute uplift or discount on the <code>ListPrice</code>. Value is used in conjunction with <code>AbsoluteAdjustmentUpdType</code>.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Price"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="AbsoluteAdjustmentUpdType"
+                type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> The type of update to perform. No updates happen if <code>AbsoluteAdjustment</code> attribute is void. If <code>AbsoluteAdjustmentUpdType</code> attribute is not passed or if it is void then the value specified in the <code>AbsoluteAdjustment</code> attribute is used for update, the value in the <code>AbsoluteAdjustment</code> replaces the existing value of the price list line.
+							<br/>Valid Values: 
+							<br/>
+                            <b>
+                                <code>PERCENT</code>
+                            </b> - <code>AbsoluteAdjustment</code> of price list line is updated by a percentage value specified in <code>AbsoluteAdjustment</code> attribute. 
+							<br/>
+                            <b>
+                                <code>ADD</code>
+                            </b> - <code>AbsoluteAdjustment</code> of price list line is updated by adding the value specified in <code>AbsoluteAdjustment</code> attribute.
+							<br/>None - Value in the <code>AbsoluteAdjustment</code> attribute itself is used for update. No updates happen if <code>AbsoluteAdjustment</code> attribute is void.     
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ListPrice" use="optional">
+                <xsd:annotation yfc:columnName="LIST_PRICE" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>
+                        <div> List Price of an item. Value is used in conjunction with <code>ListPriceUpdType</code>. API ensures that the least value of <code>ListPrice</code> on the price list lines after all updates is zero.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:UnitPrice"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ListPriceUpdType" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> The type of update to perform. No updates happen if <code>ListPrice</code> attribute is void. If <code>ListPriceUpdType</code> attribute is not passed or if it is void then the value specified in the <code>ListPrice</code> attribute is used for update, the value in the <code>ListPrice</code> replaces the existing value of the price list line. API ensures that the least value of <code>ListPrice</code> on the price list lines after all updates is zero.
+							<br/>Valid Values: 
+							<br/>
+                            <b>
+                                <code>PERCENT</code>
+                            </b> - <code>ListPrice</code> of price list line is updated by a percentage value specified in <code>ListPrice</code> attribute. 
+							<br/>
+                            <b>
+                                <code>ADD</code>
+                            </b> - <code>ListPrice</code> of price list line is updated by adding the value specified in <code>ListPrice</code> attribute.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PercentAdjustment" use="optional">
+                <xsd:annotation yfc:columnName="PERCENT_ADJUSTMENT" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>
+                        <div> Percent uplift or discount on the <code>ListPrice</code>. Value is used in conjunction with <code>PercentAdjustmentUpdType</code>.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:PercentAdjustment"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="PercentAdjustmentUpdType"
+                type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> The type of update to perform. No updates happen if <code>PercentAdjustment</code> attribute is void. If <code>PercentAdjustmentUpdType</code> attribute is not passed or if it is void then the value specified in the <code>PercentAdjustment</code> attribute is used for update, the value in the <code>PercentAdjustment</code> replaces the existing value of the price list line.
+							<br/>Valid Values: 
+							<br/>
+                            <b>
+                                <code>PERCENT</code>
+                            </b> - <code>PercentAdjustment</code> of price list line is updated by a percentage value specified in <code>PercentAdjustment</code> attribute. 
+							<br/>
+                            <b>
+                                <code>ADD</code>
+                            </b> - <code>PercentAdjustment</code> of price list line is updated by adding the value specified in <code>PercentAdjustment</code> attribute.
+							<br/>None - Value in the <code>PercentAdjustment</code> attribute itself is used for update. No updates happen if <code>PercentAdjustment</code> attribute is void.     
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricingStatus"
+                type="yfctype:PricingStatus" use="optional">
+                <xsd:annotation yfc:columnName="PRICING_STATUS" yfc:tableName="YPM_PRICELIST_LINE">
+                    <xsd:documentation>
+                        <div>Status of the price list line. No <code>PricingStatus</code> updates happen if this attribute is void.
+							<Validation>
+                                <Condition>Passed <code>PricingStatus</code> is not a valid value.</Condition>
+                                <Error
+                                    Description="Invalid PricingStatus." ErrorCode="YPM10012"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ComplexQuery">
+        <xsd:complexType>
+            <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+                <xsd:choice>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="And" type="yfc:ComplexQueryAnd"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="Or" type="yfc:ComplexQueryOr"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="Exp" type="yfc:ComplexQueryExp"/>
+                </xsd:choice>
+            </xsd:sequence>
+            <xsd:attribute name="Operator" use="optional">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value=""/>
+                        <xsd:enumeration value="AND"/>
+                        <xsd:enumeration value="And"/>
+                        <xsd:enumeration value="and"/>
+                        <xsd:enumeration value="OR"/>
+                        <xsd:enumeration value="Or"/>
+                        <xsd:enumeration value="or"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="ComplexQueryAnd">
+        <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+            <xsd:choice>
+                <xsd:element maxOccurs="1" minOccurs="1" name="And" type="yfc:ComplexQueryAnd"/>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Or" type="yfc:ComplexQueryOr"/>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Exp" type="yfc:ComplexQueryExp"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ComplexQueryOr">
+        <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+            <xsd:choice>
+                <xsd:element maxOccurs="1" minOccurs="1" name="And" type="yfc:ComplexQueryAnd"/>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Or" type="yfc:ComplexQueryOr"/>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Exp" type="yfc:ComplexQueryExp"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ComplexQueryExp">
+        <xsd:attribute name="Name" type="xsd:string" use="required"/>
+        <xsd:attribute name="Value" type="xsd:string" use="optional"/>
+        <xsd:attribute name="QryType" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value=""/>
+                    <xsd:enumeration value="EQ"/>
+                    <xsd:enumeration value="LIKE"/>
+                    <xsd:enumeration value="FLIKE"/>
+                    <xsd:enumeration value="NE"/>
+                    <xsd:enumeration value="GE"/>
+                    <xsd:enumeration value="LE"/>
+                    <xsd:enumeration value="GT"/>
+                    <xsd:enumeration value="LT"/>
+                    <xsd:enumeration value="ISNULL"/>
+                    <xsd:enumeration value="NOTNULL"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

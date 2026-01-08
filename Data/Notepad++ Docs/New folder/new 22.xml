@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:variable name="varAmountPerUnit" select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@EncirclePointsPerUnit"/>
+    <xsl:variable name="varCancelledQty" select="OrderLine/@ChangeInOrderedQty"/>
+    <xsl:variable name="varReversalPoints" select="(($varAmountPerUnit)*($varCancelledQty)*(-1))"/>
+    <xsl:template match="/">
+        <xsl:element name="Payment">
+            <xsl:attribute name="PaymentGateway">NetCarrots</xsl:attribute>
+            <xsl:attribute name="ChannelCode">tanishq</xsl:attribute>
+            <xsl:attribute name="OutletCode">tab</xsl:attribute>
+            <xsl:attribute name="OrganizationCode">
+                <xsl:value-of select="/Order/@EnterpriseCode"/>
+            </xsl:attribute>
+            <xsl:attribute name="MembershipNo">
+                <xsl:value-of select="/Order/Extn/@ExtnEncircleNo"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnBrand">
+                <xsl:value-of select="/Order/Extn/@ExtnBrand"/>
+            </xsl:attribute>
+            <xsl:attribute name="UniqueId">
+                <xsl:value-of select="/Order/@OrderHeaderKey"/>
+            </xsl:attribute>
+            <xsl:attribute name="RRNumber">
+                <xsl:value-of select="/Order/PaymentMethods/PaymentMethod[@PaymentType='Encircle']/@PaymentReference2"/>
+            </xsl:attribute>
+            <xsl:attribute name="ReversalPoints">
+                <xsl:value-of select="/Order/Extn/@ExtnEncirclePointsToRefund"/>
+            </xsl:attribute>
+            <xsl:attribute name="CustomerPhoneNo">
+                <xsl:value-of select="/Order/@CustomerPhoneNo"/>
+            </xsl:attribute>
+            <xsl:attribute name="CustomerEMailID">
+                <xsl:value-of select="/Order/@CustomerEMailID"/>
+            </xsl:attribute>
+            <xsl:attribute name="CountryCode">
+                <xsl:value-of select="/Order/Extn/@ExtnCountryCode"/>
+            </xsl:attribute>
+        </xsl:element>
+    </xsl:template>
+</xsl:stylesheet>

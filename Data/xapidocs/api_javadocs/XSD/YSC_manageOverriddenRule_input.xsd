@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/manageOverriddenRule/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/manageOverriddenRule/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_manageOverriddenRule_input.xsd" yfc:rootElement="OrderApprovalRule">
+        <xsd:appinfo source="yfc:structure">
+            <OrderApprovalRule hasAttributes="Y">
+                <GreexRule/>
+                <ApprovalGroupList>
+                    <ApprovalGroup hasAttributes="Y"/>
+                </ApprovalGroupList>
+            </OrderApprovalRule>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderApprovalRule" type="yfc:OrderApprovalRuleXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+            <xsd:documentation>
+                <div>
+				Specify the Rule information to be modified.  <code>OrderApprovalRuleKey</code> or a combination of <code>OrganizationCode</code> and <code>DocumentType</code> and <code>RuleID</code>.
+				
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderApprovalRuleXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:GreexRule"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ApprovalGroupList"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>. 
+						<Validation>
+                            <Condition>Overridden Rule being created or updated must have valid OrganizationCode, DocumentType,
+							RuleID and ValidationKey.  
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP92_0013"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated must have valid Approval Group if approval is required.
+							While modifying <code>IsOverride</code> from <code>X</code> (Approval) to <code>Z</code> (Do not allow) or <code>Y</code> (Allow), Approval Group list needs to be explicitly removed. 
+							</Condition>
+                            <Error
+                                Description="Approval Group not valid" ErrorCode="OMP92_0011"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has a GreexRule with invalid ReturnType. 
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has a GreexRule with invalid return attributes. 
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0009"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Overridden Rule being created or updated has effective end date that comes before
+							effective start date.  
+							</Condition>
+                            <Error
+                                Description="Overridden Rule cannot be created or updated." ErrorCode="OMP90_0020"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>GreexRule attribute contains an unexpected advanced XML rule.  
+							</Condition>
+                            <Error
+                                Description="GreexRule attribute contains an unexpected advanced XML rule." ErrorCode="OMP90_0024"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Channel" type="yfctype:Text-20" use="optional">
+            <xsd:annotation yfc:columnName="CHANNEL" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The channel for which this rule applies.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:DocumentType" use="required">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Document type to which this approval rule belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveEndDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_END_DATE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Defines the time before which the rule is effective.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveStartDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_START_DATE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Defines the time after which the rule is effective.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="IsActive" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IS_ACTIVE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>
+                    <div>
+	                    Indicates when the Overridden rule is active .
+	                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsOverride" type="yfctype:IsOverrideFlag" use="optional">
+            <xsd:annotation yfc:columnName="IS_OVERRIDE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>
+                    <div>
+	                    Indicates when approval is required for Overridden rule.
+	                    
+	                    <br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>X</code>
+                        </b> - Approval is required to proceed with the transaction.
+					<br/>
+                        <b>
+                            <code>Y</code>
+                        </b> - Allow the transaction no approval required 
+					<br/>
+                        <b>
+                            <code>Z</code>
+                        </b> -Do not allow the transaction.
+					<br/>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LaneType" type="yfctype:Text-20" use="optional">
+            <xsd:annotation yfc:columnName="LANE_TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The Lane for which this rule applies.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Message"
+            type="yfctype:OrderApprovalRuleMessage" use="optional">
+            <xsd:annotation yfc:columnName="MESSAGE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Message to be displayed when approval rule is violated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MessageCode"
+            type="yfctype:OrderApprovalRuleMessageCode" use="optional">
+            <xsd:annotation yfc:columnName="MESSAGE_CODE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Message code to be displayed when approval rule is violated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderApprovalRuleKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_APPROVAL_RULE_KEY" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The primary key of the YFS_ORDER_APPROVAL_RULE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The organization that is associated with this approval rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RegionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="REGION_KEY" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The region for which this rule applies.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RuleID"
+            type="yfctype:OrderApprovalRuleRuleID" use="required">
+            <xsd:annotation yfc:columnName="RULE_ID" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>
+                    <div>
+	                    Overridden rule identifier .
+	                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StoreType" type="yfctype:Text-20" use="optional">
+            <xsd:annotation yfc:columnName="STORE_TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The Store for which this rule applies.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Type" type="yfctype:OrderApprovalRuleType" use="optional">
+            <xsd:annotation yfc:columnName="TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Indicates whether approval limit is defined for header level or line level.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ValidationKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="VALIDATION_KEY" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>This is the reference to the validation identifier corresponding to base business rules.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="GreexRule">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+	               			The Greex format advanced XML condition associated with this overridden rule.
+	                   </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ApprovalGroupList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ApprovalGroup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ApprovalGroup">
+        <xsd:annotation yfc:tableName="YFS_APPROVAL_GROUP">
+            <xsd:documentation>The approval group table defines the approval group plans to be used for order approval</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Valid Values: <code>
+                                <b>REMOVE</b>
+                            </code>
+                            <br/>
+	                    Default Values: <code>
+                                <b>MANAGE</b>
+                            </code>
+                            <Validation>
+                                <Condition>Invalid Data: Attempt to remove non existing approval group</Condition>
+                                <Error Description="Invalid Data" ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApprovalGroupId"
+                type="yfctype:ApprovalGroupId" use="optional">
+                <xsd:annotation yfc:columnName="APPROVAL_GROUP_ID" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>Identifier for this approval group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApprovalGroupKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="APPROVAL_GROUP_KEY" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>The primary key of the YFS_APPROVAL_GROUP table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType"
+                type="yfctype:DocumentType" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>Document type to which this approval group belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSignatureMandatory"
+                type="yfctype:Text-1" use="optional">
+                <xsd:annotation yfc:columnName="IS_SIGNATURE_MANDATORY" yfc:tableName="YFS_APPROVAL_RULE_ASSOC">
+                    <xsd:documentation>
+                        <div>Indicates in case exception is caused by a person higher or equal to Min Approver role, the system will enforce minimum of self signature as approval mechanism..
+						<br/>Valid Values: 
+						<br/>
+                            <b>
+                                <code>Y</code>
+                            </b>
+                            <br/>
+                            <b>
+                                <code>N</code>
+                            </b>
+                            <br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxApprover" use="optional">
+                <xsd:annotation yfc:columnName="MAX_APPROVER" yfc:tableName="YFS_APPROVAL_RULE_ASSOC">
+                    <xsd:documentation>Indicates the highest approver in the approval plan sequence that can approve the exception.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LongSequence"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="MinApprover" use="optional">
+                <xsd:annotation yfc:columnName="MIN_APPROVER" yfc:tableName="YFS_APPROVAL_RULE_ASSOC">
+                    <xsd:documentation>Indicates the lowest approver in the approval plan sequence that can approve the exception.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:LongSequence"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>The organization that is associated with this approval group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SignaturePolicy" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="SIGNATURE_POLICY" yfc:tableName="YFS_APPROVAL_RULE_ASSOC">
+                    <xsd:documentation>
+                        <div>Indicates if approval signature is required by every one in the approval plan sequence or approval by any one in the approval plan sequence.
+						<br/>Valid Values: 
+						<br/>
+                            <b>
+                                <code>ANYONE</code>
+                            </b>
+                            <br/>
+                            <b>
+                                <code>EVERYONE</code>
+                            </b>
+                            <br/>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

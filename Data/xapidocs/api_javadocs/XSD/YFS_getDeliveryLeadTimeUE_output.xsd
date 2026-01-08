@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getDeliveryLeadTimeUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getDeliveryLeadTimeUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getDeliveryLeadTimeUE_output.xsd" yfc:rootElement="GetDeliveryLeadTime">
+        <xsd:appinfo source="yfc:structure">
+            <GetDeliveryLeadTime hasAttributes="Y">
+                <PossibleCarrierServices>
+                    <CarrierService hasAttributes="Y"/>
+                </PossibleCarrierServices>
+            </GetDeliveryLeadTime>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="GetDeliveryLeadTime" type="yfc:GetDeliveryLeadTimeXSDType"/>
+    <xsd:complexType name="GetDeliveryLeadTimeXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PossibleCarrierServices"/>
+        </xsd:all>
+        <xsd:attribute name="DeliveryLeadTime" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Transit time between from address and to address.  UOM for time is specified by TransitUOM
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OverrideTransferSchedule"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				If passed Y, if Transfer Schedule exist for the Address, It will be overridden and Transit days from UE will be used. 
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransitUnitOfMeasure"
+            type="yfctype:Text-24" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				UOM for delivery lead time.  If passed as "HR", delivery lead time will be considered in hours. Otherwise, it will be considered in days.  The UOM will be applicable to all lead time fields, including those for any carrier services specified. 
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PossibleCarrierServices">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+						Carrier services available.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:CarrierService"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CarrierService">
+        <xsd:annotation yfc:tableName="YFS_CARRIER_SERVICE">
+            <xsd:documentation>Services provided by a carrier.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CarrierServiceCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CARRIER_SERVICE_CODE" yfc:tableName="YFS_CARRIER_SERVICE">
+                    <xsd:documentation>A code that identifies a service provided by a carrier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeliveryLeadTime" type="yfctype:Number" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Transit time between from address and to address for the carrier service. UOM for time is specified by TransitUnitOfMeasure
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RejectCarrierService"
+                type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

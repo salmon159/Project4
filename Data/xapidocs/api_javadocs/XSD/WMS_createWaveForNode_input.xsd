@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/createWaveForNode/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/createWaveForNode/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_createWaveForNode_input.xsd" yfc:rootElement="Wave">
+        <xsd:appinfo source="yfc:structure">
+            <Wave hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Wave" type="yfc:WaveXSDType">
+        <xsd:annotation yfc:tableName="YFS_WAVE">
+            <xsd:documentation>
+                <div/>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="WaveXSDType">
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WAVE">
+                <xsd:documentation>
+                    <div>
+				 Mandatory
+				<Validation>
+                            <Condition>Must be a valid <code>Node</code> in table <code>YFS_SHIP_NODE</code>.
+					</Condition>
+                            <Error
+                                Description="WMS:Node passed does not exist." ErrorCode="WMS00042"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> must be passed.
+					</Condition>
+                            <Error Description="WMS: Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RecomputeShipmentGroup" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				 Optional. Valid values are "Y" and "N". If left blank, this value defaults to N.
+					Y - All shipments that are in the "Sent To Node" status and BLANK shipment group ids are considered for shipment group determination along with shipments with shipments having shipment group ids.
+					N - The system does not redetermine the shipment group for any shipment which have BLANK shipment group ids.
+    			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentGroupId" type="yfctype:ID-10" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_GROUP_ID" yfc:tableName="YFS_WAVE">
+                <xsd:documentation>
+                    <div>
+				 Optional. If passed, waves are created only for shipments belonging to passed <code>ShipmentGroupId</code>.
+				<Validation>
+                            <Condition> If <code>ShipmentGroupId</code> does not exist for the passed <code>Node</code>
+                            </Condition>
+                            <Error Description="Invalid Shipment Group." ErrorCode="WMS00128"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

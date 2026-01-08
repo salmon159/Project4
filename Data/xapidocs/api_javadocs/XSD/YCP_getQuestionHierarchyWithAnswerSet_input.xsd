@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getQuestionHierarchyWithAnswerSet/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getQuestionHierarchyWithAnswerSet/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_getQuestionHierarchyWithAnswerSet_input.xsd" yfc:rootElement="QuestionType">
+        <xsd:appinfo source="yfc:structure">
+            <QuestionType hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="QuestionType" type="yfc:QuestionTypeXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+			If <code>AnswerSetTranKey</code> is passed in the input, then it will be used to search in <code>YFS_ANSWER_SET_TRAN</code> for an answer set.<br/>  
+			Else, if <code>AnswerSetMasterKey</code> is passed in the input, then it will be used to search in <code>YFS_ANSWER_SET_MASTER</code> for an answer set.<br/>
+			Else, if <code>PrimaryTableName</code> and <code>PrimaryTableRefKey</code> are passed in the input with <code>PrimaryTableName = YFS_CUSTOMER</code>, then it will be used to search in <code>YFS_ANSWER_SET_MASTER</code> for an answer set.<br/>
+			Else, if <code>PrimaryTableName</code> and <code>PrimaryTableRefKey</code> are passed in the input, then it will be used with <code>PersonInfoKey</code> to search in <code>YFS_ANSWER_SET_TRAN</code> for an answer set.<br/>
+                <br/>
+			The aforementioned keys will not be validated against.  If they are passed but do not point to an answer set based on the search pattern mentioned above, no error will be thrown. 
+			<div>
+                    <Validation>
+                        <Condition>
+					If CallingOrganizationCode and OrganizationCode, or QuestionType, is not passed in the input.
+					</Condition>
+                        <Error
+                            Description="Missing Mandatory Parameters." ErrorCode="YFS10364"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="QuestionTypeXSDType">
+        <xsd:attribute name="AnswerSetMasterKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ANSWER_SET_MASTER_KEY" yfc:tableName="YFS_ANSWER_SET_MASTER">
+                <xsd:documentation>Primary key of answer set master.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AnswerSetTranKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ANSWER_SET_TRAN_KEY" yfc:tableName="YFS_ANSWER_SET_TRAN">
+                <xsd:documentation>Primary key of answer set tran.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CallingOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					If <code>CallingOrganizationCode</code> is passed, organization which has set up the questions for 
+					this organization is used to get the list of questions for input criteria.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_QUESTION">
+                <xsd:documentation>The organization that defined the questions.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_PERSON_INFO">
+                <xsd:documentation>
+                    <div>If the primary owner is an order, the person info record which an answer set is stored against on the order.  Only used if searching in <code>YFS_ANSWER_SET_TRAN</code>.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimaryTableName" type="yfctype:TableName" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The name of the table which stores the record of the primary owner of an answer set.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimaryTableRefKey" type="yfctype:Key" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The key for the primary owner of an answer set.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="QuestionType" type="yfctype:Text-20" use="optional">
+            <xsd:annotation yfc:columnName="QUESTION_TYPE" yfc:tableName="YFS_QUESTION">
+                <xsd:documentation>The question type.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

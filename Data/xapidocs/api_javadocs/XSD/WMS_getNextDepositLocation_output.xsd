@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/getNextDepositLocation/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/getNextDepositLocation/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_getNextDepositLocation_output.xsd" yfc:rootElement="DepositLocation">
+        <xsd:appinfo source="yfc:structure">
+            <DepositLocation hasAttributes="Y">
+                <TaskList hasAttributes="Y">
+                    <Task hasAttributes="Y"/>
+                </TaskList>
+                <DropoffList>
+                    <Location hasAttributes="Y"/>
+                </DropoffList>
+            </DepositLocation>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="DepositLocation" type="yfc:DepositLocationXSDType"/>
+    <xsd:complexType name="DepositLocationXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TaskList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:DropoffList"/>
+        </xsd:all>
+        <xsd:attribute name="DepositAll" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The specifies if all the tasks got for the user have a single target location or not.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The first suggested location for deposit.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="TaskList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Task"/>
+            </xsd:sequence>
+            <xsd:attribute name="IsConsolidatedTask"
+                type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							  Flag to indicate that the returned task is a consolidated task.
+						    </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Specifies then number of tasks fetched.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Task">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AssignedToUserId"
+                type="yfctype:LoginId" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGNED_TO_USER_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The user to whom this task is assigned.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AssignmentNo" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGNMENT_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>For Voice Based Task Execution, we have integrated with External Voice System Voxware(VLP). As Part of the integration the Task has to be updated with Assignment Number. Assignment on VLP represents a group of Tasks that are executed together in a trip. This column represents the Assignment on VLP.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AssignmentStatus"
+                type="yfctype:AssignmentStatus" use="optional">
+                <xsd:annotation yfc:columnName="ASSIGN_STATUS" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The status of the assignment to which task belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BatchHold" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_HOLD" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>This flag indicates whether the task requires batching.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DependencyHold" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="DEPENDENCY_HOLD" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>This flag indicates whether the predecessor of the current task is not yet complete, and therefore this task is held. When the predecessor task is completed, the successor tasks are released from hold by setting this flag to N.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndTimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="END_TIME_STAMP" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The time stamp of when the task status is changed to completed or cancelled.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The enterprise key that is associated with this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentId" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The specific equipment that is used to perform this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EquipmentLocationId"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="EQUIPMENT_LOCATION_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The identifier of the location associated with the location placeholder for the equipment, so that inventory in the location can be queried and tracked.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExceptionHold" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="EXCEPTION_HOLD" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>This flag indicates whether an exception has been detected.  The exception may be system detected or user detected. Y: Exception has been detected.  Exception hold reason will give the details of why the task is held. N: No prevailing exception. Once the exception is resolved, it is set to N.  This attribute is used to hold the task if inventory shortage is detected by system.  It is also used when supervisors want to hold tasks for operational reasons.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FinishNoLaterThan"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="FINISH_NO_LATER_THAN" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The timestamp for the time by which a task has to be completed. Tasks that are past or near their expected completion time are suggested first.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HoldReasonCode"
+                type="yfctype:HoldReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_REASON_CODE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The reason for the hold, if the task is held due to an exception. The system will ship with one system defined value for this field:  Y01: Inventory Shortage. Users can add more reasons during installation.  Example values are: 02: Equipment malfunction 03: Location Repair.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="HoldReasonText"
+                type="yfctype:HoldReasonText" use="optional">
+                <xsd:annotation yfc:columnName="HOLD_REASON_TEXT" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>A description of the reason, if the task is held by an explicit user action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsConsolidatedTask" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>This flag indicates whether the task is consolidated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSummaryTask" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_SUMMARY_TASK" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>This flag indicates whether the task is a summary task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The node key that is associated with this task. Since operations vary for each node, task type level attributes are maintained at a node level.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The ship node's organization code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ParentTaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="PARENT_TASK_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The identifier of the parent task of this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PredecessorTaskId"
+                type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="PREDECESSOR_TASK_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The identifier of the predecessor task. The predecessaor task should be completed or canceled prior to suggesting this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductivityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCTIVITY_KEY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The productivity key that is associated with this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The reason code for the change, if the task is changed (like priority).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>A description of the reason, if the task is changed (like priority).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RootTaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="ROOT_TASK_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The identifier of the root task whose execution led to the creation of this task.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceAisle" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_AISLE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The Aisle corresponding to the source location.  Denormalized here for better performance.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceLocationId"
+                type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_LOCATION_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The location at which the movement of a product starts in a warehouse.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceSortSequence"
+                type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_SORT_SEQUENCE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The sequence of the source sort. This should be passed to the createTask or changeTask API. This information is used by the getNextTask API to prioritize the task suggestion in a list of tasks.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceZoneId" type="yfctype:ZoneId" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_ZONE_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The Zone corresponding to the source location.  Denormalized here for better performance.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartNoEarlierThan"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="START_NO_EARLIER_THAN" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The time before which a task should not be started. Tasks are suggested only after the start no earlier than time is past.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartTimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="START_TIME_STAMP" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The time stamp of when the task status is changed to InProgress.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="TargetAisle" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_AISLE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The Aisle corresponding to the target location.  Denormalized here for better performance.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetCaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Target Case Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetLocationId"
+                type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_LOCATION_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The location at which the task ends.  This may be overridden during execution.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetPalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Target Pallet Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetSortSequence"
+                type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_SORT_SEQUENCE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The sequence of the target sort. This should be passed to the createTask or changeTask API. This information is used by the getNextTask API.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TargetZoneId" type="yfctype:ZoneId" use="optional">
+                <xsd:annotation yfc:columnName="TARGET_ZONE_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The Zone corresponding to the target location.  Denormalized here for better performance.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="TASK_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The one up number that uniquely identifies the task.  This is system generated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="TASK_KEY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The primary key for the YFS_TASK table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskPriority" type="yfctype:Priority" use="optional">
+                <xsd:annotation yfc:columnName="TASK_PRIORITY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The priority within the tasks of a specific task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskStatus" type="yfctype:Status" use="optional">
+                <xsd:annotation yfc:columnName="TASK_STATUS" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The status of the task.  Following are the values of task status:   * 1050: Draft  * 1100: Open  * 1200: Suggested  * 1300: In Progress  * 1400: Held  * 2000: Completed  * 9000: Canceled.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The task type that the user is eligible to perform.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TotalNumberOfRecords"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="isHistory" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>returns <code>'Y'</code>: if task is purged and exists in history table.<br/>
+				returns <code>'N'</code>: if task is not purged.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DropoffList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Location"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Location">
+        <xsd:annotation yfc:tableName="YFS_LOCATION">
+            <xsd:documentation>Warehouse zones are further divided into locations of different sizes where inventory is stored. Each location belongs to a zone and a node. It is classified as INTRANSIT, REGULAR, VIRTUAL, STAGING or DOCK. It has attributes like aisle number, bay number, level number etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AisleNumber" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="AISLE_NUMBER" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the aisle Number of the location. The locations belong to zones which have travel aisle's between them. A zone could belong to multiple aisles and multiple zones could belong to an aisle. But a location in a zone always belongs to one and only one aisle.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AisleSuffix" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="AISLE_SUFFIX" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>this field indicates the aisle section of the location id.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BayNumber" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="BAY_NUMBER" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the location's bay number. Typically, the aisle, level and bay put together represents the physical location of the location in a node, if they are based on coordinate system. The bay attribute of the location (x-coordinate from the beginning of the aisle) is used in arriving at locations nearest to the dedicated locations algorithm that is used in putaway. Typically, the bay attribute is contained within the location ID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CheckDigit" type="yfctype:VText-5" use="optional">
+                <xsd:annotation yfc:columnName="CHECK_DIGIT" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>Check Digit is a numeric representation of Location. It is generally used by Voice Systems to verify the Location. Location Check Digit is non unique.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DockType" type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="DOCK_TYPE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field depicts the type of the dock location. For a non-dock location, this field is set to blank. For a dock location, it is set to INBOUND if it is used exclusively for inbound activities. Similarly, it is set to OUTBOUND if is used exclusively for outbound activities. In case, the dock location is used for both inbound and outbound activities, this attribute is set to BOTH.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreezeMoveIn" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FREEZE_MOVE_IN" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This flag indicates whether the inventory is moved into the location. This is used for warehouses with certain number of locations. However, the usage of locations is phased out over a period of time.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreezeMoveOut" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FREEZE_MOVE_OUT" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This flag indicates whether inventory is moved out of the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InStagingLocationId"
+                type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="IN_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates that the inventory is dropped into the drop off locations.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSchedulable" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="LevelNumber" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="LEVEL_NUMBER" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the level number of the location. The height of the location (y-co-ordinate of the location from the floor) is classified as levels. The level attribute of the location is used in arriving at locations nearest to the dedicated locations algorithm used during the putaway process. Typically, the level attribute is contained within the location ID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationBarCode"
+                type="yfctype:LocationBarCode" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_BAR_CODE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates that a numeric barcode of the location identifier is stored for this location. The way this is intended to be used in WMS is that an RF operator when prompted to scan the location Id is also expected to scan the location bar code on the RF terminal. This ensures that the operator has traveled to the location suggested by the system and picked up or dropped off inventory at the specified location. Simply keying in the human readable form of the location ID on the RF terminal will be rejected by the system. The objective of this feature is to ensure inventory accuracy.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the unique identifier for the location. The combination of the LOCATION_ID and NODE_KEY forms the unique key for the YFS_LOCATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_KEY" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>The primary key for the YFS_LOCATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationSizeCode"
+                type="yfctype:LocationSizeCode" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field defines the capacity of the location. All locations having the same size (dimensions and ability to hold the same weight) are classified under the same size code. This maps to the primary key attribute of the YFS_LOCATION_SIZE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationType"
+                type="yfctype:EnumLocationType" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_TYPE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field is a system defined classification of location to aid association of locations of certain types for certain other operations with WMS. The supported types are: INTRANSIT (Mobile locations), STAGING, VIRTUAL, REGULAR and DOCK. For example, all equipment locations should be of type INTRANSIT.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MoveInSeqNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="MOVE_IN_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field is used by task management to suggest location while moving in the inventory (putaway). The putaway location selection algorithm uses this information to select locations from a list of locations based on the move in sequence.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MoveOutSeqNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="MOVE_OUT_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field is used by task management to suggest location while moving out inventory (picking). The pick location selection algorithm uses this information to select locations from a list of locations based on its move in sequence.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>The primary key for the YFS_LOCATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OutStagingLocationId"
+                type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="OUT_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the Out Drop off Location where moves originated at this location, and may be dropped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StorageCode" type="yfctype:StorageCode" use="optional">
+                <xsd:annotation yfc:columnName="STORAGE_CODE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field is an attribute of the location that allows the warehouse to store items with similar storage profile as that of the location.  For example, hazardous inflammable items need locations close to fire extinguishers. In this case the locations will be marked as having a storage code, which is suitable for storing Inflammable items. This ensures that only inflammable items get to these locations.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VelocityCode"
+                type="yfctype:VelocityCode" use="optional">
+                <xsd:annotation yfc:columnName="VELOCITY_CODE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates that the items are classified as 'A', 'B' or 'C' class items based on whether they are fast selling, not so fast selling and low selling items. These item classifications are typically followed by all enterprises to optimize certain operations such as sourcing and stocking. The reason to have locations that prefer certain velocity codes is to have locations closer to dock stocking 'A' class items, and locations furthest away from the dock stocking 'C' class items. The velocity code is a preference on the location and not a constraint. If 'A' class items fill up all locations meant for 'A' class items, then they can be moved to 'B' and later 'C'. Similarly, 'C' can go to 'B' and 'A' for lack of space in the respective locations preferred for a specific velocity code. The 'B' class items move into 'C' and then into 'A'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="XCoOrdinate" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="X_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the X co-ordinate of the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="YCoOrdinate" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="Y_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the Y co-ordinate of the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZCoOrdinate" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="Z_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the Z co-ordinate of the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+                <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>This field indicates the zone to which a location belongs. This when associated with the  node key identifies a unique zone within the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/triggerAgent/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/triggerAgent/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_triggerAgent_input.xsd" yfc:rootElement="TriggerAgent">
+        <xsd:appinfo source="yfc:structure">
+            <TriggerAgent hasAttributes="Y">
+                <CriteriaAttributes>
+                    <Attribute hasAttributes="Y"/>
+                </CriteriaAttributes>
+            </TriggerAgent>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="TriggerAgent" type="yfc:TriggerAgentXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			 The Api takes either <code> CriteriaId </code> or a combination of <code>BaseTransactionId</code> and <code>ProcessType</code> as the input.The attribute <code> CommitOnParent </code> helps the caller to commit the transaction along with the parent transaction.
+			 If <code>CriteriaId </code> is passed as input to this api, each attribute of <code> CriteriaAttributes </code> element override the corresponding attribute configured for <code>CriteriaId </code>. 
+			 If <code>CriteriaId </code> is not passed, the attributes passed in the <code> CriteriaAttributes </code> element are used to trigger the agent that corresponds to these criteria attributes. 
+			<Validation>
+                        <Condition>Either CriteriaId or both BaseTransactionId and ProcessType should be passed.
+				</Condition>
+                        <Error
+                            Description="Either CriteriaId or both BaseTransactionId and ProcessType should be passed." ErrorCode="YCP0327"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>CriteriaId if passed cannot be blank.
+				</Condition>
+                        <Error Description="CriteriaId cannot be blank." ErrorCode="YCP0328"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>BaseTransactionId if passed cannot be blank.
+				</Condition>
+                        <Error
+                            Description="BaseTransactionId cannot be blank." ErrorCode="YCP0329"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>ProcessType if passed cannot be blank.
+				</Condition>
+                        <Error
+                            Description="ProcessType cannot be blank." ErrorCode="YCP0330"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If CriteriaId is passed  and the record is not found in the database.
+				</Condition>
+                        <Error
+                            Description="CriteriaId not found in database." ErrorCode="YCP0331"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If ProcessType is passed  and the record is not found in the database.
+				</Condition>
+                        <Error
+                            Description="ProcessType not found in database." ErrorCode="YCP0332"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If BaseTransactionId is passed  and the record is not found in the database.
+				</Condition>
+                        <Error
+                            Description="BaseTransactionId not found in database." ErrorCode="YCP0333"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If there are no transaction records  matching the input criteria.
+                                </Condition>
+                        <Error
+                            Description="No transaction records found matching the input criteria." ErrorCode="YCP0334"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="TriggerAgentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CriteriaAttributes"/>
+        </xsd:all>
+        <xsd:attribute name="BaseTransactionId" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="BASE_TRANID" yfc:tableName="YFS_BASE_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+					The unique identifier for a base transaction.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CommitOnParent" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					If this is set to 'Y', the commit of this API depends on the parent transaction. By default this is set to 'Y'.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CriteriaId" type="yfctype:AgentCriteriaId" use="optional">
+            <xsd:annotation yfc:columnName="AGENT_CRITERIA_ID" yfc:tableName="YFS_AGENT_CRITERIA">
+                <xsd:documentation>
+                    <div>
+					The unique identifier of an agent criterion.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcessType" type="yfctype:ProcessType-40" use="optional">
+            <xsd:annotation yfc:columnName="PROCESS_TYPE" yfc:tableName="YFS_BASE_PROCESS_TYPE">
+                <xsd:documentation>
+                    <div>
+					Unique identifier for a base process type.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="CriteriaAttributes">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					 The matching criteria attribures are provided as  child elements. This is not taken into account if the input has <code> CriteriaId </code>.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Attribute"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Attribute">
+        <xsd:annotation yfc:tableName="YFS_ATTRIBUTE">
+            <xsd:documentation>This table stores attribute definitions. Attributes represent characteristics of entities and can be assigned to an attribute group.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="Value" type="yfctype:String" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

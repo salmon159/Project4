@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2016 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<SplitShipment xmlns="http://www.sterlingcommerce.com/documentation/YDM/splitShipment/input">
+    <Source yfc:DTDOccurrence="REQUIRED">
+        <Shipment SellerOrganizationCode="" ShipNode="" ShipmentKey=""
+            ShipmentNo="" yfc:DTDOccurrence="REQUIRED">
+            <yfc:doc>
+                <Element EntityName="Shipment">
+                    <Description>
+                        <div>The Shipment. Pass  <code>ShipmentKey</code>
+                            <i>or</i>
+                            <code>ShipmentNo</code>, <code>ShipNode</code> and <code>SellerOrganizationCode</code> to identify the shipment. Shipment lines with quantity or containers are moved from the shipment specified under <code>Source</code> element to the shipment specified under <code>Target</code> shipment.
+						<Validation>
+                                <Condition>Either <code>ShipmentLines</code> or <code>Containers</code> must be specified and not both.</Condition>
+                                <Error
+                                    Description="Input document is null or its contents are not as expected in the API documentation." ErrorCode="YCP0073"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Shipment should not have been invoiced.
+				</Condition>
+                                <Error
+                                    Description="Certain modifications are not allowed on invoiced shipment." ErrorCode="YDM77_00002"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <Containers>
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If any of the <code>Containers</code> contain a logical kit component and if all the components of the logical kit are not present in the containers being moved in same kit ratio.</Condition>
+                                    <Error
+                                    Description="Invalid quantity break up." ErrorCode="YDM00203"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+                <Container CaseId="" ContainerNo="" ContainerScm=""
+                    ContainerType="" PalletId="" ShipmentContainerKey="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Shipment_Container"/>
+                        <Attributes>
+                            <Attribute DataType="LPNNo" Name="CaseId">
+                                <Description>
+                                    <div> An unique number which helps identify the container. </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Shipment_Container"
+                                Name="ContainerScm" NameInEntity="Container_Scm">
+                                <Description>
+                                    <div> An unique number which helps identify the container. </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="LPNNo" Name="PalletId">
+                                <Description>
+                                    <div> An unique number which helps identify the container. </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <TaskList>
+                        <Task TaskId="" TaskKey="" yfc:DTDOccurrence="ZeroOrMany">
+                            <yfc:doc>
+                                <Element EntityName="Task">
+                                    <Description>
+                                    <div>
+                                    <Validation>
+                                    <Condition>
+													Task should be associated to shipment container being moved. 
+												</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+													Task should not be a summary task. 
+												</Condition>
+                                    <Error
+                                    Description="Summary task cannot be accepted" ErrorCode="YCP0155"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+													Task should not be completed or cancelled status. 
+												</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Element>
+                                <Attributes>
+                                    <Attribute Name="TaskId">
+                                    <Description>
+                                    <div>
+												The TaskId which identifies the task. Pass either the <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+												<Validation>
+                                    <Condition>Neither <code>TaskKey</code> nor <code>TaskId</code> are passed. 
+													</Condition>
+                                    <Error
+                                    Description="Task details not passed" ErrorCode="YCP0147"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Passed value does not identify an existing task. 
+													</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                    <Attribute Name="TaskKey">
+                                    <Description>
+                                    <div>
+												The key which identifies the task. Pass either the <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+												<Validation>
+                                    <Condition>Neither <code>TaskKey</code> nor <code>TaskId</code> are passed. 
+													</Condition>
+                                    <Error
+                                    Description="Task details not passed" ErrorCode="YCP0147"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Passed value does not identify an existing task. 
+													</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                        </Task>
+                    </TaskList>
+                </Container>
+            </Containers>
+            <Notes>
+                <Note AuditTransactionId="" ContactReference=""
+                    ContactTime="" ContactType="" ContactUser=""
+                    CustomerSatIndicator="" NoteText="" Priority=""
+                    ReasonCode="" SequenceNo="" Tranid="" Tranname=""
+                    VisibleToAll="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Notes"/>
+                        <Attributes>
+                            <Attribute DataType="Text-50" Name="Tranname">
+                                <Description>
+							Specifies the name of the Transaction
+						</Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <User Username="" Usertype=""/>
+                </Note>
+            </Notes>
+            <ShipmentLines>
+                <ShipmentLine DocumentType="" ItemID="" OrderNo=""
+                    PrimeLineNo="" Quantity="Required" ReleaseNo=""
+                    ShipmentLineKey="" ShipmentLineNo=""
+                    ShipmentSubLineNo="" SubLineNo="" UnitOfMeasure="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Shipment_Line">
+                            <Description>
+                                <div>To identify the <code>ShipmentLine</code>, pass either <code>ShipmentLineKey</code>
+                                    <i>or</i>
+                                    <code>ShipmentLineNo</code> and <code>ShipmentSubLineNo</code>
+                                    <i>or</i> Order attributes. 
+								<br/>If <code>ShipmentLine</code> is a logical kit parent line then kit component lines also will be considered in the proper kit ratio.
+								<br/>If <code>ShipmentLine</code> is a bundle parent line then the bundle component lines that are not specified for splitting will be moved to the target shipment. The quantity moved from bundle components is minimum of (Quantity Available to Split, KitQty * Parent Quantity Specified).
+								<br/>If <code>ShipmentLine</code> is a bundle component line then the bundle parent lines up to the bundle root will be pulled to the target shipment. 
+								</div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="String" Name="DocumentType"/>
+                            <Attribute Name="Quantity">
+                                <Description>
+                                    <div>The <code>Quantity</code> with the source shipment line is updated. The remaining line quantity is added to the target shipment. 
+									</div>
+                                    <Validation>
+                                    <Condition>If the <code>Quantity</code> is greater than uncontainerized quantity.
+										</Condition>
+                                    <Error
+                                    Description="Invalid quantity break up." ErrorCode="YDM00203"/>
+                                    </Validation>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <ShipmentLineInvAttRequest BatchNo=""
+                        LotAttribute1="" LotAttribute2=""
+                        LotAttribute3="" LotKeyReference="" LotNumber=""
+                        ManufacturingDate="" RevisionNo="">
+                        <yfc:doc>
+                            <Element EntityName="Shipment_Line_Req_Tag">
+                                <Description>
+                                    <div>
+										Information related to requested tag details for the shipment line. To identify the <code>ShipmentLineInvAttRequest</code> pass the Tag Unique Attributes: <code>LotNumber</code>, <code>BatchNo</code>, <code>RevisionNo</code>.
+									</div>
+                                </Description>
+                            </Element>
+                        </yfc:doc>
+                    </ShipmentLineInvAttRequest>
+                    <ShipmentTagSerials>
+                        <ShipmentTagSerial BatchNo="" LotAttribute1=""
+                            LotAttribute2="" LotAttribute3=""
+                            LotKeyReference="" LotNumber=""
+                            ManufacturingDate="" Quantity=""
+                            RevisionNo="" SerialNo="" ShipByDate=""
+                            ShipmentTagSerialKey="" yfc:DTDOccurrence="ZeroOrMany">
+                            <yfc:doc>
+                                <Element EntityName="Shipment_Tag_Serial">
+                                    <Description>
+                                    <div>
+									Additional information related to tag number, serial number, ship by date for a shipment line is stored in this table. If the shipment line item is tagged, <code>ShipmentTagSerial</code> has to be specified to move the tagged shipment line quantity. To identify the <code>ShipmentTagSerial</code> pass <code>ShipmentTagSerialKey</code>, or  <code>SerialNo</code>, or <code>ShipByDate</code> or Tag Attributes: <code>LotNumber</code>, <code>LotKeyReference</code>, <code>ManufacturingDate</code>, <code>LotAttribute1</code>, <code>LotAttribute2</code>, <code>LotAttribute3</code>, <code>BatchNo</code>, <code>RevisionNo</code>. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+									  <Validation>
+                                    <Condition>When sum of tagged quantity of the line and containerized quantity is greater than ShipmentLine quantity.</Condition>
+                                    <Error
+                                    Description="Invalid quantity break up." ErrorCode="YDM00203"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Element>
+                            </yfc:doc>
+                        </ShipmentTagSerial>
+                    </ShipmentTagSerials>
+                    <TaskList>
+                        <Task TaskId="" TaskKey="" yfc:DTDOccurrence="ZeroOrMany">
+                            <yfc:doc>
+                                <Element EntityName="Task">
+                                    <Description>
+                                    <div>
+                                    <Validation>
+                                    <Condition>
+													Task should be associated to shipment line being split. 
+												</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+													Task should not be a summary task. 
+												</Condition>
+                                    <Error
+                                    Description="Summary task cannot be accepted" ErrorCode="YCP0155"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+													Task should not be completed or cancelled status. 
+												</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+													The total quantity associated to all tasks should be less than or equal to shipment line quantity being split. 
+												</Condition>
+                                    <Error
+                                    Description="Invalid Quantity Breakup" ErrorCode="YDM00203"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                </Element>
+                                <Attributes>
+                                    <Attribute Name="TaskId">
+                                    <Description>
+                                    <div>
+												The id which identifies the task. Pass either the <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+												<Validation>
+                                    <Condition>
+														Neither <code>TaskKey</code> nor <code>TaskId</code> are passed. 
+													</Condition>
+                                    <Error
+                                    Description="Task details not passed" ErrorCode="YCP0147"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+														Passed value does not identify an existing task. 
+													</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                    <Attribute Name="TaskKey">
+                                    <Description>
+                                    <div>
+												The key which identifies the task. Pass either the <code>TaskKey</code> or <code>TaskId</code> to identify the task.
+												<Validation>
+                                    <Condition>Neither <code>TaskKey</code> nor <code>TaskId</code> are passed. 
+													</Condition>
+                                    <Error
+                                    Description="Task details not passed" ErrorCode="YCP0147"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Passed value does not identify an existing task. 
+													</Condition>
+                                    <Error
+                                    Description="Invalid Task" ErrorCode="YCP0111"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                        </Task>
+                    </TaskList>
+                </ShipmentLine>
+            </ShipmentLines>
+        </Shipment>
+    </Source>
+    <Target>
+        <Shipment SellerOrganizationCode="" ShipNode="" ShipmentKey="" ShipmentNo="">
+            <yfc:doc>
+                <Element EntityName="Shipment">
+                    <Description>
+                        <div>
+                            <Validation>
+                                <Condition>Shipment should not have been invoiced.
+				</Condition>
+                                <Error
+                                    Description="Certain modifications are not allowed on invoiced shipment." ErrorCode="YDM77_00002"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Shipment"
+                        Name="SellerOrganizationCode" NameInEntity="Seller_Organization_Code">
+                        <Description>
+                            <div>
+				The seller organization to which the shipment belongs. 
+			</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Shipment" Name="ShipNode" NameInEntity="ShipNode_Key">
+                        <Description>
+                            <div>
+				The ship node where the shipment was created. 
+			</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Shipment" Name="ShipmentKey" NameInEntity="Shipment_Key">
+                        <Description>
+                            <div>
+				The primary key of the target shipment 
+			</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Shipment" Name="ShipmentNo" NameInEntity="Shipment_No">
+                        <Description>
+                            <div>
+				Part of the information that identifies a Shipment. Indicates the target shipment .
+			</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </Shipment>
+    </Target>
+</SplitShipment>

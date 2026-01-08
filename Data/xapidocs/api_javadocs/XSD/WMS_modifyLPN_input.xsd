@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/modifyLPN/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/modifyLPN/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_modifyLPN_input.xsd" yfc:rootElement="ModifyLPN">
+        <xsd:appinfo source="yfc:structure">
+            <ModifyLPN hasAttributes="Y">
+                <LPN hasAttributes="Y">
+                    <Receipt hasAttributes="Y"/>
+                    <ParentLPN hasAttributes="Y"/>
+                </LPN>
+                <Audit hasAttributes="Y"/>
+            </ModifyLPN>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ModifyLPN" type="yfc:ModifyLPNXSDType"/>
+    <xsd:complexType name="ModifyLPNXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:LPN"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Audit"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>
+                    <div>
+					Inventory Organization Code. The Enterprise whose product information is being stored.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed. 
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if zone in which LPN is created is not dedicated to this, but dedicated to other Enterprises. 
+							</Condition>
+                            <Error
+                                Description="Zone-Enterprise constraint violated." ErrorCode="WMS00091"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if inventory creation violates the storage constraints defined for the zone.
+							</Condition>
+                            <Error
+                                Description="Storage Constraint for the zone is violated." ErrorCode="WMS00102"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:ShipNode" use="required">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                <xsd:documentation>
+                    <div>
+					Indicates the node or warehouse where the LPN is being created.
+						<Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> must be passed. 
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="LPN">
+        <xsd:annotation yfc:tableName="YFS_LPN_HDR">
+            <xsd:documentation>
+                <div>
+					Input XML must contain this element.
+						<Validation>
+                        <Condition>Error if <code>LPN</code> not passed. 
+							</Condition>
+                        <Error Description="The Input XML is Invalid." ErrorCode="WMS00024"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The LPN dimensions must be compatible with the location dimensions.
+							</Condition>
+                        <Error Description="Capacity not enough." ErrorCode="WMS00001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ParentLPN"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A CaseId. Id through which the inventory being tracked throughout the node.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>CaseId</code> or <code>PalletId</code> should exist.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CaseQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="CASE_QUANTITY" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+						Case quantity of the <code>LPN</code>. The attribute is significant only for single SKU pallet LPNs.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DimensionUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="DIMENSION_UOM" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+						The new unit of measure in which the <code>length</code>, <code>width</code> and <code>height</code> of <code>LPN</code> will be measured.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Height" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="HEIGHT" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+                            <code>Height</code> of the <code>LPN</code>. Specify this to override the existing dimension of the <code>LPN</code>.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Length" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="LENGTH" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+                            <code>Length</code> of the <code>LPN</code>. Specify this to override the existing dimension of the <code>LPN</code>.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A PalletId. Id through which the inventory being tracked throughout the node.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId not passed in the input." ErrorCode="WMS00011"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Passed <code>CaseId</code> or <code>PalletId</code> should exist.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+						Specifies the receipt to which LPN belongs.
+							<Validation>
+                                <Condition>If passed, should be a valid <code>ReceiptHeaderKey</code> in the system.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>
+                        <div>
+							The new <code>Segment</code> for particular enterprise or organization.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>
+                        <div>
+							The new <code>SegmentType</code> for particular enterprise or organization.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Weight" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="WEIGHT" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+						Gross weight of the <code>LPN</code> with weight of inventory included in it. Specify this to override the existing dimension of the <code>LPN</code>.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WeightUOM" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="WEIGHT_UOM" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+						The new unit of measure in which the <code>Weight</code> of <code>LPN</code> will be measured.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Width" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="WIDTH" yfc:tableName="YFS_LPN_HDR">
+                    <xsd:documentation>
+                        <div>
+                            <code>Width</code> of the <code>LPN</code>. Specify this to override the existing dimension of the <code>LPN</code>.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>
+                        <div>
+								Indicates the receipt to which <code>LPN</code> belongs.
+									<Validation>
+                                <Condition>If passed, should be a valid receipt number.
+										</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ParentLPN">
+        <xsd:annotation yfc:tableName="YFS_LPN_HDR">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>Case ID/Pallet ID of the Parent LPN must match with that of the LPN.
+						</Condition>
+                        <Error
+                            Description="CaseId/PalletId exists at a different location." ErrorCode="WMS00014"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A CaseId. Gives the LPN information for adjustment.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> must exist if passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Parent <code>CaseId</code> or <code>PalletId</code> cannot be the same as  <code>CaseId</code> or <code>PalletId</code> being modified.
+								</Condition>
+                                <Error
+                                    Description="LPN cannot have parent as itself." ErrorCode="WMS00212"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+						A PalletId. Gives the LPN information for adjustment.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> must exist if passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Audit">
+        <xsd:annotation yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+            <xsd:documentation>Stores audit information for every single location inventory transaction.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-24" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>The document type for the inventory transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>
+                        <div>
+						Gives the reason code for the inventory transaction. The inventory adjustments wil be done against this reason code. Although this is not mandatory, it is recommended that it be passed.
+							<Validation>
+                                <Condition>Should be a valid reason code in the system.
+								</Condition>
+                                <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ReasonCode</code> should not be associated with a bin location.
+								</Condition>
+                                <Error
+                                    Description="Reason Code associated to a bin location." ErrorCode="WMS00192"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>The description of the reason for the inventory adjustment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference3" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_3" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference4" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_4" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference5" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_5" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

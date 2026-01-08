@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Batch BatchKey="Conditional" BatchNo="Conditional" OrganizationCode=""
+    UserId="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/registerBatchCompletion/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute Name="BatchKey">
+                <Description>
+                    <div>
+						Either <code>BatchKey</code> OR <code>BatchNo</code> must be passed.
+						<Validation>
+                            <Condition>Neither <code>BatchKey</code> nor <code>BatchNo</code> are passed. 
+							</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Passed value does not identify an existing batch. 
+							</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="BatchNo">
+                <Description>
+                    <div>
+						Either <code>BatchKey</code> OR <code>BatchNo</code> must be passed.
+						<Validation>
+                            <Condition>Neither <code>BatchKey</code> nor <code>BatchNo</code> are passed. 
+							</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Passed value does not identify an existing batch. 
+							</Condition>
+                            <Error Description="No record found" ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Task" Name="UserId" NameInEntity="Assigned_To_User_Id">
+                <Description>
+                    <div>	The user who completes the tasks in the batch. Mandatory if tasks are unassigned at the time of batch completion.
+						<Validation>
+                            <Condition>Mandatory if any task in the batch is not assigned to any user 
+							</Condition>
+                            <Error
+                                Description="Task not assigned to any user" ErrorCode="YCP0221"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Passed value does not identify an existing user. 
+							</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If a task is already assigned to a user then either passed user id (or user id from context) should be same as what is on the task or the user on the task should not be logged in to the system at the time of completion. 
+							</Condition>
+                            <Error
+                                Description="No other user can register a task when assigned user is logged in." ErrorCode="YCP0142"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Tasks>
+        <Task AssignedToUserId="" EquipmentId="" EquipmentLocationId=""
+            SourceLocationId="" TargetLocationId="" TaskId="" TaskKey="" yfc:DTDOccurrence="REQUIRED">
+            <Inventory InventoryStatus="" Quantity="" SourceCaseId=""
+                SourcePalletId="" TargetCaseId="" TargetPalletId="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="LPNNo" Name="SourceCaseId" NameInEntity="Source_LPN_No">
+                            <Description>
+                                <div>Source Case Id of the task</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="LPNNo"
+                            Name="SourcePalletId" NameInEntity="Source_LPN_No">
+                            <Description>
+                                <div>Source Pallet Id of the task</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="LPNNo" Name="TargetCaseId" NameInEntity="Target_LPN_No">
+                            <Description>
+                                <div>Target Case Id of the task</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="LPNNo"
+                            Name="TargetPalletId" NameInEntity="Target_LPN_No">
+                            <Description>
+                                <div>Target Pallet Id of the task</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <TagAttributes BatchNo="" LotAttribute1=""
+                    LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                    LotNumber="" ManufacturingDate="" RevisionNo="">
+                    <yfc:doc>
+                        <Element EntityName="Inventory_Tag"/>
+                    </yfc:doc>
+                </TagAttributes>
+                <SerialNumberDetails>
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+					One or more <code>SerialNumberDetails</code> can be passed.  Each serial number detail is applicable to only one unit. If  serial number detail are not passed for all the units (Task, Inventory, and Quantity) that are moving into completed status, the rest of the units move with no serial number.
+					</div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                    <SerialRangeList>
+                        <SerialRange FromSerialNo="" ToSerialNo="" yfc:DTDOccurrence="OneOrMany">
+                            <yfc:doc>
+                                <Attributes>
+                                    <Attribute DataType="SerialNo" Name="FromSerialNo">
+                                    <Description>
+                                    <div>Staring serial number of a range for item. 
+										<Validation>
+                                    <Condition> From Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                    <Attribute DataType="SerialNo" Name="ToSerialNo">
+                                    <Description>
+                                    <div>Ending serial number of a range for item. 
+										<Validation>
+                                    <Condition> From Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+											</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                        </SerialRange>
+                    </SerialRangeList>
+                    <SerialNumberDetail SerialNo="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SerialNo" NameInEntity="Serial_No"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </SerialNumberDetail>
+                </SerialNumberDetails>
+            </Inventory>
+        </Task>
+    </Tasks>
+</Batch>

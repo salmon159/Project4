@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/confirmDraftOrder/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/confirmDraftOrder/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_confirmDraftOrder_input.xsd" yfc:rootElement="ConfirmDraftOrder">
+        <xsd:appinfo source="yfc:structure">
+            <ConfirmDraftOrder hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ConfirmDraftOrder" type="yfc:ConfirmDraftOrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+			The order entity which contains the description of the order. The <code>OrderHeaderKey</code> attribute OR the <code>EnterpriseCode</code> and <code>OrderNo</code> attributes must be passed.
+			<Validation>
+                        <Condition>The <code>OrderHeaderKey</code> attribute OR the <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> attributes must be passed and must be valid.
+				</Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ConfirmDraftOrderXSDType">
+        <xsd:attribute name="BypassPricing" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Optional. This flag indicates whether processing for pricing should be performed.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>If set to <b>
+                            <code>Y</code>
+                        </b>, processing for pricing will not be performed. It is assumed that pricing information is provided in the input to the api.
+               	</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The primary key for the YFS_ORDER_HEADER table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SelectMethod" type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				This attribute determines whether database select operations are carried out in the <b>
+                            <code>WAIT</code>
+                        </b> or <b>
+                            <code>NO_WAIT mode</code>
+                        </b>.
+				<br/>Default: <b>
+                            <code>NO_WAIT</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SkipBOMValidations" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Determines whether BOM XML specific validations should be skipped. Default: N
+        		</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="N"/>
+                    <xsd:enumeration value="Y"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="UpdateOrderDateOnConfirm"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Determines whether the <code>OrderDate</code> should be updated when confirming the draft order.
+                    If set to <code>Y</code>, the <code>OrderDate</code> will be set to the current date
+                    if the <code>OrderDate</code> is in the past. If set to <code>N</code>, the 
+                    <code>OrderDate</code> will remain unchanged. The default value will be that of the  
+                    <code>UPDATE_ORDER_DATE_ON_CONFIRM</code> rule.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ValidateItem" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				  Indicates if all items on the order needs to be validated against catalog. 
+				  <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

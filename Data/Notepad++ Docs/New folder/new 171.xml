@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet exclude-result-prefixes="java" version="1.0" xmlns:java="http://xml.apache.org/xslt/java" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:template match="/">
+		<xsl:variable name="varSumOfLineCharges" select="sum(Shipment/ShipmentLines/ShipmentLine/OrderLine/LineCharges/LineCharge[@ChargeCategory='Shipping']/@ChargeAmount)"/>
+		<xsl:variable name="varSumOfLinePriceTaxes" select="sum(Shipment/ShipmentLines/ShipmentLine/OrderLine/LineTaxes/LineTax[@ChargeCategory='Price']/@Tax)"/>
+		<xsl:variable name="varTaxName" select="Shipment/ShipmentLines/ShipmentLine/OrderLine/LineTaxes/LineTax[@ChargeCategory='Price']/@TaxName"/>
+		<xsl:variable name="varSumOfLineTotal" select="sum(Shipment/ShipmentLines/ShipmentLine/OrderLine/LinePriceInfo/@LineTotal)"/>
+		<xsl:variable name="varSumOfQty" select="sum(Shipment/ShipmentLines/ShipmentLine/@Quantity)"/>
+		<xsl:variable name="varSumOfUnitWeight" select="sum(Shipment/ShipmentLines/ShipmentLine/OrderLine/ItemDetails/PrimaryInformation/@UnitWeight)"/>
+		<xsl:variable name="varTotalLineSKUDiscount"/>
+		<ReturnOrderHeader>
+			<xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="/Shipment/@EnterpriseCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="LocationCode">
+				<xsl:value-of select="/Shipment/@ReceivingNode"/>
+			</xsl:attribute>
+			<xsl:attribute name="ProductLine">
+				<xsl:value-of select="Shipment/ShipmentLines/ShipmentLine/OrderLine/Item/@ProductLine"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnOrderNo">
+				<xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnOrderType">
+				<xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@OrderType"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnDate">
+				<xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@OrderDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/DerivedFromOrder/@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="OrderDate">
+				<xsl:value-of select="/Shipment/ShipmentLines/ShipmentLine/OrderLine/DerivedFromOrder/@OrderDate"/>
+			</xsl:attribute>
+			<xsl:attribute name="ReturnShipmentNo">
+				<xsl:value-of select="/Shipment/@ShipmentNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="TotalReturnQty">
+				<xsl:value-of select="$varSumOfQty"/>
+			</xsl:attribute>
+			<xsl:if test="$varSumOfLineTotal!=''">
+				<xsl:attribute name="GRNValue">
+					<xsl:value-of select="format-number($varSumOfLineTotal,'0.00')"/>
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:attribute name="OtherCharges">
+				<xsl:value-of select="$varSumOfLineCharges"/>
+			</xsl:attribute>
+			<xsl:if test="$varSumOfUnitWeight!=''">
+				<xsl:attribute name="TotalReturnWeight">
+					<xsl:value-of select="format-number($varSumOfUnitWeight,'0.000')"/>
+				</xsl:attribute>
+			</xsl:if>
+			<ReturnLineDetails>
+				<xsl:for-each select="/Shipment/ShipmentLines/ShipmentLine">
+					<ReturnLineDetail>
+						<xsl:attribute name="SalesOrderNo">
+							<xsl:value-of select="OrderLine/DerivedFromOrder/@OrderNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnOrderLineNo">
+							<xsl:value-of select="@PrimeLineNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnQty">
+							<xsl:value-of select="@Quantity"/>
+						</xsl:attribute>
+						<xsl:variable name="varQuantity" select="@Quantity"/>
+						<xsl:attribute name="LineTotal">
+							<xsl:value-of select="OrderLine/LinePriceInfo/@LineTotal"/>
+						</xsl:attribute>
+						<xsl:attribute name="SOOrderLineKey">
+							<xsl:value-of select="OrderLine/@DerivedFromOrderLineKey"/>
+						</xsl:attribute>
+						<xsl:attribute name="ItemCode">
+							<xsl:value-of select="OrderLine/ItemDetails/Extn/@ExtnItemCode"/>
+						</xsl:attribute>
+						<xsl:attribute name="LotNumber">
+							<xsl:value-of select="OrderLine/ItemDetails/Extn/@ExtnLotNo"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnGrossWt">
+							<xsl:value-of select="OrderLine/ItemDetails/PrimaryInformation/@UnitWeight"/>
+						</xsl:attribute>
+						<xsl:attribute name="ReturnReasonCode">
+							<xsl:value-of select="OrderLine/@ReturnReason"/>
+						</xsl:attribute>
+						<xsl:choose>
+							<xsl:when test="/Shipment/@EnterpriseCode='TITAN_US'">
+								<xsl:attribute name="ReturnReason">
+									<xsl:value-of select="OrderLine/@ReturnReason"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="ReturnReason"/>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:variable name="varIsFOCItem" select="OrderLine/ItemDetails/Extn/@ExtnIsFOCIItem"/>
+						<xsl:choose>
+							<xsl:when test=" $varIsFOCItem = 'N'">
+								<xsl:attribute name="IsFOC">0</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="IsFOC">1</xsl:attribute>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="$varSumOfLinePriceTaxes!=''">
+							<xsl:attribute name="TotalLinePriceTax">
+								<xsl:value-of select="format-number($varSumOfLinePriceTaxes,'0.00')"/>
+							</xsl:attribute>
+						</xsl:if>
+						<xsl:variable name="varSumOfLnLineCharges" select="sum(OrderLine/LineCharges/LineCharge[@ChargeCategory='Shipping']/@ChargeAmount)"/>
+						<xsl:attribute name="TotalLineOtherCharges">
+							<xsl:value-of select="$varSumOfLnLineCharges"/>
+						</xsl:attribute>
+						<xsl:variable name="varSumOfLineSGSTPriceTaxes" select="sum(OrderLine/LineTaxes/LineTax[((@ChargeCategory='Price') and (@TaxName='SGST'))]/@Tax)"/>
+						<xsl:variable name="varSumOfSGSTShippingTaxes" select="sum(OrderLine/LineTaxes/LineTax[((@ChargeCategory='Shipping') and (@TaxName='SGST'))]/@Tax)"/>
+						<xsl:variable name="varSumOfCGSTPriceTaxes" select="sum(OrderLine/LineTaxes/LineTax[((@ChargeCategory='Price') and (@TaxName='CGST'))]/@Tax)"/>
+						<xsl:variable name="varSumOfIGSTPriceTaxes" select="sum(OrderLine/LineTaxes/LineTax[@ChargeCategory='Price']/@Tax)"/>
+						<xsl:variable name="varSumOfCGSTShippingTaxes" select="sum(OrderLine/LineTaxes/LineTax[((@ChargeCategory='Shipping') and (@TaxName='CGST'))]/@Tax)"/>
+						<xsl:variable name="varSumOfIGSTShippingTaxes" select="sum(OrderLine/LineTaxes/LineTax[@ChargeCategory='Shipping']/@Tax)"/>
+						<xsl:choose>
+							<xsl:when test=" $varTaxName = 'SGST'">
+								<xsl:attribute name="Tax1">
+									<xsl:value-of select="$varSumOfLineSGSTPriceTaxes"/>
+								</xsl:attribute>
+								<xsl:attribute name="OtherChargesTax1">
+									<xsl:value-of select="$varSumOfSGSTShippingTaxes"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test=" $varTaxName = 'CGST'">
+								<xsl:attribute name="Tax2">
+									<xsl:value-of select="$varSumOfCGSTPriceTaxes"/>
+								</xsl:attribute>
+								<xsl:attribute name="OtherChargesTax2">
+									<xsl:value-of select="$varSumOfCGSTShippingTaxes"/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="Tax2">
+									<xsl:value-of select="$varSumOfIGSTPriceTaxes"/>
+								</xsl:attribute>
+								<xsl:attribute name="OtherChargesTax2">
+									<xsl:choose>
+										<xsl:when test="Shipment/ShipmentLines/ShipmentLine/OrderLine/Order/@OrderType ='RTO'">
+											<xsl:value-of select="$varSumOfIGSTShippingTaxes"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="'0.0'"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="$varTaxName = 'SGST' and $varTaxName = 'CGST'">
+							<xsl:attribute name="Tax1">
+								<xsl:value-of select="$varSumOfLineSGSTPriceTaxes"/>
+							</xsl:attribute>
+							<xsl:attribute name="OtherChargesTax1">
+								<xsl:value-of select="$varSumOfSGSTShippingTaxes"/>
+							</xsl:attribute>
+							<xsl:attribute name="Tax2">
+								<xsl:value-of select="$varSumOfCGSTPriceTaxes"/>
+							</xsl:attribute>
+							<xsl:attribute name="OtherChargesTax2">
+								<xsl:value-of select="$varSumOfCGSTShippingTaxes"/>
+							</xsl:attribute>
+						</xsl:if>
+						<!--Payment Details-->
+						<TitanPaymentDetailList>
+							<TitanPaymentDetail>
+								<xsl:attribute name="PaymentCode">
+									<xsl:value-of select="OrderLine/Order/PaymentMethods/PaymentMethod/@PaymentType"/>
+								</xsl:attribute>
+							</TitanPaymentDetail>
+						</TitanPaymentDetailList>
+						<!--Changes For SKUDiscount Value-->
+						<LineCharges>
+							<xsl:for-each select="OrderLine/LineCharges/LineCharge">
+								<LineCharge>
+									<xsl:attribute name="ChargeCategory">
+										<xsl:value-of select="@ChargeCategory"/>
+									</xsl:attribute>
+									<xsl:attribute name="ChargeName">
+										<xsl:value-of select="@ChargeName"/>
+									</xsl:attribute>
+									<xsl:attribute name="Reference">
+										<xsl:value-of select="@Reference"/>
+									</xsl:attribute>
+									<xsl:attribute name="ExtnPromotionType">
+										<xsl:value-of select="Extn/@ExtnPromotionType"/>
+									</xsl:attribute>
+									<xsl:attribute name="ChargePerUnit">
+										<xsl:value-of select="@ChargePerUnit"/>
+									</xsl:attribute>
+									<xsl:attribute name="IsManual">
+										<xsl:value-of select="@IsManual"/>
+									</xsl:attribute>
+									<xsl:variable name="varChargeCategory" select="@ChargeCategory"/>
+									<xsl:variable name="varChargePerUnit" select="@ChargePerUnit"/>
+									<xsl:variable name="varExtnPromotionType" select="Extn/@ExtnPromotionType"/>
+									<xsl:if test="(($varChargeCategory = 'Discount' or $varChargeCategory = 'SellerDiscount') and $varChargePerUnit!='')">
+										<xsl:for-each select="/Shipment/CommonCodeList/CommonCode[@CodeValue = $varExtnPromotionType]">
+											<xsl:attribute name="SkuDiscount">
+												<xsl:value-of select="($varChargePerUnit * $varQuantity)"/>
+											</xsl:attribute>
+										</xsl:for-each>
+									</xsl:if>
+								</LineCharge>
+							</xsl:for-each>
+						</LineCharges>
+						<xsl:if test="(/Shipment/@EnterpriseCode='TITAN_US')">
+							<LineTaxes>
+								<xsl:for-each select="OrderLine/LineTaxes/LineTax">
+									<xsl:variable name="varTaxName" select="@TaxName"/>
+									<LineTax>
+										<xsl:attribute name="ChargeCategory">
+											<xsl:value-of select="@ChargeCategory"/>
+										</xsl:attribute>
+										<xsl:attribute name="ChargeName">
+											<xsl:value-of select="@ChargeName"/>
+										</xsl:attribute>
+										<xsl:attribute name="ChargeNameKey">
+											<xsl:value-of select="@ChargeNameKey"/>
+										</xsl:attribute>
+										<xsl:attribute name="InvoicedTax">
+											<xsl:value-of select="@InvoicedTax"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference1">
+											<xsl:value-of select="@Reference1"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference2">
+											<xsl:value-of select="@Reference2"/>
+										</xsl:attribute>
+										<xsl:attribute name="Reference3">
+											<xsl:value-of select="@Reference3"/>
+										</xsl:attribute>
+										<xsl:attribute name="RemainingTax">
+											<xsl:value-of select="@RemainingTax"/>
+										</xsl:attribute>
+										<xsl:attribute name="Tax">
+											<xsl:value-of select="@Tax"/>
+										</xsl:attribute>
+										<xsl:attribute name="TaxName">
+											<xsl:value-of select="@TaxName"/>
+										</xsl:attribute>
+										<xsl:attribute name="TaxPercentage">
+											<xsl:value-of select="@TaxPercentage"/>
+										</xsl:attribute>
+									</LineTax>
+								</xsl:for-each>
+							</LineTaxes>
+						</xsl:if>
+						<!--Changes For SKUDiscount Value-->
+					</ReturnLineDetail>
+				</xsl:for-each>
+			</ReturnLineDetails>
+		</ReturnOrderHeader>
+	</xsl:template>
+</xsl:stylesheet>

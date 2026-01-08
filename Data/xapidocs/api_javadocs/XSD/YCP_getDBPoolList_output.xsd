@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getDBPoolList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getDBPoolList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getDBPoolList_output.xsd" yfc:rootElement="DBPoolList">
+        <xsd:appinfo source="yfc:structure">
+            <DBPoolList>
+                <DBPool hasAttributes="Y">
+                    <ParamList>
+                        <Param hasAttributes="Y"/>
+                    </ParamList>
+                </DBPool>
+            </DBPoolList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="DBPoolList" type="yfc:DBPoolListXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>List of database shard connection information</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="DBPoolListXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:DBPool"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DBPool">
+        <xsd:annotation yfc:tableName="PLT_DB_POOL">
+            <xsd:documentation>
+                <div>Database shard information. This maps to either the PLT_DB_POOL table or the database configuration from jdbc.properties.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ParamList"/>
+            </xsd:all>
+            <xsd:attribute name="CanPersist" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Set to <code>Y</code> if this configuration is from a persistable
+						source (like the PLT_DB_POOL table). Set to <code>N</code> if the configuration
+						comes from property files.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Boolean">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="PoolId" type="yfctype:DatabasePoolId" use="optional">
+                <xsd:annotation yfc:columnName="POOL_ID" yfc:tableName="PLT_DB_POOL">
+                    <xsd:documentation>
+                        <div>Unique identifier of the database shard</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ParamList">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>List of connection parameters. Note if the connection data is from property files, some parameters may be missing.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Param"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Param">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Connection parameter</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="IsSuppressed" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Flag to indicate whether the value was filtered from output.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Boolean">
+                        <xsd:enumeration value="N"/>
+                        <xsd:enumeration value="Y"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Parameter name</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Value" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Parameter value. This attribute is not set if the value is suppressed for some reason.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

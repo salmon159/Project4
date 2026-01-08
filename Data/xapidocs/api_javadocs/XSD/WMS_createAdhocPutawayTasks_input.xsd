@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/createAdhocPutawayTasks/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/createAdhocPutawayTasks/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_createAdhocPutawayTasks_input.xsd" yfc:rootElement="Task">
+        <xsd:appinfo source="yfc:structure">
+            <Task hasAttributes="Y">
+                <Inventory hasAttributes="Y">
+                    <TagAttributes hasAttributes="Y"/>
+                </Inventory>
+                <TaskType hasAttributes="Y"/>
+            </Task>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Task" type="yfc:TaskXSDType">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+                            <code>OrganizationCode</code>, <code>SourceLocationId</code> and <code>EnterpriseKey</code> attributes must be passed and must be valid. 
+					</Condition>
+                        <Error Description="" ErrorCode=""/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="TaskXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Inventory"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TaskType"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseKey</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS:EnterpriseCode has to be passed in the input" ErrorCode="WMS00030"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EquipmentId" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="EQUIPMENT_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The specific equipment that is used to perform this task.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreExistingAllocations"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>This flag is used to determine whether to obey the existing allocations or not. When passed as "Y", the system allows Sterling WMS Mobile Application user to forcefully move the products already allocated for some other tasks. When either passed as "N" or not passed, the system allows Sterling Mobile Application user to move only the products available in the system.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+				Identifies the organization. 
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS: Organization Code not passed." ErrorCode="WMS00077"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SourceLocationId" type="yfctype:LocationId" use="required">
+            <xsd:annotation yfc:columnName="SOURCE_LOCATION_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>
+                    <div>
+                        <Validation>
+                            <Condition>
+                                <code>SourceLocationId</code> is not passed.
+					</Condition>
+                            <Error
+                                Description="WMS:LocationId has to be passed in the input." ErrorCode="WMS00034"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SourceZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="SOURCE_ZONE_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The Zone corresponding to the source location.  Denormalized here for better performance.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TargetLocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="TARGET_LOCATION_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The location at which the task ends.  This may be overridden during execution.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TargetZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="TARGET_ZONE_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The Zone corresponding to the target location.  Denormalized here for better performance.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Inventory">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>
+                            <code>SourcePalletId</code>, <code>SourceCaseId</code> OR <code>ItemId</code> attributes must be passed in the input.
+						</Condition>
+                        <Error
+                            Description="WMS:Either Item Or LPN information is required." ErrorCode="WMS00178"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>All Item Details should be passed in the input.
+						</Condition>
+                        <Error
+                            Description="WMS: Item details are not passed in input." ErrorCode="WMS00020"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Quantity should be passed in the input.
+						</Condition>
+                        <Error
+                            Description="WMS:Quantity not passed in the input." ErrorCode="WMS00021"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Non Force Move: Picked quantity should be less than or equal to available quantity in the system.
+						</Condition>
+                        <Error
+                            Description="WMS: Quantity being picked for manual move is more than the system quantity." ErrorCode="WMS00276"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Force Move: Picked quantity should be less than or equal to available quantity in the system including the allocated quantity.
+						</Condition>
+                        <Error
+                            Description="WMS: Quantity being picked for force manual move is more than the system quantity even after considering the allocated quantity." ErrorCode="WMS00277"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Inventory must exist at the Source Location for putaway.
+						</Condition>
+                        <Error
+                            Description="WMS: There is no inventory for put away at the Source Location." ErrorCode="WMS00056"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Total number of serials should be equal to the Quantity
+						</Condition>
+                        <Error
+                            Description="WMS:Total serials scanned is not equal to quantity entered." ErrorCode="WMS00009"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Item details or tag details should match with serial.
+						</Condition>
+                        <Error
+                            Description="WMS:Serial mismatch occured." ErrorCode="WMS00010"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TagAttributes"/>
+            </xsd:all>
+            <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The country in which the item was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FifoNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="FIFO_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>A date based inventory attribute that helps understand the order in which stock arrived at the node. This is used to send out items that arrived earlier than the ones that arrived later.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The status of the inventory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemId" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The identifier of the item for which the task is created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The product class ofthe item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The quantity for which the task is created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The receipt header key that is associated with this task. This links the task to the receipt information.  When a QC recall is made for a specific shipment, it may be required to cancel any open task against the receipt.  This link between the task and the receipt enables you to do that.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The segment number. When inventory is customized for a specific order, it needs to be tracked separately so that it can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The segment type. SKUs are sometimes custom made. This field stores the customization details.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The serial number of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The date by which the shipment has to be shipped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourceCaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Source Case Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SourcePalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation yfc:columnName="SOURCE_LPN_NO" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>
+                        <div>Source Pallet Id of the task</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UNIT_OF_MEASURE" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The unit of measure of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TagAttributes">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>This table stores tag information for inventory.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TaskType">
+        <xsd:annotation yfc:tableName="YFS_TASK_TYPE">
+            <xsd:documentation>
+                <div>
+							If both ActivityCode and ActivityGroupId are not specified, ActivityCode is defaulted to <code>STORAGE</code> and ActivityGroupId defaulted to <code>RECEIPT</code> .
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ActivityCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVITY_CODE" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The code of the activity within the Activity Group.  For example, STORAGE.  This is system defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ActivityGroupId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="ACTIVITY_GROUP_ID" yfc:tableName="YFS_TASK_TYPE">
+                    <xsd:documentation>The activities performed in a warehouse are grouped in an activity group Id. For example, PUTAWAY. Activity groups are system defined.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

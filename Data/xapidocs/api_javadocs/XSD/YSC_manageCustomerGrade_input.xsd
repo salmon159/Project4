@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/manageCustomerGrade/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/manageCustomerGrade/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_manageCustomerGrade_input.xsd" yfc:rootElement="CustomerGrade">
+        <xsd:appinfo source="yfc:structure">
+            <CustomerGrade hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CustomerGrade" type="yfc:CustomerGradeXSDType">
+        <xsd:annotation yfc:tableName="YFS_CUSTOMER_GRADE">
+            <xsd:documentation>This table contains customer grade assignments for a range of customer rating.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CustomerGradeXSDType">
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>. 
+						<Validation>
+                            <Condition>Customer grade record being created or updated must have valid OrganizationCode.  
+							</Condition>
+                            <Error
+                                Description="Customer grade record cannot be created or updated." ErrorCode="YCP0040"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Customer grade being created/updated cannot have ratings which overlap with another record.  
+							</Condition>
+                            <Error
+                                Description="Customer grade record cannot be created or updated." ErrorCode="YSC91_0001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Customer grade being created/updated cannot have a blank grade code.  
+							</Condition>
+                            <Error
+                                Description="Customer grade record cannot be created or updated." ErrorCode="YSC91_0002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Customer grade being created/updated cannot have a negative number as minimum or maximum rating.  
+							</Condition>
+                            <Error
+                                Description="Customer grade record cannot be created or updated." ErrorCode="YSC91_0003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerGradeKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_GRADE_KEY" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The primary key of the YFS_CUSTOMER_GRADE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="GradeCode" type="yfctype:GradeCode" use="optional">
+            <xsd:annotation yfc:columnName="GRADE_CODE" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The grade code assigned for the range values between MINIMUM_RATING and MAXIMUM_RATING.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="GradeDescription"
+            type="yfctype:Description" use="optional">
+            <xsd:annotation yfc:columnName="GRADE_DESCRIPTION" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The description for the grade code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRating" use="optional">
+            <xsd:annotation yfc:columnName="MAXIMUM_RATING" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The maximum rating value for the grade.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:CustomerRating"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="MinimumRating" use="optional">
+            <xsd:annotation yfc:columnName="MINIMUM_RATING" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The minimum rating value for the grade.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:CustomerRating"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_CUSTOMER_GRADE">
+                <xsd:documentation>The organization code that owns the grade.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

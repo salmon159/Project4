@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageTaskQueue/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageTaskQueue/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_manageTaskQueue_input.xsd" yfc:rootElement="TaskQueue">
+        <xsd:appinfo source="yfc:structure">
+            <TaskQueue hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="TaskQueue" type="yfc:TaskQueueXSDType">
+        <xsd:annotation yfc:tableName="YFS_TASK_Q">
+            <xsd:documentation>
+                <div>
+			Specify the task queue information to be modified.  <code>TaskQKey</code> or a combination of <code>TransactionKey</code>, <code>DataType</code>, and <code>DataTypeKey</code> can be specified to identify an existing Task Queue record.  <code>TransactionId</code> may be used in place of <code>TransactionKey</code>.
+			<Validation>
+                        <Condition>If <code>Operation</code> is <b>
+                                <code>Modify</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b> and no record matches the critera:
+				</Condition>
+                        <Error Description="No Record Found." ErrorCode="YFS10001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="TaskQueueXSDType">
+        <xsd:attribute name="AvailableDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="AVAILABLE_DATE" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>The date when tasks are ready to be processed.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DataKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="DATA_KEY" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>The document identifier.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DataType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DATA_TYPE" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>
+                    <div>
+				The type of data the DataKey refers to.  Possible values are:
+				<ul>
+                            <li>
+                                <b>
+                                    <code>CountRequestKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>LoadKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>NegotiationHeaderKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>OrderHeaderKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>OrderReleaseKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>ReceiptHeaderKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>ShipmentGroupKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>ShipmentKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>WaveKey</code>
+                                </b>
+                            </li>
+                            <li>
+                                <b>
+                                    <code>WorkOrderKey</code>
+                                </b>
+                            </li>
+                        </ul>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HoldFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="HOLD_FLAG" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>This flag denotes if task queue record can be processed by the associated transaction. The default value is 'N'. If this flag is 'Y' then the transaction will not process the record until it changes to 'N'.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Operation to perform
+				<br/>Valid Values: 
+				<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+				<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+				<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+				<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+				<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskQKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TASK_Q_KEY" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>The primary key of the YFS_TASK_Q.table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TransactionID" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				The Transaction ID of the transaction that should be activated.  This may be used instead of <code>TransactionKey</code>.
+				<Validation>
+                            <Condition>Invalid<code>TransactionID</code> passed.
+						</Condition>
+                            <Error Description="Invalid transaction ID." ErrorCode="YCP0068"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TRANSACTION_KEY" yfc:tableName="YFS_TASK_Q">
+                <xsd:documentation>The transaction that should be activated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

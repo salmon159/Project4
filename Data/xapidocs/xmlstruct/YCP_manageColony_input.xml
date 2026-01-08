@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM
+     IBM Sterling Selling and Fulfillment Suite
+     (C) Copyright IBM Corp. 2001, 2016 All Rights Reserved.
+     US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<Colony Action="" ColonyId="" ColonyVersion="" PkPrefix="" Status=""
+    UseDefaultConfiguration="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/manageColony/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+					This element refers to header-level information for colony configuration.
+						<Validation>
+                        <Condition>During a modify operation, if both ColonyId and PkPrefix are passed,
+							the PkPrefix must match the existing record.</Condition>
+                        <Error
+                            Description="Key fields cannot be modified." ErrorCode="YFS10415"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The default colony (with PkPrefix of 20) cannot be deleted.</Condition>
+                        <Error
+                            Description="Cannot delete the default colony." ErrorCode="PLT0504"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Any resources mapped to a colony must be deleted before the colony
+							can be deleted.</Condition>
+                        <Error
+                            Description="Cannot delete the colony because colony map records still refer to it." ErrorCode="PLT0505"/>
+                    </Validation>
+
+						The ColonyId and PkPrefix are required during a create operation. Either is sufficient
+						do identify the colony during a delete or modify operation. 
+				</div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute DataType="Action" Name="Action">
+                <Description>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="ColonyVersion">
+                <Description>
+                    <div>
+						Version of this colony, for tracking purposes.
+					    ColonyVersion will be set to the current version if it is either blank or not passed in the input and
+					    either of ColonyId or PKPrefix is passed.
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute Name="PkPrefix">
+                <Description>
+                    <div>
+						Two-digit prefix for creation of table keys within the colony.
+						<Validation>
+                            <Condition>The prefix must be between 10 and 19, inclusive, and cannot be 19.</Condition>
+                            <Error
+                                Description="Invalid Primary Key Prefix" ErrorCode="PLT0503"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute Name="Status">
+                <Description>
+                    <div>
+						Enabled status of the colony. A colony is only enabled if the status is not set. If a status is set,
+						then any attempt to use the colony will result in an exception (PLT0528), with this status provided
+						as the <code>"ErrorRelatedMoreInfo"</code> attribute. To re-enable a colony, set the status to an
+						empty string (""). <strong>WARNING</strong>: Disabling the default colony may render the system
+						inoperable. 
+					</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="TFBoolean" Name="UseDefaultConfiguration">
+                <Description>
+                    <div>Controls whether to share CONFIGURATION and STATISTICS table types with the default colony.
+					A value of "true" is suggested for an easier and more consistent configuration, though false is the
+					default value.</div>
+                </Description>
+                <Options IsEnumeration="Y">
+                    <Option
+                        Description="(default) Do not create any shard mappings apart from what is defined in the ColonyPool elements."
+                        IsDefault="Y" Value="false"/>
+                    <Option
+                        Description="Copy common shard mappings from the default colony." Value="true"/>
+                </Options>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ColonyPoolList>
+        <ColonyPool PoolId="" TableType="Required" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute DataType="DatabasePoolId" Name="PoolId">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If PoolId is invalid.</Condition>
+                                    <Error
+                                    Description="YCP:No Record Found" ErrorCode="YCP0045"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="TableType" Name="TableType">
+                        <Description>
+                            <div>
+                                <Validation>
+                                    <Condition>If <code>Action</code> is <b>
+                                    <code>Create</code>
+                                    </b> and <code>TableType</code> is not passed.</Condition>
+                                    <Error
+                                    Description="TableType is a mandatory field." ErrorCode="PLT0511"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ColonyPool>
+    </ColonyPoolList>
+</Colony>

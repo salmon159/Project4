@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/OMP/createOrderFromQuote/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/OMP/createOrderFromQuote/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="OMP_createOrderFromQuote_input.xsd" yfc:rootElement="Order">
+        <xsd:appinfo source="yfc:structure">
+            <Order hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Order" type="yfc:OrderXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+					This table stores all order documents in the system. These orders can be further classified into various types of documents. For example, Sales Order, Quotes and any other future types that the system may provide.
+					<Validation>
+                        <Condition>Order fails on item validation.
+						</Condition>
+                        <Error
+                            Description="Cannot Move Order Status due to order line validation failure." ErrorCode="OMP90_0012"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Order is created with no valid lines.
+						</Condition>
+                        <Error
+                            Description="Order created from quote must have at least 1 line." ErrorCode="OMP90_0016"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Order and corresponding order lines are not in Accepted status.
+						</Condition>
+                        <Error
+                            Description="All status records of the Order cannot be picked for processing the transaction." ErrorCode="YFS10457"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderXSDType">
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				Part of a unique identifier of the Quote. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the quote must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the quote is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Quote cannot be identified based on passed values.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DraftOrderFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="DRAFT_ORDER_FLAG" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>This flag indicates whether the order is yet to be confirmed. Order lines can only be deleted from the system in draft stage. This flag is not applicable for Quotes.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				Identifies the Enterprise. Part of an identifier of the Quote. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code> , <code>DocumentType</code> and <code>OrderNo</code> of the quote must be passed.
+				<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the quote is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Quote cannot be identified based on passed values.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NewOrderNo" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				Unique identifier of the Quote. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>,  <code>DocumentType</code> and <code>OrderNo</code> of the quote must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the quote is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Quote cannot be identified based on passed values.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				Part of a unique identifier of the Quote. Either <code>OrderHeaderKey</code>
+                        <i>or</i>
+                        <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code> of the quote must be passed.
+					<Validation>
+                            <Condition>Either <code>EnterpriseCode</code>, <code>DocumentType</code> and <code>OrderNo</code>
+                                <i>or</i>
+                                <code>OrderHeaderKey</code> of the quote is not passed.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Quote cannot be identified based on passed values.
+					</Condition>
+                            <Error Description="Invalid Order" ErrorCode="YFS10003"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ValidateItem" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Indicates if item needs to be validated against catalog. It overrides configuration rule for validating the item if passed non-blank. Must be set to <code>Y</code> to apply entitlement logic.
+			<br/>Valid Values:<b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

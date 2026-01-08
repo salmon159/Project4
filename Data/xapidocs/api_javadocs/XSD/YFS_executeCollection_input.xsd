@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/executeCollection/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/executeCollection/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_executeCollection_input.xsd" yfc:rootElement="ExecuteCollection">
+        <xsd:appinfo source="yfc:structure">
+            <ExecuteCollection hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ExecuteCollection" type="yfc:ExecuteCollectionXSDType"/>
+    <xsd:complexType name="ExecuteCollectionXSDType">
+        <xsd:attribute name="ChargeTransactionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+				The primary key of the charge transaction record to process. If this key is passed, then only the corresponding charge transaction record is processed. The output document will contain <code>AuthorizationExpirationDate</code>, <code>AuthorizationID</code>, <code>ProcessedAmount</code> and <code>FailedAmount</code>.
+				<Validation>
+                            <Condition>The <code>ChargeTransactionKey</code> should be for a valid charge transaction record. The record must have a status of <b>
+                                    <code>OPEN</code>
+                                </b>  and the <code>ChargeType</code> for this record should be <b>
+                                    <code>AUTHORIZATION</code>
+                                </b> or <b>
+                                    <code>CHARGE</code>
+                                </b>.
+					</Condition>
+                            <Error Description="" ErrorCode=""/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				To process all the change transaction records of the Order which have a status of <b>
+                            <code>OPEN</code>
+                        </b>, and have the <code>ChargeType</code> value set to <b>
+                            <code>AUTHORIZATION</code>
+                        </b> or <b>
+                            <code>CHARGE</code>
+                        </b>, pass  either <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>. Do not pass <code>ChargeTransactionKey</code>. 
+				<br/>
+                        <br/>Passing <code>ChargeTransactionKey</code> indicates that only the particular charge transaction record specified should be processed.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				To process all the change transaction records of the Order which have a status of <b>
+                            <code>OPEN</code>
+                        </b>, and have the <code>ChargeType</code> value set to <b>
+                            <code>AUTHORIZATION</code>
+                        </b> or <b>
+                            <code>CHARGE</code>
+                        </b>, pass  either <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>. Do not pass <code>ChargeTransactionKey</code>. 
+				<br/>
+                        <br/>Passing <code>ChargeTransactionKey</code> indicates that only the particular charge transaction record specified should be processed.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreCollectionDate" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				If passed as <b>
+                            <code>N</code>
+                        </b>, a charge transaction record is processed only if its <code>CollectionDate</code> is less than or equal to current date. If passed as <b>
+                            <code>Y</code>
+                        </b>, then the <code>CollectionDate</code> is not considered.
+				<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreTransactionDependencies" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Flag to override any transaction dependencies that may be defined for the transaction this API invokes.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, transaction dependencies will not be evaluated, and thus will not prevent the API from processing.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:String">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				To process all the change transaction records of the Order which have a status of <b>
+                            <code>OPEN</code>
+                        </b>, and have the <code>ChargeType</code> value set to <b>
+                            <code>AUTHORIZATION</code>
+                        </b> or <b>
+                            <code>CHARGE</code>
+                        </b>, pass  either <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>. Do not pass <code>ChargeTransactionKey</code>. 
+				<br/>
+                        <br/>Passing <code>ChargeTransactionKey</code> indicates that only the particular charge transaction record specified should be processed.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+				To process all the change transaction records of the Order which have a status of <b>
+                            <code>OPEN</code>
+                        </b>, and have the <code>ChargeType</code> value set to <b>
+                            <code>AUTHORIZATION</code>
+                        </b> or <b>
+                            <code>CHARGE</code>
+                        </b>, pass  either <code>OrderHeaderKey</code> or <code>EnterpriseCode</code>, <code>DocumentType</code>  and <code>OrderNo</code>. Do not pass <code>ChargeTransactionKey</code>. 
+				<br/>
+                        <br/>Passing <code>ChargeTransactionKey</code> indicates that only the particular charge transaction record specified should be processed.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getOrderLineDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getOrderLineDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getOrderLineDetails_input.xsd" yfc:rootElement="OrderLineDetail">
+        <xsd:appinfo source="yfc:structure">
+            <OrderLineDetail hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderLineDetail" type="yfc:OrderLineDetailXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>
+                <div>
+			One of the following must be passed to identify the <code>OrderLine</code>:
+			<br/>- <code>OrderLineKey</code>
+                    <br/>- <code>OrderHeaderKey</code>, <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                    <br/>- <code>EnterpriseCode</code>, <code>DocumentType</code>, <code>OrderNo</code>, <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderLineDetailXSDType">
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+						The document type associated with the Order.
+						<Validation>
+                            <Condition>If <code>OrderHeaderKey</code> or <code>OrderLineKey</code> is not known, then <code>DocumentType</code> must be passed.</Condition>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:String" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>
+						The enterprise code associated with the Order.
+						<Validation>
+                            <Condition>If <code>OrderHeaderKey</code> or <code>OrderLineKey</code> is not known, then <code>EnterpriseCode</code> must be passed.</Condition>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+						Primary Key of the table. This is system generated.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_LINE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+                    <div>
+						Primary Key of the table. This is system generated.
+					</div>
+                    <div>
+						If the line was added as part of pending changes that have not been applied yet, then <code>OrderHeaderKey</code> has to be passed in addition
+						to the <code>OrderLineKey</code>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>
+                    <div>
+						Part of unique key for the order. Enterprise code, Document type and order number together uniquely identify an order. Order number can be passed during order creation or generated based on a system rule setting. 
+						<Validation>
+                            <Condition>If <code>OrderHeaderKey</code> or <code>OrderLineKey</code> is not known, then <code>OrderNo</code>  must be passed.</Condition>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="PRIME_LINE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+                    <div>
+						The order line number. Part of an order line's unique key. 
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="SUB_LINE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+                    <div>
+						Part of unique key of line.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/deleteLocation/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/deleteLocation/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_deleteLocation_input.xsd" yfc:rootElement="Location">
+        <xsd:appinfo source="yfc:structure">
+            <Location hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Location" type="yfc:LocationXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOCATION">
+            <xsd:documentation>Warehouse zones are further divided into locations of different sizes where inventory is stored. Each location belongs to a zone and a node. It is classified as INTRANSIT, REGULAR, VIRTUAL, STAGING or DOCK. It has attributes like aisle number, bay number, level number etc.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LocationXSDType">
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+                        <code>Location</code> Identifier. Forms unique key of the <code>YFS_LOCATION</code> table in conjunction with the <code>NODE_KEY</code>.
+						<Validation>
+                            <Condition>if <code>LocationKey</code> not passed, <code>Node</code> and <code>LocationId</code> combination should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_LOCATION</code> table.
+							<Validation>
+                            <Condition>
+                                <code>LocationKey</code> passed should be a valid <code>LocationKey</code>.
+								</Condition>
+                            <Error Description="Invalid LocationKey." ErrorCode="WMS00038"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If a location has inventory, it cannot be deleted. Location to be deleted should be empty.
+								</Condition>
+                            <Error
+                                Description="Operation not permitted on Locations having Inventory." ErrorCode="WMS00064"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Location having associated equipments cannot be deleted.
+								</Condition>
+                            <Error
+                                Description="Cannot delete location having equipments." ErrorCode="WMS00123"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>
+                    <div>
+                        <code>Node</code> Identifier. Primary Key of the <code>YFS_SHIP_NODE</code> table. Forms unique key of this table in conjunction with the <code>LOCATION_ID</code>.
+						<Validation>
+                            <Condition>if <code>LocationKey</code> not passed, <code>Node</code> and <code>LocationId</code> combination should be a valid combination.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and LocationId combination." ErrorCode="WMS00037"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

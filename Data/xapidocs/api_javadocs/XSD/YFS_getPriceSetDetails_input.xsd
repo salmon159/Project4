@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getPriceSetDetails/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getPriceSetDetails/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getPriceSetDetails_input.xsd" yfc:rootElement="PriceSet">
+        <xsd:appinfo source="yfc:structure">
+            <PriceSet hasAttributes="Y">
+                <ItemPriceSetList>
+                    <ItemPriceSet hasAttributes="Y"/>
+                </ItemPriceSetList>
+            </PriceSet>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PriceSet" type="yfc:PriceSetXSDType">
+        <xsd:annotation yfc:tableName="YFS_PRICE_SET">
+            <xsd:documentation>
+                <div>
+				The Price List master table. Stores a list of valid price lists for an organization.
+					<Validation>
+                        <Condition>
+                            <code>PriceSet</code> must be the root node. If not the root node:
+						</Condition>
+                        <Error
+                            Description="Input document is empty or contains invalid data" ErrorCode="YFS10363"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Either <code>PriceSetKey</code> or {<code>OrganizationCode</code> and <code>PriceSetName</code>} must be passed. If not passed:
+						</Condition>
+                        <Error
+                            Description="Mandatory parameters for the operation are missing" ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The passed input criteria should retrieve a price set. If not passed or invalid:
+						</Condition>
+                        <Error
+                            Description="Price Set parameters not passed or invalid" ErrorCode="OMP10001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						The output template must exist and be passed. If it does not exist or is not passed:
+						</Condition>
+                        <Error Description="Template not found" ErrorCode="YFS10379"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PriceSetXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemPriceSetList"/>
+        </xsd:all>
+        <xsd:attribute name="ActiveFlag" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="ACTIVE_FLAG" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Only Price Sets which are marked as active will be considered when computing tax.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+            <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Currency.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemGroupCode" type="yfctype:ItemGroupCode" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Indicates whether the price list is for a Product, Delivery or Service Line.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Link to YFS_Organization.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceSetKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICE_SET_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Primary key that identifies a price set.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PriceSetName" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="PRICE_SET_NAME"
+                yfc:isConditional="Y" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Name of a price set.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ValidTillDate" type="yfctype:Date" use="optional">
+            <xsd:annotation yfc:columnName="VALID_TILL_DATE" yfc:tableName="YFS_PRICE_SET">
+                <xsd:documentation>Price Set is valid till this date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ItemPriceSetList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemPriceSet"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemPriceSet">
+        <xsd:annotation yfc:tableName="YFS_ITEM_PRICE_SET">
+            <xsd:documentation>
+                <div>
+						The Price List for items. Attributes passed in this element are used only to filter the <code>ItemPriceSet</code> records returned as part of the output. The retrieved price set is returned even if the matching <code>ItemPriceSet</code> record is not found.
+						</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="FromItemID" type="yfctype:ItemID" use="optional"/>
+            <xsd:attribute name="FromProductClass"
+                type="yfctype:ProductClass" use="optional"/>
+            <xsd:attribute name="FromUom" type="yfctype:UOM" use="optional"/>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ITEM_PRICE_SET">
+                    <xsd:documentation>The unique identifier for an Item for which price set is maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemIDQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ITEM_PRICE_SET">
+                    <xsd:documentation>Product class of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClassQryType"
+                type="yfctype:StringQryType" use="optional"/>
+            <xsd:attribute name="ToItemID" type="yfctype:ItemID" use="optional"/>
+            <xsd:attribute name="ToProductClass"
+                type="yfctype:ProductClass" use="optional"/>
+            <xsd:attribute name="ToUom" type="yfctype:UOM" use="optional"/>
+            <xsd:attribute name="Uom" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM"
+                    yfc:qryTypeSupported="Y" yfc:tableName="YFS_ITEM_PRICE_SET">
+                    <xsd:documentation>Item's Unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UomQryType"
+                type="yfctype:StringQryType" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

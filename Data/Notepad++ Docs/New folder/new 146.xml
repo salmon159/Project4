@@ -1,0 +1,83 @@
+<MultiApi>
+	<API Name="changeOrder">
+		<Input>
+			<Order OrderNo="" Override="Y">
+				<Extn EXTN_MOBILE_TYPE="1"/>
+			</Order>
+		</Input>
+	</API>
+</MultiApi>
+
+
+<Order OrderNo="US00114457" EnterpriseCode="TITAN_US" DocumentType="0001" Override="Y">
+	<Extn ExtnEncirclePoints="Rakesh"/>
+</Order>
+
+<Order OrderNo="US00114457" EnterpriseCode="TITAN_US" DocumentType="0001" Override="Y">
+<Extn ExtnEncirclePoints="2"/>
+<OrderHoldTypes>
+		<OrderHoldType HoldType="KOUNT_STATUS_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+
+Input XML:
+
+<Order OrderNo="US00017369" EnterpriseCode="TITAN_US" DocumentType="0001" Override="Y">
+	<Extn ExtnKountStatus="Approved"/>
+	<OrderHoldTypes>
+		<OrderHoldType HoldType="KOUNT_STATUS_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+
+SFCC_KountStatusUpdate
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output indent="yes" method="xml"/>
+	<xsl:template match="@*|node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:copy>
+	</xsl:template>
+	<xsl:template match="Order">
+		<Order>
+			<xsl:variable name="isRRNumber" select="/Order/PaymentMethods/PaymentMethod[@PaymentType='Encircle']/@PaymentReference3"/>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="@OrderNo"/>
+			</xsl:attribute>
+			<xsl:attribute name="EnterpriseCode">
+				<xsl:value-of select="@EnterpriseCode"/>
+			</xsl:attribute>
+			<xsl:attribute name="DocumentType">
+				<xsl:value-of select="'0001'"/>
+			</xsl:attribute>
+			<xsl:attribute name="Override">
+				<xsl:value-of select="'Y'"/>
+			</xsl:attribute>
+			<OrderHoldTypes>
+			<OrderHoldType>
+			<xsl:attribute name="HoldType">
+				<xsl:value-of select="'KOUNT_STATUS_HOLD'"/>
+			</xsl:attribute>
+			<xsl:attribute name="Status">
+				<xsl:value-of select="'1100'"/>
+			</xsl:attribute>
+			</OrderHoldType>
+			</OrderHoldTypes>
+		</Order>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+<MultiApi>
+<API Name="changeOrder"><Input>
+<Order  DocumentType="0001" EnterpriseCode="TITAN_US" OrderNo="US00113832A"  Override="Y">
+<Extn ExtnKountStatus="Approved"/>
+	<OrderHoldTypes>
+		<OrderHoldType HoldType="KOUNT_STATUS_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+</Input></API>
+</MultiApi>

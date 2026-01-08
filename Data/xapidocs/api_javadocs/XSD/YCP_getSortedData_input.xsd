@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getSortedData/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getSortedData/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getSortedData_input.xsd" yfc:rootElement="SortedData">
+        <xsd:appinfo source="yfc:structure">
+            <SortedData hasAttributes="Y">
+                <SortGroup hasAttributes="Y">
+                    <SortParam hasAttributes="Y"/>
+                </SortGroup>
+                <API hasAttributes="Y">
+                    <Input/>
+                    <Template/>
+                </API>
+            </SortedData>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="SortedData" type="yfc:SortedDataXSDType"/>
+    <xsd:complexType name="SortedDataXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:SortGroup"/>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:API"/>
+        </xsd:sequence>
+        <xsd:attribute name="Locale" type="yfctype:String" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+				Locale to use for collation. This is the language, country, and variant separated by underscores. For example, <code>en_US</code>.
+				</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SortGroup">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Selects a parent element whose children will be sorted.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:SortParam"/>
+            </xsd:sequence>
+            <xsd:attribute name="XMLPath" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+						Path of the parent output XML element whose children will be sorted.
+						For example, the <code>User</code> elements in the following XML will be
+						sorted when an <code>XMLPath</code> of <code>/UserList</code>
+						is given.<br/>
+                        <pre>&lt;Organization&gt;
+    &lt;UserList&gt;
+        &lt;User Loginid="User1"/&gt;
+        &lt;User Loginid="User2"/&gt;
+    &lt;/UserList&gt;
+&lt;/Organization&gt;</pre>
+						To select the root element, use a single slash (<code>/</code>)
+					</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SortParam">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Describes how to sort an attribute within the children of the selected element</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Ascending" use="optional">
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:TFBoolean">
+                        <xsd:enumeration value="true"/>
+                        <xsd:enumeration value="false"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Attribute" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+							The XML attribute to sort by. In the SortGroup example, this could be <code>Loginid</code>.
+						</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DataType" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Type of the attribute to control how the data is sorted.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:String">
+                        <xsd:enumeration value="STRING"/>
+                        <xsd:enumeration value="NUMBER"/>
+                        <xsd:enumeration value="AUTO"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="API">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>API to invoke</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Input"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Template"/>
+            </xsd:all>
+            <xsd:attribute name="IsFlow" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Name of the API to call.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:TFBoolean">
+                        <xsd:enumeration value="true"/>
+                        <xsd:enumeration value="false"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Name" type="yfctype:Text-100" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Name of the API to call.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Version" type="yfctype:Text-10" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+							Version number of the API. Only provide a
+							value if a specific version of the API is
+							needed.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Input">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>The Input element must contain either a child element or an XML as text
+						data that corresponds to the document element of the API input.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Template">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>The Template element should contain either a child element or an XML as text
+						data that corresponds to the template to use for the API call.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

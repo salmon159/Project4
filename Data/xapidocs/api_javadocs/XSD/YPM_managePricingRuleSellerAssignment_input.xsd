@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/managePricingRuleSellerAssignment/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/managePricingRuleSellerAssignment/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YPM_managePricingRuleSellerAssignment_input.xsd" yfc:rootElement="PricingRuleSellerAssignment">
+        <xsd:appinfo source="yfc:structure">
+            <PricingRuleSellerAssignment hasAttributes="Y">
+                <PricingRule hasAttributes="Y"/>
+                <Coupon hasAttributes="Y"/>
+            </PricingRuleSellerAssignment>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PricingRuleSellerAssignment" type="yfc:PricingRuleSellerAssignmentXSDType">
+        <xsd:annotation yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+            <xsd:documentation>
+                <div>
+					Specify the pricing rule assignment information to be created, modified or deleted. An assignment is either for a specific seller or group of seller organization (based on the region).
+					<Validation>
+                        <Condition>Both <code>RegionKey</code> and <code>SellerOrganizationCode</code> are passed.</Condition>
+                        <Error
+                            Description="Promotion can not be assigned to both seller and Region." ErrorCode="YPM10104"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Promotion created by seller organization not assigned to same organization.</Condition>
+                        <Error
+                            Description="Promotion created by seller organization can not be assigned to any other organization." ErrorCode="YPM10106"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Promotion can have either global or specific seller assignments for an enterprise.</Condition>
+                        <Error
+                            Description="Pricing rule can not have both global and specific seller assignments for an enterprise." ErrorCode="YPM10108"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PricingRuleSellerAssignmentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricingRule"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Coupon"/>
+        </xsd:all>
+        <xsd:attribute name="AssignmentID" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="ASSIGNMENT_ID" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>Used to UNIQUELY identify a pricing rule seller assignment. The other columns are still included in the key for backward                     compatible purposes. Note that existing records, which have NULL for ASSIGNMENT_ID, will have the column populated automatically                      by SEQ_YPM_ASSIGNMENTID whenever managePricingRuleSellerAssignment on the record. Once populated, it should be solely used.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CreateGlobalCustomerAssignment"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Valid Values are <code>Y</code> and <code>N</code>. If value is passed as <code>Y</code> then a customer assignment is created which is applicable to everyone.                       
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>
+                    <div>Organization code of the enterprise to which assignment belongs. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode cannot be void." ErrorCode="YPM10030"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+						<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+						<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+						<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+						<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingRuleKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICING_RULE_KEY" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>Pricing rule that is assigned.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingRuleSellerAssignmentKey"
+            type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRC_RULE_SLR_ASSNMNT_KEY" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>Primary key attribute of YPM_PRC_RULE_SLR_ASSNMNT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RefreshCache" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Attribute can be used to control whether the cache is updated or not.  If the value <code>N</code> the cache will not be refreshed.  The default value is <code>Y</code>.
+                   	</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value=""/>
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="RegionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="REGION_KEY" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>
+                    <div>The region to which the pricing rule is assigned. If <code>RegionKey</code> is null then this assignment is applicable irrespective of the region of a seller.
+						<Validation>
+                            <Condition>If not null then <code>RegionKey</code> should be a valid region within the region schema that is configured for purpose <b>
+                                    <code>SELLING</code>
+                                </b>.</Condition>
+                            <Error Description="Invalid region passed." ErrorCode="YCP0158"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YPM_PRC_RULE_SLR_ASSNMNT">
+                <xsd:documentation>
+                    <div>Seller organization to with this pricing rule is assigned. 
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid.
+							</Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>SellerOrganizationCode</code> is not seller organization.
+							</Condition>
+                            <Error
+                                Description="YFS:Invalid seller organization code." ErrorCode="YPM10100"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PricingRule">
+        <xsd:annotation yfc:tableName="YPM_PRICING_RULE">
+            <xsd:documentation>
+                <div>The pricing rule that is assigned.
+						<Validation>
+                        <Condition>The passed <code>PricingRuleName</code> in the context of <code>EnterpriseCode</code> does not retrieve a pricing rule.</Condition>
+                        <Error
+                            Description="Invalid pricing rule identifiers." ErrorCode="YPM10063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PricingRuleName"
+                type="yfctype:PricingRuleName" use="optional">
+                <xsd:annotation yfc:columnName="PRICING_RULE_NAME" yfc:tableName="YPM_PRICING_RULE">
+                    <xsd:documentation>Name of the pricing rule.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Coupon">
+        <xsd:annotation yfc:tableName="YPM_COUPON">
+            <xsd:documentation>
+                <div>The coupon that is assigned.
+						<Validation>
+                        <Condition>The passed <code>CouponID</code> or <code>CouponKey</code> in the context of <code>EnterpriseCode</code> does not retrieve a pricing rule.</Condition>
+                        <Error
+                            Description="Invalid pricing rule identifiers." ErrorCode="YPM10063"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CouponID" type="yfctype:CouponId" use="optional">
+                <xsd:annotation yfc:columnName="COUPON_ID" yfc:tableName="YPM_COUPON">
+                    <xsd:documentation>Unique identifier of a coupon.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CouponKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="COUPON_KEY" yfc:tableName="YPM_COUPON">
+                    <xsd:documentation>Primary key attribute of YPM_COUPON table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

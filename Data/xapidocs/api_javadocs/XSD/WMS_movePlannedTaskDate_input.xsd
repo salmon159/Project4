@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/movePlannedTaskDate/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/movePlannedTaskDate/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_movePlannedTaskDate_input.xsd" yfc:rootElement="MovePlannedTaskDate">
+        <xsd:appinfo source="yfc:structure">
+            <MovePlannedTaskDate>
+                <Criteria hasAttributes="Y">
+                    <PlannedTask hasAttributes="Y">
+                        <Shipment hasAttributes="Y"/>
+                        <ResourcePool hasAttributes="Y"/>
+                    </PlannedTask>
+                </Criteria>
+                <Action hasAttributes="Y"/>
+            </MovePlannedTaskDate>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="MovePlannedTaskDate" type="yfc:MovePlannedTaskDateXSDType"/>
+    <xsd:complexType name="MovePlannedTaskDateXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Criteria"/>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Action"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="Criteria">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:PlannedTask"/>
+            </xsd:all>
+            <xsd:attribute name="NumberOfHours" type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The number of hours of work to be moved to the given date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NumberOfShipments" type="yfctype:Count" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The number of shipments to be moved to the given date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PlannedTask">
+        <xsd:annotation yfc:tableName="YFS_PLANNED_TASK">
+            <xsd:documentation>This table holds data for all planned tasks for an entity whose execution is being planned (e.g. Shipment).</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+            </xsd:all>
+            <xsd:attribute name="EntityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ENTITY_KEY" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies a entity key being planned for.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EntityName" type="yfctype:ID-40" use="required">
+                <xsd:annotation yfc:columnName="ENTITY_NAME" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>
+                        <div>
+								Identifies the entity being planned for moving.
+								<Validation>
+                                <Condition>
+                                    <code>EntityName</code> must be passed.</Condition>
+                                <Error
+                                    Description="Type of entity/request to be considered for movement must be passed." ErrorCode="WMSRP80_004"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>
+                        <div>
+								Identifies the node for which planning is done.
+								<Validation>
+                                <Condition>
+                                    <code>Node</code> must be passed.</Condition>
+                                <Error
+                                    Description="Shipnode must be passed." ErrorCode="WMS00054"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PlannedDate" use="optional">
+                <xsd:annotation yfc:columnName="PLANNED_DATE" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>The date planned for consumption of the capacity. Defaulted to expected shipment date of the shipment when Entity name is YFS_SHIPMENT.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="PlannedDateType" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="PLANNED_DATE_TYPE" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies a date type like Picking, Shipping.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies the resource pool from which capacity is being consumed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+                <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>Identifies the task type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="RequestedShipmentDate"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="REQUESTED_SHIPMENT_DATE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment date as requested by the buyer organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>This table stores information for a resource pool. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (like regions serviced and skill sets). Capacity for providing services is maintained at the Resource Pool level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CapacityOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="CAPACITY_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the catalog organization. A resource pool is always created wihin the context of a capacity organization. An organization can source services from any resource pool within the same capacity organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Action">
+        <xsd:annotation yfc:tableName="YFS_PLANNED_TASK">
+            <xsd:documentation>This table holds data for all planned tasks for an entity whose execution is being planned (e.g. Shipment).</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PlannedDate" use="required">
+                <xsd:annotation yfc:columnName="PLANNED_DATE" yfc:tableName="YFS_PLANNED_TASK">
+                    <xsd:documentation>
+                        <div>
+							The date to which planned tasks for the request to be moved.
+							<Validation>
+                                <Condition>
+                                    <code>PlannedDate</code> must be passed.</Condition>
+                                <Error
+                                    Description="Planning Date is Mandatory." ErrorCode="WMSRP80_002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>PlannedDate</code> cannot be before today.</Condition>
+                                <Error
+                                    Description="Planning Date cannot be before today." ErrorCode="WMSRP80_003"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

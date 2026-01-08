@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getNegotiationHistory/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getNegotiationHistory/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getNegotiationHistory_output.xsd" yfc:rootElement="NegotiationHistory">
+        <xsd:appinfo source="yfc:structure">
+            <NegotiationHistory hasAttributes="Y">
+                <Responses>
+                    <Response hasAttributes="Y">
+                        <HeaderResponses>
+                            <HeaderResponse hasAttributes="Y">
+                                <HeaderTerms hasAttributes="Y"/>
+                            </HeaderResponse>
+                        </HeaderResponses>
+                        <LineResponses>
+                            <LineResponse hasAttributes="Y">
+                                <NegotiationLine hasAttributes="Y"/>
+                                <LineTerms>
+                                    <LineTermsDetail hasAttributes="Y"/>
+                                </LineTerms>
+                            </LineResponse>
+                        </LineResponses>
+                    </Response>
+                </Responses>
+            </NegotiationHistory>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="NegotiationHistory" type="yfc:NegotiationHistoryXSDType">
+        <xsd:annotation yfc:tableName="YFS_NEGOTIATION_HDR">
+            <xsd:documentation>Primary negotiation table. This table stores all order negotiations in the system. There can be zero or many negotations for an order.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="NegotiationHistoryXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Responses"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>Virtual Field.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NegotiationNo" type="yfctype:DocumentNo" use="required">
+            <xsd:annotation yfc:columnName="NEGOTIATION_NO" yfc:tableName="YFS_NEGOTIATION_HDR">
+                <xsd:documentation>Part of unique key of negotiation. Enterprise code and negotiation number together uniquely identify a negotiation.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Responses">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Response"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Response">
+        <xsd:annotation yfc:tableName="YFS_RESPONSE">
+            <xsd:documentation>This table stores header level information of responses from initiator organization and negotiator organization for a negotiation. The new values for the negotiation terms are stored in its children tables, yfs_response_hdr and yfs_response_line.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderResponses"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineResponses"/>
+            </xsd:all>
+            <xsd:attribute name="EnteredBy" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="ENTERED_BY" yfc:tableName="YFS_RESPONSE">
+                    <xsd:documentation>Id of the user who has entered this response.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Notes" type="yfctype:Text-2000" use="optional">
+                <xsd:annotation yfc:columnName="NOTES" yfc:tableName="YFS_RESPONSE">
+                    <xsd:documentation>Any notes added by organization sending the response.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_RESPONSE">
+                    <xsd:documentation>Oraganization that has sent this response. This will be either initiator_org_code or negotiator_org_code of the negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_RESPONSE">
+                    <xsd:documentation>Any reason code specified by organization sending the response.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResponseNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="RESPONSE_NO" yfc:tableName="YFS_RESPONSE">
+                    <xsd:documentation>A system generated one up number. Unique within a negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderResponses">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderResponse"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderResponse">
+        <xsd:annotation yfc:tableName="YFS_RESPONSE_HDR">
+            <xsd:documentation>This table stores new terms of the negotiation level negotiable attributes. Its parent table is yfs_response. Organization level information and user notes are stored in yfs_response table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:HeaderTerms"/>
+            </xsd:all>
+            <xsd:attribute name="ForResponseNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FOR_RESPONSE_NO" yfc:tableName="YFS_RESPONSE_HDR">
+                    <xsd:documentation>Response number of the other organization's last response. Blanks if this is the first response on this negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResponseAction" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="RESPONSE_ACTION" yfc:tableName="YFS_RESPONSE_HDR">
+                    <xsd:documentation>Action to be performed. Possible actions are  offer(1100), counter offer (1200) and accept(1500).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResponseActionDesc"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Virtual field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="HeaderTerms">
+        <xsd:annotation yfc:tableName="YFS_RESPONSE_HDR">
+            <xsd:documentation>This table stores new terms of the negotiation level negotiable attributes. Its parent table is yfs_response. Organization level information and user notes are stored in yfs_response table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="DELIVERY_DATE" yfc:tableName="YFS_RESPONSE_HDR">
+                    <xsd:documentation>New delivery date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreightTerms" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FREIGHT_TERMS" yfc:tableName="YFS_RESPONSE_HDR">
+                    <xsd:documentation>New freight terms.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentTerms" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_TERMS" yfc:tableName="YFS_RESPONSE_HDR">
+                    <xsd:documentation>New payment terms.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineResponses">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LineResponse"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineResponse">
+        <xsd:annotation yfc:tableName="YFS_RESPONSE_LINE">
+            <xsd:documentation>This table stores response action and reference to last response of the other organization. The new terms of the negotiation line level negotiable attributes are stored in its child table, yfs_response_line_dtl. Its parent table is yfs_response. Organization level information and user notes are stored in yfs_response table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:NegotiationLine"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineTerms"/>
+            </xsd:all>
+            <xsd:attribute name="ForOptionNo"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="FOR_OPTION_NO" yfc:tableName="YFS_RESPONSE_LINE">
+                    <xsd:documentation>Option number of the other organization's last response. Blanks if this is the first response on this negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ForResponseNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FOR_RESPONSE_NO" yfc:tableName="YFS_RESPONSE_LINE">
+                    <xsd:documentation>Response number of the other organization's last response. Blanks if this is the first response on this negotiation.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResponseAction" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="RESPONSE_ACTION" yfc:tableName="YFS_RESPONSE_LINE">
+                    <xsd:documentation>Action to be performed. Possible actions are  offer(1100), counter offer (1200), reject (1300), remove(1400) and accept(1500).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResponseActionDesc"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Virtual field.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="NegotiationLine">
+        <xsd:annotation yfc:tableName="YFS_NEGOTIATION_LINE">
+            <xsd:documentation>This table stores line information of a negotiation. One negotiation line is created for each order line of the negotiation's order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LineEntity" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LINE_ENTITY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Currently can have value ORDER_LINE only.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineEntityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LINE_ENTITY_KEY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Primary key of the order line to which this negotiation line corresponds too.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NegotiationLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NEGOTIATION_LINE_KEY" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Primary key. A system generated number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="PRIME_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Prime_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="SUB_LINE_NO" yfc:tableName="YFS_NEGOTIATION_LINE">
+                    <xsd:documentation>Sub_line_no of the order line to which this negotiation line corresponds to.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineTerms">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:LineTermsDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineTermsDetail">
+        <xsd:annotation yfc:tableName="YFS_RESPONSE_LINE_DTL">
+            <xsd:documentation>This table stores new terms of the negotiation level negotiable attributes. Its parent table is yfs_response_line.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DeliveryDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="DELIVERY_DATE" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New delivery date offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreightTerms" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="FREIGHT_TERMS" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New freight terms offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New item id offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OptionNo" type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="OPTION_NO" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>Option number. Organization can offer multiple options for new value of a negotiable attribute. For example, option 1 can be item=item1 and option 2 can be item=item2. The other organization can accept any of the multiple options.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Price" type="yfctype:UnitPrice" use="optional">
+                <xsd:annotation yfc:columnName="PRICE" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New price offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New quantity offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo"
+                type="yfctype:ShorterNumber" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>One up number. Negotiation_line_key, option_no and sequence_no makes a unique key. Total quantity of the negotiation line can be split into multiple offer. For example, for total quantity of 10, oraganization's offer can be quantity=8, Price=10 and quantity=2, Price=11. In this case the two records will have sequence number 1 and 2.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_DATE" yfc:tableName="YFS_RESPONSE_LINE_DTL">
+                    <xsd:documentation>New ship date offered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<WorkOrder EnterpriseCode="Conditional" NodeKey="Conditional"
+    WorkOrderKey="Conditional" WorkOrderNo="Conditional" xmlns="http://www.sterlingcommerce.com/documentation/VAS/confirmWorkOrderActivity/input">
+    <yfc:includeInParent IncludeXMLFileName="YFS_Work_Order_keys.xml" IncludeXMLPath="/WorkOrder"/>
+    <yfc:doc>
+        <Element EntityName="Work_Order">
+            <Description>
+                <div>
+			An existing <code>WorkOrder</code> is identified by using one of the following: 
+			<code>WorkOrderKey </code> or
+			<code>WorkOrderNo</code>, <code>NodeKey</code> and <code>EnterpriseCode </code>
+			If none of them are passed VAS00013 is thrown.
+			</div>
+            </Description>
+        </Element>
+    </yfc:doc>
+    <WorkOrderActivityDtl ActivityCode="Required"
+        ActivityLocationId="Required" CaseId="" EndTimeStamp=""
+        PalletId="" QuantityBeingConfirmed="" ShipByDate="" StartTimeStamp="">
+        <yfc:doc>
+            <Element EntityName="Work_Order_Activity_Dtl">
+                <Description>
+                    <div>
+							The passed <code>SerialNo </code> , <code>ShipByDate </code> are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+						</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute DataType="Text-40" Name="ActivityCode">
+                    <Description>
+                        <div>Activity Code of the work order activity. 
+					<Validation>
+                                <Condition> It should be passed.
+					</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LocationId" Name="ActivityLocationId">
+                    <Description>
+                        <div>Location where the activity to be performed.
+					<Validation>
+                                <Condition> It should be passed.
+					</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-40" Name="CaseId">
+                    <Description>
+                        <div>Case for which the work order activity is confirmed.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="TimeStamp" EntityName="Task"
+                    Name="EndTimeStamp" NameInEntity="EndTimeStamp">
+                    <Description>
+                        <div>The time stamp of when the task status is changed to completed or cancelled.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-40" Name="PalletId">
+                    <Description>
+                        <div>Pallet for which the work order activity is confirmed.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Number" Name="QuantityBeingConfirmed">
+                    <Description>
+                        <div>Quantity being confirmed for work order activity. 
+					<Validation>
+                                <Condition> Quantity being confirmed should be less than or equal to allocated quantity.
+					</Condition>
+                                <Error
+                                    Description="Quantity being confirmed cannot exceed allocated quantity." ErrorCode="VAS00029"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Work_Order" Name="ShipByDate" NameInEntity="Ship_By_Date"/>
+                <Attribute DataType="TimeStamp" EntityName="Task"
+                    Name="StartTimeStamp" NameInEntity="StartTimeStamp">
+                    <Description>
+                        <div>The time stamp of when the task status is changed to InProgress.
+					</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <WorkOrderTag BatchNo="" LotAttribute1="" LotAttribute2=""
+            LotAttribute3="" LotKeyReference="" LotNumber=""
+            ManufacturingDate="" RevisionNo="">
+            <yfc:doc>
+                <Element EntityName="Work_Order_Tag">
+                    <Description>
+                        <div>
+				This entity stores details of the inventory tag attributes of the work order item that is tag tracked.
+				<br/>The passed tag attributes are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+				</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </WorkOrderTag>
+        <SerialList>
+            <SerialRangeList>
+                <SerialRange FromSerialNo="" ToSerialNo="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="SerialNo" Name="FromSerialNo">
+                                <Description>
+                                    <div>Staring serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="SerialNo" Name="ToSerialNo">
+                                <Description>
+                                    <div>Ending serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </SerialRange>
+            </SerialRangeList>
+            <SerialDetail SecondarySerial1="" SecondarySerial2=""
+                SecondarySerial3="" SecondarySerial4=""
+                SecondarySerial5="" SecondarySerial6=""
+                SecondarySerial7="" SecondarySerial8=""
+                SecondarySerial9="" SerialNo="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial1" NameInEntity="Secondary_Serial_1"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial2" NameInEntity="Secondary_Serial_2"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial3" NameInEntity="Secondary_Serial_3"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial4" NameInEntity="Secondary_Serial_4"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial5" NameInEntity="Secondary_Serial_5"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial6" NameInEntity="Secondary_Serial_6"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial7" NameInEntity="Secondary_Serial_7"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial8" NameInEntity="Secondary_Serial_8"/>
+                        <Attribute EntityName="Global_Serial_Num"
+                            Name="SecondarySerial9" NameInEntity="Secondary_Serial_9"/>
+                        <Attribute EntityName="Work_Order"
+                            Name="SerialNo" NameInEntity="Serial_No"/>
+                    </Attributes>
+                </yfc:doc>
+            </SerialDetail>
+        </SerialList>
+        <WorkOrderComponents>
+            <WorkOrderComponent ItemID="" ParentSerialNo=""
+                ProductClass="" Quantity="" SerialNo="" ShipByDate=""
+                Uom="" WorkOrderComponentKey="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Element EntityName="Work_Order_Component">
+                        <Description>
+                            <div>
+							A <code>WorkOrderComponent</code> can be identified by using one of the following: 
+							<code>WorkOrderComponentKey</code> or 
+							<code>ItemID</code>, <code>Uom</code> and <code>ProductClass.</code>
+                                <br/>The passed <code>SerialNo </code> , <code>ShipByDate </code> are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+							</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="SerialNo" Name="ParentSerialNo">
+                            <Description>
+                                <div>ParentSerialNo is mandatory for serial tracked Kits. This is stamped on each WorkOrderComponent element carrying the Serial Number of Parent/Kit item.
+									<Validation>
+                                    <Condition> If Kit item is serial tracked, then all components related to it should have ParentSerialNo stamped as the Kit Serial No.
+										</Condition>
+                                    <Error
+                                    Description="ParentSerialNo is mandatory when Kit is serial tracked." ErrorCode="VAS80_003"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="Quantity">
+                            <Description>
+                                <div>Quantity for which the component is being confirmed.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Date" Name="ShipByDate">
+                            <Description>
+                                <div>Date before which a time-sensitive inventory must be must be shipped out.
+								<br/>The ShipByDate passed while confirming is not any override of the <code>ShipByDate</code> that is present on the work order, it comes to play only when the item is time sensitive and the work order was created without any <code>ShipByDate</code> (i.e High date).
+								</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <WorkOrderComponentTag BatchNo="" LotAttribute1=""
+                    LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                    LotNumber="" ManufacturingDate="" RevisionNo="">
+                    <yfc:doc>
+                        <Element EntityName="Work_Order_Component_Tag">
+                            <Description>
+                                <div>
+						This entity stores details of the inventory tag attributes of the work order item that is tag tracked.
+						<br/>The passed tag attributes are not overridden and will not be saved in db, but they will be used when doing supply updates or inventory updates or task updates.
+						</div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                </WorkOrderComponentTag>
+                <SerialDetail SecondarySerial1="" SecondarySerial2=""
+                    SecondarySerial3="" SecondarySerial4=""
+                    SecondarySerial5="" SecondarySerial6=""
+                    SecondarySerial7="" SecondarySerial8=""
+                    SecondarySerial9="" SerialNo="">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial1"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial2"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial3"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial4"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial5"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial6"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial7"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial8"/>
+                            <Attribute DataType="SerialNo" Name="SecondarySerial9"/>
+                            <Attribute DataType="SerialNo" Name="SerialNo">
+                                <Description>
+                                    <div>When Single Serial Entry is required, then this attribute needs to be populated with the Serial No of the component. This cannot be used along with Serial Range List Element. If required, Serial Range List can be provided with a separate WorkOrderComponent Element.
+									</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <SerialRangeList>
+                        <SerialRange FromSerialNo="" ToSerialNo="" yfc:DTDOccurrence="OneOrMany">
+                            <yfc:doc>
+                                <Attributes>
+                                    <Attribute DataType="SerialNo" Name="FromSerialNo">
+                                    <Description>
+                                    <div>Staring serial number of a range for item. 
+											<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+												</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+												</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+												</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+												</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+												</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+												</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+												</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                    <Attribute DataType="SerialNo" Name="ToSerialNo">
+                                    <Description>
+                                    <div>Ending serial number of a range for item. 
+											<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+												</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+												</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+												</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+												</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+												</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+												</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+												</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                        </SerialRange>
+                    </SerialRangeList>
+                </SerialDetail>
+            </WorkOrderComponent>
+        </WorkOrderComponents>
+    </WorkOrderActivityDtl>
+</WorkOrder>

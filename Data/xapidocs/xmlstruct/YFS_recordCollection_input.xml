@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<RecordCollection ChargeTransactionKey="Required"
+    ExecutionDate="Required" bHoldOrderAndRaiseEvent="" sHoldReason="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/recordCollection/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Charge_Transaction"
+                Name="ChargeTransactionKey" NameInEntity="Charge_Transaction_Key">
+                <Description>
+                    <div>
+				The primary key of the charge transaction record to process.
+				<Validation>
+                            <Condition>ChargeTransactionKey does not identify an existing record.</Condition>
+                            <Error Description="No record found." ErrorCode="YFS10001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+						Charge transaction record is in <code>
+                                    <b>OPEN</b>
+                                </code> status with a <code>ChargeType</code> 
+						of <code>
+                                    <b>AUTHORIZATION</b>
+                                </code> or <code>
+                                    <b>CHARGE</b>
+                                </code>.
+					</Condition>
+                            <Error Description="Invalid status." ErrorCode="YFS10235"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Charge_Transaction"
+                Name="ExecutionDate" NameInEntity="Execution_Date">
+                <Description>
+                    <div>
+					This indicates when the charge request was executed.  If not passed, it defaults to the current date and time.
+				</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="bHoldOrderAndRaiseEvent">
+                <Description>
+                    <div>
+				When <code>bHoldOrderAndRaiseEvent</code> is passed as <code>
+                            <b>Y</b>
+                        </code>, the <code>CHARGE_FAILED</code> event for the <code>PAYMENT_EXECUTION</code> transaction is raised. The <code>CHARGE_FAILED</code> event updates the payment status to <code>
+                            <b>FAILED_CHARGE</b>
+                        </code> for charge requests or <code>
+                            <b>FAILED_AUTH</b>
+                        </code> for authorization requests.
+				<br/>Valid Values:  <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-100" Name="sHoldReason">
+                <Description>
+                    <div>
+				Specifies the reason for holding an order. If rule 'Use Deprecated hold Functionality' is set, sHoldReason will be set on the Order if bHoldOrderAndRaiseEvent is set to true. If rule is not set, HoldReason will be treated as HoldType. Order hold type will be added for the passed HoldReason, EnterpriseCode and DocumentType combination. Error is thrown if Hold type does not exist for the combination. Task queue records will be updated for hold type changes. HoldFlag is set to "Y" on order in any case.
+				</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <!--Collection status and Charge Type are implicitly driven based on charge transaction key passed -->
+    <PaymentDetails AuditTransactionId="" AuthAvs="" AuthCode=""
+        AuthReturnCode="" AuthReturnFlag="" AuthReturnMessage=""
+        AuthTime="" AuthorizationExpirationDate="" AuthorizationID=""
+        CVVAuthCode="" DisplayPaymentReference1="" DisplaySvcNo=""
+        InternalReturnCode="" InternalReturnFlag=""
+        InternalReturnMessage="" PaymentReference1=""
+        PaymentReference2="" PaymentReference3="" ProcessedAmount=""
+        Reference1="" Reference2="" RequestAmount="" RequestID=""
+        RequestId="" SvcNo="" TranRequestTime="" TranReturnCode=""
+        TranReturnFlag="" TranReturnMessage="" TranType="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="Credit_Card_Transaction">
+                <Description>
+                    <div>
+				Records authorization and charge request details.
+				</div>
+                </Description>
+            </Element>
+            <Attributes>
+                <Attribute EntityName="Charge_Transaction"
+                    Name="AuditTransactionId" NameInEntity="Audit_Transaction_Id">
+                    <Description>
+                        <div>
+							AuditTransactionID is a user defined data. This data will be stored on YFS_ORDER_AUDIT table. Also in case of APIs that cause the creation of a CHARGE_REQUEST, the same field will be stored on YFS_CHARGE_TRANSACTION table.
+						</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-20" Name="AuthAvs">
+                    <Description>
+                        <div>
+					Indicates whether the authorization request was successful. The value of this attribute can be:
+					<ul>
+                                <code>
+                                    <b>1</b>
+                                </code> - Successful
+					<br/>
+                                <code>
+                                    <b>0</b>
+                                </code> - Declined
+					<br/>
+                                <code>
+                                    <b>-1</b>
+                                </code> - Authorization failed due to system, hardware, software, or processing error</ul>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-20" Name="AuthCode">
+                    <Description>
+                        <div>
+					The authorization code.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-254" Name="AuthReturnMessage">
+                    <Description>
+                        <div>
+					A message explaining the <code>AuthReturnCode</code>.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Date" Name="AuthorizationExpirationDate">
+                    <Description>
+                        <div>
+                            <code>AuthorizationExpirationDate</code> is passed when making an authorization request to return the authorization expiration on the request.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-20" Name="AuthorizationID">
+                    <Description>
+                        <div>
+                            <code>AuthorizationID</code> is passed when making an authorization request to return the authorization ID on the request.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment"
+                    Name="DisplayPaymentReference1" NameInEntity="Display_Payment_Reference1">
+                    <Description>
+                        <div>
+							Sets the <code>DisplayPaymentReference1</code> attribute on the charge transaction's payment method. 
+							If it is not passed, but the <code>PaymentReference1</code> attribute is, this attribute will be internally 
+							defaulted to the last 4 characters of <code>PaymentReference1</code>.
+						<Validation>
+                                <Condition>Payment method cannot belong to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT.</Condition>
+                                <Error
+                                    Description="Cannot update payment method attributes when payment type belongs to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment" Name="DisplaySvcNo" NameInEntity="Display_Svc_No">
+                    <Description>
+                        <div>
+							Sets the <code>DisplaySvcNo</code> attribute on the charge transaction's payment method. 
+							If it is not passed, but the <code>SvcNo</code> attribute is, this attribute will be internally 
+							defaulted to the last 4 characters of <code>SvcNo</code>.
+						<Validation>
+                                <Condition>Payment method cannot belong to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT.</Condition>
+                                <Error
+                                    Description="Cannot update payment method attributes when payment type belongs to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment" Name="PaymentReference1" NameInEntity="Payment_Reference1">
+                    <Description>
+                        <div>Sets the PaymentReference1 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment" Name="PaymentReference2" NameInEntity="Payment_Reference2">
+                    <Description>
+                        <div>Sets the PaymentReference2 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment" Name="PaymentReference3" NameInEntity="Payment_Reference3">
+                    <Description>
+                        <div>Sets the PaymentReference3 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Money" Name="ProcessedAmount">
+                    <Description>
+                        <div>
+					The amount to be processed in this authorization or charge request. 
+					<br/>
+                            <code>ProcessedAmount</code>updates the charge transaction record with the authorized or charged amount passed in this attribute. 
+					<br/>If ProcessedAmount is passed, it is set as the <code>AuthAmount</code> of the credit card transaction record.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Money" Name="RequestAmount">
+                    <Description>
+                        <div>
+					If <code>RequestAmount</code> is passed, it is set as the <code>TranAmount</code> of the credit card transaction record.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="Text-254" Name="RequestID">
+                    <Description>
+                        <div>
+					The charge request ID, generated by the external system.
+					</div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Payment" Name="SvcNo" NameInEntity="Svc_No">
+                    <Description>
+                        <div>Sets the SvcNo attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </PaymentDetails>
+</RecordCollection>

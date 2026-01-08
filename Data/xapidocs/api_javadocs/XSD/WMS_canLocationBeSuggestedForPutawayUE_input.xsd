@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/canLocationBeSuggestedForPutawayUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/canLocationBeSuggestedForPutawayUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="WMS_canLocationBeSuggestedForPutawayUE_input.xsd" yfc:rootElement="CanLocationBeSuggested">
+        <xsd:appinfo source="yfc:structure">
+            <CanLocationBeSuggested hasAttributes="Y">
+                <Source hasAttributes="Y">
+                    <Inventory hasAttributes="Y">
+                        <Receipt hasAttributes="Y"/>
+                        <InventoryItem hasAttributes="Y"/>
+                    </Inventory>
+                </Source>
+                <Destination hasAttributes="Y"/>
+            </CanLocationBeSuggested>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="CanLocationBeSuggested" type="yfc:CanLocationBeSuggestedXSDType">
+        <xsd:annotation yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+            <xsd:documentation>Stores attributes values based on whose values locations where the activity may be perfomed is configured. Allows setup at Item classification level, by inventory status (quality status), UOM etc. The Location selection algorithm uses the best matched configuration for determining locations.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="CanLocationBeSuggestedXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Source"/>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:Destination"/>
+        </xsd:all>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>This field is an audit reference, which indicates that the inventory transaction is for an order associated with this enterprise.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromActivityGroup"
+            type="yfctype:ActivityGroup" use="required">
+            <xsd:annotation yfc:columnName="FROM_ACTIVITY_GROUP" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>This field identifies an activity group for the activity for which the constraint is defined. However, the constraint activity need not belong to this activity group.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="INVENTORY_TYPE" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>Type of inventory that is being considered for putaway 
+					after honoring putaway configuration (SingleSku/MultiSku/UnknownSku)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_ACTIVITY_CONSTRAINT">
+                <xsd:documentation>The primary key for the YFS_ACTIVITY_CONSTRAINT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OriginalInventoryType"
+            type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Type of inventory that was requested for putaway (SingleSku/MultiSku/UnknownSku)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Source">
+        <xsd:annotation yfc:tableName="YFS_LPN_LOCATION">
+            <xsd:documentation>Stores location of the LPN that directly sits on the location. In other words, it stores only the outermost LPN.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Inventory"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>A CaseId</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LPN_LOCATION">
+                    <xsd:documentation>The identifier for the location. This, in conjunction with NODE_KEY, identifies a unique location in the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>A PalletId</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Inventory">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_INVENTORY">
+            <xsd:documentation>Non-license plated inventory is tracked using this table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryItem"/>
+            </xsd:all>
+            <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The country in which the item was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FifoNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="FIFO_NO" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>A date based inventory attribute that helps understand the order in which stock arrived at the node. This is used to send out items that arrived earlier than the ones that arrived later.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory item key that is associated with this location inventory.  This points to a SKU that comprises the Inventory Organization, Item ID, Product Class and Unit of Measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory status that is associated with this location inventory.  This refers to an inventory sub classification based on the results of the inventory control processes within the warehouse.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory tag key that is associated with this location inventory. This points to lot and related attributes (revision etc) for the item whose inventory is tracked here.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PutawayQuantity" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The putaway quantity for item</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The receipt header key that is associated with this LPN header. &#xd;
+This helps identify all stocks attached to a receipt. This number is of significance until the sample from the receipt has been certified as having passed or failed QC. This number is used to pull out all stocks based on the receipt. This is usually flled in situations where the LPN does not have contents.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment to which the inventory belongs. This helps to track inventory separately when the inventory is customized for a specific order so that the inventory can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment type of the inventory. This field indicates the buyer or buyer category for whom the inventory is customized.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The date by which the item must be shipped so that it is usable. This is also referred to as the expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>The unique key or business key, which by itself identifies a receipt along with ReceivingNode.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>This table stores definitions for all inventory items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="required">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Destination">
+        <xsd:annotation yfc:tableName="YFS_LOCATION">
+            <xsd:documentation>Warehouse zones are further divided into locations of different sizes where inventory is stored. Each location belongs to a zone and a node. It is classified as INTRANSIT, REGULAR, VIRTUAL, STAGING or DOCK. It has attributes like aisle number, bay number, level number etc.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="HoldQuantity" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The quantity that the location can hold after considering capacity constraints (Location Volume/Location Weight/Location Capacity / SKU Dedication Capacity etc)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="required">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>
+							This is the location that put away has selected for suggesting after considering all the constraints. This location 
+							belongs to the Node given in the <code>CanLocationBeSuggested</code> element.
+						</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="required">
+                <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_LOCATION">
+                    <xsd:documentation>
+							ZoneId to which the location belongs. This zone belongs to the node given in the <code>CanLocationBeSuggested</code> element.
+						</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

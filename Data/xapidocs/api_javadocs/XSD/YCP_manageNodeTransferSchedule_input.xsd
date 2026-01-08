@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageNodeTransferSchedule/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageNodeTransferSchedule/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_manageNodeTransferSchedule_input.xsd" yfc:rootElement="NodeTransferSchedule">
+        <xsd:appinfo source="yfc:structure">
+            <NodeTransferSchedule hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="NodeTransferSchedule" type="yfc:NodeTransferScheduleXSDType">
+        <xsd:annotation yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+            <xsd:documentation>This table contains information about Node Transfer Schedule.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="NodeTransferScheduleXSDType">
+        <xsd:attribute name="CostFactorCurrency" type="yfctype:Currency" use="optional">
+            <xsd:annotation yfc:columnName="COST_FACTOR_CURRENCY" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Indicates currency for the transfer schedule cost per unit.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DefaultTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>The default transit time between the 2 nodes. This will be used in transit time calculations if day-specific transit days is not defined.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveFromDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_FROM_DATE" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>
+                    <div>The date in which the specified transfer schedule goes into effect. An empty value means that this transfer schedule will be effective for any date up until the <code>EffectiveToDate</code>. In order to change this date, the <code>NodeTransferScheduleKey</code> must be passed along with the new date.
+					<Validation>
+                            <Condition>The <code>EffectiveFromDate</code> overlaps an existing node transfer schedule.</Condition>
+                            <Error
+                                Description="Can not create a transfer schedule with effective dates that overlap another transfer schedule for the same nodes." ErrorCode="OMP80_0024"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveToDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_TO_DATE" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>
+                    <div>The last date in which the specified transfer schedule will be in effect. An empty value means that this transfer schedule will be effective for any date in the future. In order to change this date, the <code>NodeTransferScheduleKey</code> must be passed along with the new date.
+					<Validation>
+                            <Condition>The <code>EffectiveToDate</code> overlaps an existing node transfer schedule.</Condition>
+                            <Error
+                                Description="Can not create a transfer schedule with effective dates that overlap another transfer schedule for the same nodes." ErrorCode="OMP80_0024"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The <code>EffectiveToDate</code> passed is before the <code>EffectiveFromDate</code>.</Condition>
+                            <Error
+                                Description="Can not create a transfer schedule with an EffectiveToDate before EffectiveFromDate." ErrorCode="OMP80_0025"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="FridayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="FRIDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Friday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="FridayShip" use="optional">
+            <xsd:annotation yfc:columnName="FRIDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Friday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="FridayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>FridayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Friday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FridayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="FRIDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Friday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="FROM_NODE" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>
+                    <div>				Value of FromNode can not be null.
+						<Validation>
+                            <Condition>If creating new record, FromNode is not passed OR If updating existing record, new value passed is null.</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MondayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="MONDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Monday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="MondayShip" use="optional">
+            <xsd:annotation yfc:columnName="MONDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Monday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="MondayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>MondayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Monday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MondayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="MONDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Monday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NodeTransferScheduleKey" type="yfctype:Key" use="optional">
+            <xsd:annotation
+                yfc:columnName="YFS_NODE_TRANSFER_SCHEDULE_KEY" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Primary key attribute of YFS_NODE_TRANSFER_SCHEDULE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Operation to perform on this record.
+			<br/>Default: If not passed then API will try to either create or modify depending on the existence of the data.
+			<br/>Valid Values: 
+				<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+				<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SaturdayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="SATURDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Saturday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="SaturdayShip" use="optional">
+            <xsd:annotation yfc:columnName="SATURDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Saturday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="SaturdayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>SaturdayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Saturday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SaturdayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="SATURDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Saturday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SundayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="SUNDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Sunday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="SundayShip" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="SUNDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Sunday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SundayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>SundayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Sunday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SundayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="SUNDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Sunday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ThursdayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="THURSDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Thursday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ThursdayShip" use="optional">
+            <xsd:annotation yfc:columnName="THURSDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Thursday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ThursdayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>ThursdayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Thursday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ThursdayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="THURSDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Thursday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="TO_NODE" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>
+                    <div>				Value of ToNode can not be Null.
+						<Validation>
+                            <Condition>If creating new record, ToNode is not passed OR If updating existing record, new value passed is null. </Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YFS10364"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TranSchCostPerUnit" use="optional">
+            <xsd:annotation yfc:columnName="TRAN_SCH_COST_PER_UNIT" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Indicates Cost Per Unit for Transfers between 2 nodes using the Transfer Schedule.  It is used for Landed Cost computation.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Decimal"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>DefaultTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				The default transit days between the 2 nodes. This will be 
+				used in transit time calculations if day-specific transit days is not defined.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransitUnitOfMeasure" use="optional">
+            <xsd:annotation yfc:columnName="TRANSIT_UOM" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>
+                    <div>This determines the UOM used for this transfer schedule. If null, then it is assumed 
+				to be DAY. Possible values: DAY, HR.
+					<Validation>
+                            <Condition>
+                                <code>TransitUnitOfMeasure</code> passed along with a deprecated attribute.</Condition>
+                            <Error
+                                Description="TransitUnitOfMeasure cannot be used in conjunction with deprecated attributes." ErrorCode="OMP950_0001"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:UOM">
+                    <xsd:enumeration value="DAY"/>
+                    <xsd:enumeration value="HR"/>
+                    <xsd:enumeration value=""/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TuesdayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="TUESDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Tuesday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TuesdayShip" use="optional">
+            <xsd:annotation yfc:columnName="TUESDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Tuesday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="TuesdayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>TuesdayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Tuesday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TuesdayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="TUESDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Tuesday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WednesdayCutOffTime" use="optional">
+            <xsd:annotation yfc:columnName="WEDNESDAY_CUT_OFF_TIME" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Cut off time for Wednesday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Time"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="WednesdayShip" use="optional">
+            <xsd:annotation yfc:columnName="WEDNESDAY_SHIP" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Can ship on Wednesday.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="WednesdayTransitDays" type="yfctype:Number" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <b>Deprecated.</b> As of 9.5 this has been replaced by <code>WednesdayTransitTime</code>
+				and <code>TransitUnitOfMeasure</code>.<br/> 
+				Number of Transit days for Wednesday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WednesdayTransitTime" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="WEDNESDAY_TRANSIT_DAYS" yfc:tableName="YFS_NODE_TRANSFER_SCHEDULE">
+                <xsd:documentation>Transit time for Wednesday.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

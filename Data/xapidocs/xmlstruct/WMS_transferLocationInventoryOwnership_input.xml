@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TransferOwnership EnterpriseCode="Required" Node="Required" xmlns="http://www.sterlingcommerce.com/documentation/WMS/transferLocationInventoryOwnership/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Inventory_Item" Name="EnterpriseCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+					The Enterprise whose product information is being stored. 
+					<Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> must be passed. 
+							</Condition>
+                            <Error
+                                Description="EnterpriseCode has to be passed in the input." ErrorCode="WMS00030"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EnterpriseCode</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Ship_Node" Name="Node" NameInEntity="Ship_Node">
+                <Description>
+                    <div>
+					Indicates the node or warehouse where the attributes of inventory are being changed.					 	<Validation>
+                            <Condition>
+                                <code>Node</code> must be passed. 
+							</Condition>
+                            <Error Description="Node not passed." ErrorCode="WMS00054"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> passed but does not exist. 
+							</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Node</code> and <code>EnterpriseCode</code> combination should be valid in the system.
+							</Condition>
+                            <Error
+                                Description="Invalid Node and EnterpriseCode combination." ErrorCode="WMS00040"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <Source CaseId="" LocationId="" PalletId="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="LPN_Location"/>
+            <Attributes>
+                <Attribute DataType="LPNNo" Name="CaseId">
+                    <Description>
+                        <div>
+						A CaseId. Gives the LPN information for adjustment.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> must exist if passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute EntityName="Location" Name="LocationId" NameInEntity="Location_Id">
+                    <Description>
+                        <div>
+						Location Identifier. Forms unique key of this table in conjunction with <code>NODE_KEY</code>. Indicates the location from where the inventory is being adjusted. <code>LocationId</code> becomes mandatory, if <code>CaseId</code>/<code>PalletId</code> is not passed. 
+							<Validation>
+                                <Condition>
+                                    <code>LocationId</code> should be a valid location in the warehouse.
+								</Condition>
+                                <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If both <code>CaseId</code>/<code>PalletId</code> and <code>LocationId</code> are passed, location is validated against LPN location.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId exists at a different location." ErrorCode="WMS00014"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if both <code>CaseId</code>/<code>PalletId</code> and <code>LocationId</code> are not passed.
+								</Condition>
+                                <Error
+                                    Description="Either CaseId/PalletId or location information is not passed in the input." ErrorCode="WMS00015"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if location is not dedicated to SKU that is being adjusted, but dedicated to other SKU.
+								</Condition>
+                                <Error
+                                    Description="SKU Dedication violated for location." ErrorCode="WMS00090"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+                <Attribute DataType="LPNNo" Name="PalletId">
+                    <Description>
+                        <div>
+						A PalletId. Gives the LPN information for adjustment.
+							<Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> cannot be passed. Error if both <code>CaseId</code> and <code>PalletId</code> are given.
+								</Condition>
+                                <Error
+                                    Description="Only One of Case/Pallet Can Be Used." ErrorCode="WMS00028"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Both <code>CaseId</code> and <code>PalletId</code> must exist if passed.
+								</Condition>
+                                <Error
+                                    Description="CaseId/PalletId does not exist." ErrorCode="WMS00004"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <FromInventory CountryOfOrigin="" FifoNo="" InventoryItemKey=""
+            InventoryStatus="" InventoryTagKey="" Quantity=""
+            ReceiptHeaderKey="" Segment="" SegmentType="" ShipByDate="" yfc:DTDOccurrence="REQUIRED">
+            <yfc:includeInParent IncludeXMLChildNodes="Y"
+                IncludeXMLFileName="WMS_Inventory_master.xml" IncludeXMLPath="/Inventory"/>
+            <yfc:doc>
+                <Element EntityName="Location_Inventory">
+                    <Description>
+                        <div>
+						Non-license plated inventory is tracked using this table.
+						</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="CountryOfOrigin" NameInEntity="Country_Of_Origin">
+                        <Description>
+                            <div>
+							Country in which the item was manufactured.
+								<Validation>
+                                    <Condition>Should be a valid country of origin.
+									</Condition>
+                                    <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="FifoNo" NameInEntity="Fifo_No">
+                        <Description>
+                            <div>
+							The first-in-first-out number to determine sequence of inventory move. A user exit <code>getFifoNumber</code> is called to obtain <code>FifoNo</code>, if new inventory is being created, <code>FifoNo</code> is not passed and item is FIFO tracked.
+							</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="InventoryItemKey" NameInEntity="Inventory_Item_Key">
+                        <Description>
+                            <div>
+							Gives the unique key for the inventory item.
+								<Validation>
+                                    <Condition>Should be a valid <code>InventoryItemKey</code> in the system.
+									</Condition>
+                                    <Error
+                                    Description="Invalid InventoryItemKey." ErrorCode="WMS00017"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="InventoryStatus" NameInEntity="Inventory_Status">
+                        <Description>
+                            <div>
+							Gives the status of the inventory. If not passed, status will be taken as blank.
+								<Validation>
+                                    <Condition>Error if status not passed and status transition is not specified for blank status.
+									</Condition>
+                                    <Error
+                                    Description="Inventory Status not passed and transition is not specified for blank Status." ErrorCode="WMS00023"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="InventoryTagKey" NameInEntity="Inventory_Tag_Key">
+                        <Description>
+                            <div>
+							Gives the unique key for the tag associated with inventory.
+								<Validation>
+                                    <Condition>Should be a valid <code>InventoryTagKey</code> in the system.
+									</Condition>
+                                    <Error
+                                    Description="Invalid InventoryTagKey." ErrorCode="WMS00070"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="Quantity" NameInEntity="Quantity">
+                        <Description>
+                            <div>
+							Gives the inventory quantity for which the attributes need to be changed.
+								<Validation>
+                                    <Condition>If passed, <code>Quantity</code> should not be more than the existing quantity.
+									</Condition>
+                                    <Error
+                                    Description="Not enough quantity for inventory operation." ErrorCode="WMS00019"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="ReceiptHeaderKey" NameInEntity="Receipt_Header_Key">
+                        <Description>
+                            <div>
+							Specifies the receipt to which inventory belongs.
+								<Validation>
+                                    <Condition>If passed, should be a valid <code>ReceiptHeaderKey</code> in the system.
+									</Condition>
+                                    <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Location_Inventory"
+                        Name="ShipByDate" NameInEntity="Ship_By_Date">
+                        <Description>
+                            <div>
+							Date by which inventory should be shipped.
+							</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Receipt ReceiptNo="">
+                <yfc:doc>
+                    <Element EntityName="Receipt_Header"/>
+                    <Attributes>
+                        <Attribute EntityName="Receipt_Header"
+                            Name="ReceiptNo" NameInEntity="Receipt_No">
+                            <Description>
+                                <div>
+								Indicates the receipt to which inventory belongs.
+									<Validation>
+                                    <Condition>If passed, should be a valid receipt number.
+										</Condition>
+                                    <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </Receipt>
+            <InventoryItem ItemID="" ProductClass="" UnitOfMeasure="">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Item"/>
+                    <Attributes>
+                        <Attribute EntityName="Inventory_Item"
+                            Name="ItemID" NameInEntity="Item_ID">
+                            <Description>
+                                <div>
+								Item identity for the inventory.
+									<Validation>
+                                    <Condition>Item should exist in the catalog.
+										</Condition>
+                                    <Error
+                                    Description="Invalid Item. Organization Code: {OrganizationCode}, Item ID: {ItemID} and UOM: {UnitOfMeasure}." ErrorCode="WMS00209"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>if <code>InventoryItemKey</code> is not passed, <code>ItemID</code> must be passed.
+										</Condition>
+                                    <Error
+                                    Description="ItemId has to be passed in the input." ErrorCode="WMS00031"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Item"
+                            Name="ProductClass" NameInEntity="Product_Class">
+                            <Description>
+                                <div>
+								Gives the ProductClass for the item.
+									<Validation>
+                                    <Condition>if <code>InventoryItemKey</code> is not passed, <code>ProductClass</code> must be passed.
+										</Condition>
+                                    <Error
+                                    Description="ProductClass has to be passed in the input." ErrorCode="WMS00033"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute EntityName="Inventory_Item"
+                            Name="UnitOfMeasure" NameInEntity="Uom">
+                            <Description>
+                                <div>
+								Unit of measure for the item.
+									<Validation>
+                                    <Condition>if <code>InventoryItemKey</code> is not passed, <code>UnitOfMeasure</code> must be passed.
+										</Condition>
+                                    <Error
+                                    Description="UnitOfMeasure has to be passed in the input." ErrorCode="WMS00032"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </InventoryItem>
+            <TagDetail BatchNo="" LotAttribute1="" LotAttribute2=""
+                LotAttribute3="" LotKeyReference="" LotNumber=""
+                ManufacturingDate="" RevisionNo="">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Tag">
+                        <Description>
+                            <div>
+							Gives the information about the tag to which inventory belongs. Attributes passed in this element will be used to identify a tag for the item in inventory based on attributes marked as unique tag attributes in the item catalog. If a tag is present, it will be used and the existing tag will be updated with the other non-unique tag attributes passed in the TagDetail element (if different from the existing tag record). Tag information is stored only if the <code>Node</code> tracks tag information in inventory.
+								<Validation>
+                                    <Condition>Mandatory in <code>FromInventory</code> if item is tag tracked. Error if mandatory and not passed.
+										</Condition>
+                                    <Error Description="No Tag Number." ErrorCode="YFSI10004"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Element>
+                </yfc:doc>
+            </TagDetail>
+            <SerialList>
+                <SerialDetail SecondarySerial1="" SecondarySerial2=""
+                    SecondarySerial3="" SecondarySerial4=""
+                    SecondarySerial5="" SecondarySerial6=""
+                    SecondarySerial7="" SecondarySerial8=""
+                    SecondarySerial9="" SerialNo="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Global_Serial_Num">
+                            <Description>
+                                <div>
+						Gives the list of serials whose attributes are being changed. <code>SerialList</code> becomes mandatory if serial tracking for inventory is set for the node and item is serial tracked.
+							<Validation>
+                                    <Condition>If serial tracking is mandatory, total serials should be equal to quantity.
+								</Condition>
+                                    <Error
+                                    Description="Total serials not equal to quantity." ErrorCode="WMS00009"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If serial tracking is not mandatory, total serials should be less than or equal to quantity.
+								</Condition>
+                                    <Error
+                                    Description="Serials more than quantity." ErrorCode="WMS00008"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>Error if duplicate serials are passed.
+								</Condition>
+                                    <Error
+                                    Description="Duplicate serials passed in input." ErrorCode="WMS00086"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial1" NameInEntity="Secondary_Serial_1">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial2" NameInEntity="Secondary_Serial_2">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial3" NameInEntity="Secondary_Serial_3">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial4" NameInEntity="Secondary_Serial_4">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial5" NameInEntity="Secondary_Serial_5">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial6" NameInEntity="Secondary_Serial_6">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial7" NameInEntity="Secondary_Serial_7">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial8" NameInEntity="Secondary_Serial_8">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SecondarySerial9" NameInEntity="Secondary_Serial_9">
+                                <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Global_Serial_Num"
+                                Name="SerialNo" NameInEntity="Serial_No">
+                                <Description>
+                                    <div>
+										Unique identity for each serial.
+											<Validation>
+                                    <Condition>If passed, should be a valid serial number.
+												</Condition>
+                                    <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>If <code>SerialList</code> and item details are passed, then it is validated that serial belongs to same item.
+												</Condition>
+                                    <Error
+                                    Description="Serial mismatch occured." ErrorCode="WMS00010"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </SerialDetail>
+            </SerialList>
+            <SerialRangeList>
+                <SerialRange FromSerialNo="" ToSerialNo="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="SerialNo" Name="FromSerialNo">
+                                <Description>
+                                    <div>Staring serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="SerialNo" Name="ToSerialNo">
+                                <Description>
+                                    <div>Ending serial number of a range for item. 
+ 									<Validation>
+                                    <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                    <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> From Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To Serial Number is blank.
+										</Condition>
+                                    <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                    <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                    <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                    <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                    <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </SerialRange>
+            </SerialRangeList>
+        </FromInventory>
+        <ToInventory yfc:DTDOccurrence="REQUIRED">
+            <yfc:doc>
+                <Element EntityName="Location_Inventory">
+                    <Description>
+                        <div>
+						This element provides information on the enterprise to which transfer is done. 
+						</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <InventoryItem InventoryOrganizationCode="Required">
+                <yfc:doc>
+                    <Element EntityName="Inventory_Item"/>
+                </yfc:doc>
+            </InventoryItem>
+        </ToInventory>
+    </Source>
+    <Audit DocumentType="" ReasonCode="" ReasonText="" Reference1=""
+        Reference2="" Reference3="" Reference4="" Reference5="">
+        <yfc:doc>
+            <Element EntityName="Location_Inventory_Audit"/>
+            <Attributes>
+                <Attribute EntityName="Location_Inventory_Audit"
+                    Name="ReasonCode" NameInEntity="Reason_Code">
+                    <Description>
+                        <div>
+						Gives the reason code for the inventory transaction. The inventory adjustments wil be done against this reason code. This is mandatory if inventory is getting updated.
+							<Validation>
+                                <Condition>Mandatory for inventory adjustments.
+								</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Should be a valid reason code in the system.
+								</Condition>
+                                <Error Description="Invalid ReasonCode." ErrorCode="WMS00071"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>ReasonCode</code> should not be associated with a bin location.
+								</Condition>
+                                <Error
+                                    Description="Reason Code associated to a bin location." ErrorCode="WMS00192"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+    </Audit>
+</TransferOwnership>

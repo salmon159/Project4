@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM
+     IBM Sterling Selling and Fulfillment Suite
+     (C) Copyright IBM Corp. 2001, 2013 All Rights Reserved.
+     US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<!--changeCalendar Input XML-->
+<Calendar CalendarDescription="" CalendarId="" CalendarKey=""
+    OrganizationCode="Conditional" xmlns="http://www.sterlingcommerce.com/documentation/YCP/changeCalendar/input">
+    <yfc:doc>
+        <Element>
+            <Description>
+                <div>
+				This is a mandatory element. It stores information related to a Calendar to be changed. A calendar can be created for an organization or for a ship node. A calendar is created by the <code>createCalendar</code> API and managed by <code>changeCalendar</code> API.
+					<Validation>
+                        <Condition>
+						Either <code>CalendarKey</code> or {<code>CalendarId</code> and <code>OrganizationCode</code>} must be passed. If not passed:
+						</Condition>
+                        <Error
+                            Description="Either CalendarKey or CalendarId and OrganizationCode must be passed." ErrorCode="YFS10515"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						Invalid Calendar information provided.
+						</Condition>
+                        <Error Description="Calendar not found." ErrorCode="YFS10516"/>
+                    </Validation>
+                </div>
+            </Description>
+        </Element>
+        <Attributes>
+            <Attribute Name="OrganizationCode">
+                <Description>
+                    <div>
+					The organization that owns the the Calendar.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be valid. If not valid:
+							</Condition>
+                            <Error Description="Invalid Organization" ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <EffectivePeriods ResetAll="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="ResetAll">
+                    <Description>
+                        <div>
+					Specify <code>ResetAll</code> = <code>
+                                <b>Y</b>
+                            </code> to remove all existing children and insert the new children (if provided).
+					</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <EffectivePeriod Action="" EffectiveFromDate=""
+            EffectiveToDate="" ShiftEffectivePeriodKey="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+					This is an optional element. Stores information about the Shift Effective Periods for a Calendar. Shift Effective Periods can be created for a date range. Shift Effective Periods can be created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API. A calendar can have multiple Effective Periods specified.  However, a calendar that inherits from another calendar cannot define its own Effective Periods as they will be derived from the parent calendar.
+						<Validation>
+                                <Condition>
+							One <code>EffectivePeriod</code> should not overlap another. If they overlap:
+							</Condition>
+                                <Error
+                                    Description="EffectivePeriods should not overlap" ErrorCode="YFS10511"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+							If this calendar is inheriting its definition from another calendar and an <code>EffectivePeriod</code> is specified:
+							</Condition>
+                                <Error
+                                    Description="Inherited calendar cannot define any EffectivePeriods." ErrorCode="YCP75_00007"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Text-10" Name="Action">
+                        <Description>
+                            <div>
+						Specify <code>Action</code> = <code>
+                                    <b>REMOVE</b>
+                                </code> to remove the entity. Leave <code>Action</code> blank or don't include it for modifying or creating a new entity.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="EffectiveFromDate">
+                        <Description>
+                            <div>
+						The date from which shift is effective.
+							<Validation>
+                                    <Condition>
+                                    <code>EffectiveFromDate</code> must be passed. If not passed:
+								</Condition>
+                                    <Error
+                                    Description="EffectiveFromDate and EffectiveToDate must be passed" ErrorCode="YFS10521"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>EffectiveFromDate</code> must be before <code>EffectiveToDate</code>. If not:
+								</Condition>
+                                    <Error
+                                    Description="EffectiveFromDate must come before EffectiveToDate" ErrorCode="YFS10522"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="EffectiveToDate">
+                        <Description>
+                            <div>
+						The date on which shift expires. 
+							<Validation>
+                                    <Condition>
+                                    <code>EffectiveToDate</code> must be passed. If not passed:
+								</Condition>
+                                    <Error
+                                    Description="EffectiveFromDate and EffectiveToDate must be passed" ErrorCode="YFS10521"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>EffectiveToDate</code> must be after <code>EffectiveFromDate</code>. If not:
+								</Condition>
+                                    <Error
+                                    Description="EffectiveFromDate must come before EffectiveToDate" ErrorCode="YFS10522"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <Shifts>
+                <Shift Action="" FridayValid="" MondayValid=""
+                    SaturdayValid="" ShiftEndTime="" ShiftKey=""
+                    ShiftName="" ShiftStartTime="" ShiftType=""
+                    SundayValid="" ThursdayValid="" TuesdayValid=""
+                    WednesdayValid="" yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+								This is an optional element. It stores information related to a shift. Shifts can be defined for a given effective period; this API indicates the <code>ShiftName</code>, <code>ShiftStartTime</code>, <code>ShiftEndTime</code>, and the day of week that shift is valid. A shift is created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+									<Validation>
+                                    <Condition>
+                                    <code>Shift</code> must belong to the <code>EffectivePeriod</code> that <code>CalendarDayException</code> falls into. If not valid:
+										</Condition>
+                                    <Error
+                                    Description="Shift must belong to Effective Period that CalendarDayException falls into" ErrorCode="YCP0176"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+                                    <code>ShiftStartTime</code> and <code>ShiftEndTime</code> must be passed and must be valid. If not passed:
+										</Condition>
+                                    <Error
+                                    Description="ShiftStartTime and ShiftEndTime must be passed" ErrorCode="YFS10518"/>
+                                    </Validation>
+                                    <Validation>
+                                    <Condition>
+										Valid values for <code>*Valid</code> are <code>
+                                    <b>Y</b>
+                                    </code> or <code>
+                                    <b>N</b>
+                                    </code>. There is no validation for <code>*Valid</code>.
+										</Condition>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                        <Attributes>
+                            <Attribute DataType="Text-10" Name="Action">
+                                <Description>
+                                    <div>
+									Specify <code>Action</code> = <code>
+                                    <b>REMOVE</b>
+                                    </code> to remove the entity. Leave <code>Action</code> blank or don't include it for modifying or creating a new entity.
+									</div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </Shift>
+            </Shifts>
+        </EffectivePeriod>
+    </EffectivePeriods>
+    <CalendarDayExceptions ResetAll="">
+        <yfc:doc>
+            <Attributes>
+                <Attribute DataType="Flag" Name="ResetAll">
+                    <Description>
+                        <div>
+						Specify <code>ResetAll</code> = <code>
+                                <b>Y</b>
+                            </code> to remove all existing children and insert the new children (if provided).
+						</div>
+                    </Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <CalendarDayException Action="" CalendarDayExceptionKey=""
+            Date="" ExceptionType="" ResetAll="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+					This is an optional element. It stores information about the Calendar Day Exceptions for a Calendar. Exceptions can be created with Types: 0 Non-Standard Off Day) or 1 (Non-Standard Working Day). Calendar Day Exceptions are created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+					</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="Text-10" Name="Action">
+                        <Description>
+                            <div>
+						Specify <code>Action</code> = <code>
+                                    <b>REMOVE</b>
+                                </code> to remove the entity. Leave <code>Action</code> blank or don't include it for modifying or creating a new entity.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute Name="Date">
+                        <Description>
+                            <div>
+						The Date for which the exception has been specified.
+							<Validation>
+                                    <Condition>
+                                    <code>Date</code> must fall into some of the effective period specified. If not:
+								</Condition>
+                                    <Error
+                                    Description="Exception date does not fall into any effective periods" ErrorCode="YFS10517"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-1" Name="ExceptionType">
+                        <Description>
+                            <div>
+						The Exception Type. Valid values are: <code>
+                                    <b>1</b>
+                                </code> (Working Day) and <code>
+                                    <b>0</b>
+                                </code> (Off Day). There is no validation. If <code>ExceptionType</code> is set to <code>
+                                    <b>0</b>,</code> all of the exception shifts are removed.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="ResetAll">
+                        <Description>
+                            <div>
+						Specify <code>ResetAll</code> = <code>
+                                    <b>Y</b>
+                                </code> to remove all existing children and insert new children (if provided). If <code>ResetAll</code> = <code>
+                                    <b>Y</b>
+                                </code> and <code>ExceptionType</code> = <code>
+                                    <b>1</b>
+                                </code> and there are no ExceptionShifts provided, the <code>CalendarDayException</code> is removed.
+						</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ExceptionShifts>
+                <ExceptionShift yfc:DTDOccurrence="ZeroOrMany">
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+								This is an optional element that specifies an exception shift for a specific exception date. It stores information about the Exception Shift of Calendar Day Exceptions for a Calendar. Exception shifts can be created or managed by the <code>createCalendar</code> API or <code>changeCalendar</code> API.
+								<Validation>
+                                    <Condition>
+									If the calendar inherits its definition from another calendar and the start time and end time of the exception shift do not match the start time and end time of any standard shifts in the effective period of the parent calendar.  
+									</Condition>
+                                    <Error
+                                    Description="The parent calendar does not have any shifts that match the exception shift of the child calendar." ErrorCode="YCP75_00010"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                    <Shift Action="" ShiftEndTime="" ShiftKey=""
+                        ShiftStartTime="" ShiftType=""/>
+                </ExceptionShift>
+            </ExceptionShifts>
+        </CalendarDayException>
+    </CalendarDayExceptions>
+</Calendar>

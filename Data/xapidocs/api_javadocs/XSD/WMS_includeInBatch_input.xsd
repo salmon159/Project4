@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/includeInBatch/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/includeInBatch/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_includeInBatch_input.xsd" yfc:rootElement="Batch">
+        <xsd:appinfo source="yfc:structure">
+            <Batch hasAttributes="Y">
+                <BatchLocation hasAttributes="Y"/>
+                <Tasks>
+                    <Task hasAttributes="Y"/>
+                </Tasks>
+            </Batch>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Batch" type="yfc:BatchXSDType">
+        <xsd:annotation yfc:tableName="YFS_BATCH">
+            <xsd:documentation>This table stores the batches of tasks.  A batch of tasks is typically sized such that it takes one user around 30 minutes to complete.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="BatchXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:BatchLocation"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tasks"/>
+        </xsd:all>
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_CART">
+                <xsd:documentation>
+                    <div> Identifies the newly created batch for the cart build process
+				<Validation>
+                            <Condition>
+                                <code>BatchNo</code> passed should be a valid and of an open batch.
+					</Condition>
+                            <Error
+                                Description="Invalid or Batch is not open." ErrorCode="WMS75100300"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CartId" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="CART_ID" yfc:tableName="YFS_CART">
+                <xsd:documentation>This uniquely identifies a cart.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerNo" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The container number. This is a unique key or business key, which by itself identifies a delivery plan. If not passed as input, the system generates this number using the database sequence SEQ_YFS_CONTAINER_NO.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ManuallyCreated" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="MANUALLY_CREATED" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>This flag indicates whether the batch is created by the system or manually by the user.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The node's organization code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentContainerKey"
+            type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_CONTAINER_KEY" yfc:tableName="YFS_TASK">
+                <xsd:documentation>Identifies the Container associated with the Batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Text-24" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The shipment number associated with this batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SourceZoneId" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="SOURCE_ZONE_ID" yfc:tableName="YFS_TASK">
+                <xsd:documentation>The Zone corresponding to the source location. Denormalized here for better performance.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TaskType" type="yfctype:TaskType" use="optional">
+            <xsd:annotation yfc:columnName="TASK_TYPE" yfc:tableName="YFS_BATCH">
+                <xsd:documentation>The type of the task. A batch can only contain tasks of the same task type.  This attribute marks task type for all tasks within this batch.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ToteId" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="TOTE_ID" yfc:tableName="YFS_TOTE">
+                <xsd:documentation>Tote Identifier.Forms unique key of this table in conjunction with NODE_KEY. Indicates the tote that has to be inducted.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="BatchLocation">
+        <xsd:annotation yfc:tableName="YFS_BATCH_LOCATION">
+            <xsd:documentation>This table stores the actual location of the shipment or container in the cart.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Identifies the cart location for a cart. The location is the logical location name of the cart location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Tasks">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:Task"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Task">
+        <xsd:annotation yfc:tableName="YFS_TASK">
+            <xsd:documentation>This table stores list of all tasks across nodes.  Tasks represent a logical or a physical activity.  Every task must belong to a task type, which identifies the type of activity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="TaskId" type="yfctype:SequenceNo" use="optional">
+                <xsd:annotation yfc:columnName="TASK_ID" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The one up number that uniquely identifies the task.  This is system generated.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TaskKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="TASK_KEY" yfc:tableName="YFS_TASK">
+                    <xsd:documentation>The primary key for the YFS_TASK table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,70 @@
+<Alert FlowName="IBD_ReceiveLotMasterFeed_Async" createts="20251001"/>
+
+
+
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+    <!-- Output as XML -->
+    <xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
+
+    <!-- Template matches the Alert root -->
+    <xsl:template match="/Alert">
+	<xsl:variable name="FlowName" select="/Alert/@FlowName"/>
+	<xsl:variable name="createts" select="/Alert/@createts"/>
+	<xsl:variable name="IBDReceiveJewFeedIntegServer">SELECT count(*) FROM YFS_ITEM WHERE     (CREATETS <xsl:text>&gt;</xsl:text>  '<xsl:value-of select="@createts"/>'      OR MODIFYTS <xsl:text>&gt;</xsl:text>  '<xsl:value-of select="@createts"/>') and createuserid='IBDReceiveJewFeedIntegServer'</xsl:variable>
+	<xsl:variable name="IBD_ReceiveJewelleryFeed_Async">SELECT count(*) FROM yfs_reprocess_error WHERE FLOW_NAME = 'IBD_ReceiveJewelleryFeed_Async' and  (CREATETS <xsl:text>&gt;</xsl:text>'<xsl:value-of select="@createts"/>'      OR MODIFYTS <xsl:text>&gt;</xsl:text> '<xsl:value-of select="@createts"/>')</xsl:variable>
+        <MultiApi>
+            <API FlowName="IBD_SQLProcessor">
+                <Input>
+                    <CustomSQL Query="{$IBDReceiveJewFeedIntegServer}"/>
+                </Input>
+            </API>
+    		<API FlowName="IBD_SQLProcessor">
+                <Input>
+                    <CustomSQL Query="{$IBD_ReceiveJewelleryFeed_Async}"/>
+                </Input>
+            </API>
+        </MultiApi>
+    </xsl:template>
+
+</xsl:stylesheet>
+
+
+
+<MultiApi>
+    <API FlowName="IBD_SQLProcessor">
+        <Input>
+            <CustomSQL Query="SELECT * FROM (SELECT FLOW_NAME, COUNT(*) AS ERR_COUNT FROM yfs_reprocess_error WHERE ERRORTXNID >  '20251125' GROUP BY FLOW_NAME ) A WITH UR"/>
+        </Input>
+    </API>
+</MultiApi>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <!-- Output as XML -->
+    <xsl:output indent="yes" method="xml" omit-xml-declaration="yes"/>
+    <!-- Template matches the Alert root -->
+    <xsl:template match="/Alert">
+        <xsl:variable name="FlowName" select="/Alert/@FlowName"/>
+        <xsl:variable name="createts" select="/Alert/@createts"/>
+        <xsl:variable
+                name="IBDReceiveJewFeedIntegServer">SELECT count(*) FROM YFS_ITEM WHERE  createuserid='IBDReceiveJewFeedIntegServer' and CREATETS >'<xsl:value-of
+                select="@createts"/>'</xsl:variable>
+        <xsl:variable
+                name="IBD_ReceiveJewelleryFeed_Async">SELECT * FROM (SELECT FLOW_NAME, COUNT(*) AS ERR_COUNT FROM yfs_reprocess_error WHERE ERRORTXNID >'<xsl:value-of select="@createts"/>' GROUP BY FLOW_NAME ) A WITH UR</xsl:variable>
+        <MultiApi>
+            <API FlowName="IBD_SQLProcessor">
+                <Input>
+                    <CustomSQL Query="{$IBDReceiveJewFeedIntegServer}"/>
+                </Input>
+            </API>
+            <API FlowName="IBD_SQLProcessor">
+                <Input>
+                    <CustomSQL Query="{$IBD_ReceiveJewelleryFeed_Async}"/>
+                </Input>
+            </API>
+        </MultiApi>
+    </xsl:template>
+</xsl:stylesheet>

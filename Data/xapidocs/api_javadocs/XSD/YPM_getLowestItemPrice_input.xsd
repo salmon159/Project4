@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/getLowestItemPrice/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/getLowestItemPrice/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_getLowestItemPrice_input.xsd" yfc:rootElement="ItemPrice">
+        <xsd:appinfo source="yfc:structure">
+            <ItemPrice hasAttributes="Y">
+                <LineItems>
+                    <LineItem hasAttributes="Y">
+                        <LineItemAttributes/>
+                    </LineItem>
+                </LineItems>
+            </ItemPrice>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ItemPrice" type="yfc:ItemPriceXSDType"/>
+    <xsd:complexType name="ItemPriceXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:LineItems"/>
+        </xsd:all>
+        <xsd:attribute name="BuyerUserId" type="yfctype:ContactUserId" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Currency" type="yfctype:Currency" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>Currency used for pricing data selection.
+		  				<Validation>
+                                <Condition>
+                                    <code>Currency</code> is not passed. </Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>Currency</code> is not valid.</Condition>
+                                <Error
+                                    Description="YFS: Invalid currency." ErrorCode="YFS10325"/>
+                            </Validation>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerContactID" type="yfctype:ID-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>An identifier of the customer. This is a pass through field available to user exits.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CustomerID" type="yfctype:CustomerId" use="optional">
+            <xsd:annotation yfc:columnName="CUSTOMER_ID" yfc:tableName="YPM_PRICELIST_ASSIGNMENT">
+                <xsd:documentation>
+                    <div>
+                        <p>The identifier for the customer.
+						<Validation>
+                                <Condition>If not void then <code>CustomerID</code> must be of one of the valid customer.</Condition>
+                                <Error Description="Invalid CustomerID." ErrorCode="YPM10028"/>
+                            </Validation>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+					The <code>EnterpriseCode</code> on which behalf pricing inquiry is being made.
+					<Validation>
+                                <p>
+                                    <Condition>
+                                    <code>EnterpriseCode</code> is not passed. </Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                                </p>
+                            </Validation>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreCombinationRules" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <ul style="list-style-type:none">
+                                <li>If <code>IgnoreCombinationRules</code> is passed as <b>
+                                    <code>N</code>
+                                    </b> then Combination Rules will be included if the target Items found in the input.</li>
+                                <li>If <code>IgnoreCombinationRules</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b> then all Combination Rules will be ignored. </li>
+                            </ul>
+			  			Default value is <b>
+                                <code>Y</code>
+                            </b>.
+				  	</p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreCustomerAssignments"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <ul style="list-style-type:none">If <code>IgnoreCustomerAssignments</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, following is the behavior:
+                              <li>- consider any price list which have at least one customer assignment for the passed enterprise.</li>
+                                <li>- consider any pricing rule which have at least one customer assignment for the passed enterprise.</li>
+                            </ul>
+                            <ul style="list-style-type:none"> If <code>IgnoreCustomerAssignments</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, following is the behavior:
+                             <li>-if <code>CustomerID</code> is not passed then consider generic assignments with <code>CustomerType</code> 03 or 04.</li>
+                                <li>-if <code>CustomerID</code> is passed then customer assignments with <code>CustomerType</code> 04 are considered, and any assignments based on customer's <code>CustomerType</code> or any other customer attribute is also considered.</li>
+                            </ul>
+                            <br>Default value is <b>
+                                    <code>N</code>
+                                </b>.</br>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnorePriceListQuantityTiers"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <ul style="list-style-type:none">
+                                <li>If <code>IgnorePriceListQuantityTiers</code> is passed as <b>
+                                    <code>N</code>
+                                    </b> then select the price list line tier with mapping input quantity.</li>
+                                <li>If <code>IgnorePriceListQuantityTiers</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b> then gets all price list quantity tiers for the given SKU, UOM and select the Price list line tier with lowest price.</li>
+                            </ul>
+			  			Default value is <b>
+                                <code>N</code>
+                            </b>.
+				  	</p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreRuleQuantity" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <ul style="list-style-type:none">
+                                <li>If <code>IgnoreRuleQuantity</code> is passed as <b>
+                                    <code>N</code>
+                                    </b> then Quantity Tier Rules will be included based on the quantity in the input for respective item, uom combinations. Discount will be performed based on the input quantity.</li>
+                                <li>If <code>IgnoreQuantityTiers</code> is passed as <b>
+                                    <code>Y</code>
+                                    </b> then selects Quantity Tier Rule with maximum discount irrespective of the quantity in the input. </li>
+                            </ul>
+			  			Default value is <b>
+                                <code>N</code>
+                            </b>.
+				  	</p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreSellerAssignments"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <ul style="list-style-type:none">If <code>IgnoreSellerAssignments</code> is passed as <b>
+                                    <code>Y</code>
+                                </b>, following is the behavior:
+                              <li>- consider any price list which has at least one seller assignment for the passed enterprise.</li>
+                                <li>- consider any pricing rule which has at least one seller assignment for the passed enterprise.</li>
+                            </ul>
+                            <ul style="list-style-type:none">If <code>IgnoreSellerAssignments</code> is passed as <b>
+                                    <code>N</code>
+                                </b>, following is the behavior:
+                             <li>- <code>SellerOrganizationCode</code> is not passed, then consider any price list which has a global seller assignment for the passed enterprise.</li>
+
+                                <li>- <code>SellerOrganizationCode</code> is passed then 
+                               <ul style="list-style-type:none">
+                                    <li>- consider any price list which has a global seller assignment for the passed enterprise.</li>
+                                    <li>- consider any pricing price list/rule created and assigned to SellerOrganizationCode passed in the input.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+	 		  		    Default value is <b>
+                                <code>N</code>
+                            </b>. 
+				  	</p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NumberOfDaysInPast"
+            type="yfctype:PositiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>For the given input criteria, computes lowest price by including all the pricelist lines valid between the date time <code>PricingDate - NumberOfDaysInPast</code> and <code>PricingDate</code>. If <code>NumberOfDaysInPast</code> is not passed in the input, default value will be read from the configured rule <code>"PRICING_BLIND_RETURN_DAYS"</code>. Default value for this rule is 90 days.
+					</p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>Pricing data is read on behalf of the organization specified by <code>OrganizationCode</code>.
+						<Validation>
+                                <Condition>
+                                    <code>OrganizationCode</code> is not passed. </Condition>
+                                <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrganizationCode</code> is not valid. </Condition>
+                                <Error
+                                    Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Date on which the pricing is requested. If void it is defaulted to current date and time.</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>Pricing data is either maintained or assigned to the organization specified by <code>SellerOrganizationCode</code>.				
+                    </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SuppressRuleExecution" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <p>
+                            <p>If <code>SuppressRuleExecution</code> is passed as <b>
+                                    <code>Y</code>
+                                </b> pricing rules are not applied.
+			  			Default value is <b>
+                                    <code>N</code>
+                                </b>.</p>
+                        </p>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="LineItems">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:LineItem"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineItem">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LineItemAttributes"/>
+            </xsd:all>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <p>Item identifier.
+								<Validation>
+                                    <Condition>
+                                    <code>ItemID</code> is void.</Condition>
+                                    <Error
+                                    Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                                </Validation>
+                            </p>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Unique identifier for the line.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The quantity of item which needs to be priced.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The unit of measure of the item.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LineItemAttributes">
+        <xsd:complexType/>
+    </xsd:element>
+</xsd:schema>

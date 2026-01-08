@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/modifyLocation/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/modifyLocation/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_modifyLocation_output.xsd" yfc:rootElement="Location">
+        <xsd:appinfo source="yfc:structure">
+            <Location hasAttributes="Y">
+                <SKUDedications>
+                    <SKUDedication hasAttributes="Y"/>
+                </SKUDedications>
+                <LocationSize hasAttributes="Y">
+                    <LocationCapacities>
+                        <LocationCapacity hasAttributes="Y"/>
+                    </LocationCapacities>
+                </LocationSize>
+                <TransactionalLocationAttributes hasAttributes="Y"/>
+            </Location>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Location" type="yfc:LocationXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOCATION">
+            <xsd:documentation>Warehouse zones are further divided into locations of different sizes where inventory is stored. Each location belongs to a zone and a node. It is classified as INTRANSIT, REGULAR, VIRTUAL, STAGING or DOCK. It has attributes like aisle number, bay number, level number etc.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="LocationXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SKUDedications"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LocationSize"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TransactionalLocationAttributes"/>
+        </xsd:all>
+        <xsd:attribute name="AisleNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="AISLE_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the aisle Number of the location. The locations belong to zones which have travel aisle's between them. A zone could belong to multiple aisles and multiple zones could belong to an aisle. But a location in a zone always belongs to one and only one aisle.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AisleSuffix" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="AISLE_SUFFIX" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>this field indicates the aisle section of the location id.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BayNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="BAY_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the location's bay number. Typically, the aisle, level and bay put together represents the physical location of the location in a node, if they are based on coordinate system. The bay attribute of the location (x-coordinate from the beginning of the aisle) is used in arriving at locations nearest to the dedicated locations algorithm that is used in putaway. Typically, the bay attribute is contained within the location ID.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CheckDigit" type="yfctype:VText-5" use="optional">
+            <xsd:annotation yfc:columnName="CHECK_DIGIT" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>Check Digit is a numeric representation of Location. It is generally used by Voice Systems to verify the Location. Location Check Digit is non unique.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Createprogid" type="yfctype:Createprogid" use="optional">
+            <xsd:annotation yfc:columnName="CREATEPROGID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The program that created this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The timestamp for the creation of this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Createuserid" type="yfctype:Createuserid" use="optional">
+            <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The user who created this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DockType" type="yfctype:Text-10" use="optional">
+            <xsd:annotation yfc:columnName="DOCK_TYPE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field depicts the type of the dock location. For a non-dock location, this field is set to blank. For a dock location, it is set to INBOUND if it is used exclusively for inbound activities. Similarly, it is set to OUTBOUND if is used exclusively for outbound activities. In case, the dock location is used for both inbound and outbound activities, this attribute is set to BOTH.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FreezeMoveIn" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="FREEZE_MOVE_IN" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This flag indicates whether the inventory is moved into the location. This is used for warehouses with certain number of locations. However, the usage of locations is phased out over a period of time.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FreezeMoveOut" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="FREEZE_MOVE_OUT" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This flag indicates whether inventory is moved out of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InStagingLocationId"
+            type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="IN_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates that the inventory is dropped into the drop off locations.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsSchedulable" type="yfctype:String" use="optional"/>
+        <xsd:attribute name="LevelNumber" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="LEVEL_NUMBER" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the level number of the location. The height of the location (y-co-ordinate of the location from the floor) is classified as levels. The level attribute of the location is used in arriving at locations nearest to the dedicated locations algorithm used during the putaway process. Typically, the level attribute is contained within the location ID.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationBarCode"
+            type="yfctype:LocationBarCode" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_BAR_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates that a numeric barcode of the location identifier is stored for this location. The way this is intended to be used in WMS is that an RF operator when prompted to scan the location Id is also expected to scan the location bar code on the RF terminal. This ensures that the operator has traveled to the location suggested by the system and picked up or dropped off inventory at the specified location. Simply keying in the human readable form of the location ID on the RF terminal will be rejected by the system. The objective of this feature is to ensure inventory accuracy.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the unique identifier for the location. The combination of the LOCATION_ID and NODE_KEY forms the unique key for the YFS_LOCATION table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The primary key for the YFS_LOCATION table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationSizeCode"
+            type="yfctype:LocationSizeCode" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field defines the capacity of the location. All locations having the same size (dimensions and ability to hold the same weight) are classified under the same size code. This maps to the primary key attribute of the YFS_LOCATION_SIZE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationType"
+            type="yfctype:EnumLocationType" use="optional">
+            <xsd:annotation yfc:columnName="LOCATION_TYPE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is a system defined classification of location to aid association of locations of certain types for certain other operations with WMS. The supported types are: INTRANSIT (Mobile locations), STAGING, VIRTUAL, REGULAR and DOCK. For example, all equipment locations should be of type INTRANSIT.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Lockid" type="yfctype:Lockid" use="optional">
+            <xsd:annotation yfc:columnName="LOCKID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>An integer used to track and prevent concurrent modifications.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Modifyprogid" type="yfctype:Modifyprogid" use="optional">
+            <xsd:annotation yfc:columnName="MODIFYPROGID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The program that modified this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The timestamp for the last modification of this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Modifyuserid" type="yfctype:Modifyuserid" use="optional">
+            <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The user who last modified this record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveInSeqNo" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_IN_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is used by task management to suggest location while moving in the inventory (putaway). The putaway location selection algorithm uses this information to select locations from a list of locations based on the move in sequence.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveOutSeqNo" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_OUT_SEQ_NO" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is used by task management to suggest location while moving out inventory (picking). The pick location selection algorithm uses this information to select locations from a list of locations based on its move in sequence.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>The primary key for the YFS_LOCATION table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OutStagingLocationId"
+            type="yfctype:LocationId" use="optional">
+            <xsd:annotation yfc:columnName="OUT_STAGING_LOCATION_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the Out Drop off Location where moves originated at this location, and may be dropped.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StorageCode" type="yfctype:StorageCode" use="optional">
+            <xsd:annotation yfc:columnName="STORAGE_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field is an attribute of the location that allows the warehouse to store items with similar storage profile as that of the location.  For example, hazardous inflammable items need locations close to fire extinguishers. In this case the locations will be marked as having a storage code, which is suitable for storing Inflammable items. This ensures that only inflammable items get to these locations.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="VelocityCode" type="yfctype:VelocityCode" use="optional">
+            <xsd:annotation yfc:columnName="VELOCITY_CODE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates that the items are classified as 'A', 'B' or 'C' class items based on whether they are fast selling, not so fast selling and low selling items. These item classifications are typically followed by all enterprises to optimize certain operations such as sourcing and stocking. The reason to have locations that prefer certain velocity codes is to have locations closer to dock stocking 'A' class items, and locations furthest away from the dock stocking 'C' class items. The velocity code is a preference on the location and not a constraint. If 'A' class items fill up all locations meant for 'A' class items, then they can be moved to 'B' and later 'C'. Similarly, 'C' can go to 'B' and 'A' for lack of space in the respective locations preferred for a specific velocity code. The 'B' class items move into 'C' and then into 'A'.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="XCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="X_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the X co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="YCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="Y_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the Y co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZCoOrdinate" type="yfctype:Number" use="optional">
+            <xsd:annotation yfc:columnName="Z_CO_ORDINATE" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the Z co-ordinate of the location.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ZoneId" type="yfctype:ZoneId" use="optional">
+            <xsd:annotation yfc:columnName="ZONE_ID" yfc:tableName="YFS_LOCATION">
+                <xsd:documentation>This field indicates the zone to which a location belongs. This when associated with the  node key identifies a unique zone within the node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SKUDedications">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SKUDedication"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SKUDedication">
+        <xsd:annotation yfc:tableName="YFS_SKU_DEDICATION">
+            <xsd:documentation>This contains definitions of locations that are dedicated to certain SKUs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Createprogid"
+                type="yfctype:Createprogid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEPROGID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The program that created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The timestamp for the creation of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createuserid"
+                type="yfctype:Createuserid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The user who created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="required">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field identifies the enterprise to which the location is dedicated .</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemId" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field specifies the item's ID.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_ID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field specifies the location identifier. This field when associated with the NODE_KEY identifies a unique location in the node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Lockid" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="LOCKID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>An integer used to track and prevent concurrent modifications.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="MAX_QTY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This quantity indicates the maximum quantity upto which location can be replenished. This quantity is used by Release Wave and Location Monitor transactions while replenishing.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Maximum quantity of SKU that should be stored in the location. This attribute is used by put away location selection algorithm to ensure that no more than the maximum quantity for that item at that location is put away, even if location capacity constraints allow for more quantity than the maximum quantity. It is computed as minimum of LocationSize and LocationCapacity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="MIN_QTY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>If the inventory at the dedicated location goes below this quantity then replenishment is triggered for the location. Replenishment is triggered by Release Wave and Location Monitor transactions upon additional configuration.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Minimum quantity of SKU for replenishing. It is computed as 
+					  <Code> MaxQuantity * (TriggerPercent/100)</Code>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyprogid"
+                type="yfctype:Modifyprogid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYPROGID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The program that modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The timestamp for the last modification of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyuserid"
+                type="yfctype:Modifyuserid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The user who last modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The primary key for the YFS_SKU_DEDICATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="required">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field specifies the item's product class.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SKUDedicationKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SKU_DEDICATION_KEY" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The primary key for the YFS_SKU_DEDICATION table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field stores customization details for those items that are custom specific. When the inventory is customized for a specific order, it needs to be tracked separately so that it can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>This field stores customization details for items that are custom specific.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_SKU_DEDICATION">
+                    <xsd:documentation>The item's unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LocationSize">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_SIZE">
+            <xsd:documentation>Each location belongs to a specific location size code. Location size code defines the dimensions of the location, and the weight that it can withstand when products are stored in the location.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LocationCapacities"/>
+            </xsd:all>
+            <xsd:attribute name="Createprogid"
+                type="yfctype:Createprogid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEPROGID" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The program that created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The timestamp for the creation of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createuserid"
+                type="yfctype:Createuserid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The user who created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Description" type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>A brief description of the size code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DimensionUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Unit of measure for Dimension. This unit of measure applies to Height, Length and Width attributes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Height" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="HEIGHT" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This field indicates the height of location. The height is as per the dimension UOM set up against the node's locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsInfiniteCapacity" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_INFINITE_CAPACITY" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This flag indicates whether the dimension related fields are used to compute capacity, and whether the capacity checks are done.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Length" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="LENGTH" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This field specifies the length of the location. The length is as per the dimension UOM set up against the node's locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationSizeCode"
+                type="yfctype:LocationSizeCode" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This field specifies the location size identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationSizeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_SIZE_KEY" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The primary key for the YFS_LOCATION_SIZE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Lockid" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="LOCKID" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>An integer used to track and prevent concurrent modifications.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MaxWeight" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="MAX_WEIGHT" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This field indicates the maximum weight that this location can hold. The weight's UOM is as per the weight UOM set up against the node's locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyprogid"
+                type="yfctype:Modifyprogid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYPROGID" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The program that modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The timestamp for the last modification of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyuserid"
+                type="yfctype:Modifyuserid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The user who last modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>The primary key for the YFS_LOCATION_SIZE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Volume" type="yfctype:Volume" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Volume that a location can hold. This field is computed using the Height, Length and Width attributes as defined above.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VolumeUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Unit of measure for Volume.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WeightUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Unit of measure for Weight.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Width" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="WIDTH" yfc:tableName="YFS_LOCATION_SIZE">
+                    <xsd:documentation>This field specifies the width of the location. The dimension UOM of breadth is as per the dimension UOM set up against the node's locale.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LocationCapacities">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:LocationCapacity"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LocationCapacity">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_CAPACITY">
+            <xsd:documentation>Each location has a certain capacity in terms of number of packages of certain packaging type. Item has dimensions and so has the location (size code). We could very easily have computed the location capacity by volume of item versus the volume of the location. If you notice, we have classified locations as belonging to locations of a certain size type and then associated dimensions with the size type. This significantly reduces the amount of data that needs to be configured. Similarly, we would need to classify items into categories for purposes of capacity calculations, so that we have lesser data to configure. For example, all items coming in a 2 feet * 2 feet * 2 feet box can be classified as having a capacity code of 2 feet cube packaged as a carton (packaging type). Similarly we could have the same item coming in a 6 * 6 * 6 feet pallet, which could be classified as 6 feet cube pallet. What is defined here is how many such packages can fit within the location of a particular size code. If this is not setup here at the item classification level, then capacity computation is done using volumes of the item versus volume of the location.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Createprogid"
+                type="yfctype:Createprogid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEPROGID" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The program that created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The timestamp for the creation of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createuserid"
+                type="yfctype:Createuserid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The user who created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>This field specifies the enterprise identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemClassificationCode"
+                type="yfctype:ID-40" use="optional">
+                <xsd:annotation
+                    yfc:columnName="ITEM_CLASSIFICATION_CODE" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>This field specifies the item classification identifier. This field allows to dynamically select a capacity classification attribute of an item for defining the capacity constraints.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationCapacityKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_CAPACITY_KEY" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The primary key for the YFS_LOCATION_CAPACITY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationSizeCode"
+                type="yfctype:LocationSizeCode" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_SIZE_CODE" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>This field specifies the location size identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Lockid" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="LOCKID" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>An integer used to track and prevent concurrent modifications.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyprogid"
+                type="yfctype:Modifyprogid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYPROGID" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The program that modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The timestamp for the last modification of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyuserid"
+                type="yfctype:Modifyuserid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The user who last modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoOfPackages" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="NO_OF_PACKAGES" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>This field indicates the location capacity in terms of number of packages.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>The primary key for the YFS_LOCATION_CAPACITY table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PackagingType"
+                type="yfctype:PackagingType" use="optional">
+                <xsd:annotation yfc:columnName="PACKAGING_TYPE" yfc:tableName="YFS_LOCATION_CAPACITY">
+                    <xsd:documentation>This field indicates the packaging type, such as Pallets, Cartons.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TransactionalLocationAttributes">
+        <xsd:annotation yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+            <xsd:documentation>Location's transactional attributes like volume, weight, empty/full etc., are maintained in this table. The reason this is not a part of the YFS_LOCATION table is because we would like to use caching capacity for heavily accessed master configurations such as locations, items etc. Only those attributes that are likely to be modified based on transactions need to be read from the database at every access.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AvailableVolume" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="AVAILABLE_VOLUME" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>This field indicates that the unoccupied physical volume of the location that is available for moving in stock. This does not include the PEND_IN_VOLUME. (See explanation against this field in this entity).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AvailableWeight" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="AVAILABLE_WEIGHT" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>This field indicates the additional physical weight the location can withstand when products are moved into this location to fill in the unoccupied volume. This does not include the PEND_IN_WEIGHT. (See explanation against this field in this entity).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createprogid"
+                type="yfctype:Createprogid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEPROGID" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The program that created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="CREATETS" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The timestamp for the creation of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Createuserid"
+                type="yfctype:Createuserid" use="optional">
+                <xsd:annotation yfc:columnName="CREATEUSERID" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The user who created this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FillCode" type="yfctype:EnumFillCode" use="optional">
+                <xsd:annotation yfc:columnName="FILL_CODE" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>Indicates if the location is Empty('0'), Partially Full('1') or Full('2'). These three values are updated by the applications based on stock movements to and from the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FreezeOnVariance" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="FREEZE_ON_VARIANCE" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>This flag indicates whether the location has an item with negative variance that was detected during the count operation. This determines whether a pick or putaway operation can be performed in the location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LocationKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOCATION_KEY" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The primary key for the YFS_TRAN_LOCN_ATTRS table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Lockid" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="LOCKID" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>An integer used to track and prevent concurrent modifications.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyprogid"
+                type="yfctype:Modifyprogid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYPROGID" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The program that modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyts" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYTS" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The timestamp for the last modification of this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Modifyuserid"
+                type="yfctype:Modifyuserid" use="optional">
+                <xsd:annotation yfc:columnName="MODIFYUSERID" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The user who last modified this record.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PendInVolume" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="PEND_IN_VOLUME" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>This field indicates the volume of the stock expected to move into this location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PendInWeight" type="yfctype:Number" use="optional">
+                <xsd:annotation yfc:columnName="PEND_IN_WEIGHT" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>This field indicates the weight of the stock expected to move into this location.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionalLocationAttributesKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_LOCN_ATTRS_KEY" yfc:tableName="YFS_TRAN_LOCN_ATTRS">
+                    <xsd:documentation>The primary key for the YFS_TRAN_LOCN_ATTRS table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VolumeUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Unit of measure for Volume.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WeightUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>Unit of measure for Weight.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

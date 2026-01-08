@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YSC/manageOrderApprovalRule/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YSC/manageOrderApprovalRule/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YSC_manageOrderApprovalRule_input.xsd" yfc:rootElement="OrderApprovalRule">
+        <xsd:appinfo source="yfc:structure">
+            <OrderApprovalRule hasAttributes="Y">
+                <ApprovalGroupList>
+                    <ApprovalGroup hasAttributes="Y"/>
+                </ApprovalGroupList>
+            </OrderApprovalRule>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderApprovalRule" type="yfc:OrderApprovalRuleXSDType">
+        <xsd:annotation yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+            <xsd:documentation>This table stores order approval rules</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderApprovalRuleXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ApprovalGroupList"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>. 
+						<Validation>
+                            <Condition>Order Approval Rule being created or updated must have valid OrganizationCode, DocumentType, 
+							RuleID and GreexRule.  
+							</Condition>
+                            <Error
+                                Description="Order Approval Rule cannot be created or updated." ErrorCode="OMP90_0007"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Order Approval Rule being created or updated has a GreexRule with invalid ReturnType. 
+							</Condition>
+                            <Error
+                                Description="Order Approval Rule cannot be created or updated." ErrorCode="OMP90_0008"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Order Approval Rule being created or updated has a GreexRule with invalid return attributes. 
+							</Condition>
+                            <Error
+                                Description="Order Approval Rule cannot be created or updated." ErrorCode="OMP90_0009"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Order Approval Rule being created or updated has effective end date that comes before
+							effective start date.  
+							</Condition>
+                            <Error
+                                Description="Order Approval Rule cannot be created or updated." ErrorCode="OMP90_0020"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>GreexRule attribute contains an unexpected advanced XML rule.  
+							</Condition>
+                            <Error
+                                Description="GreexRule attribute contains an unexpected advanced XML rule." ErrorCode="OMP90_0024"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DocumentType" type="yfctype:DocumentType" use="required">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Document type to which this approval rule belongs.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveEndDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_END_DATE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Defines the time before which the rule is effective.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="EffectiveStartDate" use="optional">
+            <xsd:annotation yfc:columnName="EFFECTIVE_START_DATE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Defines the time after which the rule is effective.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Date"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="GreexRule" type="yfctype:CLOB" use="required">
+            <xsd:annotation yfc:columnName="GREEX_RULE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The Greex format advanced XML condition associated with this approval limit.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsActive" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IS_ACTIVE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Indicates when the approval rule is active.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsOverride" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="IS_OVERRIDE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Indicates when the approval overrides other applicable rules of the same Type</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Message"
+            type="yfctype:OrderApprovalRuleMessage" use="optional">
+            <xsd:annotation yfc:columnName="MESSAGE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Message to be displayed when approval rule is violated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MessageCode"
+            type="yfctype:OrderApprovalRuleMessageCode" use="optional">
+            <xsd:annotation yfc:columnName="MESSAGE_CODE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Message code to be displayed when approval rule is violated.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderApprovalRuleKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_APPROVAL_RULE_KEY" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The primary key of the YFS_ORDER_APPROVAL_RULE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>The organization that is associated with this approval rule.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RuleID"
+            type="yfctype:OrderApprovalRuleRuleID" use="required">
+            <xsd:annotation yfc:columnName="RULE_ID" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Approval rule identifier.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Type" type="yfctype:OrderApprovalRuleType" use="optional">
+            <xsd:annotation yfc:columnName="TYPE" yfc:tableName="YFS_ORDER_APPROVAL_RULE">
+                <xsd:documentation>Indicates whether approval limit is defined for header level or line level.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ApprovalGroupList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ApprovalGroup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ApprovalGroup">
+        <xsd:annotation yfc:tableName="YFS_APPROVAL_GROUP">
+            <xsd:documentation>The approval group table defines the approval group plans to be used for order approval</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Valid Values: <code>
+                                <b>REMOVE</b>
+                            </code>
+                            <br/>
+	                    Default Values: <code>
+                                <b>MANAGE</b>
+                            </code>
+                            <Validation>
+                                <Condition>Invalid Data: Attempt to remove non existing approval group</Condition>
+                                <Error Description="Invalid Data" ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApprovalGroupId"
+                type="yfctype:ApprovalGroupId" use="optional">
+                <xsd:annotation yfc:columnName="APPROVAL_GROUP_ID" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>Identifier for this approval group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ApprovalGroupKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="APPROVAL_GROUP_KEY" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>The primary key of the YFS_APPROVAL_GROUP table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DocumentType"
+                type="yfctype:DocumentType" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>Document type to which this approval group belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_APPROVAL_GROUP">
+                    <xsd:documentation>The organization that is associated with this approval group.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

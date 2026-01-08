@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/manageItemNodeVelocity/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/manageItemNodeVelocity/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="INV_manageItemNodeVelocity_input.xsd" yfc:rootElement="ItemNodeVelocities">
+        <xsd:appinfo source="yfc:structure">
+            <ItemNodeVelocities>
+                <ItemNodeVelocity hasAttributes="Y">
+                    <InventoryItem hasAttributes="Y"/>
+                </ItemNodeVelocity>
+            </ItemNodeVelocities>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ItemNodeVelocities" type="yfc:ItemNodeVelocitiesXSDType"/>
+    <xsd:complexType name="ItemNodeVelocitiesXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemNodeVelocity"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="ItemNodeVelocity">
+        <xsd:annotation yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+            <xsd:documentation>Peak velocities for an inventory item and ship node pair.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryItem"/>
+            </xsd:all>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+                    <xsd:documentation>
+                        <div>The primary key of the YFS_INVENTORY_ITEM record for which this is a velocity. 
+                        <Validation>
+                                <Condition>The inventory item could not be found.
+						</Condition>
+                                <Error Description="Invalid Item." ErrorCode="INV80_035"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>The operation to perform on the specified velocity. Default: Manage.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:YSCManageOrDeleteOperation">
+                        <xsd:enumeration value="Manage"/>
+                        <xsd:enumeration value="Delete"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityInMaxWindow" use="optional">
+                <xsd:annotation yfc:columnName="QTY_IN_MAX_WINDOW" yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+                    <xsd:documentation>The number of items for which demand was created (or supply reduced) in the maximum window.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="QuantityInMinWindow" use="optional">
+                <xsd:annotation yfc:columnName="QTY_IN_MIN_WINDOW" yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+                    <xsd:documentation>The number of items for which demand was created (or supply reduced) in the minimum window.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Quantity"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+                    <xsd:documentation>
+                        <div>The primary key of the YFS_SHIPNODE record for which this is a velocity.
+                        <Validation>
+                                <Condition>The <code>ShipNode</code> is either not passed or is not a valid ship node.
+						</Condition>
+                                <Error Description="YFS:Invalid Node" ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="VelocityDate" use="optional">
+                <xsd:annotation yfc:columnName="VELOCITY_DATE" yfc:tableName="YFS_ITEM_NODE_VELOCITY">
+                    <xsd:documentation>The time the velocity was recorded.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>
+                <div>The inventory item information related to the velocity. 
+                        <Validation>
+                        <Condition>The inventory item could not be found.
+						</Condition>
+                        <Error Description="Invalid Item." ErrorCode="INV80_035"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="InventoryOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

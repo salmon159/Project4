@@ -1,0 +1,261 @@
+1st When Order is shipped - shopping exp
+Flag initial null - Yes
+
+2nd after order is delivered 5 days.
+Flag initial null - Yes
+
+
+Order 1 - 
+
+Order 2 shipments
+      shipment 1 shipped, shipment 2 is still accepted - trigger and put flag as yes
+	As flag is Yes when shipment 2 is shipped no mail is triggered.
+
+shipped - service
+set condition if flag is yes - proceed with the creating  xml trigger the
+ 
+IBDOrderDeliveredMailIntegServer
+
+
+Order 2 shipments
+      shipment 1 Delivered, shipment 2 is still accepted - trigger and put flag as yes
+	As flag is Yes when shipment 2 is delivered no mail is triggered.
+
+
+custom agent - 
+fetch - min order status > delivered and flag is null and delivered date greater than 5 days.
+
+execute - flag check and then create xml and call the mail
+
+
+
+NotificationReference -100 NotificationType -20
+
+PersonalizeCode -20
+PriorityCode -20
+
+SearchCriteria1 -100
+SearchCriteria2 -100
+
+
+
+For US to export 18 MB file it took 2.5 hours,
+For GCC as we doubled the agents it took export 31 MB in 2 hours.
+
+
+Number of stores are more in GCC, 
+For each item it checks inventory against all the stores and export the data
+
+
+IBDNPSDeliverySurveyEmail
+
+IBDNPSDeliverySurveyEmailAgentServer
+
+
+
+treads - 1
+File
+${qcf}
+${providerurl}
+
+schedule trigger
+720
+
+OMS.ORDER.SURVEY.FEEDBACK.IN
+
+
+SERVICE_FOR_GET_JOBS - IBD_NPSDeliveryEmailGetJobs
+JOB_ELEMENT_NAME
+SERVICE_FOR_EXECUTE_JOB - NPSDeliveryEmailExecuteJobs
+
+TCI_NPSOrderDetails
+com.cts.sterling.custom.accelerators.DynamicCondition
+NO_OF_PROPERTIES
+XPATH_EXPRESSION_1 count(/OrderList/Order)=0
+
+sh /opt/Sterling10AWS/bin/titanagentserver.sh IBDNPSDeliverySurveyEmailAgentServer "-Xms1024m -Xmx1024m" &
+
+sh /opt/Sterling10AWS/bin/triggeragent.sh IBDNPSDeliverySurveyEmail
+
+
+”OMS.SHOPPING.FEEDBACK.OUT”
+”OMS.ORDER.JOURNEY.FEEDBACK.OUT”.
+
+<TriggerAgent CriteriaId="IBDNPSDeliverySurveyEmail"/>
+
+
+
+
+
+###################################################################################################################################
+###################################################################################################################################
+
+Create these 5 queues in SIT 
+OMS.ORDER.SURVEY.AGENT.IN
+dis qs(OMS.ORDER.SURVEY.AGENT.IN)
+
+
+
+OMS.JPMC.REVERSAL.IN
+OMS.JPMC.REFUND.IN
+
+OMS.ENCIRCLE.REVERSAL.IN
+OMS.ENCIRCLE.REFUND.IN
+
+
+Steps for New Queue Creation
+ 
+ 
+Go to MQM user -->
+ 
+runmqsc QMOMS01 -->
+ 
+define qlocal (OMS.ENCIRCLE.REFUND.IN)
+dis qs(OMS.ENCIRCLE.REFUND.IN)
+end
+ 
+setmqaut -m QMOMS01 -n OMS.ENCIRCLE.REFUND.IN -t queue -p somsadm +browse +get +inq +put +dsp
+ 
+cd /var/mqm/jndisit2
+. /opt/mqm/java/bin/setjmsenv
+/opt/mqm/java/bin/JMSAdmin -cfg JMSAdmin.config  
+
+-->
+ 
+InitCtx> def q(OMS.ENCIRCLE.REFUND.IN) queue(OMS.ENCIRCLE.REFUND.IN)
+ 
+end
+ 
+---------------------------------------------------
+ 
+To verify Queue is created correctly or not
+ 
+cat .bindings | grep 'OMS.ENCIRCLE.REFUND.IN' | wc -l
+Count Should be 71
+###################################################################################################################################
+###################################################################################################################################
+
+
+
+<Shipment ActualShipmentDate="2025-04-24T08:04:01-04:00" AirwayBillNo="100007986" OrderHeaderKey="2025040704332152669673" OrderNo="US00113842" SCAC="UPSC" ScacAndServiceKey="2023020117334770391" ShipDate="2025-04-24T08:04:01-04:00" ShipNode="XTH" ShipmentKey="2025040704533552670459" ShipmentNo="100007986" ShipmentType="US_JEWEL" TotalVolume="0.061" TotalWeight="0.0334">
+<Extn ExtnInvoiceNo="" ExtnLabelCode="" ExtnOrderChannel="WCS" ExtnPaymentType="PREPAID" ExtnSellerInvoiceNo="" ExtnTotalNetAmount="40.80"/>
+<FromAddress FirstName="XTH"/>
+<ToAddress AddressLine1="6265 BROCKPORT SPENCERPORT RD" AddressLine2="" AddressLine3="" City="BROCKPORT" Country="US" DayPhone="" EMailID="" EveningPhone="" FirstName="sachin" LastName="test" MobilePhone="4111111116" State="NY" Title="" ZipCode="14420-2605"/>
+<ShipmentStatusAudits TotalNumberOfRecords="5">
+<ShipmentStatusAudit Createts="2025-04-07T04:53:42-04:00" NewStatus="1100" OldStatus="" ReasonCode="" ReasonText=""/>
+<ShipmentStatusAudit Createts="2025-04-07T04:53:42-04:00" NewStatus="1100.70.06.10" OldStatus="1100" ReasonCode="" ReasonText=""/>
+<ShipmentStatusAudit Createts="2025-04-24T08:03:42-04:00" NewStatus="1200.50" OldStatus="1100.70.06.10" ReasonCode="" ReasonText=""/>
+<ShipmentStatusAudit Createts="2025-04-24T08:03:42-04:00" NewStatus="1200.100" OldStatus="1200.50" ReasonCode="" ReasonText=""/>
+<ShipmentStatusAudit Createts="2025-04-24T08:03:42-04:00" NewStatus="1200.200" OldStatus="1200.100" ReasonCode="" ReasonText=""/>
+</ShipmentStatusAudits>
+<Containers>
+<Container ActualFreightCharge="0.00" ActualWeight="500.00" ActualWeightUOM="GRAM" AppliedWeight="0.00" AppliedWeightUOM=" " AstraCode=" " BarcodeDiscount=" " BasicFreightCharge="0.00" CODReturnTrackingNo=" " CarriageValue="0.00" ContainerGrossWeight="0.00" ContainerGrossWeightUOM="LBS" ContainerGroup="SHIPMENT" ContainerHeight="3.00" ContainerHeightUOM="IN" ContainerLength="8.00" ContainerLengthUOM="IN" ContainerNetWeight="0.00" ContainerNetWeightUOM="LBS" ContainerNo="100003593" ContainerScm=" " ContainerSeqNo="0" ContainerType=" " ContainerWidth="6.00" ContainerWidthUOM="IN" CustomsValue="0.00" DeclaredValue="0.00" DimmedFlag=" " DiscountAmount="0.00" ExportLicenseExpDate="2025-04-24" ExportLicenseNo=" " HasOtherContainers="N" IsHazmat="N" IsManifested="N" IsPackProcessComplete="N" IsReceived="N" LoadKey=" " OversizedFlag=" " ParentContainerGroup=" " ParentContainerKey=" " ParentContainerNo=" " RoutingCode=" " SCAC="UPSC" ShipmentContainerKey="2025042408034353126175" ShipmentKey="2025040704533552670459" SpecialServicesSurcharge="0.00" SystemSuggested=" " Ucc128code=" " Zone=" ">
+<ContainerDetails/>
+</Container>
+</Containers>
+<ShipmentLines>
+<ShipmentLine Action="" BackroomPickedQuantity="" CountryOfOrigin="" Createprogid="IBDRetrieveAWBandShipmentIntegServer" Createts="2025-04-07T04:53:42-04:00" Createuserid="IBDRetrieveAWBandShipmentIntegServer" CustomerPoLineNo="" CustomerPoNo="" DepartmentCode="" FifoNo="0" IsPickable="Y" ItemDesc="Yellow Gold Earrings" ItemID="UP4005HUWABA002ED000008" KitCode="" KitQty="0.00" Lockid="0" Modifyprogid="IBDRetrieveAWBandShipmentIntegServer" Modifyts="2025-04-07T04:53:42-04:00" Modifyuserid="IBDRetrieveAWBandShipmentIntegServer" NetWeight="0.00" NetWeightUom="" OrderHeaderKey="2025040704332152669673" OrderLineKey="2025040704332152669674" OrderNo="US00113842" OrderReleaseKey="2025040704523952670441" OriginalQuantity="1.00" OverShipQuantity="0.00" PrimeLineNo="1" ProductClass="FQ" Quantity="1.00" ReleaseNo="1" RequestedSerialNo="" Segment="" SegmentType="" ShipmentKey="2025040704533552670459" ShipmentLineKey="2025040704533552670457" ShipmentLineNo="1" ShipmentSubLineNo="0" ShortageQty="0.00" SubLineNo="1" UnitOfMeasure="EACH" WaveNo="" isHistory="N">
+<ContainerDetails/>
+<!-- Order and Line details go here (trimmed for brevity) -->
+</ShipmentLine>
+</ShipmentLines>
+</Shipment>
+
+
+###################################################################################################################################
+###################################################################################################################################
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Order AllocationRuleID="DEFAULT" AuthorizationExpirationDate="2499-12-31T19:00:00-05:00" CarrierAccountNo="" CarrierServiceCode="" ChainType="" ChargeActualFreightFlag="N" CustCustPONo="" CustomerEMailID="anupama@solveda.com" CustomerPONo="" DeliveryCode="" Division="" DocumentType="0001" DraftOrderFlag="N" EnterpriseCode="TITAN_US" EntryType="WCS" FreightTerms="" HasDeliveryLines="N" HasProductLines="Y" HasServiceLines="N" HoldFlag="N" HoldReasonCode="" MaxOrderStatus="3700.7777" MaxOrderStatusDesc="Order Delivered" MinOrderStatus="3350.150" MinOrderStatusDesc="Ready For Backroom Pick" NotifyAfterShipmentFlag="N" OrderDate="2025-04-02T11:22:26-04:00" OrderHeaderKey="2025040211220052544497" OrderName="SFCC" OrderNo="US00113809" OrderType="" OriginalTax="0.00" OriginalTotalAmount="181.68" OtherCharges="0.00" PaymentStatus="AUTHORIZED" PendingTransferIn="0.00" PersonalizeCode="" PriorityCode="" PriorityNumber="0" Purpose="" ReturnByGiftRecipient="" SCAC="" ScacAndService="" ScacAndServiceKey="" SearchCriteria1="" SearchCriteria2="" SellerOrganizationCode="TITAN_US" Status="Partially Order Delivered" TaxExemptFlag="N" TaxExemptionCertificate="" TaxJurisdiction="" TaxPayerId="" TermsCode="" TotalAdjustmentAmount="0.00" isHistory="N">
+	<PriceInfo Currency="USD" EnterpriseCurrency="USD" ReportingConversionDate="2025-04-02T11:22:27-04:00" ReportingConversionRate="1.00" TotalAmount="181.68"/>
+	<OrderLines>
+		<OrderLine AllocationDate="2025-04-02" DeliveryMethod="SHP" FulfillmentType="US_JEW" InvoicedQty="1.00" ItemGroupCode="PROD" LineSeqNo="1.1" MaxLineStatus="3700.7777" MaxLineStatusDesc="Order Delivered" MinLineStatus="3700.7777" MinLineStatusDesc="Order Delivered" OpenQty="0.00" OrderHeaderKey="2025040211220052544497" OrderLineKey="2025040211220052544498" OrderedQty="1.00" OriginalOrderedQty="1.00" OtherCharges="7.50" PickableFlag="Y" PrimeLineNo="1" RemainingQty="0.00" ShipNode="XNJ" ShipTogetherNo="4" Status="Order Delivered" StatusQuantity="1.00" SubLineNo="1" isHistory="N">
+			<ItemDetails SHORT_DESCRIPTION="Gold chain">
+				<Extn EXTN_PRICING_GROUP_TYPE="Gold Plain"/>
+			</ItemDetails>
+		</OrderLine>
+		<CapacityAllocations/>
+	</OrderLine>
+</OrderLines>
+<Instructions NumberOfInstructions="1">
+	<Instruction InstructionText="NA" InstructionType="OTHER" InstructionURL=""/>
+</Instructions>
+<PersonInfoShipTo AddressLine1="6805 WINDHAVEN PKWY" AddressLine2="123" City="THE COLONY" Country="US" DayPhone="6789999999" EMailID="anupama@solveda.com" FirstName="daily" LastName="test" MobilePhone="6789999999" PersonInfoKey="2025040211220152544504" State="TX" Title="Mr" ZipCode="75056-5254"/>
+<PersonInfoBillTo AddressLine1="6805 WINDHAVEN PKWY" AddressLine2="123" City="THE COLONY" Country="US" DayPhone="6789999999" EMailID="anupama@solveda.com" FirstName="daily" LastName="test" MobilePhone="6789999999" PersonInfoKey="2025040211220152544505" State="TX" Title="Mr" ZipCode="75056-5254"/>
+<PersonInfoContact City="" Country="" EMailID="anupama@solveda.com" FirstName="daily" LastName="test" MobilePhone="6789999999" PersonInfoKey="2024101807260939165967" State="" Title="Mr" ZipCode=""/>
+<AdditionalAddresses NumberOfAdditionalAddresses="0"/>
+<OrderStatuses>
+	<OrderStatus OrderHeaderKey="2025040211220052544497" OrderLineKey="2025040211220052544498" OrderLineScheduleKey="202504021145303852544980" OrderReleaseKey="2025040211303852544977" OrderReleaseStatusKey="202504031081353552593463" PipelineKey="20220715114504184036" ShipNode="XNJ" Status="3700.7777" StatusDate="2025-04-03T10:35:35-04:00" StatusDescription="Order Delivered" StatusQty="1.00" TotalQuantity="1.00">
+		<Details ExpectedDeliveryDate="2025-04-08T11:32:47-04:00" ExpectedShipmentDate="2025-04-02T11:32:47-04:00" TagNumber=""/>
+	</OrderStatus>
+	<OrderStatus OrderHeaderKey="2025040211220052544497" OrderLineKey="2025040211220052544500" OrderLineScheduleKey="202504021120303852544982" OrderReleaseKey="2025040211303852544977" OrderReleaseStatusKey="202504031048353552593464" PipelineKey="20220715114504184036" ShipNode="XNJ" Status="3700.7777" StatusDate="2025-05-15T10:35:35-04:00" StatusDescription="Order Delivered" StatusQty="1.00" TotalQuantity="1.00">
+		<Details ExpectedDeliveryDate="2025-04-08T11:32:47-04:00" ExpectedShipmentDate="2025-04-02T11:32:47-04:00" TagNumber=""/>
+	</OrderStatus>
+	<OrderStatus OrderHeaderKey="2025040211220052544497" OrderLineKey="2025040211220152544502" OrderLineScheduleKey="202504021170303852544978" OrderReleaseKey="2025040211303852544976" OrderReleaseStatusKey="202504021148363252545215" PipelineKey="20220715114504184036" ShipNode="XTH" Status="3350.150" StatusDate="2025-04-02T11:37:03-04:00" StatusDescription="Ready For Backroom Pick" StatusQty="1.00" TotalQuantity="1.00">
+		<Details ExpectedDeliveryDate="2025-04-08T11:32:47-04:00" ExpectedShipmentDate="2025-04-02T11:32:47-04:00" TagNumber=""/>
+	</OrderStatus>
+</OrderStatuses>
+<ExchangeOrders/>
+</Order>
+
+
+
+
+
+
+
+
+<Order App_Id="hw88_touchpoint" Delivery_EMail_Check="Y" Name="Tanishq"
+    tag_State="NY" tag_abm_name="Kshitij Tripathi"
+    tag_btq_location="ecomm" tag_category="GOLDSTUDDED"
+    tag_cee_name="Mansi Sinha" tag_city="BROCKPORT"
+    tag_customer_mobile="+14111111111" tag_customer_name="Sachin test"
+    tag_eligible_amount="160.11" tag_fiscal_year="2025"
+    tag_invoicenumber="00113421"
+    tag_private_group_hierarchy_0_id="ecom_online"
+    tag_product_category="bracelet" tag_rbm_name="Amrit pal singh"
+    tag_shopping_amount="160.11" tag_storecode="ecom_online"
+    tag_transacting_channel="ecom" tag_transactiondate="03-03-2025"
+    tag_ulpno="" tag_url="www.tanishq.com" userWhatsapp="+14111111111"
+    user_email="ssharma@solveda.com" user_phone="+14111111111"/>
+
+
+
+
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:template match="/">
+	<xsl:variable name="vtag_storecode" select="/Order/@tag_storecode"/>
+		<Order>
+			<xsl:attribute name="OrderNo">
+				<xsl:value-of select="/Order/@tag_invoicenumber"/>
+			</xsl:attribute>
+			<xsl:attribute name="EnterpriseCode">TITAN_US</xsl:attribute>
+			<xsl:attribute name="DocumentType">0001</xsl:attribute>
+			<xsl:attribute name="Override">Y</xsl:attribute>
+			<Extn>
+			
+			<xsl:choose>
+				<xsl:when test="$vtag_storecode='ecom_online'">
+					<xsl:attribute name="Extn_NPS_Shipped_Email">Y</xsl:attribute>
+				</xsl:when>
+				<xsl:when test="$vtag_storecode='ecom_delivery'">
+					<xsl:attribute name="Extn_NPS_Deliver_Email">Y</xsl:attribute>
+				</xsl:when>
+				
+			</xsl:choose>
+			
+			</Extn>
+		</Order>
+	</xsl:template>
+</xsl:stylesheet>
+
+
+<xsl:choose>
+ <xsl:when test="expression">
+  ... some output ...
+ </xsl:when>
+ <xsl:when test="another-expression">
+  ... some output ...
+ </xsl:when>

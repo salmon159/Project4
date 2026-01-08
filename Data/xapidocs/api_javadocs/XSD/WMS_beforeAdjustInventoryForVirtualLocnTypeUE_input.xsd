@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/beforeAdjustInventoryForVirtualLocnTypeUE/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/beforeAdjustInventoryForVirtualLocnTypeUE/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="WMS_beforeAdjustInventoryForVirtualLocnTypeUE_input.xsd" yfc:rootElement="Inventory">
+        <xsd:appinfo source="yfc:structure">
+            <Inventory hasAttributes="Y">
+                <Receipt hasAttributes="Y"/>
+                <InventoryItem hasAttributes="Y"/>
+                <TagDetail hasAttributes="Y"/>
+                <SerialList>
+                    <SerialDetail hasAttributes="Y"/>
+                </SerialList>
+                <SerialRangeList>
+                    <SerialRange hasAttributes="Y"/>
+                </SerialRangeList>
+            </Inventory>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Inventory" type="yfc:InventoryXSDType">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_INVENTORY">
+            <xsd:documentation>Non-license plated inventory is tracked using this table. Contains information for the inventory that needs to be adjusted.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="InventoryXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryItem"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TagDetail"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialRangeList"/>
+        </xsd:all>
+        <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+            <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Country in which the item was manufactured.
+								<Validation>
+                            <Condition>Should be a valid country of origin.
+									</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FifoNo" type="yfctype:Integer" use="optional">
+            <xsd:annotation yfc:columnName="FIFO_NO" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							The first-in-first-out number to determine sequence of inventory move. A user exit <code>getFifoNumber</code> is called to obtain <code>FifoNo</code>, if new inventory is being created, <code>FifoNo</code> is not passed and item is FIFO tracked.
+							</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Gives the unique key for the inventory item.
+								<Validation>
+                            <Condition>Should be a valid <code>InventoryItemKey</code> in the system.
+									</Condition>
+                            <Error
+                                Description="Invalid InventoryItemKey." ErrorCode="WMS00017"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryStatus"
+            type="yfctype:InventoryStatus" use="optional">
+            <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Gives the status of the inventory. Only one level <code>InventoryStatus</code> transitions happen for the inventory for positive adjustments. Negative adjustments will not take care of <code>InventoryStatus</code> transitions. If not passed, status will be taken as blank.
+								<Validation>
+                            <Condition>Error if status not passed and transition is not specified for blank status.
+									</Condition>
+                            <Error
+                                Description="Inventory Status not passed and transition is not specified for blank Status." ErrorCode="WMS00023"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if passed an invalid <code>InventoryStatus</code>.
+									</Condition>
+                            <Error
+                                Description="WMS:No record found for passed inputs." ErrorCode=" WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Gives the unique key for the tag associated with inventory.
+								<Validation>
+                            <Condition>Should be a valid <code>InventoryTagKey</code> in the system.
+									</Condition>
+                            <Error
+                                Description="Invalid InventoryTagKey." ErrorCode="WMS00070"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+            <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Gives the adjustment quantity for the inventory. The negative quantity specifies negative adjustment and positive quantity denotes positive adjustment. Quantity becomes mandatory if <code>SerialDetail</code> does not provide quantity for adjustment.
+								<Validation>
+                            <Condition>If passed and <code>SerialDetail</code> also has <code>Quantity</code> passed, both should have same sign (either positive or negative).
+									</Condition>
+                            <Error
+                                Description="Invalid inventory operation." ErrorCode="WMS00089"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Error if <code>Quantity</code> not passed and <code>SerialDetail</code> also does not provide quantity.
+									</Condition>
+                            <Error
+                                Description="Quantity not passed in the input." ErrorCode="WMS00021"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Specifies the receipt to which inventory belongs.
+								<Validation>
+                            <Condition>If passed, should be a valid <code>ReceiptHeaderKey</code> in the system.
+									</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+                        <code>Segment</code> for particular enterprise or organization. <code>Segment</code> becomes mandatory if <code>SegmentType</code> is passed.
+								<Validation>
+                            <Condition>If passed, and inventory is LPN tracked, and LPN has <code>Segment</code>, then both should be same.
+									</Condition>
+                            <Error
+                                Description="Segment cannot be mixed within a Case/Pallet." ErrorCode="WMS00096"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>SegmentType</code> is passed, <code>Segment</code> must also be passed.
+									</Condition>
+                            <Error
+                                Description="Both Segment and SegmentType are required." ErrorCode="WMS00101"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+            <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+                        <code>SegmentType</code> for particular enterprise or organization. <code>SegmentType</code> becomes mandatory if <code>Segment</code> is passed.
+								<Validation>
+                            <Condition>If passed, and inventory is LPN tracked, and LPN has <code>SegmentType</code>, then both should be same.
+									</Condition>
+                            <Error
+                                Description="SegmentTypes cannot be mixed within a Case/Pallet." ErrorCode="WMS00097"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>If <code>Segment</code> is passed, <code>SegmentType</code> must also be passed.
+									</Condition>
+                            <Error
+                                Description="Both Segment and SegmentType are required." ErrorCode="WMS00101"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                <xsd:documentation>
+                    <div>
+							Date by which inventory should be shipped.
+								<Validation>
+                            <Condition>Mandatory if the item is time sensitive.
+									</Condition>
+                            <Error Description="Blank Ship By Date." ErrorCode="YFSI10002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>
+                        <div>
+								Indicates the receipt to which inventory belongs.
+									<Validation>
+                                <Condition>If passed, should be a valid receipt number.
+										</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>Item should exist in the catalog.
+										</Condition>
+                        <Error
+                            Description="Invalid Item. Organization Code: {OrganizationCode}, Item ID: {ItemID} and UOM: {UnitOfMeasure}." ErrorCode="WMS00209"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Item cannot be a logical kit.
+										</Condition>
+                        <Error
+                            Description="Item cannot be a logical kit" ErrorCode="WMS00214"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+								Item identity for the inventory.
+									<Validation>
+                                <Condition>if <code>InventoryItemKey</code> is not passed, <code>ItemID</code> must be passed.
+										</Condition>
+                                <Error
+                                    Description="ItemId has to be passed in the input." ErrorCode="WMS00031"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+								Gives the ProductClass for the item.
+									<Validation>
+                                <Condition>if <code>InventoryItemKey</code> is not passed, <code>ProductClass</code> must be passed.
+										</Condition>
+                                <Error
+                                    Description="ProductClass has to be passed in the input." ErrorCode="WMS00033"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+								Unit of measure for the item.
+									<Validation>
+                                <Condition>if <code>InventoryItemKey</code> is not passed, <code>UnitOfMeasure</code> must be passed.
+										</Condition>
+                                <Error
+                                    Description="UnitOfMeasure has to be passed in the input." ErrorCode="WMS00032"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TagDetail">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>
+                <div>
+							Gives the information about the tag to which inventory belongs. Attributes passed in this element will be used to identify a tag for the item in inventory based on attributes marked as unique tag attributes in the item catalog. Tag information is stored only if the <code>Node</code> tracks tag information in inventory.
+								<Validation>
+                        <Condition>Mandatory if item is tag tracked. Error if mandatory and not passed.
+										</Condition>
+                        <Error
+                            Description="Tag Number Not Found for the Item." ErrorCode="YFSI10004"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SerialDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialDetail">
+        <xsd:annotation yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+            <xsd:documentation>
+                <div>
+								Stores details about serial numbers. Since serial number scanning is an overhead if it has to be done at every single move operation in the warehouse for tracking purposes, warehouses typically just record the fact that the serial number has reached the warehouse during the receiving process. Similarly, the serial number is scanned at shipping to record the fact that the serial number has left the warehouse. So, the location at any time is the last location at which it was scanned. Similarly, the ship node on the serial number will reflect the ship node at which it was last scanned.
+									<Validation>
+                        <Condition>Serial information must be passed if the item is serial tracked and the node tracks serials.
+											</Condition>
+                        <Error
+                            Description="Serial tracking mandatory for the Item." ErrorCode="WMS00013"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Number of serials passed must be equal to the quantity passed.
+											</Condition>
+                        <Error
+                            Description="Total serials not equal to quantity." ErrorCode="WMS00009"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Number of serials passed must not be more than the quantity passed.
+											</Condition>
+                        <Error
+                            Description="Total number of serials passed is more than quantity." ErrorCode="WMS00008"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>As many secondary serials as per the item's configuration must be passed.
+											</Condition>
+                        <Error
+                            Description="Required number of Secondary Serials as per item configuration not passed." ErrorCode="WMS00202"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Quantity" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+										Specifies operation for the serial. The negative quantity specifies negative adjustment and positive quantity denotes positive adjustment. Quantity becomes mandatory if Inventory does not provide quantity for adjustment.
+											<Validation>
+                                <Condition>If passed and Inventory also has Quantity passed, both should have same sign (either positive or negative).
+												<br/>If passed, should be either +1 or -1.
+												</Condition>
+                                <Error
+                                    Description="Invalid inventory operation." ErrorCode="WMS00089"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if quantity not passed and Inventory also does not provide quantity.
+												</Condition>
+                                <Error
+                                    Description="Quantity not passed in the input." ErrorCode="WMS00021"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial1"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_1" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial2"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_2" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial3"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_3" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial4"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_4" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial5"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_5" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial6"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_6" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial7"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_7" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial8"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_8" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial9"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_9" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>
+										Unique identity for each serial.
+											<Validation>
+                                <Condition>If passed, should be a valid serial number.
+												</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if negative adjustment is being performed and serial is not at node or serial cannot be determined with the provided item details.
+												</Condition>
+                                <Error
+                                    Description="Serial is not at the node." ErrorCode="WMS00085"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>If <code>SerialList</code> and item details are passed, then it is validated that serial belongs to same item.
+												</Condition>
+                                <Error
+                                    Description="Serial mismatch occured." ErrorCode="WMS00010"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Error if positive adjustment is being performed and serial is already at source.
+												</Condition>
+                                <Error
+                                    Description="Serial is already at the node." ErrorCode="WMS00016"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>As many secondary serials as per the item's configuration must be passed.
+													</Condition>
+                                <Error
+                                    Description="Required number of Secondary Serials as per item configuration not passed." ErrorCode="WMS00202"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>For negative adjustments if serial is already existing and is at a different location or LPN.
+													</Condition>
+                                <Error
+                                    Description="Serial not in location or LPN." ErrorCode="WMS00221"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRangeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:SerialRange"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRange">
+        <xsd:complexType>
+            <xsd:attribute name="FromSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Staring serial number of a range for item. 
+ 									<Validation>
+                                <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> From Serial Number is blank.
+										</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+										</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Ending serial number of a range for item. 
+ 									<Validation>
+                                <Condition> If item has secondary serials, serial range entry is not supported.
+										</Condition>
+                                <Error
+                                    Description="Secondary serial exists for the item. Single serial scanning is required." ErrorCode="INV80_037"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> From Serial Number is blank.
+										</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+										</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+										</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+										</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Default implementation is given only for numeric serial numbers.
+										</Condition>
+                                <Error
+                                    Description="Serial is neither Integer nor Long. User Exit needs to be implemented." ErrorCode="INV80_038"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To serial numbers needs to be greater than from serial number for default implementation.
+										</Condition>
+                                <Error
+                                    Description="From Serial number is greater than To Serial number." ErrorCode="INV80_040"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

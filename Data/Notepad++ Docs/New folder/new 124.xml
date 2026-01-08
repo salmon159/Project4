@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output encoding="UTF-8" indent="no" method="xml" omit-xml-declaration="yes"/>
+    <xsl:template match="/">
+        <Order>
+            <xsl:attribute name="OrderHeaderKey">
+                <xsl:value-of select="/OrderInvoice/Order/OrderLines/OrderLine/@DerivedFromOrderHeaderKey"/>
+            </xsl:attribute>
+            <xsl:attribute name="Modifyts">
+                <xsl:value-of select="/OrderInvoice/Order/@Modifyts"/>
+            </xsl:attribute>
+            <xsl:attribute name="RefundType">
+                <xsl:value-of select="'Partial'"/>
+            </xsl:attribute>
+            <xsl:attribute name="ReferenceCode">
+                <xsl:value-of select="'order return'"/>
+            </xsl:attribute>
+            <xsl:attribute name="OrderReleaseKey">
+                <xsl:value-of select="/OrderInvoice/@OrderInvoiceKey"/>
+            </xsl:attribute>
+			<xsl:variable name="varOrderType">
+                <xsl:value-of select="OrderInvoice/Order/@OrderType"/>
+            </xsl:variable>
+					
+            <OrderLines>
+                <xsl:for-each select="/OrderInvoice/Order/OrderLines/OrderLine">
+                    <xsl:variable name="varExtnSellerLineNo">
+                        <xsl:value-of select="Extn/@ExtnSOSellerLineNo"/>
+                    </xsl:variable>
+                    <xsl:variable name="varShipChrgSellerLineNo">
+                        <xsl:value-of select="@ShipTogetherNo"/>
+                    </xsl:variable>
+                    <OrderLine>
+                        <Extn>
+                            <xsl:attribute name="ExtnSellerLineNo">
+                                <xsl:value-of select="Extn/@ExtnSOSellerLineNo"/>
+                            </xsl:attribute>
+                        </Extn>
+                    </OrderLine>
+					<xsl:if test="$varOrderType='RTO'">
+                    <xsl:if test="LineTaxes/LineTax[@TaxName='Shipping Tax' and @Tax > 0]">
+                        <OrderLine>
+                            <Extn>
+                                <xsl:attribute name="ExtnSellerLineNo">
+                                    <xsl:value-of select="$varShipChrgSellerLineNo"/>
+                                </xsl:attribute>
+                            </Extn>
+                        </OrderLine>
+                    </xsl:if>
+					</xsl:if>
+                </xsl:for-each>
+            </OrderLines>
+        </Order>
+    </xsl:template>
+</xsl:stylesheet>

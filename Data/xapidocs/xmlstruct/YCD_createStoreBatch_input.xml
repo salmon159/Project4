@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM IBM Sterling Selling And Fulfillment 
+	Suite (C) Copyright IBM Corp. 2005, 2014 All Rights Reserved. US Government 
+	Users Restricted Rights - Use, duplication or disclosure restricted by GSA 
+	ADP Schedule Contract with IBM Corp. -->
+<StoreBatch ApplicationName="" AssignedToUserId="" BatchNo=""
+    BatchType="" IgnoreInvalidLines="" OrganizationCode="" xmlns="http://www.sterlingcommerce.com/documentation/YCD/createStoreBatch/input">
+    <yfc:doc>
+        <Element EntityName="Store_Batch"/>
+        <Attributes>
+            <Attribute DataType="String" EntityName="Store_Batch" Name="ApplicationName">
+                <Description>
+                    <div>
+							The identifier of the application for which the state is being used for creating batches.
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="AssignedToUserId" NameInEntity="Assigned_To_User_Id">
+                <Description>
+                    <div>
+							The user to which this batch will be assigned. 
+							 <Validation>
+                            <Condition>
+                                <code>AssignedToUserId</code> should be a valid user.
+								</Condition>
+                            <Error
+                                Description="Invalid User identifiers passed." ErrorCode="YCP0084"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="BatchType" NameInEntity="Batch_Type">
+                <Description>
+                    <div>
+							The sort method for the batch. This could be <code>SORT_WHILE_PICK</code> or <code>SORT_AFTER_PICK</code>.
+							If not passed, then this value is obtained from <code>Definition</code> column of <code>PLT_USER_UI_STATE</code> table with 
+							<code>ApplicationName=WSC,ComponentName=BATCH_SORT_METHOD,ScreenName=ALL and LoginId=AssignedToUserId</code>
+							If no record is found in <code>PLT_USER_UI_STATE</code> table, then <code>BatchType</code> is defaulted to <code>SORT_WHILE_PICK</code>. 
+						</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="IgnoreInvalidLines">
+                <Description>
+                    <div>
+							Valid values Y/N. <br/>
+							If Y, the API will create a batch and return invalid shipment lines as part of the <code>DiscardedShipmentLines</code> element in the output.<br/>
+							If N, the API will not create a batch. It will also not throw any error. The input document will be returned back as the output with <code>FailureMessage</code> attribute.
+							Default Value is Y.<br/>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Store_Batch" Name="OrganizationCode" NameInEntity="Organization_Code">
+                <Description>
+                    <div>
+							The ship node's organization code to which this batch belongs.
+							<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is mandatory.
+								</Condition>
+                            <Error
+                                Description="OrganizationCode is mandatory." ErrorCode="YDM000162"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> should be a valid ship node.
+								</Condition>
+                            <Error Description="YFS:Invalid Node" ErrorCode="YFS10048"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <ShipmentLines>
+        <ShipmentLine ShipmentKey="" ShipmentLineKey=""
+            ShipmentLineNo="" ShipmentSubLineNo="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Element EntityName="Shipment_Line">
+                    <Description>
+                        <div>
+								If no shipment lines are passed, then an error is thrown.
+								 <Validation>
+                                <Condition>
+										Valid shipment lines should be passed to create a batch
+									</Condition>
+                                <Error
+                                    Description="No shipment lines found to create batch." ErrorCode="YCD00080"/>
+                            </Validation>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+        </ShipmentLine>
+    </ShipmentLines>
+</StoreBatch>

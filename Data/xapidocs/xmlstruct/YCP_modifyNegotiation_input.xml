@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<ModifyNegotiation Override="" SelectMethod="" TransactionId="Required"
+    UserId="" xmlns="http://www.sterlingcommerce.com/documentation/YCP/modifyNegotiation/input">
+    <yfc:doc>
+        <Attributes>
+            <Attribute DataType="Flag" Name="Override">
+                <Description>Indicate if modifcation rules need to be overridden
+				</Description>
+            </Attribute>
+            <Attribute DataType="Text-20" Name="SelectMethod">
+                <Description>Specifies what is the method of selecting the records. Valid methods are WAIT,NO_WAIT,NONE.</Description>
+            </Attribute>
+            <Attribute EntityName="Transaction" Name="TransactionId" NameInEntity="Tranid"/>
+            <Attribute EntityName="User" Name="UserId" NameInEntity="Loginid"/>
+        </Attributes>
+    </yfc:doc>
+    <Negotiation EnterpriseCode="" NegotiationHeaderKey=""
+        NegotiationNo="" yfc:DTDOccurrence="REQUIRED">
+        <yfc:doc>
+            <Element EntityName="Negotiation_Hdr">
+                <Description>
+                    <div>
+				One of the following must be passed to identify the <code>Negotiation</code>:
+				<br/>- <code>NegotiationHeaderKey</code>
+                        <br/>- <code>NegotiationNo</code> and <code>EnterpriseCode</code>
+                    </div>
+                </Description>
+            </Element>
+        </yfc:doc>
+        <!-- Either NegotiationHeaderKey or NegotiationNo and EnterpriseCode is required. -->
+        <AddLine ApplicationAction="" ApplicationReference=""
+            FreightTerms="" ItemID="" LineEntity="Required"
+            LineEntityKey="" Price="" PrimeLineNo="" ProductClass=""
+            Quantity="" ShipDate="" SubLineNo="" UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Negotiation_Line">
+                    <Description>
+                        <div>
+					One of the following must be passed:
+					<br/>- <code>LineEntity</code> and <code>LineEntityKey</code>
+                            <br/>- <code>PrimeLineNo</code> and <code>SubLineNo</code>
+                        </div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <AdditionalAttributeList>
+                <AdditionalAttribute Name="Required" Value=""/>
+            </AdditionalAttributeList>
+        </AddLine>
+        <ChangeStatus BaseDropStatus="Conditional" ToStatus="Conditional">
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+                            <code>BaseDropStatus</code> or <code>ToStatus</code> must be passed.
+				</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute EntityName="Pipeline_Definition"
+                        Name="BaseDropStatus" NameInEntity="Drop_Status"/>
+                    <Attribute EntityName="Status" Name="ToStatus" NameInEntity="Status">
+                        <Description>
+                            <div>
+					The status that the transaction is to move to from the base status.
+						<Validation>
+                                    <Condition>The <code>BaseDropStatus</code> of the <code>ToStatus</code> should be same as the negotiation's <code>BaseDropStatus</code>.
+							</Condition>
+                                    <Error Description="" ErrorCode="YCP0043"/>
+                                </Validation>
+                                <Validation>
+                                    <Condition>
+                                    <code>ToStatus</code> must be setup in the <code>YFS_STATUS</code> table.
+							</Condition>
+                                    <Error Description="" ErrorCode="YCP0044"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ChangeStatus>
+        <ChangeExpirationDate ToExpirationDate="Required">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute EntityName="Negotiation_Hdr"
+                        Name="ToExpirationDate" NameInEntity="Negotiation_Expiration_Date">
+                        <Description>
+                            <div>
+					The date the negotiation expires. There is no logic built on this attribute. However, the negotiation monitor can be configured to raise alerts on <code>ToExpirationDate</code>. 
+						<Validation>
+                                    <Condition>
+                                    <code>ToExpirationDate</code> is required.
+						</Condition>
+                                    <Error Description="" ErrorCode="YCP0042"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+        </ChangeExpirationDate>
+        <ChangeAttributes>
+            <yfc:doc>
+                <Element>
+                    <Description>
+                        <div>
+                            <code>ChangeAttributes</code> modifies an extended attribute.
+				</div>
+                    </Description>
+                </Element>
+            </yfc:doc>
+            <Extn/>
+        </ChangeAttributes>
+        <NegotiationLine LineEntity="" LineEntityKey="" PrimeLineNo=""
+            SubLineNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <ChangeAttributes>
+                <Extn/>
+            </ChangeAttributes>
+        </NegotiationLine>
+    </Negotiation>
+</ModifyNegotiation>

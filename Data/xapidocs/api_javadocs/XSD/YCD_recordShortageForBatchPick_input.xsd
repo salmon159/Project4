@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCD/recordShortageForBatchPick/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCD/recordShortageForBatchPick/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCD_recordShortageForBatchPick_input.xsd" yfc:rootElement="StoreBatch">
+        <xsd:appinfo source="yfc:structure">
+            <StoreBatch hasAttributes="Y">
+                <Item hasAttributes="Y"/>
+            </StoreBatch>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="StoreBatch" type="yfc:StoreBatchXSDType">
+        <xsd:annotation yfc:tableName="YFS_STORE_BATCH">
+            <xsd:documentation>This table stores the batches for Web Store. A batch consists of multiple shipment lines which can be picked together.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="StoreBatchXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Item"/>
+        </xsd:all>
+        <xsd:attribute name="BatchNo" type="yfctype:SequenceNo" use="optional">
+            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>The unique batch number to identify this batch in this store.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="HandleCustomShortage" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates whether the custom shortage should be considered to short the batch line or not. Valid values are 'Y', 'N' and null. Default value is null.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>The store's organization code.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StoreBatchKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="STORE_BATCH_KEY" yfc:tableName="YFS_STORE_BATCH">
+                <xsd:documentation>
+                    <div>
+					Unique Identifier for a Batch
+						<Validation>
+                            <Condition>
+                                <code>StoreBatchKey OR OrganizationCode,BatchNo</code> should be passed.
+							</Condition>
+                            <Error Description="Invalid Batch" ErrorCode="YCD00081"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UpdateShipmentStatus" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						Indicates whether the shipment status should be updated or not after batch is completely picked. Valid values are 'Y', 'N' and null. Default value is null. Shipment status will be updated if value is 'Y' or null.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemKey" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="ShortageReason"
+                type="yfctype:CodeValue" use="required">
+                <xsd:annotation yfc:columnName="CODE_VALUE" yfc:tableName="YFS_COMMON_CODE">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>ShortageReason is not passed
+						</Condition>
+                                <Error
+                                    Description="Shortage reason info is missing" ErrorCode="YCD00070"/>
+                            </Validation>
+                        </div>
+                        <div>
+                            <Validation>
+                                <Condition>Unique Identifiers for Item should be passed
+						</Condition>
+                                <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

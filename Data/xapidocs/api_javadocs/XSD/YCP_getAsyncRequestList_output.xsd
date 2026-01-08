@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getAsyncRequestList/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getAsyncRequestList/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getAsyncRequestList_output.xsd" yfc:rootElement="AsyncronousRequestList">
+        <xsd:appinfo source="yfc:structure">
+            <AsyncronousRequestList>
+                <AsyncronousRequest hasAttributes="Y">
+                    <AsyncRequestErrorList>
+                        <AsyncRequestError hasAttributes="Y"/>
+                    </AsyncRequestErrorList>
+                </AsyncronousRequest>
+            </AsyncronousRequestList>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AsyncronousRequestList" type="yfc:AsyncronousRequestListXSDType"/>
+    <xsd:complexType name="AsyncronousRequestListXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:AsyncronousRequest"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:element name="AsyncronousRequest">
+        <xsd:annotation yfc:tableName="YFS_ASYNC_REQ">
+            <xsd:documentation>This table is used to persist requests to process updates in background.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AsyncRequestErrorList"/>
+            </xsd:all>
+            <xsd:attribute name="AsyncronousRequestKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASYNC_REQUEST_KEY" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>Primary Key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorCount" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="ERROR_COUNT" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>Number of times this transaction has errored out.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorMessage" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="IsService" type="yfctype:String" use="optional"/>
+            <xsd:attribute name="Message" type="yfctype:CLOB" use="optional">
+                <xsd:annotation yfc:columnName="MESSAGE" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>The Data that has been published by Sterling or the external System.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PredessorServiceName"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="PRDSR_SRVC_NAME" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>Only after executing this service, the current service can be called.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ServiceName" type="yfctype:FlowName" use="optional">
+                <xsd:annotation yfc:columnName="SERVICE_NAME" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>Service name to call.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionRequestNo"
+                type="yfctype:Text-10" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_REQ_NO" yfc:tableName="YFS_ASYNC_REQ">
+                    <xsd:documentation>A sequence number used to identify all api calls.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AsyncRequestErrorList">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AsyncRequestError"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AsyncRequestError">
+        <xsd:annotation yfc:tableName="YFS_ASYNC_REQ_ERROR">
+            <xsd:documentation>This table is used to persist the errors encountered while trying to execute the background requests in    Asyncronous_Request.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AsyncRequestErrorKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASYNC_REQ_ERROR_KEY" yfc:tableName="YFS_ASYNC_REQ_ERROR">
+                    <xsd:documentation>Primary Key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AsyncronousRequestKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ASYNC_REQUEST_KEY" yfc:tableName="YFS_ASYNC_REQ_ERROR">
+                    <xsd:documentation>Primary Key of Asyncronous_Request.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorCount" type="yfctype:Lockid" use="optional">
+                <xsd:annotation yfc:columnName="ERROR_COUNT" yfc:tableName="YFS_ASYNC_REQ_ERROR">
+                    <xsd:documentation>Indicates this error occured while trying to execute the request for 'n'th time, where 'n' is the ErrorCount.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ErrorMessage" type="yfctype:CLOB" use="optional">
+                <xsd:annotation yfc:columnName="ERROR_MESSAGE" yfc:tableName="YFS_ASYNC_REQ_ERROR">
+                    <xsd:documentation>Error xml of the exception occured while trying to execute the API or Service in background mode.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

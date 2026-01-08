@@ -1,0 +1,1169 @@
+SFCC - order create message.
+select * from  yfs_import where Flow_name='SFCC_CO_XML_DB' and message like '%00002102%' order by createts desc;
+
+Created,Scheduled,Released and Ready for Backroom Pick --agents
+ServiceName : IBD_ReceiveStoreStatusUpdates	
+ 
+ERP System Send to OMS
+
+US - XNJ
+UAE - 
+
+Released to OMNIPOSS
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="0" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+
+Downloaded at POSS
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="1" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="1" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+Queries to check the above message sent to POSS
+GCC  - select * from  yfs_export where Flow_name='IBD_OrderDetailOmniPossStoreDB' and message like '%00002368%' order by createts desc;
+US - select * from  yfs_export where Flow_name='IBD_OrderDetailERPStoreDB' and message like '%00001629%' order by createts desc;
+
+Order Accepted
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="2" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+
+
+ServiceName : IBD_ReceiveStoreStatusUpdates	
+Order Rejected
+<Shipment ShipNode="XNJ" ShipmentNo="100006452" StatusCode="3" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+
+
+
+Pack Update:
+ 
+ERP System Send to OMS
+
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="4" OrderNo="00111492" StatusDateTime="2024-06-03T02:00:00" SellerOrganizationCode="TITAN_US">
+<Containers>
+<Container ContainerLength="15.25" ContainerWidth="10.35" ContainerHeight="12.50" ActualWeight="250.25"/>
+</Containers>
+</Shipment>
+During Packed status - OMS make call to UPS via MS
+select message,createts from  yfs_export where Flow_name='IBD_UPSAWBReqDB' and EXPORT_KEY > '20240506' and message like '%00110938%' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_UPSAWBResDB' and EXPORT_KEY > '20240506' order by createts desc;
+//IBD_ReceiveStatusUpdateFromERP - Exception service.
+UPS Team - devalapalli.haritha@cloudodyssey.co
+
+
+
+
+Transguard:
+
+Invoice Update:
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="19" OrderNo="00111492" StatusDateTime="2024-06-03T02:00:00" SellerOrganizationCode="TITAN_US"> 
+<ShipmentLines>
+<ShipmentLine PrimeLineNo="1" ItemCode="UL1002SLZADA012BD000002" />
+</ShipmentLines>
+</Shipment>
+
+//Check Payment message
+select message,createts from  yfs_export where Flow_name='IBD_JPMorganReq' and EXPORT_KEY > '20240228' and message like '%472910257483%'  order by createts asc;
+select message,createts from  yfs_export where Flow_name='IBD_JPMorganReq' and EXPORT_KEY > '20240416' order by createts desc;
+select EXPORT_KEY,message,createts from  yfs_export where Flow_name='IBD_JPMorganReq' and EXPORT_KEY > '20240605' order by createts desc;
+ 
+select EXPORT_KEY,message,createts from  yfs_export where Flow_name='IBD_JPMorganResponse' and EXPORT_KEY > '20240225' order by createts desc;
+
+NGenius
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusReq' and EXPORT_KEY > '20240316' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusResponse' and EXPORT_KEY > '20240316' order by createts desc;
+ 
+select message,createts from  yfs_export where Flow_name='IBD_NGeniusRefReq' and EXPORT_KEY > '20240116' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_RefResponse' and EXPORT_KEY > '20240212' order by createts desc;
+
+Shipped:
+US:
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="5" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+
+GCC:
+IBD_ReceiveStatusUpdatesFromTransguard
+<Shipment EnterpriseCode="TITAN_GCC" OrderLeg="PICKUP" ShipmentNo="100007544" StatusCode="PICKEDUPNOTIFICATION"/>
+
+OUTFORDELIVERY
+GCC:
+IBD_ReceiveStatusUpdatesFromTransguard
+<Shipment EnterpriseCode="TITAN_GCC" OrderLeg="DELIVER" ShipmentNo="100007192" StatusCode="OUTFORDELIVERY"/>
+
+DELIVERYFAILED
+GCC:
+IBD_ReceiveStatusUpdatesFromTransguard"
+<Shipment EnterpriseCode="TITAN_GCC" OrderLeg="DELIVER" ShipmentNo="100007192" StatusCode="DELIVERYFAILED"/>
+
+
+Delivered
+GCC - Fareye
+IBD_ReceiveStatusUpdatesFromTransguard
+<Shipment EnterpriseCode="TITAN_GCC" OrderLeg="DELIVER" OrderState="DELIVERED" ShipmentNo="100007192" StatusCode="DELIVEREDNOTIFICATION"/>
+
+
+
+ 
+UPS System(Courior partner) to OMS US
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="17" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+
+
+
+
+#################################################################################################################################
+
+<MultiApi>
+<!--Released to OMNIPOSS -->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="0" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+</Input></API>
+
+<!--Downloaded at POSS-->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="1" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+</Input></API>
+
+<!--Order Accepted-->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="2" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+</Input></API>
+
+<!--Pack Update: ERP System Send to OMS-->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="4" OrderNo="00111492" StatusDateTime="2024-06-03T02:00:00" SellerOrganizationCode="TITAN_US">
+<Containers>
+<Container ContainerLength="15.25" ContainerWidth="10.35" ContainerHeight="12.50" ActualWeight="250.25"/>
+</Containers>
+</Shipment>
+</Input></API>
+
+<!--Invoice Update:-->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="19" OrderNo="00111492" StatusDateTime="2024-06-03T02:00:00" SellerOrganizationCode="TITAN_US"> 
+<ShipmentLines>
+<ShipmentLine PrimeLineNo="1" ItemCode="EP03ABXABAAA002BL001561" AdditionalStoreDiscount="99.99"/>
+</ShipmentLines>
+</Shipment>
+</Input></API>
+
+<!--Shipped:-->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="5" OrderNo="00111492" SellerOrganizationCode="TITAN_US"/>
+</Input></API>
+
+<!--Delivered Status for GCC	UPS System(Courior partner) to OMS US -->
+<API FlowName="IBD_ReceiveStoreStatusUpdates"><Input>
+<Shipment ShipNode="XNJ" ShipmentNo="100006451" StatusCode="17" OrderNo="00111492" SellerOrganizationCode="TITAN_US" StatusDateTime="2024-06-03T02:00:00"/>
+</Input></API>
+
+</MultiApi>
+
+
+##################################################################################################################################################################################################################################################################
+Test Payment data:
+https://digitalecom.atlassian.net/wiki/spaces/IBD/pages/76414977/QA+Test+Data+Credentials#Credit-Card-Details:
+
+US Address : https://gist.github.com/m4ll0k/11f40f41fac6277dd5a7c57367094873
+
+UAE Adddress
+Street					9660 Elisa Fords*
+Locality				Abu Dhabi Emirate, Al Dhafrah Region, Bu Al Dhiyab
+Country					United Arab Emirates, AE (ARE)
+
+
+##################################################################################################################################################################################################################################################################
+##################################################################################################################################################################################################################################################################
+
+
+Return Order Initiate Refund
+<Shipment ShipNode="XTD" OrderNo="00111895" ShipmentNo="100006821" StatusCode="8"  StatusDateTime="" ReturnOrderNo="Y100012090" ReturnShipmentNo="100006690" SellerOrganizationCode="TITAN_US">    
+<ShipmentLines>
+<ShipmentLine PrimeLineNo="1" ItemCode="UPW1D1DMBABA18" LotNo="2BA000001" StatusQuantity="1" QCStatus="PASS_REFUND" StatusCode="8"/>
+</ShipmentLines>
+</Shipment>
+
+
+IBD_ReceiveStoreStatusUpdates
+
+<Shipment ShipNode="XTD" OrderNo="00111895" ShipmentNo="100006821" StatusCode="8"  StatusDateTime="" ReturnOrderNo="Y100012090" ReturnShipmentNo="100006690" SellerOrganizationCode="TITAN_US">    
+<ShipmentLines>
+<ShipmentLine PrimeLineNo="1" ItemCode="UPW1D1DMBABA18" LotNo="2BA000001" StatusQuantity="1" QCStatus="PASS_REFUND" StatusCode="8"/>
+</ShipmentLines>
+</Shipment>
+
+
+
+
+##################################################################################################################################################################################################################################################################
+
+Return Order 
+
+
+USe below query to get Return Payload
+ 
+select message,createts from  yfs_export where Flow_name='SFCC_ReturnOrder_DB' and EXPORT_KEY > '20240426' and message like '%00001082%' order by createts desc;
+ 
+ 
+Step1.Once the Order is Delivered We can create Return by invoking the Service which will change sales order status to "Return Created"
+ 
+Service name- SF_CreateSFCCReturn
+ 
+Input Xml:-
+ 
+
+<SF_CreateSFCCReturn>
+	<Order DocumentType="0003" EnterpriseCode="TITAN_US" OrderDate="2024-05-27T14:54:42-04:00" OrderNo="00001044">
+		<OrderLines>
+			<OrderLine Quantity="1.00">
+				<Item OtherReason="Change my Mind" ReturnReason="Change my Mind"/>
+				<DerivedFromOrder DerivedFromSellerNo="2" DocumentType="0001" OrderHeaderKey="20240413121616162063114"/>
+			</OrderLine>
+		</OrderLines>
+	</Order>
+</SF_CreateSFCCReturn>
+
+
+<SF_CreateSFCCReturn>
+	<Order DocumentType="0003" EnterpriseCode="TITAN_US"  OrderNo="00002639">
+		<OrderLines>
+			<OrderLine Quantity="1.00">
+				<Item OtherReason=" Found Cheaper Elsewhere" ReturnReason=" Found Cheaper Elsewhere"/>
+				<DerivedFromOrder DerivedFromSellerNo="1" DocumentType="0001" OrderHeaderKey="2024062608414117898606  "/>
+			</OrderLine>
+			<OrderLine Quantity="1.00">
+				<Item OtherReason=" Found Cheaper Elsewhere" ReturnReason=" Found Cheaper Elsewhere"/>
+				<DerivedFromOrder DerivedFromSellerNo="2" DocumentType="0001" OrderHeaderKey="2024062608414117898606  "/>
+			</OrderLine>
+		</OrderLines>
+	</Order>
+</SF_CreateSFCCReturn>
+
+
+select ORDER_HEADER_KEY,PRIME_LINE_NO,ITEM_ID,ORDERED_QTY,EXTN_SELLER_LINE_NO from yfs_order_line where ORDER_HEADER_KEY in (
+select ORDER_HEADER_KEY from yfs_order_header where order_no='00002601');
+
+<MultiApi>
+<API FlowName="SF_CreateSFCCReturn"><Input>
+<SF_CreateSFCCReturn>
+    <Order DocumentType="0003" EnterpriseCode="TITAN_GCC"
+        OrderDate="" OrderNo="00002601">
+        <OrderLines>
+            <OrderLine Quantity="1.00">
+                <Item OtherReason=" Found Cheaper Elsewhere" ReturnReason=" Found Cheaper Elsewhere"/>
+                <DerivedFromOrder
+                    DerivedFromSellerNo="3d69f82c8e386807c623543426"
+                    DocumentType="0001" OrderHeaderKey="2024070111465930329581"/>
+            </OrderLine>
+        </OrderLines>
+    </Order>
+</SF_CreateSFCCReturn>
+</Input></API>
+</MultiApi>
+
+select ORDER_HEADER_KEY,PRIME_LINE_NO,ITEM_ID,ORDERED_QTY,EXTN_SELLER_LINE_NO from yfs_order_line where ORDER_HEADER_KEY in (
+select ORDER_HEADER_KEY from yfs_order_header where order_no='38470096025');
+
+
+
+ 
+ 
+Step2.Once the return is created Agents will move the status to Release and then Included In Shipment:-
+ 
+Here we will get Return ShipmentNo from Return Order Console
+ 
+ 
+Step3.Invoke the Service which will change the sales order status as "Return Received" and for Return Console the status would be "Receipt Closed".
+ 
+Service name- IBD_ReceiveStoreStatusUpdates
+ 
+Input Xml:-
+ 
+<Shipment ShipNode="XDB" ShipmentNo="100003714" StatusCode="8" OrderNo="00000183" StatusDateTime="2018-06-11T02:00:00" ReturnOrderNo="Y100001815" ReturnShipmentNo="100003723" SellerOrganizationCode="TITAN_US">    
+<ShipmentLines>
+<ShipmentLine PrimeLineNo="1" ItemCode="EL0760SMAAGA02" LotNo="2JA000027" StatusQuantity="2" QCStatus="PASS_REFUND" StatusCode="8"/>
+<ShipmentLine PrimeLineNo="2" ItemCode="EL0934PBAAAC02" LotNo="3IH000012" StatusQuantity="1" QCStatus="PASS_REFUND" StatusCode="8"/>
+<!-- ShipmentLine element can repeat-->
+</ShipmentLines>
+</Shipment>
+
+<?xml version='1.0' encoding='UTF-8'?>
+<Shipment ShipNode="XDB" ShipmentNo="100005065" StatusCode="8" OrderNo="00002919" ReturnOrderNo="Y100000961" ReturnShipmentNo="100005119_R" StatusDateTime="08/17/2024 14:14:51" SellerOrganizationCode="TITAN_GCC">
+  <ShipmentLines>
+    <ShipmentLine PrimeLineNo="1" ItemCode="EP0561VTAK1A00" LotNo="2EA000017" StatusCode="8" StatusQuantity="1" QCStatus="PASS_REFUND"/>
+  </ShipmentLines>
+</Shipment>
+
+select message,createts from  yfs_export where Flow_name='IBD_UPSRetReqDB' and EXPORT_KEY > '20240506' and message like '%00110938%' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_UPSRetResDB' and EXPORT_KEY > '20240506' order by createts desc;
+
+
+ 
+UL3416SGPADA042BD000002
+ 
+ 
+In Step 3 We have Different Quality Check scenarios and Invoice Generation for that we need to change "QCStatus" value as mentioned below:-
+ 
+1.QCStatus="PASS_REFUND" - invoice will get generated in the Return Order Console.
+ 
+2.QCStatus="FAIL_REFUND" - invoice will get generated in the Return Order Console.
+ 
+3.QCStatus="FAIL_NOREFUND" -No Invoice generation.
+
+Refund for GCC after 1 day (Ngenius)
+JPMC - immediately can 
+ 
+Cancel return
+ 
+ 
+<Shipment Action="Delete" CancelRemovedQuantity="Y" CancelShipmentOnZeroTotalQuantity="Y" ShipmentKey="2024022902075424606647">
+<ShipmentLines>
+<ShipmentLine Quantity="1" ShipmentLineKey="2024022902075424606645"/>
+</ShipmentLines>
+</Shipment>
+ 
+
+
+
+
+
+
+ 
+<Shipment ShipNode="XDB" ShipmentNo="100004888" StatusCode="8" OrderNo="00000999" StatusDateTime="2018-06-11T02:00:00" ReturnOrderNo="Y100010909" ReturnShipmentNo="100003723" SellerOrganizationCode="TITAN_US">    
+ 
+<ShipmentLines>
+ 
+<ShipmentLine PrimeLineNo="1" ItemCode="EL0760SMAAGA02" LotNo="2JA000027" StatusQuantity="2" QCStatus="PASS_REFUND" StatusCode="8"/>
+<ShipmentLine PrimeLineNo="2" ItemCode="EL0934PBAAAC02" LotNo="3IH000012" StatusQuantity="1" QCStatus="PASS_REFUND" StatusCode="8"/>
+<!-- ShipmentLine element can repeat-->
+ 
+</ShipmentLines>
+ 
+</Shipment>
+
+
+
+##################################################################################################################################################################################################################################################################
+
+Avlara
+
+
+
+
+
+status - commited
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraCommitReq' and EXPORT_KEY > '20240316' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraCommitRes' and EXPORT_KEY > '20240316' order by createts desc;
+
+for cancel and return. trans type is returninv
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraRefundReq' order by createts desc;
+select message,createts from  yfs_export where Flow_name='IBD_AvalaraRefundRes' and EXPORT_KEY > '20240316' order by createts desc;
+
+Service - TestAvalaraCommit
+ 
+<Order OrderNo="00001451"/>
+
+
+
+ 
+Then call changeOrder to remove hold
+ 
+<Order OrderHeaderKey="20240622211243195899805" Override="Y">
+<OrderHoldTypes>
+<OrderHoldType HoldType="AVALARA_COMMIT_HOLD" Status="1300"/>
+</OrderHoldTypes>
+</Order>
+
+##################################################################################################################################################################################################################################################################
+Stores
+US - XNJ, XTH, XTD, XCG
+UAE/GCC - XDM, 
+
+US
+UL1002SLZADA012BD000002
+UL2617BBQHAA042BD000003
+
+
+
+UAE:GCC
+EP3818FDZLAA002ED000004
+EL3919VCKR1A022JA000002
+ 
+IBD_UpdateInventory
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XNJ">
+<Item ItemID="UL1002SLZADA01" LotNumber="2BD000002" CFAProductCode="73" ProductCode="V">
+<SupplyDetails Quantity="1000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+
+
+			
+IBD_UpdateInventory
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_GCC">
+<ShipNode ShipNode="XDJ">
+<Item ItemID="EP3818FDZLAA00" LotNumber="2ED000004" CFAProductCode="71" ProductCode="F">
+<SupplyDetails Quantity="1000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+
+
+
+
+
+
+<MultiApi>
+
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XNJ">
+<Item ItemID="UL1002SLZADA01" LotNumber="2BD000003" CFAProductCode="86" ProductCode="S">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+</MultiApi>
+
+
+#################################################################################################################################
+ 
+
+
+Order Cancellation:
+ 
+Service  -  SF_changeOrderRealTime_SFCC
+
+
+<SF_changeOrderRealTime_SFCC>
+    <Order Action="CANCEL" CancelReason="Change My Mind"
+        EnterpriseCode="TITAN_US" OrderNo="00111161" OtherReason="">
+        <OrderLines>
+            <OrderLine Action="CANCEL" CancelReason="Change My Mind"
+                OtherReason="" PrimeLineNo="1" Quantity="1.00"
+                SFCCLineNo="1" SubLineNo="1"/>
+        </OrderLines>
+        <UserOverride>
+            <Order_Header EnterpriseCode="TITAN_US"/>
+        </UserOverride>
+    </Order>
+</SF_changeOrderRealTime_SFCC>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<SF_changeOrderRealTime_SFCC>
+    <Order Action="CANCEL" CancelReason="Change My Mind"
+        EnterpriseCode="TITAN_US" OrderNo="00111161" OtherReason="">
+        <OrderLines>
+            <OrderLine Action="CANCEL" CancelReason="Change My Mind"
+                OtherReason="" PrimeLineNo="1" Quantity="1.00"
+                SFCCLineNo="1" SubLineNo="1"/>
+            <OrderLine Action="CANCEL" CancelReason="Change My Mind"
+                OtherReason="" PrimeLineNo="2" Quantity="1.00"
+                SFCCLineNo="2" SubLineNo="1"/>
+        </OrderLines>
+        <UserOverride>
+            <Order_Header EnterpriseCode="TITAN_US"/>
+        </UserOverride>
+    </Order>
+</SF_changeOrderRealTime_SFCC>
+
+
+select ORDER_HEADER_KEY,PRIME_LINE_NO,ITEM_ID,ORDERED_QTY,EXTN_SELLER_LINE_NO from yfs_order_line where ORDER_HEADER_KEY in (
+select ORDER_HEADER_KEY from yfs_order_header where order_no='00002379');
+
+<MultiApi>
+<API FlowName="SF_changeOrderRealTime_SFCC"><Input>
+<SF_changeOrderRealTime_SFCC>
+    <Order Action="CANCEL" CancelReason="Change My Mind"
+        EnterpriseCode="TITAN_GCC" OrderNo="00002379" OtherReason="">
+        <OrderLines>
+            <OrderLine Action="CANCEL" CancelReason="Change My Mind"
+                OtherReason="" PrimeLineNo="1" Quantity="1.00"
+                SFCCLineNo="df858ba213eb39dd1e25f6de7a" SubLineNo="1"/>
+        </OrderLines>
+        <UserOverride>
+            <Order_Header EnterpriseCode="TITAN_GCC"/>
+        </UserOverride>
+    </Order>
+</SF_changeOrderRealTime_SFCC>
+</Input></API>
+
+</MultiApi>
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<SF_changeOrderRealTime_SFCC>
+    <Order Action="MODIFY" CancelReason="" EnterpriseCode="TITAN_US"
+        OrderNo="00111510" OtherReason="">
+        <OrderLines>
+            <OrderLine Action="CANCEL" CancelReason="Change my Mind"
+                OtherReason="" PrimeLineNo="2" Quantity="1.00"
+                SFCCLineNo="2" SubLineNo="1"/>
+        </OrderLines>
+        <UserOverride>
+            <Order_Header EnterpriseCode="TITAN_US"/>
+        </UserOverride>
+    </Order>
+</SF_changeOrderRealTime_SFCC>
+
+
+
+
+select * from  yfs_export where flow_name='SFCC_OrderCancel_DB' and EXPORT_KEY > '20240530' and message like '%00002387%' order by createts desc;
+
+
+select * from  yfs_export where flow_name='TestCancelUpdatesToERP' and EXPORT_KEY > '20240524' order by createts desc;     ----- US
+ 
+select * from  yfs_export where flow_name='Test_CancelUpdatesToOMNIPOSS' and EXPORT_KEY > '20240606' and message like '%00002412%' order by createts desc;   -- GCC
+
+
+https://dev2.tanishq.com/on/demandware.store/Sites-TanishqUS-Site/en_US/Order-DetailsGuestOrder?orderID=00111067&email=anupama%40solveda%2ecom
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+//JPMCPayment Manual push
+
+IBD_InvokeJPMorganPayIIBForCapture
+
+Sample request:
+<Order Amount="38300" ChargeType="CHARGE" OrderNo="00002698" TxRefNum="667674EB1A8FC7220000044500000B0152505317"/>
+//Respose
+<Order Amount="38300" Message="Approved" OrderNo="00002698"/>
+
+
+Refund:
+IBD_InvokeJPMorganPayIIBForRefundCapture
+
+Sample request:
+<Order Amount="446781" ChargeType="CHARGE" IndustryType="EC" InvokedService="Invoked on Refund" OrderNo="00002749" TxRefNum="666A344004E080630000238300014113525054FC"/>
+
+//Response
+<Order Message="Approved" OrderNo="00002749" TxRefNum="667989873B4C460700000C12000043345250534D"/>
+
+#################################################################################################################################
+#################################################################################################################################
+
+Resolve Holds - changeOrder API
+<Order OrderHeaderKey="" Override="Y">
+<OrderHoldTypes>
+<OrderHoldType HoldType="CC_REFUND_HOLD" Status="1300"/>
+</OrderHoldTypes>
+</Order>
+
+#################################################################################################################################
+
+Add reference - changeOrder API
+<Order Action="MODIFY" Override="Y" DocumentType="0003" EnterpriseCode="TITAN_US" OrderNo="" >
+<OrderLines>
+<OrderLine OrderLineKey="">
+<References>
+<Reference Name="QC Pass"/>
+</References>
+</OrderLine>
+</OrderLines>
+</Order>
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+UPS RTO Codes
+For normal Delivered Type is D, Code is KB
+For RTO Type is D and code is DL.
+For Status Code="AR" Description="Arrived at Facility" Type="I"/>
+
+#################################################################################################################################
+#################################################################################################################################
+SIT:
+
+all returns go to XTH 
+
+US
+XNJ
+UL1002SLZADA012BD000002 -	XNJ	-	99k
+ULC2FFFBYOAA292BD000001 -	XNJ	-	1K
+
+XCG
+UPAP01JAPABA002EA000001	-	XCG	-	1k
+UP3919JIJABA002EA000002 -   XCG	-	1k       
+
+
+XTD
+UP1166FAENAA182BA000002	-	XTD	-	1K
+UL2617BBQHAA042BD000003	-	XTD	-	1K
+
+XTH
+UPF1D1BQHGAA002EA000004	-	XTH	-	
+UPT051BFRSAA002EA000002	-	XTH	-	
+
+'UL1002SLZADA012BD000002','ULC2FFFBYOAA292BD000001',
+'UPAP01JAPABA002EA000001','UP3919JIJABA002EA000002',
+'UP1166FAENAA182BA000002','UL2617BBQHAA042BD000003',
+'UPF1D1BQHGAA002EA000004','UPT051BFRSAA002EA000002'
+
+<MultiApi>
+<!--	XNJ		-->
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XNJ">
+<Item ItemID="UL1002SLZADA01" LotNumber="2BD000002" CFAProductCode="86" ProductCode="S">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XNJ">
+<Item ItemID="ULC2FFFBYOAA29" LotNumber="2BD000001" CFAProductCode="86" ProductCode="F">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+
+<!--	XTD		-->
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XTD">
+<Item ItemID="UP1166FAENAA18" LotNumber="2BA000002" CFAProductCode="78" ProductCode="F">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XTD">
+<Item ItemID="UL2617BBQHAA04" LotNumber="2BD000003" CFAProductCode="86" ProductCode="B">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+
+<!--	XTH		-->
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XTH">
+<Item ItemID="UPF1D1BQHGAA00" LotNumber="2EA000004" CFAProductCode="71" ProductCode="B">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XTH">
+<Item ItemID="UPT051BFRSAA00" LotNumber="2EA000002" CFAProductCode="71" ProductCode="B">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+
+<!--	XCG		-->
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XCG">
+<Item ItemID="UPAP01JAPABA00" LotNumber="2EA000001" CFAProductCode="71" ProductCode="J">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+<API FlowName="IBD_UpdateInventory"><Input>
+<InventorySnapShot InventoryFeedType="0" OrganizationCode="TITAN_US">
+<ShipNode ShipNode="XCG">
+<Item ItemID="UP3919JIJABA00" LotNumber="2EA000002" CFAProductCode="71" ProductCode="J">
+<SupplyDetails Quantity="10000"/>
+</Item>		
+</ShipNode>
+</InventorySnapShot>
+</Input></API>
+
+
+</MultiApi>
+
+#################################################################################################################################
+#################################################################################################################################
+
+Get Item list input:
+<Item ItemID="EP03ABXADAAA002BL000091" OrganizationCode="TITAN_GCC" UnitOfMeasure="EACH"/>
+
+<Item ItemID="EZ0102ZFIAAP002BL001084" OrganizationCode="TITAN_GCC" UnitOfMeasure="EACH"/>
+
+<Item ItemID="EP03ABXADAAA002BL000093" OrganizationCode="TITAN_GCC" UnitOfMeasure="EACH"/>
+
+<Item ItemID="UP0153VXAV1A002EA000007" OrganizationCode="TITAN_US" UnitOfMeasure="EACH"/>
+
+
+<Item ItemID="UPF1D1BQHGAA002EA000004" OrganizationCode="TITAN_US" UnitOfMeasure="EACH"/>
+
+#################################################################################################################################
+#################################################################################################################################
+Encircle RR
+<MultiApi>
+<API Name="changeOrder"><Input>
+<Order OrderHeaderKey="2025032007271051760362" Override="Y">
+	<OrderHoldTypes>
+		<OrderHoldType HoldType="ENCIRCLE_RR_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+</Input></API>
+</MultiApi>
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+<SF_CancelReservation>
+    <MultiApi>
+        <API Name="cancelReservation">
+            <Input>
+                <CancelReservation ItemID="UL2617BBQHAA041BL000006"
+                    OrganizationCode="TITAN_US" ProductClass="FQ"
+                    QtyToBeCancelled="1.00"
+                    ReservationID="621971de2966a58e867def2dce"
+                    ShipDate="2025-04-17" ShipNode="XCG" UnitOfMeasure="EACH"/>
+            </Input>
+        </API>
+    </MultiApi>
+</SF_CancelReservation>
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+
+<Traces>
+<Trace Action="ADD" Level="VERBOSE" Name="com.yantra.yfs.japi.ue.YFSCollectionCreditCardUE" ServerName="" Type="UE"/>
+</Traces>
+
+<!-- Modify Traces -->
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="ADD" Level="VERBOSE" Name="EndPointDeltaSync" ServerName="" Type="FLOWS"/>
+</Traces>
+</Input></API>
+</MultiApi>
+
+
+
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="ADD" Level="VERBOSE" Name="IBD_Carrier_Determination" ServerName="IBDCarrierSelectionAgentServer" Type="AGENTS"/>
+</Traces>
+</Input></API>
+</MultiApi>
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="MODIFY" Level="VERBOSE" Name="PAYMENT_COLLECTION_US" ServerName="PAYMENT_COLLECTION_US" Type="AGENTS"/>
+<Trace Action="MODIFY" Level="VERBOSE" Name="PAYMENT_EXECUTION_US" ServerName="PAYMENT_EXECUTION_US" Type="AGENTS"/>
+<Trace Action="MODIFY" Level="VERBOSE" Name="IBD_USRecordExternalCharges" ServerName="" Type="FLOWS"/>
+<Trace Action="MODIFY" Level="VERBOSE" Name="IBD_CancelOrderMsgIntegServer" ServerName="PAYMENT_EXECUTION_US" Type="AGENTS"/>
+</Traces>
+</Input></API>
+</MultiApi>
+
+
+
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="DELETE" Level="VERBOSE" Name="com.yantra.yfs.japi.ue.YFSCollectionOthersUE" ServerName="" Type="UE"/>
+<Trace Action="DELETE" Level="VERBOSE" Name="PAYMENT_COLLECTION_US" ServerName="PAYMENT_COLLECTION_US" Type="AGENTS"/>
+<Trace Action="DELETE" Level="VERBOSE" Name="PAYMENT_EXECUTION_US" ServerName="PAYMENT_EXECUTION_US" Type="AGENTS"/>
+
+</Traces>
+</Input></API>
+</MultiApi>
+
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="ADD" Level="VERBOSE" Name="PAYMENT_EXECUTION_US" ServerName="PAYMENT_EXECUTION_US" Type="AGENTS"/>
+
+</Traces>
+</Input></API>
+</MultiApi>
+
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="DELETE" Level="VERBOSE" Name="IBD_ReceiveLotMasterFeed_Async" ServerName="" Type="FLOWS"/>
+<Trace Action="DELETE" Level="VERBOSE" Name="IBD_ReceiveJewelleryFeed_Async" ServerName="" Type="FLOWS"/>
+
+
+<Trace Action="DELETE" Level="VERBOSE" Name="IBD_ReceiveJewelleryPriceFeed_Async" ServerName="" Type="FLOWS"/>
+<Trace Action="DELETE" Level="VERBOSE" Name="IBD_UpdateInventory_Async" ServerName="" Type="FLOWS"/>
+</Traces>
+</Input></API>
+</MultiApi>
+
+
+
+
+<MultiApi>
+<API Name="modifyTraces"><Input>
+<Traces>
+<Trace Action="ADD" Level="VERBOSE" Name="TestLog" ServerName="" Type="FLOWS"/>
+</Traces>
+</Input></API>
+</MultiApi>
+
+<!-- Reprocess exception -->
+<IntegrationError ErrorTxnId="2024101004382838510123"/>
+
+<MultiApi>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="2025073004144356716207"/>		</Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="2025073004141556716181"/>		</Input></API>
+</MultiApi>
+
+<API Name="reprocessIntegratiFonError"><Input>	<IntegrationError ErrorTxnId="2025020712175844471884"/>		</Input></API>  
+
+<MultiApi>             
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251015102622482201299"/>		</Input></API>
+</MultiApi>  
+
+<MultiApi>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251014160823481537090"/>		</Input></API>
+</MultiApi>            
+
+<MultiApi>
+
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="2026010804524459309372"/>		</Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="2026010804492759309175"/>	</Input></API>
+</MultiApi>        
+
+
+<MultiApi>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251010103559478945758"/></Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251009093141478434661"/></Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251008171931478150412"/></Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251008114230478062907"/></Input></API>
+<API Name="reprocessIntegrationError"><Input>	<IntegrationError ErrorTxnId="20251006130751476404401"/></Input></API>       </MultiApi>             
+          
+#################################################################################################################################
+#################################################################################################################################
+
+Record External Charges 
+
+<MultiApi>
+<API FlowName="IBD_SQLProcessor"><Input>
+<CustomSQL Query="DELETE FROM YFS_CHARGE_TRANSACTION where CHARGE_TRANSACTION_KEY in ('')"/>
+</Input></API>
+
+<API Name="recordExternalCharges"><Input>
+<RecordExternalCharges OrderHeaderKey="" >
+	<PaymentMethod  PaymentKey=""  PaymentType="" >
+		<PaymentDetailsList>
+			<PaymentDetails AuthorizationID="" ChargeType="CHARGE" ProcessedAmount="" />
+		</PaymentDetailsList>
+	</PaymentMethod>
+</RecordExternalCharges>
+</Input></API>
+
+<API Name="changeOrder"><Input>
+<Order OrderHeaderKey="" Override="Y">
+	<OrderHoldTypes>
+		<OrderHoldType HoldType="CC_REFUND_HOLD" Status="1300"/>
+	</OrderHoldTypes>
+</Order>
+</Input></API>
+</MultiApi>
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+<MultiApi>
+	<API FlowName="IBD_SQLProcessor">
+		<Input>
+			<CustomSQL Query="Delete from yfs_heartbeat where server_type!='APPSERVER'"/>
+		</Input>
+	</API>
+</MultiApi>
+
+
+
+<MultiApi>
+	<API FlowName="IBD_SQLProcessor">
+		<Input>
+			<CustomSQL Query="Delete from yfs_heartbeat where HEARTBEAT_KEY in ('20251216002423499240557','20251216002423499240558')"/>
+		</Input>
+	</API>
+</MultiApi>
+
+
+
+
+sh /opt/Sterling10AWS/bin/titanstartIntegrationServer.sh IBD_ProcessJPMCIntegServer "-Xms1024m -Xmx1024m" &
+
+<MultiApi>
+	<API FlowName="IBD_SQLProcessor">
+		<Input>
+			<CustomSQL Query="Delete from yfs_heartbeat where server_name in ( 'IBDReceivePriceFeedIntegServer') and server_type!='APPSERVER' "/>
+		</Input>
+	</API>
+</MultiApi>
+
+
+
+
+<MultiApi>
+	<API FlowName="IBD_SQLProcessor">
+		<Input>
+			<CustomSQL Query="Delete from yfs_heartbeat where server_type!='APPSERVER' and HOST_NAME='Titan-IBD-Prod-US-OMS-Agent2.prod.aws-ibd.com' "/>
+		</Input>
+	</API>
+</MultiApi>
+#################################################################################################################################
+#################################################################################################################################
+
+<MultiApi>
+<API FlowName="IBD_SQLProcessor"><Input>
+<CustomSQL Query="update yfs_person_info set EMAILID='msalmon@solveda.com' where EMAILID like '%btq%' "/>
+</Input></API>
+<MultiApi>
+
+
+<MultiApi>
+<API FlowName="IBD_SQLProcessor"><Input>
+<CustomSQL Query="update yfs_task_q set AVAILABLE_DATE ='2025-10-10 00:20:00.0'  where TASK_Q_KEY in ('20251009235915478785841 ');"/> 
+</Input></API>
+
+</MultiApi>
+
+
+
+
+Manage TaskQ
+<MultiApi>
+<API Name="manageTaskQueue"><Input>
+<TaskQueue AvailableDate="2025-07-08 01:45:00" HoldFlag="N" TaskQKey="20250707103306414804324"/>
+</Input></API>
+</MultiApi>
+
+
+
+<MultiApi>
+	<API FlowName="IBD_SQLProcessor">
+		<Input>
+			<CustomSQL Query="Delete from yfs_export where EXPORT_KEY in ('20251216013628499245434','20251216013505499245374','20251216013104499245305')"/>
+		</Input>
+	</API>
+</MultiApi>
+
+
+ 
+
+
+#################################################################################################################################
+ChangeOrderStatus
+
+
+<OrderStatusChange  DocumentType="0001" EnterpriseCode="TITAN_GCC" IgnoreTransactionDependencies="Y"  OrderNo="00012785"  TransactionId="IBD_Return_PickUp.0001.ex">
+<OrderLines>
+<OrderLine BaseDropStatus="3700.011" ChangeForAllAvailableQty="Y" OrderLineKey="20250510160541375113014" OrderReleaseKey="" PrimeLineNo="" SubLineNo="">
+</OrderLine>
+</OrderLines>
+</OrderStatusChange>
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+RTO XML:
+
+Service:
+IBD_UPSTrackShipment
+
+<trackResponse>
+	<shipment>
+		<inquiryNumber>1ZXXXXUS00100008596</inquiryNumber>
+		<shipmentType>S</shipmentType>
+		<shipperNumber>G2B511</shipperNumber>
+		<pickupDate>20250618</pickupDate>
+		<package>
+			<trackingNumber>1ZXXXXUS00100008596</trackingNumber>
+			<deliveryDate>
+				<type>DEL</type>
+				<date>20250621</date>
+			</deliveryDate>
+			<deliveryTime>
+				<type>DEL</type>
+				<endTime>165457</endTime>
+			</deliveryTime>
+			<activity>
+				<location>
+					<code>UA</code>
+					<address/>
+					<slic>0101</slic>
+				</location>
+				<status>
+					<type>D</type>
+					<description/>
+					<code>UA</code>
+					<statusCode>034</statusCode>
+				</status>
+				<date>20250709</date>
+				<time>165457</time>
+				<gmtDate>20250709</gmtDate>
+				<gmtOffset>-04:00</gmtOffset>
+				<gmtTime>20:54:57</gmtTime>
+			</activity>
+			 <currentStatus>
+                <description>Returned to Sender</description>
+                <code>034</code>
+            </currentStatus>
+		</package>
+		<userRelation>SHIPPER</userRelation>
+	</shipment>
+</trackResponse>
+
+
+
+
+Shipping Node		Name				UPS Account#		
+XWS				Tanishq - Seattle		V575D6 
+XAC				Tanishq - Atlanta		V575D7 
+XBA				Tanishq - California	V575D8 
+XTD				Tanishq - Dallas		E4B395
+XTH				Tanishq - Houston		E4B394
+XCG				Tanishq - Chicago		G2B511
+XNJ				Tanishq - New Jersey	X4029Y
+
+
+<ManageXmlList>
+	<ManageXml Action="Manage" AttributeName="AccountNumber" AttributeValue="G2B511" Condition="/Shipment[@ReceivingNode='XCG']" Xpath="/Shipment/PaymentInfo"/>
+	<ManageXml Action="Remove" AttributeName="PickupUserEmailID" Xpath="/OrderHeader"/>
+</ManageXmlList>
+
+GetOrderDetails
+<Order OrderNo="US00021474" DocumentTpye="0001" EnterpriseCode="TITAN_US"/>
+
+
+
+
+EZ0113ZAARAS002BL000705
+
+<IBD_FindInventory>
+    <Promise OnlineStoreID="20152">
+        <ShipToAddress Country="US" ZipCode="75056-5254"/>
+        <PromiseLines>
+            <PromiseLine Engraving="N" ItemID="EZ0113ZAARAS002BL000705"
+                LineId="1" ProductType="JEWELLERY" RequiredQty="1"/>
+        </PromiseLines>
+    </Promise>
+</IBD_FindInventory>
+
+
+<IBD_FindInventory>
+    <Promise OnlineStoreID="20152">
+        <ShipToAddress Country="CA" ZipCode="J8C 1J5"/>
+        <PromiseLines>
+            <PromiseLine Engraving="N" ItemID="UL2923PWPAAB372JA000020"
+                LineId="1" ProductType="JEWELLERY" RequiredQty="1"/>
+        </PromiseLines>
+    </Promise>
+</IBD_FindInventory>
+
+
+EZ0113ZAARAS002BL000666
+<IBD_FindInventory>
+    <Promise OnlineStoreID="20151">
+        <ShipToAddress Country="AE" ZipCode="undefined"/>
+        <PromiseLines>
+            <PromiseLine Engraving="N" ItemID="EZ0113ZAARAS002BL000666"
+                LineId="1" ProductType="JEWELLERY" RequiredQty="1"/>
+        </PromiseLines>
+    </Promise>
+</IBD_FindInventory>
+
+
+#################################################################################################################################
+#################################################################################################################################
+SFCC Services
+Create Order				-	SF_CreateOrder_Sync
+Cancel (Change) Order		-	SF_changeOrderRealTime_SFCC
+
+#################################################################################################################################
+#################################################################################################################################
+triggerAgent
+##
+<TriggerAgent CriteriaId="PAYMENT_COLLECTION_US"/>
+<TriggerAgent CriteriaId="PAYMENT_COLLECTION"/>
+
+<TriggerAgent CriteriaId="PAYMENT_EXECUTION"/>
+<TriggerAgent CriteriaId="PAYMENT_EXECUTION_US"/>
+#########################################################################
+<TriggerAgent CriteriaId="SCHEDULE.0001"/>
+<TriggerAgent CriteriaId="RELEASE.0001"/>
+<TriggerAgent CriteriaId="IBD_Carrier_Determination"/>
+
+
+
+<TriggerAgent CriteriaId="SCHEDULE.0003"/>
+<TriggerAgent CriteriaId="IBD_Carrier_Determination_RO"/>
+
+#################################################################################################################################
+#################################################################################################################################
+
+
+GCC		-	omni: 
+Message:		Queue										Service	to repush						Service to fetch
+orderDetail: "OMS.POSTORDERDETAILOMNIPOSS.OUT"		-	IBD_OrderDetailOmniPossStoreQ		-	IBD_OrderDetailOmniPossStoreDB
+orderReturn: "OMS.POSTRETURNUPDATESOMNIPOSS.OUT"	-	IBD_PostReturnOrderToOmniPOSS		-	Test_ReturnUpdatesToOMNIPOSS
+orderCancel: "OMS.POSTCANCELUPDATESOMNIPOSS.OUT"	-	IBD_PostingToOMNIPOSS				-	Test_CancelUpdatesToOMNIPOSS
+orderStatusUpdates: "WMS.DELIVERED.OMNIPOSS.OUT"	-	IBD_StatusUpdatesToOmniPOSS			-	IBD_PostUpdatesToOMNIPOSSDB
+
+US		-	
+Message			Queue								-	Service to repush
+Order Details:	OMS.POSTORDERDETAILERP.OUT			-	IBD_OrderDetailERPQueue				-	IBD_OrderDetailERPStoreDB
+Order Updates:	OMS.DELIVERED.ERP.OUT				-	IBD_StatusUpdatesToERP
+orderCancel:										-	IBD_PostingToERP					-	TestCancelUpdatesToERP
+Return Details: 									-	IBD_PostingReturnToERP
+
+
+Payment Services.
+Service - IBD_JPMCReversal
+
+
+http://10.11.90.84:9080/smcfs/restapi/executeFlow/TestService
+
+
+
+
+Tickets in the Piepline for deployment to Prod from OMS.
+US:
+Shipping Charges.
+NPS Survey Changes.
+Canada shipment.
+
+
+UAE:
+Shipping charges.
+
+
+

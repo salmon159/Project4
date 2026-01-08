@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YDM/addToContainer/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YDM/addToContainer/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YDM_addToContainer_input.xsd" yfc:rootElement="Container">
+        <xsd:appinfo source="yfc:structure">
+            <Container hasAttributes="Y">
+                <PackLocation hasAttributes="Y"/>
+                <Shipment hasAttributes="Y"/>
+                <Load hasAttributes="Y"/>
+                <Source hasAttributes="Y">
+                    <Shipment hasAttributes="Y"/>
+                    <Load hasAttributes="Y"/>
+                    <Inventory hasAttributes="Y">
+                        <Receipt hasAttributes="Y"/>
+                        <InventoryItem hasAttributes="Y"/>
+                        <AdditionalAttributes hasAttributes="Y"/>
+                        <TagDetail hasAttributes="Y"/>
+                        <RequestedTag hasAttributes="Y"/>
+                        <SerialList>
+                            <SerialRangeList>
+                                <SerialRange hasAttributes="Y"/>
+                            </SerialRangeList>
+                            <SerialDetail hasAttributes="Y"/>
+                        </SerialList>
+                    </Inventory>
+                </Source>
+                <Audit hasAttributes="Y"/>
+                <Corrugation hasAttributes="Y"/>
+            </Container>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Container" type="yfc:ContainerXSDType">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_CONTAINER">
+            <xsd:documentation>Stores container header information. Containers are created using packShipment, createShipment or changeShipment API.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ContainerXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PackLocation"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Shipment">
+                <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="SellerOrganizationCode"
+                        type="yfctype:OrgCode" use="optional">
+                        <xsd:annotation
+                            yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                            <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="ShipmentNo"
+                        type="yfctype:DocumentNo" use="optional">
+                        <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                            <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Load">
+                <xsd:annotation yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="LoadNo"
+                        type="yfctype:DocumentNo" use="optional">
+                        <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                            <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Source"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Audit"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Corrugation"/>
+        </xsd:all>
+        <xsd:attribute name="ActivityCode" type="yfctype:Activity" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>ActivityCode to be associated with Container while adding to Container.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="AddingComplete" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If equals Y then Container Status changes to either <code>Packed</code> or <code>ShortPicked</code> depending on the whether ContainerDetails' <code>QuantityPlaced</code> equals <code>Quantity</code>. If no <code>ContainerDetails</code> then it changes to <code>Packed</code>. 
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <Validation>
+                            <br/>
+                            <Condition> if it is Y and the Container does not have <code>ContainerDetails</code> or any child containers and container contents are required.
+					</Condition>
+                            <Error
+                                Description="Container contents is required." ErrorCode="YDM00215"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CODReturnTrackingNo"
+            type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="COD_RETURN_TRACKING_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The tracking number for the COD return. If carrier integration is availed for the carrier on the shipment, then this information is returned by the FedEx carrier server. This is a unique number assigned to each container that can be used to track individual containers of a shipment in case of return.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The Container identifier to which <code>Inventory</code> or <code>Source</code> is to be added. 
+				<Validation>
+                            <Condition> If <code>Container</code> is a Inventory Case/Pallet then <code>Source</code> should be a valid Container and <code>CaseId</code> should be valid SCM.
+				</Condition>
+                            <Error
+                                Description="Shipping Container can be added to a Inventory Pallet with valid SCM." ErrorCode="YDM00174"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerNo" type="yfctype:ContainerNo" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_NO" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The container number. This is a unique key or business key, which by itself identifies a delivery plan. If not passed as input, the system generates this number using the database sequence SEQ_YFS_CONTAINER_NO.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerScm" type="yfctype:UCC128" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_SCM" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>A unique number which helps identify the shipper as well as the goods.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ContainerType" type="yfctype:Text-6" use="optional">
+            <xsd:annotation yfc:columnName="CONTAINER_TYPE" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The type of container. You could use it as an attribute to group containers - either based on size of the container, type of goods that it carries, and so forth.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CorrugationItemKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="CORRUGATION_ITEM_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The corrugation item key that is associated with this shipment container.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DoInventoryUpdatesOffline"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Set to enable inventory update offline.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD">
+                <xsd:documentation>
+                    <div>Specifies the load to which container belongs</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>The Container identifier to which <code>Inventory</code> or 
+				<code>Source</code> is to be added. 
+				<Validation>
+                            <Condition>If <code>Container</code> is a Inventory Case/Pallet then <code>Source</code> should be a valid Container and <code>PalletId</code> should be valid SCM.
+				</Condition>
+                            <Error
+                                Description="Shipping Container can be added to a Inventory Pallet with valid SCM." ErrorCode="YDM00174"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT_CONTAINER">
+                <xsd:documentation>The shipment key that is associated with this shipment container.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UpdateOpenContainers" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+                        <br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+					If equals Y then open container records in YFS_Open_Container table will be updated with the child container attributes.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PackLocation">
+        <xsd:complexType>
+            <xsd:attribute name="LocationId" type="yfctype:LocationId" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>A valid location in the Node
+							<Validation>
+                                <Condition> If <code>Node</code> is WMS Node Integrated with DCM and Location cannot be derived from <code>Source</code> or <code>Container</code> then Location must be an a valid <code>Location</code> in the Node.
+								</Condition>
+                                <Error
+                                    Description="Location does not exist." ErrorCode="WMS00005"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Node at which Packing is taking place.
+							<Validation>
+                                <br/>
+                                <Condition> Must be a valid. <code>Node</code>.
+								</Condition>
+                                <Error Description="Invalid ShipNode." ErrorCode="YFS10048"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StationId" type="yfctype:EquipmentId" use="optional">
+                <xsd:annotation yfc:isConditional="Y">
+                    <xsd:documentation>
+                        <div>Station associated to pack location
+							<Validation>
+                                <Condition> If <code>Node</code> is WMS Node Integrated with DCM, then Station must be a valid <code>Station</code> in the Node.
+								</Condition>
+                                <Error Description="Invalid Data." ErrorCode="YCM0017"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Source">
+        <xsd:annotation>
+            <xsd:documentation>Specifies the Container or SKU to be added.
+					When an inventory LPN is picked into a system suggested outbound container, the LPN will not be retained as the child container of the outbound container, only the SKU and the quantity is updated in container details table. But if the inventory LPN is picked into a user suggested outbound container, then LPN will be retained as child container of the outbound container. This happens only if the CaseId/PalletId is a NewPrePrintedLicencePlate, else the SKU and quantity will be updated in container details table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Shipment">
+                    <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+                        <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="SellerOrganizationCode"
+                            type="yfctype:OrgCode" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                                <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ShipmentNo"
+                            type="yfctype:DocumentNo" use="optional">
+                            <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                                <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Load">
+                    <xsd:annotation yfc:tableName="YFS_LOAD">
+                        <xsd:documentation>Stores information about loads. Loads are made of Shipments, carry one or more shipments between two points, and carry an entire shipment. A load has one origin, one destination and can have multiple intermediate stops. A load has one carrier. Loads  may or may not belong to a Delivery Plan. A load can pickup a shipment from its origin or an intermediate stop and drop off the shipment to its destination or an intermediate stop. A load is created and managed by the manageLoad API.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="LoadNo"
+                            type="yfctype:DocumentNo" use="optional">
+                            <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                                <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Inventory"/>
+            </xsd:all>
+            <xsd:attribute name="CaseId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The Container or Inventory LPN identifier which needs to added to <code>Container</code> or converted to a container.
+					<Validation>
+                                <br/>
+                                <Condition> If <code>CaseId</code> does not point to a valid Inventory <code>Case</code> or shipping container 
+						</Condition>
+                                <Error
+                                    Description="Cannot add non Shipping or Inventory Container to another Container." ErrorCode="YDM00195"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>
+                        <div>Specifies the load to which container belongs</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PalletId" type="yfctype:LPNNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>The Container or Inventory LPN identifier which needs to added to <code>Container</code> or converted to a container. 
+					<Validation>
+                                <br/>
+                                <Condition> If <code>PalletId</code> does not point to a valid Inventory <code>Pallet</code> or shipping container 
+						</Condition>
+                                <Error
+                                    Description="Cannot add non Shipping or Inventory Container to another Container." ErrorCode="YDM00195"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The primary key for the YFS_SHIPMENT table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TransactionId" type="yfctype:TranId" use="optional">
+                <xsd:annotation yfc:columnName="TRANID" yfc:tableName="YFS_TRANSACTION">
+                    <xsd:documentation>If passed this would be used for the ChildContainer which is added to the Container.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Inventory">
+        <xsd:annotation yfc:tableName="YFS_LOCATION_INVENTORY">
+            <xsd:documentation>
+                <div>
+					The <code>Inventory</code> passed is decreased from the <code>PackLocation</code> and is increased at the virtual location associated with <code>PACK</code> reason code. This reason code needs to be setup for the <code>Node</code>.
+					<Validation>
+                        <br/>
+                        <Condition> if <code>PACK</code> reason code associated with a virtual location is not setup for the <code>Node</code>.
+					</Condition>
+                        <Error Description="WMS: Invalid ReasonCode." ErrorCode="WMS00071"/>
+                    </Validation>
+                    <Validation>
+                        <br/>
+                        <Condition> if <code>Inventory</code> is passed and container contents are not required.
+					</Condition>
+                        <Error
+                            Description="Container contents is not required and should not be specified." ErrorCode="YDM00214"/>
+                    </Validation>
+                    <Validation>
+                        <br/>
+                        <Condition> Either <code>Quantity</code> or <code>InnerPackQuantity</code> and <code>NoOfInnerPacks</code> must be passed.
+					</Condition>
+                        <Error
+                            Description="Quantity not passed in the input." ErrorCode="WMS00021"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Receipt"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:InventoryItem"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AdditionalAttributes"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:TagDetail"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:RequestedTag"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialList"/>
+            </xsd:all>
+            <xsd:attribute name="CountryOfOrigin" type="yfctype:Country" use="optional">
+                <xsd:annotation yfc:columnName="COUNTRY_OF_ORIGIN" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The country in which the item was manufactured.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FifoNo" type="yfctype:Integer" use="optional">
+                <xsd:annotation yfc:columnName="FIFO_NO" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>A date based inventory attribute that helps understand the order in which stock arrived at the node. This is used to send out items that arrived earlier than the ones that arrived later.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InnerPackQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Quantity contained in inner packs.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_ITEM_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory item key that is associated with this location inventory.  This points to a SKU that comprises the Inventory Organization, Item ID, Product Class and Unit of Measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryStatus"
+                type="yfctype:InventoryStatus" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_STATUS" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory status that is associated with this location inventory.  This refers to an inventory sub classification based on the results of the inventory control processes within the warehouse.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InventoryTagKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INVENTORY_TAG_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The inventory tag key that is associated with this location inventory. This points to lot and related attributes (revision etc) for the item whose inventory is tracked here.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NoOfInnerPacks" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Number of inner packs packed in the shipment container.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <br/>
+                                <Condition> In case of SystemSuggested Container, Quantity should not exceed un placed ContainerDetail Quantity. 
+							In case of User Suggested Container, Quantity should not exceed 
+							uncontainerized quantity of corresponding ShipmentLine + 
+					        (Over Ship Percentage*ShipmentLine Quantity)/100. 
+							</Condition>
+                                <Error
+                                    Description="Not enough uncontainerized quantity available on the shipment for containerization." ErrorCode="YDM00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The receipt header key that is associated with this LPN header. &#xd;
+This helps identify all stocks attached to a receipt. This number is of significance until the sample from the receipt has been certified as having passed or failed QC. This number is used to pull out all stocks based on the receipt. This is usually flled in situations where the LPN does not have contents.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment to which the inventory belongs. This helps to track inventory separately when the inventory is customized for a specific order so that the inventory can be allocated to that order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The segment type of the inventory. This field indicates the buyer or buyer category for whom the inventory is customized.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_LOCATION_INVENTORY">
+                    <xsd:documentation>The date by which the item must be shipped so that it is usable. This is also referred to as the expiration date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Receipt">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                    <xsd:documentation>The unique key or business key, which by itself identifies a receipt along with ReceivingNode.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryItem">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>SKU to be added</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <br/>
+                                <Condition> If void </Condition>
+                                <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="required">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <br/>
+                                <Condition> If void </Condition>
+                                <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="required">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <br/>
+                                <Condition> If void </Condition>
+                                <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP00046"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AdditionalAttributes">
+        <xsd:annotation>
+            <xsd:documentation>Do not mix attributes to be considered during packing</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="CustomerPoNo" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="CUSTOMER_PO_NO" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The Customer PO # that is associated with Shipment Line</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DepartmentCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="DEPARTMENT_CODE" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The Department Code that is associated with Shipment Line</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MarkForKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="MARK_FOR_KEY" yfc:tableName="YFS_SHIPMENT_LINE">
+                    <xsd:documentation>The mark for key that is associated with this shipment line</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TagDetail">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>
+                <div>
+							Stores tag information for container details. Tag information is stored only if the <code>Node</code> tracks tag information in inventory or the <code>Buyer</code> mandates tag information.
+							</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="RequestedTag">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+            <xsd:documentation>
+							This is used to specify the <code>RequestedTag</code> if any to be used while packing. If this information is provided, API tries to fetch a shipment line with matching Requested Tag. Also, if <code>RequestedTag</code> is not given, preference will be given to a shipment line with blank requested tag and then a line with matching <code>RequestedTag</code>.
+							<div>
+                    <Validation>
+                        <br/>
+                        <Condition> In case of a matching shipment line cannot be found for the given input. 
+									</Condition>
+                        <Error
+                            Description="Could not identify matching Shipment line." ErrorCode="YDM00239"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_SHIPMENT_LINE_REQ_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:SerialRangeList"/>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:SerialDetail"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRangeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:SerialRange"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialRange">
+        <xsd:complexType>
+            <xsd:attribute name="FromSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Staring serial number of a range for item. 
+										<Validation>
+                                <Condition> From Serial Number is blank.
+											</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+											</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToSerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Ending serial number of a range for item. 
+										<Validation>
+                                <Condition> From Serial Number is blank.
+											</Condition>
+                                <Error
+                                    Description="From Serial Number is blank." ErrorCode="INV80_043"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> To Serial Number is blank.
+											</Condition>
+                                <Error
+                                    Description="To Serial Number is blank." ErrorCode="INV80_044"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Both From and To Serial numbers are blank.
+											</Condition>
+                                <Error
+                                    Description="Both From and To Serial numbers are blank." ErrorCode="INV80_039"/>
+                            </Validation>
+                            <Validation>
+                                <Condition> Serial range entry is not supported when From and To Serial numbers are of different length.
+											</Condition>
+                                <Error
+                                    Description="From and To Serial numbers are of different length, Manual Scanning Required." ErrorCode="INV80_045"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="SerialDetail">
+        <xsd:annotation yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+            <xsd:documentation>This table stores details about serial numbers. Since serial number scanning is an overhead if it has to be done at every single move operation in the warehouse for tracking purposes, warehouses typically just record the fact that the serial number has reached the warehouse during the receiving process. Similarly, the serial number is scanned at shipping to record the fact that the serial number has left the warehouse. So, the location at any time is the last location at which it was scanned. Similarly, the ship node on the serial number will reflect the ship node at which it was last scanned.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SecondarySerial1"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_1" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial2"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_2" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial3"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_3" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial4"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_4" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial5"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_5" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial6"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_6" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial7"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_7" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial8"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_8" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SecondarySerial9"
+                type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SECONDARY_SERIAL_9" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>Component serial numbers of the item. For example if we are recording serial number of the computer as SERIAL_NO, we could store the serial number of the battery, hard disk etc. in the secondary serial fields.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SerialNo" type="yfctype:SerialNo" use="optional">
+                <xsd:annotation yfc:columnName="SERIAL_NO" yfc:tableName="YFS_GLOBAL_SERIAL_NUM">
+                    <xsd:documentation>
+                        <div>If passed will be adjusted against <code>RequestedSerialNo</code> of <code>ShipmentLine</code> of the shipment if found.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Audit">
+        <xsd:annotation yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+            <xsd:documentation>Stores audit information for every single location inventory transaction.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>The description of the reason for the inventory adjustment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference3" type="yfctype:Text-50" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_3" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference4" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_4" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference5" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_5" yfc:tableName="YFS_LOCN_INVENTORY_AUDIT">
+                    <xsd:documentation>Generic references.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Corrugation">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

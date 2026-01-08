@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCM/SEND_ITEM_CHANGES_ON_SUCCESS"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCM/SEND_ITEM_CHANGES_ON_SUCCESS" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCM_SEND_ITEM_CHANGES_ON_SUCCESS.xsd" yfc:rootElement="Item">
+        <xsd:appinfo source="yfc:structure">
+            <Item hasAttributes="Y">
+                <PrimaryInformation hasAttributes="Y"/>
+                <InventoryParameters hasAttributes="Y"/>
+                <ClassificationCodes hasAttributes="Y"/>
+                <ItemInstructionList hasAttributes="Y">
+                    <ItemInstruction hasAttributes="Y"/>
+                </ItemInstructionList>
+                <Components hasAttributes="Y">
+                    <Component hasAttributes="Y"/>
+                </Components>
+            </Item>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Item" type="yfc:ItemXSDType">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>
+                <div>
+		  The Item to be modified. Pass the <code>ItemKey</code> attribute <i>or</i> the combination of <code>OrganizationCode</code>, <code>ItemID</code>, and <code>UnitOfMeasure</code> to identify the Item.
+			<Validation>
+                        <Condition>If data passed does not include one of the combinations to identify the <code>Item</code>.
+				</Condition>
+                        <Error
+                            Description="Missing Mandatory Parmeters." ErrorCode="YCM0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Values passed are invalid, and do not identify an item.
+				</Condition>
+                        <Error Description="Item Not Found" ErrorCode="YCM0033"/>
+                    </Validation>
+                    <Validation>
+                        <Condition> Try to modify the <code>ItemID</code>, <code>OrganizationCode</code>, or <code>UnitOfMeasure</code> attributes.
+				</Condition>
+                        <Error
+                            Description="Primary Key or Unique Keys can not be modified." ErrorCode="YCM0040"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PrimaryInformation"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventoryParameters"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ClassificationCodes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ItemInstructionList"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Components"/>
+        </xsd:all>
+        <xsd:attribute name="Action" type="yfctype:Action" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					</div>
+                    <Validation>
+                        <Condition>
+                            <code>Action</code> is not specified or invalid <code>Action</code> is provided.
+						</Condition>
+                        <Error Description="Invalid Action." ErrorCode="YFS10423"/>
+                    </Validation>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_ID"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The unique identifier for the item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The primary key for the YFS_ITEM table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The organization code whose product information is being stored.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RemoteModifyTS" use="optional">
+            <xsd:annotation yfc:columnName="REMOTE_MODIFYTS" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The field indicates the remote modify timestamp.   This field gets updated when changes are apply through item synchronization.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                <xsd:documentation>The unit of measure for item quantity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PrimaryInformation">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BundleFulfillmentMode"
+                type="yfctype:Text-2" use="optional">
+                <xsd:annotation yfc:columnName="BUNDLE_FULFILLMENT_MODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>
+                        <div>
+                        This field indicates the way bundle will be fulfilled. It can be Ship Together(01), Ship Independent(00), or Deliver Together (02). Default value is Ship Together(01).
+                        <Validation>
+                                <Condition>
+                                    <code>BundleFulfillmentMode</code> cannot be other than 00, 01, or 02.
+                                    </Condition>
+                                <Error
+                                    Description="Bundle fulfillment mode cannot be other than 00, 01, or 02." ErrorCode="YCM79_007"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ConfiguredModelKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="CONFIGURED_MODEL_KEY" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The key of the configured model for a configurable item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ExtendedDescription"
+                type="yfctype:Text-2000" use="optional">
+                <xsd:annotation yfc:columnName="EXTENDED_DESCRIPTION" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The extended multi-line description of the Item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsConfigurable" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_CONFIGURABLE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>
+                                    <code>IsConfigurable</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>KitCode</code> is not <code>
+                                    <b>BUNDLE</b>
+                                    </code>.
+					</Condition>
+                                <Error
+                                    Description="A configurable item must be a bundle item." ErrorCode="YCM80_014"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>IsConfigurable</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>ConfiguredModelKey</code> is not passed.
+					</Condition>
+                                <Error
+                                    Description="A configurable item must have a ConfiguredModelKey." ErrorCode="YCM80_015"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsModelItem" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_MODEL_ITEM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>
+                        <div>
+				This flag indicates that the item is a model item.  A model item represents a group of items with similar set of attributes.
+				<Validation>
+                                <Condition>A model item is a child of another model item.
+					</Condition>
+                                <Error
+                                    Description="A model item cannot be a child of another model item." ErrorCode="YCM80_011"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>A model item is a logical kit, a bundle, or a dynamic physical kit.
+					</Condition>
+                                <Error
+                                    Description="A model item cannot be a logical kit, a bundle, or a dynamic physical kit." ErrorCode="YCM80_012"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsPreConfigured" type="yfctype:Flag" use="optional">
+                <xsd:annotation yfc:columnName="IS_PRE_CONFIGURED" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>
+                        <div>
+                            <Validation>
+                                <Condition>
+                                    <code>IsPreConfigured</code> is passed as <code>
+                                    <b>Y</b>
+                                    </code> and <code>IsConfigurable</code> is not <code>
+                                    <b>Y</b>
+                                    </code>.
+					</Condition>
+                                <Error
+                                    Description="A pre-configured item must be a configurable item." ErrorCode="YCM80_016"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="KitCode" type="yfctype:EnumKitCode" use="optional">
+                <xsd:annotation yfc:columnName="KIT_CODE" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field indicates the kit code for this item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinOrderQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="MIN_ORDER_QUANTITY" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The minimum order quantity.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ModelItemUnitOfMeasure"
+                type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="MODEL_ITEM_UOM" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field describes the unit of measure of the item with variations.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShortDescription"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="SHORT_DESCRIPTION" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The short description of the item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Status" type="yfctype:EnumShortStatus" use="optional">
+                <xsd:annotation yfc:columnName="STATUS" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field indicates the status of an item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryParameters">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LeadTime" use="optional">
+                <xsd:annotation yfc:columnName="LEAD_TIME" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>The lead time for getting the product delivered. Purchase order placed today will arrive after this many days at the warehouse. Default value: 0.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:NumberOfDays"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ClassificationCodes">
+        <xsd:annotation yfc:tableName="YFS_ITEM">
+            <xsd:documentation>The table stores product information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Model" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="MODEL" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>This field describes the identifier of the item with variations to which this item belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemInstructionList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:ItemInstruction"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				  If <code>Reset</code> is passed as <b>
+                                <code>Y</code>
+                            </b>, the old item instructions are removed and replaced with the new ones.   
+				  If <code>Reset</code> is not passed or <code>Reset</code> is passed as <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+				  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ItemInstruction">
+        <xsd:annotation yfc:tableName="YFS_ITEM_INSTRUCTION">
+            <xsd:documentation>
+                <div>
+				Stores instructions pertaining to the item.
+				Standard pre-defined instruction code as defined by the catalog organization can be used as the value of <code>InstructionCode</code>.
+				Free form instruction text for the given instruction type can be used as the value of <code>InstructionText</code>.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="InstructionCode" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_CODE" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Standard pre-defined instruction code as defined by the catalog organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionText"
+                type="yfctype:FreeInstructionText" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TEXT" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Free form instruction text for the given instruction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionType" type="yfctype:ID-10" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TYPE" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Instruction type as defined by the catalog organization.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemInstructionKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_INSTRUCTION_KEY" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Primary key attribute of YFS_ITEM_INSTRUCTION.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_KEY" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Item for which instructions are maintained.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity.
+			  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SeqNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQ_NO" yfc:tableName="YFS_ITEM_INSTRUCTION">
+                    <xsd:documentation>Instruction SequenceNo for a given instruction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Components">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Component"/>
+            </xsd:sequence>
+            <xsd:attribute name="Reset" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>If the value of <code>Reset</code> passed is <b>
+                                <code>Y</code>
+                            </b>, the component definitions are changed. If the value of <code>Reset</code> passed is <b>
+                                <code>N</code>
+                            </b>, only the deltas are applied. 
+				  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Component">
+        <xsd:annotation yfc:tableName="YFS_KIT_ITEM">
+            <xsd:documentation>
+                <div>This element defines a component of the Item, if it is a Kit Item.  To identify a component, pass either <code>ComponentItemKey</code>
+                    <i>or</i>
+                    <code>ComponentItemID</code>, <code>ComponentOrganizationCode</code>, and <code>ComponentUnitOfMeasure</code> is required.
+				  <Validation>
+                        <Condition>Try to add a ComponentItem that cannot be identified in the database.
+					</Condition>
+                        <Error Description="Item Not Found." ErrorCode="YCM0033"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If kitCode is Nonbundle then component cannot be Bundle.
+					</Condition>
+                        <Error
+                            Description="Nonbundle kit item cannot have Bundle as component." ErrorCode="YCM80_002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Item already exist in hierarchy.
+					</Condition>
+                        <Error
+                            Description="Item already exists in hierarchy." ErrorCode="YCM80_003"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Component item is not PS or PROD and parent item is bundle.
+						</Condition>
+                        <Error
+                            Description="Bundle component cannot be other than PS or PROD." ErrorCode="YCM79_006"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Bundle component is DPK.
+						</Condition>
+                        <Error
+                            Description="Bundle component cannot be DPK." ErrorCode="YCM79_009"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ComponentItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Along with <code>ComponentOrganizationCode</code> and <code>ComponentUnitOfMeasure</code>, it identifies a component item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComponentItemKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Component item's primary key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComponentOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Organization that maintains the catalog for the Component Item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ComponentUnitOfMeasure"
+                type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM"
+                    yfc:isConditional="Y" yfc:tableName="YFS_ITEM">
+                    <xsd:documentation>Unit of measure for the Component Item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="KitQuantity" type="yfctype:Quantity" use="required">
+                <xsd:annotation yfc:columnName="KIT_QUANTITY" yfc:tableName="YFS_KIT_ITEM">
+                    <xsd:documentation>Amount of a component item that is contained in a parent item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					   Valid value is <b>
+                                <code>Delete</code>
+                            </b>.  Set <code>Operation</code> = "<b>
+                                <code>Delete</code>
+                            </b>" to delete the entity. To add or modify a component there is no need to pass operation attribute. It is determined internally. Delete is the one which should be passed explicitly.
+					  </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

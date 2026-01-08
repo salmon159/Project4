@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/getServiceResourceCapacity/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/getServiceResourceCapacity/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_getServiceResourceCapacity_input.xsd" yfc:rootElement="ServiceResource">
+        <xsd:appinfo source="yfc:structure">
+            <ServiceResource hasAttributes="Y">
+                <ResourcePool hasAttributes="Y"/>
+            </ServiceResource>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ServiceResource" type="yfc:ServiceResourceXSDType">
+        <xsd:annotation yfc:tableName="YFS_SERVICE_RESOURCE">
+            <xsd:documentation>
+                <div>
+				Provide criteria for service resource and/or resource pool to obtain service resource capacity information. 
+					<Validation>
+                        <Condition>
+						If <code>StartDate</code> and <code>EndDate</code> are passed, <code>StartDate</code> must be before <code>EndDate</code>. If <code>StartDate</code> is after <code>EndDate</code>:
+						</Condition>
+                        <Error
+                            Description="INV: StartDate must be before EndDate" ErrorCode="INV10026"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ServiceResourceXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ResourcePool"/>
+        </xsd:all>
+        <xsd:attribute name="EndDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					The end date of the date range.  If <code>EndDate</code> is not passed, it defaults as follows:<br>
+					if <code>NumberOfDaysFromStartDate</code> is passed, <code>EndDate</code> = <code>StartDate</code> + <code>NumberOfDaysFromStartDate</code> (including the Start Date)</br>
+					else <code>EndDate</code> = <code>StartDate</code> + 7 (including the Start Date).
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NumberOfDaysFromStartDate"
+            type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					The number of days (including start date) from the start date for the date range to the end date.<br>
+					If <code>NumberOfDaysFromStartDate</code> is passed, it is used to calculate <code>EndDate</code>, if <code>EndDate</code> is not passed.</br>
+					If <code>NumberOfDaysFromStartDate</code> is not passed, it defaults to 7 days.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ServiceResourceId" type="yfctype:ID-24" use="optional">
+            <xsd:annotation yfc:columnName="SERVICE_RESOURCE_ID" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>The unique identifier of the service resource.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ServiceResourceKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SERVICE_RESOURCE_KEY" yfc:tableName="YFS_SERVICE_RESOURCE">
+                <xsd:documentation>Primary key attribute of YFS_SERVICE_RESOURCE table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					The start date of the date range.  If <code>StartDate</code> is not passed, it defaults to today's date.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactInWorkDay" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Applicable to resources of resource pools with purpose <code>
+                            <b>WMS-RP</b>
+                        </code>. The flag indicates whether to return the capacities and availablities in terms of Work Day defined at the node or not.<br>
+					Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </br>
+					If no value is passed, the default is <b>
+                            <code>N</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ResourcePool">
+        <xsd:annotation yfc:tableName="YFS_RES_POOL">
+            <xsd:documentation>This table stores information for a resource pool. A resource pool represents a collection of resources for providing services. The resources represented by a resource pool should have common characteristics (like regions serviced and skill sets). Capacity for providing services is maintained at the Resource Pool level.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ItemGroupCode"
+                type="yfctype:EnumItemGroupCode2" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The type of item that this resource pool services.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The node that is associated with this resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProviderOrganizationCode"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PROVIDER_ORGANIZATION_CODE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The code of the organization that owns the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Purpose"
+                type="yfctype:INVResourcePoolPurpose" use="optional">
+                <xsd:annotation yfc:columnName="PURPOSE" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>This field indicates if the resource pool is used for service or dock scheduling. Default value: SERVICE.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolId" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_ID" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The unique identifier of the resource pool.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ResourcePoolKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="RESOURCE_POOL_KEY" yfc:tableName="YFS_RES_POOL">
+                    <xsd:documentation>The primary key for the YFS_RES_POOL table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

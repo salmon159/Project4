@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/INV/transferInventoryOwnership/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/INV/transferInventoryOwnership/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="INV_transferInventoryOwnership_input.xsd" yfc:rootElement="Items">
+        <xsd:appinfo source="yfc:structure">
+            <Items>
+                <Item hasAttributes="Y">
+                    <Tag hasAttributes="Y"/>
+                </Item>
+            </Items>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Items" type="yfc:ItemsXSDType"/>
+    <xsd:complexType name="ItemsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Item"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_SUPPLY">
+            <xsd:documentation>
+                <div>
+		Information regarding inventory adjustment of an item.		
+			<Validation>
+                        <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                <b>Y</b>
+                            </code> and the provided item does not exist in the catalog.
+				 </Condition>
+                        <Error Description="Invalid Item." ErrorCode="INV10007"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+				If the <code>VALIDATE_ITEM_DURING_ADJUST_INVENTORY</code> rule of the inventory organization is set to <code>
+                                <b>Y</b>
+                            </code> and the provided item exists in the catalog, but is a logical kit item.
+				 </Condition>
+                        <Error
+                            Description="Cannot Adjust Inventory For A Logical Kit Item." ErrorCode="INV75_001"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Tag"/>
+            </xsd:all>
+            <xsd:attribute name="Availability"
+                type="yfctype:EnumAvailabilityType" use="optional">
+                <xsd:annotation yfc:columnName="AVAILABILITY_TYPE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div width="100%">
+				Defines whether the supply is infinite or tracked. 
+				<br/>Valid values: <b>
+                                <code>TRACK</code>
+                            </b> or <b>
+                                <code>INFINITE</code>
+                            </b>
+                            <br/>Default: If not passed then it defaults to Availabilty type of the shipnode. If ShipNode tracks inventory it will default to <code>TRACK</code> else it will default to <code>INFINITE</code>
+                            <br/>The behavior depends on the current configuration of the <code>ShipNode</code> and the value passed in <code>Availability</code>. 
+				<br/>
+                            <br/>
+                            <div class="innerpanel" width="30%">
+                                <table border="0" cellpadding="0"
+                                    cellspacing="0" class="table">
+                                    <thead>
+                                    <tr>
+                                    <td class="tablecolumnheader">ShipNode Configuration</td>
+                                    <td class="tablecolumnheader">Availability passed</td>
+                                    <td class="tablecolumnheader">API Behavior</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">Supply record stamped as infinite</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">TRACK</td>
+                                    <td class="tablecolumn">Updated based on quantity passed</td>
+                                    </tr>
+                                    <tr>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">INFINITE</td>
+                                    <td class="tablecolumn">No updates done</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <Validation>
+                                <Condition>
+						Input must either be <code>TRACK</code> or <code>INFINITE</code>.
+						 </Condition>
+                                <Error Description="Invalid Data." ErrorCode="YFS10190"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FromOrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>FromOrganizationCode not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+					If the organization is not valid.
+					<Validation>
+                                <Condition>Organization not found corresponding to input. 
+						</Condition>
+                                <Error
+                                    Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+					If the organization is valid but is not associated to an inventory organization.
+					<Validation>
+                                <Condition>Organization has no inventory organization. 
+						</Condition>
+                                <Error
+                                    Description="Inventory Organization not found for the organization." ErrorCode="YCP80_0007"/>
+                            </Validation>
+                            <code>FromOrganizationCode</code> is the organization whose inventory is getting transferrred.Inventory owned by <code>FromOrganizationCode</code> will be deducted by an amount equal to the <code>Quantity</code> passed as input.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+				(Required) The unique identifier for the item. 
+			<Validation>
+                                <Condition>Item ID is not passed. 
+					</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+
+			When item validation flag is enabled in the configurator, <code>ItemID</code> is validated against the organization catalog.  
+			Validation is made based on the input <code>OrganizationCode</code>; Exception will be thrown even if item exists 
+			in other organization catalogs. 
+			<Validation>
+                                <Condition>Item Id does not exist in organization catalog.	</Condition>
+                                <Error
+                                    Description="ItemId is void or not found in organization catalog." ErrorCode="INV80_046"/>
+                                <Condition>ItemID does not exist.</Condition>
+                                <Error Description="Invalid Item." ErrorCode="INV80_035"/>
+                            </Validation>
+                            <br>If validation flag is not set, the input <code>ItemID</code> will be used as is.</br>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+						 It should be a valid <code>ProductClass</code> .This will be defaulted for the inventory in both the organization the same as in input xml.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity"
+                type="yfctype:QuantityPositiveAndNegative" use="required">
+                <xsd:annotation yfc:columnName="QUANTITY" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Quantity not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+				Indicates the quantity to be deducted from onhand inventory supply at source(Enterprise or Supplier) and added to the onhand inventory supply at target(Supplier or Enterprise),during transfer.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The code of the reason for this inventory audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The description of the reason for this inventory audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_1" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_1" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The reference1 for this inventory audit.  If the inventory adjustment is the result of a change in the order for which the inventory is associated, the order's OrderHeaderKey will be posted as the value of Reference1.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_2" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_2" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The reference2 for this inventory audit.  If the inventory adjustment is the result of a change in the order line for which the inventory is associated, the order line's OrderLineKey will be posted as the value of Reference2.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_3" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_3" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The reference3 for this inventory audit.  If the inventory adjustment is the result of receiving order, the receipt's ReceiptHeaderKey will be posted as the value of Reference3.  If the inventory adjustment is the result of shipment confirmation, the shipment's ShipmentHeaderKey will be posted as the value of Reference3.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_4" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_4" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The reference4 for this inventory audit.  If the inventory adjustment is the result of receiving order, the receipt line's ReceiptLineKey will be posted as the value of Reference4.  If the inventory adjustment is the result of shipment confirmation, the shipment line's ShipmentLineKey will be posted as the value of Reference4.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference_5" type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE_5" yfc:tableName="YFS_INVENTORY_AUDIT">
+                    <xsd:documentation>The reference5 for this inventory audit.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Segment" type="yfctype:Segment" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>The segment for this inventory supply.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+                <xsd:annotation yfc:columnName="SEGMENT_TYPE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>The segment type for this inventory supply.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipByDate" type="yfctype:Date" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_BY_DATE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				
+				If item is time sensitive, a <code>ShipByDate</code> may be provided for updates, otherwise if 
+				<code>SupplyType</code> is a "onhand" type, then the <code>ShipByDate</code> by default is equated from  
+				<br>"today + item's default expiration days".</br>
+                            <br>
+                                <code>ShipByDate</code> is needed to both the decrease and increase inventory.</br>
+                            <Validation>
+                                <Condition>Date format is checked. 
+					</Condition>
+                                <Error Description="Invalid Date Format" ErrorCode="YFC0004"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>For a time sensitive item ship date is not provided and  system rule FEFO updates is turned off.
+					</Condition>
+                                <Error
+                                    Description="YFS:Either allow FEFO or pass ship by date" ErrorCode="YFSI10008"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:Key" use="required">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				Indicates the node to adjust.
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Ship node not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Must be a valid node in the system.
+					</Condition>
+                                <Error Description="Invalid Node." ErrorCode="YFS10048"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Node with InterfaceType equals to <code>INTEGRATED_WMS</code> and <code>SupplyType</code> is of type on-hand.
+					</Condition>
+                                <Error
+                                    Description="Cannot adjust inventory for node with InterfaceType INTEGRATED_WMS." ErrorCode="INV10034"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SupplyType" type="yfctype:Text-40" use="required">
+                <xsd:annotation yfc:columnName="SUPPLY_TYPE" yfc:tableName="YFS_INVENTORY_SUPPLY">
+                    <xsd:documentation>
+                        <div>
+				Required. 
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>Supply type not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>	
+				The value should be a valid <code>SupplyType</code> defined in <code>YFS_INVENTORY_SUPPLY_TYPE</code>.   Indicates the <code>SupplyType</code> with which inventory needs to be adjusted.
+					<Validation>
+                                <Condition>
+                                    <code>SupplyType</code> must be passed.
+						</Condition>
+                                <Error Description="No supply type." ErrorCode="YFSI10006"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>SupplyType</code> must be of onhand nature.
+						</Condition>
+                                <Error
+                                    Description="Supply Type is not of onhand nature." ErrorCode="INV80_047"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ToOrganizationCode"
+                type="yfctype:OrgCode" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				This is a required field.If not in input,exception is thrown.
+					<Validation>
+                                <Condition>ToOrganizationCode not passed in the input. 
+						</Condition>
+                                <Error
+                                    Description="Missing attribute in input." ErrorCode="YFS10460"/>
+                            </Validation>
+				If the organization is not valid.
+					<Validation>
+                                <Condition>Organization not found corresponding to input. 
+						</Condition>
+                                <Error
+                                    Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                            </Validation>
+				If the organization is valid but is not associated to an inventory organization.
+					<Validation>
+                                <Condition>Organization has no inventory organization. 
+						</Condition>
+                                <Error
+                                    Description="Inventory Organization not found for the organization." ErrorCode="YCP80_0007"/>
+                            </Validation>
+				 Inventory owned by <code>FromOrgnaizationCode</code> will be deducted where as inventory owned by <code>ToOrganizationCode</code> will be increased by an amount equal to the <code>Quantity</code> passed as input.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>
+                        <div>
+				The value should be a valid <code>UnitOfMeasure</code>.It will be defaulted in the target organization as the same in source organization.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UseHotSKUFeature" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				When this flag is turned on, hot sku feature is used depending upon the parameters passed in yfs.properties. The hot sku feature is not used if the availability type is passed as <code>INFINITE</code> or if no availability type is passed and node's inventory type is <code>INFINITE</code>.
+				<br/>Valid values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                            <br/>Default: <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ValidateTagInformation"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Indicates if tag information should be validated for a tag controlled item. If passed as 'Y' or not passed tag details should be passed for always tag controlled item.
+				<br/>Default: <b>
+                                <code>Y</code>
+                            </b>
+                            <br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Tag">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+            <xsd:documentation>
+                <div>
+				Stores tag information for inventory. Tag information is stored only if the <code>ShipNode</code> tracks tag information in inventory.
+					<Validation>
+                        <Condition>
+						If Item is tag-controlled, all of the unique tag identifiers must be passed.
+						</Condition>
+                        <Error
+                            Description="Missing Inventory Identifier Attribute." ErrorCode="INV10029"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>
+						If Item is tag-controlled, and there is no tag number generated from the provided inventory identifier attributes.
+						</Condition>
+                        <Error Description="No Tag number" ErrorCode="YFSI10004"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="BatchNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Batch Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute1" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute2" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotAttribute3" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotKeyReference"
+                type="yfctype:Text-4000" use="optional">
+                <xsd:annotation yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LotNumber" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ManufacturingDate" use="optional">
+                <xsd:annotation yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:Date"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="RevisionNo" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                    <xsd:documentation>Revision Number.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

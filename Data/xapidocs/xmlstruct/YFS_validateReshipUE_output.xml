@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<Order DocumentType="" EnterpriseCode="" ModificationReasonCode=""
+    OrderHeaderKey="" OrderNo="" ReshipAllowed="" ReshipMessage=""
+    ReshipWindow="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/validateReshipUE/output">
+    <yfc:includeInParent IncludeXMLChildNodes="Y"
+        IncludeXMLFileName="YFS_validateReship_output.xml" IncludeXMLPath="/Order"/>
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReasonCode" NameInEntity="Reason_Code"/>
+            <Attribute DataType="Flag" Name="ReshipAllowed">
+                <Description>
+                    <div>Indicates if the order lines passed in the input meet the reship requirements.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Text-40" Name="ReshipMessage">
+                <Description>
+                    <div>If <code>ReshipAllowed</code> is <code>
+                            <b>N</b>
+                        </code>, this attribute indicates which reship requirement was not met.</div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Number" Name="ReshipWindow">
+                <Description>
+                    <div>The reship window used, taken from the rule specified for the enterprise and document type combination.  At least this many days must have passed since the shipment date for reship to be allowed.</div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <PriceInfo Currency="" EnterpriseCurrency=""
+        ReportingConversionDate="" ReportingConversionRate="" TotalAmount="">
+        <yfc:includeInParent IncludeXMLChildNodes="N"
+            IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/PriceInfo"/>
+    </PriceInfo>
+    <OrderLines>
+        <OrderLine ContainerKey="" OrderLineKey="" PrimeLineNo=""
+            QuantityToReship="" ReshipAllowed="" ReshipMessage=""
+            ReshippableQty="" ShipDate="" ShipmentLineKey=""
+            SubLineNo="" yfc:DTDOccurrence="OneOrMany">
+            <yfc:doc>
+                <Attributes>
+                    <Attribute EntityName="Shipment_Container"
+                        Name="ContainerKey" NameInEntity="Shipment_Container_Key"/>
+                    <Attribute DataType="Quantity" Name="QuantityToReship">
+                        <Description>
+                            <div>The quantity to reship.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="ReshipAllowed">
+                        <Description>
+                            <div>Indicates if the order line meets the reship requirements.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-40" Name="ReshipMessage">
+                        <Description>
+                            <div>If <code>ReshipAllowed</code> is <code>
+                                    <b>N</b>
+                                </code>, this attribute indicates which reship requirement was not met.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity" Name="ReshippableQty">
+                        <Description>
+                            <div>The total quantity that is valid for reship, regardless of inventory availability.  By default, this is calculated as the total shipped quantity on the order line minus the quantity on that order line that has already been reshipped.</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Shipment" Name="ShipDate" NameInEntity="Ship_Date"/>
+                    <Attribute EntityName="Shipment_Line"
+                        Name="ShipmentLineKey" NameInEntity="Shipment_Line_Key"/>
+                </Attributes>
+            </yfc:doc>
+            <ReshipOrderLine AvailableDate="" ExpectedShipDate=""
+                QuantityAvailableForReship="" yfc:DTDOccurrence="REQUIRED">
+                <yfc:doc>
+                    <Element>
+                        <Description>
+                            <div>Provides information about reship line availability.</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="TimeStamp" Name="AvailableDate">
+                            <Description>
+                                <div>The date the quantity for reshipping will be available.</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="TimeStamp" Name="ExpectedShipDate">
+                            <Description>
+                                <div>The date the quantity for reshipping is expected to ship on.</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="TimeStamp" Name="QuantityAvailableForReship">
+                            <Description>
+                                <div>The available inventory for the reshipped line.</div>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ReshipOrderLine>
+            <ComputedPrice AdditionalLinePriceTotal="" Charges=""
+                Discount="" ExtendedPrice="" LineCost="" LineTotal=""
+                LineTotalWithoutTax="" PercentProfitMargin="" Tax="" UnitPrice="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/ComputedPrice"/>
+                <yfc:doc>
+                    <Element>
+                        <Description>
+							Contains computed information about the price and total amount
+							details
+							for the order line. If the line is a bundle parent,
+							components with
+							<code>IsLinePriceForInformationOnly</code>
+							flag set to
+							<code>Y</code>
+							are ignored in
+							the total calculation. If the bundle parent is a
+							recommended line,
+							then the total
+							will be based on the
+							<code>BundlePricingStrategy</code>
+							defined for the item.
+						</Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Money" Name="AdditionalLinePriceTotal">
+                            <Description>Total Price for all non-informational Additional
+								Line Prices for the Component Lines of a Bundle Parent. List Price times ActualPricingQuantity.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="Charges">
+                            <Description>
+                                <div>The computed amount of the charges for this line.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="Discount">
+                            <Description>
+                                <div>The computed total of the discount amounts.
+								</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="ExtendedPrice">
+                            <Description>The computed price for this line before taxes,
+								charges, and
+								discounts are accounted for.</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="LineCost">
+                            <Description>
+								The total cost incurred on this order line. If this order line
+								is part of a bundle,
+								<code>LineCost</code>
+								is evaluated based on the bundle's' pricing strategy.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="LineTotal">
+                            <Description>The total amount for this line.</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="LineTotalWithoutTax">
+                            <Description>The computed total amount for this line before taxes
+								are accounted
+								for.</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="PercentProfitMargin">
+                            <Description>The percentage of the profit margin for this line.
+								Depending on the pricing strategy, all components or part of the
+								components are considered for the profit margin calculation. 
+								OrderLine Option OptionPrices and OrderLine AdditionalLinePriceTotals are
+								not considered for the Profit Margin.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="Tax">
+                            <Description>The computed amount of taxes for this line.</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="UnitPrice">
+                            <Description>The price for one unit of this line.</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </ComputedPrice>
+            <LinePriceInfo ActualPricingQty=""
+                AdditionalLinePriceTotal="" BundleTotal=""
+                DiscountPercentage="" InvoicedLineTotal=""
+                InvoicedPricingQty="" IsEligibleForShippingDiscount=""
+                IsLinePriceForInformationOnly="" IsPriceLocked=""
+                LineTotal="" ListPrice="" OrderedPricingQty=""
+                PricingQtyConversionFactor="" PricingUOM=""
+                RepricingQty="" RetailPrice="" SettledAmount=""
+                SettledQuantity="" TaxExemptionCertificate=""
+                TaxableFlag="" UnitPrice="">
+                <yfc:includeInParent IncludeXMLChildNodes="N"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/LinePriceInfo"/>
+                <yfc:doc>
+                    <Element EntityName="Order_Line">
+                        <Description>
+                            <div>
+								Contains information about order line pricing and quantity
+								details.
+							</div>
+                        </Description>
+                    </Element>
+                    <Attributes>
+                        <Attribute DataType="Money" Name="AdditionalLinePriceTotal">
+                            <Description>Total Price for all non-informational Additional
+								Line Prices for the OrderLine. List Price times ActualPricingQuantity.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Money" Name="BundleTotal">
+                            <Description>Sum of line totals of all the bundle components.
+								Components having price for information purposes are ignored
+								from this calculation.
+							</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </LinePriceInfo>
+            <Item AlternateItemID="" BundleFulfillmentMode="|00|01|02"
+                CostCurrency="" CountryOfOrigin="" CustomerItem=""
+                CustomerItemDesc="" ECCNNo="" HarmonizedCode="" ISBN=""
+                ItemDesc="" ItemID="" ItemShortDesc="" ItemWeight=""
+                ItemWeightUOM="" ManufacturerItem=""
+                ManufacturerItemDesc="" ManufacturerName="" NMFCClass=""
+                NMFCCode="" NMFCDescription="" ProductClass=""
+                ProductLine="" ScheduleBCode="" SupplierItem=""
+                SupplierItemDesc="" TaxProductCode="" UPCCode=""
+                UnitCost="" UnitOfMeasure="">
+                <yfc:includeInParent IncludeXMLChildNodes="N"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/Item"/>
+                <yfc:doc>
+                    <Element EntityName="Order_Line"/>
+                </yfc:doc>
+            </Item>
+            <ItemDetails CanUseAsServiceTool="" GlobalItemID=""
+                IsItemSuperseded="" ItemGroupCode="" ItemID=""
+                ItemKey="" OrganizationCode="Required"
+                SubCatalogOrganizationCode="" UnitOfMeasure="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/ItemDetails"/>
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="CommonMasterItemDetails.xml" IncludeXMLPath="/Item"/>
+                <yfc:doc>
+                    <Element EntityName="Item"/>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="IsItemSuperseded">
+                            <Description>
+					This flag indicates if this item has been superseded. 
+					<br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b>, <b>
+                                    <code>N</code>
+                                </b>
+                            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <PrimaryInformation AgeVerificationCode=""
+                    AllowGiftWrap="" AssumeInfiniteInventory=""
+                    BundleFulfillmentMode=""
+                    BundlePricingStrategy="PARENT|COMP|ALL"
+                    CapacityPerOrderedQty="" CapacityQuantityStrategy=""
+                    ColorCode="" ComputedUnitCost="" ConfigurationKey=""
+                    ConfigurationModelName="" ConfiguredModelKey=""
+                    CostCurrency="" CountryOfOrigin=""
+                    CreditWOReceipt="" DefaultProductClass=""
+                    Description="" DisplayItemDescription=""
+                    EffectiveEndDate="" EffectiveStartDate=""
+                    ExtendedDescription="" ExtendedDisplayDescription=""
+                    FixedCapacityQtyPerLine="" FixedPricingQtyPerLine=""
+                    ImageID="" ImageLabel="" ImageLocation=""
+                    InvoiceBasedOnActuals="" InvolvesSegmentChange=""
+                    IsAirShippingAllowed="" IsConfigurable=""
+                    IsDeliveryAllowed=""
+                    IsEligibleForShippingDiscount="|N|Y"
+                    IsForwardingAllowed="" IsFreezerRequired=""
+                    IsHazmat="" IsModelItem=""
+                    IsParcelShippingAllowed="" IsPickupAllowed=""
+                    IsPreConfigured="" IsProcurementAllowed=""
+                    IsReturnService="" IsReturnable=""
+                    IsShippingAllowed="" IsSoldSeparately=""
+                    IsStandaloneService="" IsSubOnOrderAllowed=""
+                    IsValid="" ItemType="" Keywords="" KitCode=""
+                    ManufacturerItem="" ManufacturerItemDesc=""
+                    ManufacturerName="" MasterCatalogID=""
+                    MaxOrderQuantity="" MaxReturnWindow=""
+                    MinOrderQuantity="" MinReturnWindow=""
+                    MinimumCapacityQuantity="" ModelItemUnitOfMeasure=""
+                    NumSecondarySerials="" OrderingQuantityStrategy=""
+                    PricingQuantityConvFactor=""
+                    PricingQuantityStrategy="" PricingUOM=""
+                    PricingUOMStrategy="" PrimaryEnterpriseCode=""
+                    PrimarySupplier="" ProductLine=""
+                    RequiresProdAssociation="" ReturnWindow=""
+                    RunQuantity="" SerializedFlag="" ServiceTypeID=""
+                    ShipmentConsolidationWindow="" ShortDescription=""
+                    SizeCode="" Status="" TaxableFlag="" UnitCost=""
+                    UnitHeight="" UnitHeightUOM="" UnitLength=""
+                    UnitLengthUOM="" UnitVolume="" UnitVolumeUOM=""
+                    UnitWeight="" UnitWeightUOM="" UnitWidth="" UnitWidthUOM="">
+                    <yfc:doc>
+                        <Attributes>
+                            <Attribute DataType="String" Name="DisplayItemDescription">
+                                <Description>User defined description of the item.</Description>
+                            </Attribute>
+                            <Attribute DataType="Flag" Name="IsValid">
+                                <Description>This flag indicates whether the item is valid.</Description>
+                            </Attribute>
+                            <Attribute DataType="Dimension" Name="UnitVolume">
+                                <Description>Calculated volume of one unit of item quantity.</Description>
+                            </Attribute>
+                            <Attribute DataType="UOM" Name="UnitVolumeUOM">
+                                <Description>Unit of measure in which the item volume is measured. </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                </PrimaryInformation>
+                <SafetyFactorDefinitions>
+                    <SafetyFactorDefinition DeliveryMethod=""
+                        FutureSafetyFactorPercentage=""
+                        OnhandSafetyFactorPercentage=""
+                        OnhandSafetyFactorQuantity="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="CommonCode"
+                                    EntityName="Sku_Safety_Factor_Defn"
+                                    Name="DeliveryMethod" NameInEntity="DeliveryMethod"/>
+                                <Attribute
+                                    EntityName="Sku_Safety_Factor_Defn"
+                                    Name="FutureSafetyFactorPercentage" NameInEntity="Future_Safety_Factor_Pct"/>
+                                <Attribute
+                                    EntityName="Sku_Safety_Factor_Defn"
+                                    Name="OnhandSafetyFactorPercentage" NameInEntity="Onhand_Safety_Factor_Pct"/>
+                                <Attribute DataType="Quantity"
+                                    EntityName="Sku_Safety_Factor_Defn"
+                                    Name="OnhandSafetyFactorQuantity" NameInEntity="Onhand_Safety_Factor_Qty"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </SafetyFactorDefinition>
+                </SafetyFactorDefinitions>
+                <InventoryParameters ATPRule=""
+                    AdvanceNotificationTime="" DefaultExpirationDays=""
+                    FutureSafetyFactorPercentage=""
+                    InventoryMonitorRule="" IsFifoTracked=""
+                    IsItemBasedAllocationAllowed="" IsSerialTracked=""
+                    LeadTime="" MaximumNotificationTime=""
+                    MinNotificationTime=""
+                    NodeLevelInventoryMonitorRule=""
+                    OnhandSafetyFactorPercentage=""
+                    OnhandSafetyFactorQuantity="" ProcessingTime=""
+                    RequiresDGOverride="" TagControlFlag=""
+                    TagReqAtReceipt="" TagReqAtShipment=""
+                    TimeSensitive="" UseUnplannedInventory=""/>
+                <ClassificationCodes CommodityCode="" ECCNNo=""
+                    HarmonizedCode="" HazmatClass="" Model=""
+                    NAICSCode="" NMFCClass="" NMFCCode=""
+                    OperationalConfigurationComplete="" PickingType=""
+                    PostingClassification="" Schedule_B_Code=""
+                    StorageType="" TaxProductCode="" UNSPSC="" VelocityCode=""/>
+                <HazmatInformation CargoAir="" Exception=""
+                    HazardClass="" HazmatComplianceKey="" Label=""
+                    PackingGroup="" PassengerAir=""
+                    ProperShippingName="" QtyBulk="" QtyNonBulk=""
+                    SortOrder="" SpecialProvisions="" Symbols=""
+                    UNNumber="" Vessel="" VesselSP="">
+                    <yfc:doc>
+                        <Element EntityName="Hazmat_Compliance"/>
+                    </yfc:doc>
+                </HazmatInformation>
+                <ItemServiceSkillList>
+                    <ItemServiceSkill Description="" ServiceSkillId="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Item_Service_Skill"/>
+                            <Attributes>
+                                <Attribute EntityName="Service_Skill"
+                                    Name="Description" NameInEntity="Description"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </ItemServiceSkill>
+                </ItemServiceSkillList>
+                <ItemAliasList>
+                    <ItemAlias AliasName="" AliasValue="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </ItemAliasList>
+                <ItemExclusionList>
+                    <ItemExclusion ExclusionCode="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </ItemExclusionList>
+                <AdditionalAttributeList>
+                    <AdditionalAttribute AdditionalAttributeKey=""
+                        AttributeDomainID="" AttributeGroupID=""
+                        DoubleValue="" IntegerValue="" IsInherited=""
+                        Name="" Value="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </AdditionalAttributeList>
+                <LanguageDescriptionList>
+                    <LanguageDescription Description=""
+                        ExtendedDescription=""
+                        ExtendedDisplayDescription="" LocaleCode=""
+                        ShortDescription="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </LanguageDescriptionList>
+                <ItemLocaleList>
+                    <ItemLocale Country="" Language="" Variant=""/>
+                </ItemLocaleList>
+                <Components>
+                    <Component ComponentDescription=""
+                        ComponentItemGroupCode="" ComponentItemID=""
+                        ComponentItemKey="" ComponentKitCode=""
+                        ComponentOrganizationCode=""
+                        ComponentUnitOfMeasure="" ItemKey=""
+                        KitQuantity="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Kit_Item">
+                                <Description>A Component Definition</Description>
+                            </Element>
+                            <Attributes>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentDescription" NameInEntity="Description">
+                                    <Description>Description of the Component Item</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentItemGroupCode" NameInEntity="ItemGroupCode">
+                                    <Description>Item Group Code for the Component Item</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentItemID" NameInEntity="Item_Id">
+                                    <Description>Along with ComponentOrganizationCode and ComponentUnitOfMeasure, it identifies a component item.</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentItemKey" NameInEntity="Item_Key">
+                                    <Description>Component item's primary key</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentKitCode" NameInEntity="KitCode">
+                                    <Description>Item Kit Code for the Component Item</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentOrganizationCode" NameInEntity="Organization_Code">
+                                    <Description>Organization that maintains catalog</Description>
+                                </Attribute>
+                                <Attribute EntityName="Item"
+                                    Name="ComponentUnitOfMeasure" NameInEntity="Uom">
+                                    <Description>Unit of measure for the Component Item</Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                        <Item CanUseAsServiceTool="" GlobalItemID=""
+                            IsItemSuperseded="" ItemGroupCode=""
+                            ItemID="" ItemKey="" OrganizationCode=""
+                            SubCatalogOrganizationCode="" UnitOfMeasure="">
+                            <yfc:doc>
+                                <Attributes>
+                                    <Attribute DataType="Flag" Name="IsItemSuperseded">
+                                    <Description>
+								This flag indicates if this item has been superseded. 
+								<br/>Valid Values: <b>
+                                    <code>Y</code>
+                                    </b>, <b>
+                                    <code>N</code>
+                                    </b>
+                                    </Description>
+                                    </Attribute>
+                                </Attributes>
+                            </yfc:doc>
+                            <PrimaryInformation AgeVerificationCode=""
+                                AllowGiftWrap=""
+                                AssumeInfiniteInventory=""
+                                BundleFulfillmentMode=""
+                                BundlePricingStrategy="PARENT|COMP|ALL"
+                                CapacityPerOrderedQty=""
+                                CapacityQuantityStrategy="" ColorCode=""
+                                ComputedUnitCost="" ConfigurationKey=""
+                                ConfigurationModelName=""
+                                ConfiguredModelKey="" CostCurrency=""
+                                CountryOfOrigin="" CreditWOReceipt=""
+                                DefaultProductClass="" Description=""
+                                DisplayItemDescription=""
+                                EffectiveEndDate=""
+                                EffectiveStartDate=""
+                                ExtendedDescription=""
+                                ExtendedDisplayDescription=""
+                                FixedCapacityQtyPerLine=""
+                                FixedPricingQtyPerLine="" ImageID=""
+                                ImageLabel="" ImageLocation=""
+                                InvoiceBasedOnActuals=""
+                                InvolvesSegmentChange=""
+                                IsAirShippingAllowed=""
+                                IsConfigurable="" IsDeliveryAllowed=""
+                                IsEligibleForShippingDiscount="|N|Y"
+                                IsForwardingAllowed=""
+                                IsFreezerRequired="" IsHazmat=""
+                                IsModelItem=""
+                                IsParcelShippingAllowed=""
+                                IsPickupAllowed="" IsPreConfigured=""
+                                IsProcurementAllowed=""
+                                IsReturnService="" IsReturnable=""
+                                IsShippingAllowed="" IsSoldSeparately=""
+                                IsStandaloneService=""
+                                IsSubOnOrderAllowed="" IsValid=""
+                                ItemType="" Keywords="" KitCode=""
+                                ManufacturerItem=""
+                                ManufacturerItemDesc=""
+                                ManufacturerName="" MasterCatalogID=""
+                                MaxOrderQuantity="" MaxReturnWindow=""
+                                MinOrderQuantity="" MinReturnWindow=""
+                                MinimumCapacityQuantity=""
+                                ModelItemUnitOfMeasure=""
+                                NumSecondarySerials=""
+                                OrderingQuantityStrategy=""
+                                PricingQuantityConvFactor=""
+                                PricingQuantityStrategy="" PricingUOM=""
+                                PricingUOMStrategy=""
+                                PrimaryEnterpriseCode=""
+                                PrimarySupplier="" ProductLine=""
+                                RequiresProdAssociation=""
+                                ReturnWindow="" RunQuantity=""
+                                SerializedFlag="" ServiceTypeID=""
+                                ShipmentConsolidationWindow=""
+                                ShortDescription="" SizeCode=""
+                                Status="" TaxableFlag="" UnitCost=""
+                                UnitHeight="" UnitHeightUOM=""
+                                UnitLength="" UnitLengthUOM=""
+                                UnitVolume="" UnitVolumeUOM=""
+                                UnitWeight="" UnitWeightUOM=""
+                                UnitWidth="" UnitWidthUOM="">
+                                <yfc:doc>
+                                    <Element EntityName="Item"/>
+                                    <Attributes>
+                                    <Attribute DataType="String" Name="DisplayItemDescription">
+                                    <Description>User defined description of the item.</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Flag" Name="IsValid">
+                                    <Description>This flag indicates whether the item is valid.</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Dimension" Name="UnitVolume">
+                                    <Description>Calculated volume of one unit of item quantity.</Description>
+                                    </Attribute>
+                                    <Attribute DataType="UOM" Name="UnitVolumeUOM">
+                                    <Description>Unit of measure in which the item volume is measured. </Description>
+                                    </Attribute>
+                                    </Attributes>
+                                </yfc:doc>
+                            </PrimaryInformation>
+                        </Item>
+                    </Component>
+                </Components>
+                <InventoryTagAttributes BatchNo="" ItemKey=""
+                    ItemTagKey="" LotAttribute1="" LotAttribute2=""
+                    LotAttribute3="" LotKeyReference="" LotNumber=""
+                    ManufacturingDate="" RevisionNo="">
+                    <yfc:doc>
+                        <Element EntityName="Item_Tag"/>
+                    </yfc:doc>
+                </InventoryTagAttributes>
+                <AlternateUOMList>
+                    <AlternateUOM Height="" HeightUOM=""
+                        IsOrderingUOM="" ItemKey="" ItemUOMKey=""
+                        Length="" LengthUOM="" Quantity=""
+                        UnitOfMeasure="" Weight="" WeightUOM="" Width=""
+                        WidthUOM="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Item_UOM"/>
+                        </yfc:doc>
+                    </AlternateUOM>
+                </AlternateUOMList>
+                <ItemInstructionList>
+                    <ItemInstruction InstructionCode=""
+                        InstructionText="" InstructionType=""
+                        ItemInstructionKey="" ItemKey="" SeqNo="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </ItemInstructionList>
+                <ItemOptionList>
+                    <ItemOption ItemKey="" ItemOptionKey=""
+                        OptionItemId="" OptionUOM="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </ItemOptionList>
+                <ItemServiceAssocList>
+                    <ItemServiceAssoc CategoryKey=""
+                        HoldSchedTillCompletion="" ItemKey=""
+                        ItemServiceAssocKey="" PricingProductQuantity=""
+                        PricingServiceQuantity="" ProductQuantity=""
+                        ServiceItemDesc="" ServiceItemGroupCode=""
+                        ServiceItemId="" ServiceQuantity=""
+                        ServiceUOM="" TimeOffsetInMinutes="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute EntityName="Item"
+                                    Name="ServiceItemDesc" NameInEntity="Short_Description"/>
+                            </Attributes>
+                        </yfc:doc>
+                        <ItemServiceAssocSkillList yfc:DTDOccurrence="REQUIRED">
+                            <ItemServiceAssocSkill Description=""
+                                ServiceSkillId="" yfc:DTDOccurrence="ZeroOrMany">
+                                <yfc:doc>
+                                    <Element EntityName="Item_Service_Assoc_Skill"/>
+                                    <Attributes>
+                                    <Attribute
+                                    EntityName="Service_Skill"
+                                    Name="Description" NameInEntity="Description"/>
+                                    </Attributes>
+                                </yfc:doc>
+                            </ItemServiceAssocSkill>
+                        </ItemServiceAssocSkillList>
+                    </ItemServiceAssoc>
+                </ItemServiceAssocList>
+                <ServiceActivities>
+                    <ServiceActivity ActivityCode="" ActivitySeqNo="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute EntityName="Service_Activity"
+                                    Name="ActivityCode" NameInEntity="Activity_Code">
+                                    <Description>
+                                    <div>
+					Specifies the activity to be performed for the item.
+					</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute EntityName="Service_Activity"
+                                    Name="ActivitySeqNo" NameInEntity="Activity_Seq_No">
+                                    <Description>
+                                    <div>
+					Attribute to specify the Sequence Number in which the Instruction should be performed.
+					</div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                        <ServiceActivityInstructions>
+                            <ServiceActivityInstruction
+                                InstructionText="" InstructionURL=""
+                                SequenceNo="Required" yfc:DTDOccurrence="ZeroOrMany">
+                                <yfc:doc>
+                                    <Attributes>
+                                    <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="InstructionText" NameInEntity="Instruction_Text"/>
+                                    <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="InstructionURL" NameInEntity="Instruction_URL"/>
+                                    <Attribute
+                                    EntityName="Instruction_Detail"
+                                    Name="SequenceNo" NameInEntity="Sequence_No"/>
+                                    </Attributes>
+                                </yfc:doc>
+                            </ServiceActivityInstruction>
+                        </ServiceActivityInstructions>
+                    </ServiceActivity>
+                </ServiceActivities>
+                <CategoryList>
+                    <Category CategoryID="" CategoryKey=""
+                        CategoryPath="" OrganizationCode="" yfc:DTDOccurrence="ZeroOrMany"/>
+                </CategoryList>
+                <ChildItemList>
+                    <yfc:doc>
+                        <Element>
+                            <Description>
+                                <div>
+					A list of child items of an item with variations.
+					</div>
+                            </Description>
+                        </Element>
+                    </yfc:doc>
+                    <ChildItem ItemGroupCode="" ItemID="" ItemKey=""
+                        OrganizationCode="" UnitOfMeasure="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Item"/>
+                        </yfc:doc>
+                    </ChildItem>
+                </ChildItemList>
+            </ItemDetails>
+            <OrderLineTranQuantity FillQuantity="" InvoicedQuantity=""
+                OpenQty="" OrderedQty="" OriginalOrderedQty=""
+                ReceivedQty="" RemainingQty="" SettledQuantity=""
+                ShippedQuantity="" SplitQty="" StatusQuantity=""
+                TranDiscrepancyQty="" TransactionalUOM="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/OrderLineTranQuantity"/>
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Quantity" Name="FillQuantity">
+                            <Description>The minimum order line quantity that must be
+								fulfilled in an order release before it is shipped.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="InvoicedQuantity">
+                            <Description>Invoiced quantity on the order line.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="OpenQty">
+                            <Description>Total quantity that can be cancelled from the line.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="OrderedQty">
+                            <Description>The quantity of the the line item that has been
+								ordered. If part of line is cancelled, this number is reduced
+								appropriately. If an order line is returned, this number is not
+								reduced.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="OriginalOrderedQty">
+                            <Description>Quantity which was ordered during order creation.
+								This is not modified after order confirmation.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="ReceivedQty">
+                            <Description>Received quantity on the order line.					  </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="RemainingQty">
+                            <Description>Remaining quantity.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="SettledQuantity">
+                            <Description>Quantity which should be settled before it is
+								actually invoiced.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="ShippedQuantity">
+                            <Description>Shippped quantity on the order line.					  </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="SplitQty">
+                            <Description>Quantity which has been split from this line due to
+								substitutions, price negotiations etc.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="StatusQuantity">
+                            <Description>Quantity on the order line in the current status.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="TranDiscrepancyQty">
+                            <Description>Quantity which was over or under received.
+							</Description>
+                        </Attribute>
+                        <Attribute DataType="UOM" Name="TransactionalUOM">
+                            <Description>UOM on which all the transactional quantities are
+								specified.
+							</Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </OrderLineTranQuantity>
+            <BundleParentLine OrderLineKey="" PrimeLineNo="" SubLineNo="">
+                <yfc:includeInParent IncludeXMLChildNodes="Y"
+                    IncludeXMLFileName="MasterOrder.xml" IncludeXMLPath="/Order/OrderLines/OrderLine/BundleParentLine"/>
+                <yfc:doc>
+                    <Element EntityName="Order_Line">
+                        <Description>Specifies the unique identifiers of the bundle parent
+							order line for this order line.</Description>
+                    </Element>
+                </yfc:doc>
+            </BundleParentLine>
+        </OrderLine>
+    </OrderLines>
+</Order>

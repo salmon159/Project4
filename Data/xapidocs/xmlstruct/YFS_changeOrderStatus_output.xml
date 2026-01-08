@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!-- OrderStatusChange is not a template-driven element. It is returned same as what was passed to the api. -->
+<OrderStatusChange AuditTransactionId="" BaseDropStatus=""
+    ChangeForAllAvailableQty="" DocumentType="" EnterpriseCode=""
+    ModificationReasonCode="" ModificationReasonText=""
+    ModificationReference1="" ModificationReference2=""
+    ModificationReference3="" ModificationReference4=""
+    OrderHeaderKey="" OrderNo="" OrderReleaseKey="" ReleaseNo=""
+    TransactionId="Required" xmlns="http://www.sterlingcommerce.com/documentation/YFS/changeOrderStatus/output">
+    <yfc:doc>
+        <Attributes>
+            <Attribute EntityName="Order_Audit"
+                Name="AuditTransactionId" NameInEntity="Audit_Transaction_Id"/>
+            <Attribute DataType="Status" Name="BaseDropStatus"/>
+            <Attribute DataType="Flag" Name="ChangeForAllAvailableQty"/>
+            <Attribute EntityName="Order_Header" Name="DocumentType" NameInEntity="Document_Type"/>
+            <Attribute EntityName="Order_Header" Name="EnterpriseCode" NameInEntity="Enterprise_Key"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReasonCode" NameInEntity="Reason_Code"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReasonText" NameInEntity="Reason_Text"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReference1" NameInEntity="Reference_1"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReference2" NameInEntity="Reference_2"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReference3" NameInEntity="Reference_3"/>
+            <Attribute EntityName="Order_Audit"
+                Name="ModificationReference4" NameInEntity="Reference_4"/>
+            <Attribute EntityName="Order_Header" Name="OrderHeaderKey" NameInEntity="Order_Header_Key"/>
+            <Attribute EntityName="Order_Header" Name="OrderNo" NameInEntity="Order_No"/>
+            <Attribute EntityName="Order_Release" Name="OrderReleaseKey" NameInEntity="Order_Release_Key"/>
+            <Attribute EntityName="Order_Release" Name="ReleaseNo" NameInEntity="Release_No"/>
+            <Attribute DataType="TransactionID" Name="TransactionId">
+                <Description>
+                    <div>
+				Identifies a transaction that changes the status of the order.
+				<Validation>
+                            <Condition>
+                                <code>TransactionID</code> not passed.
+						</Condition>
+                            <Error
+                                Description="Invalid input to change status" ErrorCode="YFS10428"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Invalid<code>TransactionID</code> passed.
+						</Condition>
+                            <Error Description="Invalid Transaction." ErrorCode="YCP0063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>TransactionID</code> of a system transaction passed.
+						</Condition>
+                            <Error
+                                Description="Invalid Transaction Type." ErrorCode="YFS10156"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+        </Attributes>
+    </yfc:doc>
+    <OrderLines>
+        <!-- OrderLine is not a template-driven element. It is returned same as what was passed to the api. -->
+        <OrderLine BaseDropStatus="" ChangeForAllAvailableQty=""
+            FromBatchNo="" FromExpectedShipDate="" FromLotNo=""
+            FromRevisionNo="" OrderLineKey="" OrderReleaseKey=""
+            PrimeLineNo="" Quantity="" ReleaseNo="" SubLineNo="" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Order_Release_Status">
+                    <Description>
+                        <div>
+					Either both the <code>PrimeLineNo</code> and the <code>SubLineNo</code> or just the <code>OrderLineKey</code> by itself must be passed to identify the <code>OrderLine</code>.
+					</div>
+                    </Description>
+                </Element>
+                <Attributes>
+                    <Attribute DataType="ShortStatus" Name="BaseDropStatus">
+                        <Description>
+                            <div>
+						 Indicates the base drop status. The <code>BaseDropStatus</code> can be passed at either the <code>OrderLine</code> level or at the <code>OrderStatusChange</code> level. If a value is passed at both levels, the value at the <code>OrderLine</code> is used. The <code>BaseDropStatus</code> is required at either the <code>OrderStatusChange</code> level or the <code>OrderLine</code> level.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Flag" Name="ChangeForAllAvailableQty">
+                        <Description>
+                            <div>
+						Indicates if all quantities should be changed by the transaction associated with the <code>TransactionID</code> passed. If passed, the Quantity attribute for  the <code>OrderLine</code>  is ignored. If <code>ChangeForAllAvailableQty</code> is <b>
+                                    <code>Y</code>
+                                </b>,  <code>BaseDropStatus</code> must be passed.
+						<br/>Default: <b>
+                                    <code>N</code>
+                                </b>
+                                <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                </b> or <b>
+                                    <code>N</code>
+                                </b>
+                                <Validation>
+                                    <Condition>If <code>ChangeForAllAvailableQty</code> is not <code>Y</code> and <code>Quantity</code> is not passed.
+                            </Condition>
+                                    <Error
+                                    Description="Invalid input to change status" ErrorCode="YFS10428"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-40" Name="FromBatchNo">
+                        <Description>
+                            <div>
+						The old batch number.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Date" Name="FromExpectedShipDate">
+                        <Description>
+                            <div>
+						If <code>FromExpectedShipDate</code> is passed, it is used as a filter criteria to pick up statuses having schedules with the passed <code>FromExpectedShipDate</code>.
+						<br/>If <code>FromExpectedShipDate</code> is not passed, this filtering is not applied.
+						<br/>Valid values: blank or a valid date.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-40" Name="FromLotNo">
+                        <Description>
+                            <div>
+						The old lot number.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Text-40" Name="FromRevisionNo">
+                        <Description>
+                            <div>
+						The old revision number.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Line"
+                        Name="OrderLineKey" NameInEntity="Order_Line_Key">
+                        <Description>
+                            <div>
+						Either both the <code>PrimeLineNo</code> and the <code>SubLineNo</code> or just the <code>OrderLineKey</code> by itself must be passed to identify the <code>OrderLine</code>.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Line"
+                        Name="PrimeLineNo" NameInEntity="Prime_Line_No">
+                        <Description>
+                            <div>
+						Either both the <code>PrimeLineNo</code> and the <code>SubLineNo</code> or just the <code>OrderLineKey</code> by itself must be passed to identify the <code>OrderLine</code>.
+						</div>
+                        </Description>
+                    </Attribute>
+                    <Attribute DataType="Quantity" Name="Quantity">
+                        <Description>
+                            <div>
+					Quantity for which the status needs to be changed. If <code>ChangeForAllAvailableQty</code> is passed, then this attribute is ignored.
+                    <Validation>
+                                    <Condition>If <code>Quantity</code> not passed and <code>ChangeForAllAvailableQty</code> is not <code>Y</code>.
+                        </Condition>
+                                    <Error
+                                    Description="Invalid input to change status" ErrorCode="YFS10428"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Order_Release"
+                        Name="ReleaseNo" NameInEntity="Release_No"/>
+                    <Attribute EntityName="Order_Line" Name="SubLineNo" NameInEntity="Sub_Line_No">
+                        <Description>
+                            <div>
+						Either both the <code>PrimeLineNo</code> and the <code>SubLineNo</code> or just the <code>OrderLineKey</code> by itself must be passed to identify the<code>OrderLine</code>.
+						</div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <OrderLineTranQuantity ChangeForAllAvailableQty=""
+                Quantity="" TransactionalUOM="">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Flag" Name="ChangeForAllAvailableQty">
+                            <Description>
+                                <div>
+						Indicates if all quantities should be changed by the transaction associated with the <code>TransactionID</code> passed. If passed, the Quantity attribute for  the <code>OrderLine</code>  is ignored. If <code>ChangeForAllAvailableQty</code> is <b>
+                                    <code>Y</code>
+                                    </b>,  <code>BaseDropStatus</code> must be passed.
+						<br/>Default: <b>
+                                    <code>N</code>
+                                    </b>
+                                    <br/>Valid Values: <b>
+                                    <code>Y</code>
+                                    </b> or <b>
+                                    <code>N</code>
+                                    </b>
+                                    <Validation>
+                                    <Condition>If <code>ChangeForAllAvailableQty</code> is not <code>Y</code> and <code>Quantity</code> is not passed.
+                            </Condition>
+                                    <Error
+                                    Description="Invalid input to change status" ErrorCode="YFS10428"/>
+                                    </Validation>
+                                </div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="Quantity" Name="Quantity">
+                            <Description>
+                                <div>
+					Quantity in Transactional Unit Of Measure for which the status needs to be changed. If <code>ChangeForAllAvailableQty</code> is passed, then this attribute is ignored.
+					</div>
+                            </Description>
+                        </Attribute>
+                        <Attribute DataType="UOM" Name="TransactionalUOM">
+                            <Description>UOM on which all the transactional quantities are specified.
+					  </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+            </OrderLineTranQuantity>
+        </OrderLine>
+    </OrderLines>
+    <!-- OrderAudit is a template-driven element.  -->
+    <OrderAudit AuditTransactionId="" CreateUserName="" Createts=""
+        Createuserid="" ModifyUserName="" Modifyts="" Modifyuserid=""
+        NewBuffer="" OldBuffer="" OrderAuditKey="" OrderHeaderKey=""
+        OrderLineKey="" OrderReleaseKey="" ReasonCode="" ReasonText=""
+        Reference1="" Reference2="" Reference3="" Reference4="" XMLFlag="">
+        <yfc:includeInParent IncludeXMLChildNodes="Y"
+            IncludeXMLFileName="YFS_getOrderAuditDetails_output.xml" IncludeXMLPath="/OrderAudit"/>
+        <yfc:doc>
+            <Element EntityName="Order_Audit"/>
+            <Attributes>
+                <Attribute EntityName="User" Name="CreateUserName" NameInEntity="Username">
+                    <Description>Name of the user who created the audit.</Description>
+                </Attribute>
+                <Attribute EntityName="User" Name="ModifyUserName" NameInEntity="Username">
+                    <Description>Name of the user who modified the audit.</Description>
+                </Attribute>
+                <Attribute DataType="Text-40" Name="ReasonCode">
+                    <Description>
+		Reason Code
+		</Description>
+                </Attribute>
+                <Attribute DataType="Text-100" Name="ReasonText">
+                    <Description>
+		Reason Text
+		</Description>
+                </Attribute>
+            </Attributes>
+        </yfc:doc>
+        <Order DocumentType="" EnterpriseCode="" OrderNo=""/>
+        <OrderAuditLevels>
+            <OrderAuditLevel ModificationLevel=""
+                ModificationLevelScreenName="" OrderLineKey=""
+                OrderReleaseKey="" yfc:DTDOccurrence="ZeroOrMany">
+                <yfc:doc>
+                    <Attributes>
+                        <Attribute DataType="Text-40" Name="ModificationLevel">
+                            <Description>
+            Level at which modification is done. Order, Order_Line, Order_Release or Order_Release_Line.
+            </Description>
+                        </Attribute>
+                        <Attribute DataType="Text-40" Name="ModificationLevelScreenName">
+                            <Description>
+            Screen Name for the Modification level.
+            </Description>
+                        </Attribute>
+                    </Attributes>
+                </yfc:doc>
+                <OrderLine OrderLineKey="" OrderedQty="" PrimeLineNo="" SubLineNo="">
+                    <Item AlternateItemID=""
+                        BundleFulfillmentMode="|00|01|02"
+                        CostCurrency="" CountryOfOrigin=""
+                        CustomerItem="" CustomerItemDesc="" ECCNNo=""
+                        HarmonizedCode="" ISBN="" ItemDesc="" ItemID=""
+                        ItemShortDesc="" ItemWeight="" ItemWeightUOM=""
+                        ManufacturerItem="" ManufacturerItemDesc=""
+                        ManufacturerName="" NMFCClass="" NMFCCode=""
+                        NMFCDescription="" ProductClass=""
+                        ProductLine="" ScheduleBCode=""
+                        SubstituteItemID="" SubstituteItemUOM=""
+                        SupplierItem="" SupplierItemDesc=""
+                        TaxProductCode="" UPCCode="" UnitCost="" UnitOfMeasure="">
+                        <yfc:doc>
+                            <Element EntityName="Order_Line"/>
+                            <Attributes>
+                                <Attribute DataType="Text-40" Name="SubstituteItemID">
+                                    <Description>Substituted ItemID. This field is only populated if the item on the Order line is substituted. 
+					</Description>
+                                </Attribute>
+                                <Attribute DataType="Text-40" Name="SubstituteItemUOM">
+                                    <Description>Substituted Item UOM. This field is only populated if the item on the Order line is substituted.
+					</Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                        <LanguageDescriptionList>
+                            <LanguageDescription Description="" LocaleCode=""/>
+                        </LanguageDescriptionList>
+                    </Item>
+                </OrderLine>
+                <OrderRelease ReleaseNo=""/>
+                <OrderAuditDetails>
+                    <OrderAuditDetail Action="" AuditType="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Attributes>
+                                <Attribute DataType="Text-10" Name="Action">
+                                    <Description>
+						Action 
+						</Description>
+                                </Attribute>
+                                <Attribute DataType="Text-30" Name="AuditType">
+                                    <Description>
+						Audit Type
+						</Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                        <IDs>
+                            <!-- ID is not a template-driven element. If the template contains OrderAuditDetail element, this element will come based on AuditType. For AuditTypes like Order, OrderLine this element does not come.-->
+                            <ID Name="Required" Value="Required" yfc:DTDOccurrence="ZeroOrMany">
+                                <yfc:doc>
+                                    <Attributes>
+                                    <Attribute DataType="Text-30" Name="Name">
+                                    <Description>
+											Name of the ID
+											</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-30" Name="Value">
+                                    <Description>
+											Value of the ID
+											</Description>
+                                    </Attribute>
+                                    </Attributes>
+                                </yfc:doc>
+                            </ID>
+                        </IDs>
+                        <Attributes>
+                            <!-- Attribute is not a template-driven element. If the template contains OrderAuditDetail element, this element will appear in the output xml alongwith all its attributes.-->
+                            <Attribute Extended="N|Y"
+                                ModificationType="" Name="Required"
+                                NewValue="Required" OldValue="Required" yfc:DTDOccurrence="OneOrMany">
+                                <yfc:doc>
+                                    <Element EntityName="[NONE]"/>
+                                    <Attributes>
+                                    <Attribute DataType="Flag" Name="Extended">
+                                    <Description>Determines whether the attribute is an extended field. If this attribute
+								is not available, then it means the attribute is not extended.</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-40" Name="ModificationType">
+                                    <Description>
+							Modification Type used for changing the attribute
+							</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-30" Name="Name">
+                                    <Description>
+							Name of the Attribute Changed
+							</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-100" Name="NewValue">
+                                    <Description>
+							New Value of the attribute modified
+							</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-100" Name="OldValue">
+                                    <Description>
+							Old Value of the attribute modified
+							</Description>
+                                    </Attribute>
+                                    </Attributes>
+                                </yfc:doc>
+                            </Attribute>
+                        </Attributes>
+                        <!-- CustomAuditDetails is not a template-driven element. If custom entity is modified, this element will appear in the output xml . -->
+                        <!-- Nested CustomAuditDetails element will be returned if custom table has a hangoff table. -->
+                        <CustomAuditDetails>
+                            <OrderAuditDetail Action="" AuditType="" yfc:DTDOccurrence="ZeroOrMany">
+                                <yfc:includeInParent
+                                    IncludeXMLChildNodes="N"
+                                    IncludeXMLFileName="YFS_getOrderAuditDetails_output.xml" IncludeXMLPath="/OrderAudit/OrderAuditLevels/OrderAuditLevel/OrderAuditDetails/OrderAuditDetail"/>
+                                <yfc:doc>
+                                    <Attributes>
+                                    <Attribute DataType="Text-10" Name="Action">
+                                    <Description>
+						Action 
+						</Description>
+                                    </Attribute>
+                                    <Attribute DataType="Text-30" Name="AuditType">
+                                    <Description>
+						Audit Type
+						</Description>
+                                    </Attribute>
+                                    </Attributes>
+                                </yfc:doc>
+                                <IDs>
+                                    <yfc:includeInParent
+                                    IncludeXMLChildNodes="Y"
+                                    IncludeXMLFileName="YFS_getOrderAuditDetails_output.xml" IncludeXMLPath="/OrderAudit/OrderAuditLevels/OrderAuditLevel/OrderAuditDetails/OrderAuditDetail/IDs"/>
+                                    <!-- ID is not a template-driven element. If the template contains OrderAuditDetail element, this element will come based on AuditType. For AuditTypes like Order, OrderLine this element does not come.-->
+                                    <ID Name="Required" Value="Required" yfc:DTDOccurrence="ZeroOrMany">
+                                    <yfc:doc>
+                                    <Attributes>
+                                    <Attribute
+                                    DataType="Text-30" Name="Name">
+                                    <Description>
+											Name of the ID
+											</Description>
+                                    </Attribute>
+                                    <Attribute
+                                    DataType="Text-30" Name="Value">
+                                    <Description>
+											Value of the ID
+											</Description>
+                                    </Attribute>
+                                    </Attributes>
+                                    </yfc:doc>
+                                    </ID>
+                                </IDs>
+                                <Attributes>
+                                    <yfc:includeInParent
+                                    IncludeXMLChildNodes="Y"
+                                    IncludeXMLFileName="YFS_getOrderAuditDetails_output.xml" IncludeXMLPath="/OrderAudit/OrderAuditLevels/OrderAuditLevel/OrderAuditDetails/OrderAuditDetail/Attributes"/>
+                                    <!-- Attribute is not a template-driven element. If the template contains OrderAuditDetail element, this element will appear in the output xml alongwith all its attributes.-->
+                                    <Attribute Extended="N|Y"
+                                    ModificationType=""
+                                    Name="Required"
+                                    NewValue="Required"
+                                    OldValue="Required" yfc:DTDOccurrence="OneOrMany">
+                                    <yfc:doc>
+                                    <Element EntityName="[NONE]"/>
+                                    <Attributes>
+                                    <Attribute
+                                    DataType="Flag" Name="Extended">
+                                    <Description>Determines whether the attribute is an extended field. If this attribute
+								is not available, then it means the attribute is not extended.</Description>
+                                    </Attribute>
+                                    <Attribute
+                                    DataType="Text-40" Name="ModificationType">
+                                    <Description>
+							Modification Type used for changing the attribute
+							</Description>
+                                    </Attribute>
+                                    <Attribute
+                                    DataType="Text-30" Name="Name">
+                                    <Description>
+							Name of the Attribute Changed
+							</Description>
+                                    </Attribute>
+                                    <Attribute
+                                    DataType="Text-100" Name="NewValue">
+                                    <Description>
+							New Value of the attribute modified
+							</Description>
+                                    </Attribute>
+                                    <Attribute
+                                    DataType="Text-100" Name="OldValue">
+                                    <Description>
+							Old Value of the attribute modified
+							</Description>
+                                    </Attribute>
+                                    </Attributes>
+                                    </yfc:doc>
+                                    </Attribute>
+                                </Attributes>
+                            </OrderAuditDetail>
+                        </CustomAuditDetails>
+                    </OrderAuditDetail>
+                </OrderAuditDetails>
+                <ModificationTypes>
+                    <ModificationType Name="" ScreenName="" yfc:DTDOccurrence="ZeroOrMany">
+                        <yfc:doc>
+                            <Element EntityName="Order_Audit"/>
+                            <Attributes>
+                                <Attribute EntityName="Order_Audit"
+                                    Name="Name" NameInEntity="Modification_Type"/>
+                                <Attribute
+                                    EntityName="Status_Modification_Type"
+                                    Name="ScreenName" NameInEntity="Modification_Type_Screen_Name"/>
+                            </Attributes>
+                        </yfc:doc>
+                    </ModificationType>
+                </ModificationTypes>
+            </OrderAuditLevel>
+        </OrderAuditLevels>
+    </OrderAudit>
+</OrderStatusChange>

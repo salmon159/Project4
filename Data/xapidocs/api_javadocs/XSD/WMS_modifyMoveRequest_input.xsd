@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/modifyMoveRequest/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/modifyMoveRequest/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="WMS_modifyMoveRequest_input.xsd" yfc:rootElement="MoveRequest">
+        <xsd:appinfo source="yfc:structure">
+            <MoveRequest hasAttributes="Y">
+                <Shipment hasAttributes="Y"/>
+                <WorkOrder hasAttributes="Y"/>
+                <Wave hasAttributes="Y"/>
+                <MoveRequestLines>
+                    <MoveRequestLine hasAttributes="Y"/>
+                </MoveRequestLines>
+            </MoveRequest>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="MoveRequest" type="yfc:MoveRequestXSDType">
+        <xsd:annotation yfc:tableName="YFS_MOVE_REQUEST">
+            <xsd:documentation>This table stores all the move requests that are created for a node. The move requests may be created from any activity group.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="MoveRequestXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:WorkOrder"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Wave"/>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:MoveRequestLines"/>
+        </xsd:all>
+        <xsd:attribute name="FinishNoLaterThan" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="FINISH_NO_LATER_THAN" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Pass through field to be stamped on each task. It indicates that the task has to be completed before this date.
+							<Validation>
+                            <Condition>Passed value should not be less than or equal to the <code>StartNoEarlierThan</code> date.
+								</Condition>
+                            <Error
+                                Description="Finish no later than date cannot be before Start no earlier than date." ErrorCode="WMS00139"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ForActivityCode" type="yfctype:Activity" use="optional">
+            <xsd:annotation yfc:columnName="FOR_ACTIVITY_CODE" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+							Identifies the activity for which the move request is being logged. If this is passed, both source and target locations need not be passed. Activity location (i.e target location) for the passed activity is determined using getPutawayLocations API and inventory will be retrieved to this location.
+							<Validation>
+                            <Condition>
+                                <code>ForActivityCode</code> passed should be a valid activity code.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="YCP0045"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="FromActivityGroup" type="yfctype:Text-40" use="required">
+            <xsd:annotation yfc:columnName="FROM_ACTIVITY_GROUP" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Identifies the department, which created this move request.
+						<br/>Valid values - <code>
+                            <b>RECEIPT</b>
+                        </code>,
+						<code>
+                            <b>VAS</b>
+                        </code>, <code>
+                            <b>PACK</b>
+                        </code>, <code>
+                            <b>OUTBOUND_INVENTORY_CONTAINER_BUILD</b>
+                        </code>,
+						<code>
+                            <b>COUNT</b>
+                        </code>, <code>
+                            <b>SHIPPING_CONTAINER_BUILD</b>
+                        </code>,
+						<code>
+                            <b>SHIP</b>
+                        </code>, <code>
+                            <b>INSPECTION</b>
+                        </code>,
+						<code>
+                            <b>OUTBOUND_PICKING</b>
+                        </code> and <code>
+                            <b>REPLENISHMENT</b>
+                        </code>.
+							<Validation>
+                            <Condition>
+                                <code>FromActivityGroup</code> passed should be a valid activity group.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveRequestKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_REQUEST_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_MOVE_REQUEST</code> table.
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if <code>MoveRequestKey</code> is passed but not exist in the database. 
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Move request should be in <code>CREATED</code> status.
+								</Condition>
+                            <Error
+                                Description="Move Request cannot be modified in this status." ErrorCode="WMS00135"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MoveRequestNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="MOVE_REQUEST_NO" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+                        <code>MoveRequestNo</code> identifies a move request within the context of an activity group for a node. This is the unique key of the <code>YFS_Move_Request</code> entity. 
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if <code>MoveRequestNo</code> is not passed alongwith <code>Node</code>. 
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if Move request for the <code>MoveRequestNo</code> does not exist in the database. 
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						This is the <code>Node</code> where move request would be executed. It is the primary key attribute of the <code>YFS_SHIP_NODE</code> table. 
+							<Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if <code>Node</code> is not passed alongwith <code>MoveRequestNo</code>. 
+								</Condition>
+                            <Error
+                                Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either primary key (<code>MoveRequestKey</code>) or all attributes of unique key (<code>MoveRequestNo</code> and <code>Node</code>) must be passed. Error if Move request for the <code>Node</code> does not exist in the database. 
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Priority" type="yfctype:Priority" use="optional">
+            <xsd:annotation yfc:columnName="PRIORITY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						An integer priority. Requests will be processed in the order of this priority. System defined Common Code with CodeType <code>PRIORITY</code>. If priority is not passed, then it is defaulted to value <code>
+                            <b>3</b>
+                        </code> i.e. <code>Normal</code>
+                        <br/>Valid values - <code>
+                            <b>1</b>
+                        </code>, <code>
+                            <b>2</b>
+                        </code>, <code>
+                            <b>3</b>
+                        </code>, <code>
+                            <b>4</b>
+                        </code>. These values correspond to <code>Urgent</code>, <code>High</code>, <code>Normal</code> and <code>Low</code> values respectively.
+							<Validation>
+                            <Condition>Passed value should be greater than zero. Error if the passed value is less than zero.
+								</Condition>
+                            <Error
+                                Description="Priority value cannot be less than Zero." ErrorCode="WMS00143"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Passed value should correspond to one of the Common Code values.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Release" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+						This flag indicates whether the request is to be released immediately after creation. If passed and the value is either <code>
+                            <b>Y</b>
+                        </code> or true, then request gets released immediately after modification.
+						</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RequestUserId" type="yfctype:LoginId" use="optional">
+            <xsd:annotation yfc:columnName="REQUEST_USER_ID" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						User who requested the move.
+							<Validation>
+                            <Condition>
+                                <code>RequestUserId</code> if passed, should be a valid user. Error if <code>RequestUserId</code> passed is not a  valid user.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Identifies a <code>Shipment</code> in context for the move request. If not passed, then <code>ShipmentKey</code> is determined based on the child node Shipment.
+							<Validation>
+                            <Condition>shipment corresponding to the passed <code>ShipmentKey</code> must exist in the database.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartNoEarlierThan"
+            type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="START_NO_EARLIER_THAN" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Pass through field to be stamped on each task. It indicates that the task is not to be picked up before this date.
+							<Validation>
+                            <Condition>Passed value should not be less than the current date. Error if passed value is less than the current date.
+								</Condition>
+                            <Error
+                                Description="Start no earlier than date cannot be before current time." ErrorCode="WMS00138"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WaveKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WAVE_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						Identifies a Wave in context for the move request. If not passed, then <code>WaveKey</code> is determined based on the child node Wave.
+							<Validation>
+                            <Condition>Record corresponding to the passed <code>WaveKey</code> must exist in the database.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="WorkOrderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="WORK_ORDER_KEY" yfc:tableName="YFS_MOVE_REQUEST">
+                <xsd:documentation>
+                    <div>
+						If not passed, then WorkOrderKey is determined based on the child node WorkOrder.
+							<Validation>
+                            <Condition>Record corresponding to the passed <code>WorkOrderKey</code> must exist in the database.
+								</Condition>
+                            <Error
+                                Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div>
+					The <code>Shipment</code> child node is optional. If <code>ShipmentKey</code> is not passed and Shipment child node is passed then, <code>ShipmentKey</code> can be determined based on the passed unique key of the <code>YFS_Shipment entity</code>: <code>ShipmentNo</code>, <code>ShipNode</code> (same as <code>Node</code> passed in the <code>MoveRequest</code>) and <code>SellerOrganizationCode</code>.
+						<Validation>
+                        <Condition>Multiple records should not exist for the passed Shipment criteria. Error if it exists.
+								</Condition>
+                        <Error
+                            Description="Multiple records found for passed inputs." ErrorCode="WMS00003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>
+                        <div>
+                            <code>ShipmentNo</code> is a part of unique key. ShipNode and SellerOrganizationCode identify the origin of the shipment (i.e. The place from where the shipment was shipped).
+							<Validation>
+                                <Condition>Record corresponding to the passed <code>ShipmentNo</code> must exist in the database.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="WorkOrder">
+        <xsd:annotation yfc:tableName="YFS_WORK_ORDER">
+            <xsd:documentation>
+                <div>
+					The <code>WorkOrder</code> child node is optional. If <code>WorkOrderKey</code> is not passed and <code>WorkOrder</code> child node is passed then, <code>WorkOrderKey</code> can be determined based on the passed unique key of the <code>YFS_Work_Order entity</code>: <code>WorkOrderNo</code>, <code>NodeKey</code> (same as <code>Node</code> passed in the MoveRequest) and <code>EnterpriseCode</code>.
+						<Validation>
+                        <Condition>Multiple records should not exist for the passed WorkOrder criteria. Error if it exists.
+								</Condition>
+                        <Error
+                            Description="Multiple records found for passed inputs." ErrorCode="WMS00003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:ID-24" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The code of the enterprise to which the item or license plate belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>The node associated with this work order, where work orders would be executed.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WorkOrderNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="WORK_ORDER_NO" yfc:tableName="YFS_WORK_ORDER">
+                    <xsd:documentation>
+                        <div>
+                            <code>WorkOrderNo</code> is a part of unique key. NodeKey is where work orders would be executed. EnterpriseCode to which inventory belongs.
+							<Validation>
+                                <Condition>Record corresponding to the passed <code>WorkOrderNo</code> must exist in the database.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Wave">
+        <xsd:annotation yfc:tableName="YFS_WAVE">
+            <xsd:documentation>
+                <div>
+					The <code>Wave</code> child node is optional. If <code>WaveKey</code> is not passed and Wave child node is passed then, <code>WaveKey</code> can be determined based on the passed unique key of the <code>YFS_Wave entity</code>: <code>WaveNo</code>, <code>Node</code> (same as <code>Node</code> passed in the <code>MoveRequest</code>).
+						<Validation>
+                        <Condition>Multiple records should not exist for the passed Wave criteria. Error if it exists.
+								</Condition>
+                        <Error
+                            Description="Multiple records found for passed inputs." ErrorCode="WMS00003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_WAVE">
+                    <xsd:documentation>The primary key for the YFS_WAVE table.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="WaveNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="WAVE_NO" yfc:tableName="YFS_WAVE">
+                    <xsd:documentation>
+                        <div>
+                            <code>WaveNo</code> is a part of unique key. Node identify the origin of the Wave (i.e. The place from where the Wave was created). 
+							<Validation>
+                                <Condition>Record corresponding to the passed <code>WaveNo</code> must exist in the database.
+								</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MoveRequestLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="yfc:MoveRequestLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="MoveRequestLine">
+        <xsd:annotation yfc:tableName="YFS_MOVE_REQUEST_LINE">
+            <xsd:documentation>This table contains details of the inventory that needs to be moved against a move request.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+								This intimates the action to be taken on the line. The action can be either <code>MODIFY</code> or <code>CANCEL</code>.
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MoveRequestLineKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="MOVE_REQUEST_LINE_KEY" yfc:tableName="YFS_MOVE_REQUEST_LINE">
+                    <xsd:documentation>
+                        <div>
+								This is the primary key of the <code>YFS_Move_Request_Line</code> entity.
+									<Validation>
+                                <Condition>If passed, then MoveRequestLine corresponding to this key should exist in the database.
+										</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonCode" type="yfctype:ReasonCode" use="optional">
+                <xsd:annotation yfc:columnName="REASON_CODE" yfc:tableName="YFS_MOVE_REQUEST_LINE">
+                    <xsd:documentation>
+                        <div>
+								User defined Common Code with CodeType 'MOVE_REQ_CANCEL_RSN'. Required, if action is 'CANCEL'. 
+									<Validation>
+                                <Condition>Passed value should correspond to one of the Common Code values.
+										</Condition>
+                                <Error
+                                    Description="No record found for passed inputs." ErrorCode="WMS00002"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>ReasonCode should be passed.
+										</Condition>
+                                <Error
+                                    Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReasonText" type="yfctype:ReasonText" use="optional">
+                <xsd:annotation yfc:columnName="REASON_TEXT" yfc:tableName="YFS_MOVE_REQUEST_LINE">
+                    <xsd:documentation>
+                        <div>
+								Free form reason text. If not passed, <code>ReasonText</code> gets defaulted to BLANK i.e. " ".
+								</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RemoveDBHouseKeeping"
+                type="yfctype:String" use="optional"/>
+            <xsd:attribute name="RequestQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="REQUEST_QUANTITY" yfc:tableName="YFS_MOVE_REQUEST_LINE">
+                    <xsd:documentation>
+                        <div>
+						Quantity in the Item's unit of measure that is required to be moved. If action is <code>MODIFY</code>, then <code>RequestQuanity</code> is modified.
+							<Validation>
+                                <Condition>If passed, value should not be negative.
+								</Condition>
+                                <Error
+                                    Description="Quantity passed cannot be negative." ErrorCode="WMS00057"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

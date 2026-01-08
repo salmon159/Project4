@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getOrderLineStatusList/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getOrderLineStatusList/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getOrderLineStatusList_input.xsd" yfc:rootElement="OrderLineStatus">
+        <xsd:appinfo source="yfc:structure">
+            <OrderLineStatus hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="OrderLineStatus" type="yfc:OrderLineStatusXSDType">
+        <xsd:annotation yfc:UsedForIndexing="Order" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+            <xsd:documentation>This table stores status-quantity break up for each line-schedule.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="OrderLineStatusXSDType">
+        <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ENTERPRISE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreTransactionDependencies" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Flag to override any transaction dependencies that may be defined for the transaction this API invokes.
+					<br/>Default: <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>. When passed as <b>
+                            <code>Y</code>
+                        </b>, transaction dependencies will not be evaluated, and thus will not prevent the API from processing.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:String">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="ItemGroupCode"
+            type="yfctype:EnumItemGroupCode" use="optional">
+            <xsd:annotation yfc:columnName="ITEM_GROUP_CODE" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>This field indicates what kind of item is on the order line.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:Integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Specifies the Maximum Number of records to be returned. Default is 500.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+                <xsd:documentation>The order header that is associated with this order release status record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderLineKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_LINE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+                <xsd:documentation>The order line that is associated with this order release status record.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderNo" type="yfctype:VarcharDocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_HEADER">
+                <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE_STATUS">
+                <xsd:documentation>
+                    <div>
+				Pass <code>ReleaseNo</code> or <code>OrderReleaseKey</code> to select order lines in that release.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PrimeLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="PRIME_LINE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+                    <div>
+				Part of a key to identify an order line. Pass either <code>OrderLineKey</code> or <code>OrderHeaderKey</code>, <code>PrimeLineNo</code> and <code>SubLineNumber</code> to 
+				get the order line status for a specific order line.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProcureFromNode" type="yfctype:ShipNode" use="optional">
+            <xsd:annotation yfc:columnName="PROCURE_FROM_NODE" yfc:tableName="YFS_ORDER_LINE_SCHEDULE">
+                <xsd:documentation>The node from which the scheduled order line should be procured if it cannot be sourced from the ship node specified on the order line.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReleaseNo" type="yfctype:ShorterNumber" use="optional">
+            <xsd:annotation yfc:columnName="RELEASE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_RELEASE">
+                <xsd:documentation>
+                    <div>
+				Pass <code>ReleaseNo</code> or <code>OrderReleaseKey</code> to select order lines in that release.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipNode" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_ORDER_LINE_SCHEDULE">
+                <xsd:documentation>The ship node fulfilling this scheduled order line.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SubLineNo" type="yfctype:LineNo" use="optional">
+            <xsd:annotation yfc:columnName="SUB_LINE_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_ORDER_LINE">
+                <xsd:documentation>
+                    <div>
+				Part of a key to identify an order line. Pass either <code>OrderLineKey</code> or <code>OrderHeaderKey</code>, <code>PrimeLineNo</code> and <code>SubLineNumber</code> to 
+				get the order line status for a specific order line.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TransactionId" type="yfctype:TransactionID" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>
+				 Pass <code>TransactionID</code> to get a list of <code>DropStatus</code> records for that transaction.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

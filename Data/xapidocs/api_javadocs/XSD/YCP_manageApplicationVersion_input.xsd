@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/manageApplicationVersion/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/manageApplicationVersion/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="YCP_manageApplicationVersion_input.xsd" yfc:rootElement="ApplicationVersion">
+        <xsd:appinfo source="yfc:structure">
+            <ApplicationVersion hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ApplicationVersion" type="yfc:ApplicationVersionXSDType">
+        <xsd:annotation yfc:tableName="PLT_APPLICATION_VERSION">
+            <xsd:documentation>
+                <div>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> or <b>
+                                <code>Delete</code>
+                            </b> and no record matches the criteria:
+					</Condition>
+                        <Error
+                            Description="Record does not exist in the database." ErrorCode="YFC0002"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Modify</code>
+                            </b> and ApplicationVersionKey is blank:
+					</Condition>
+                        <Error
+                            Description="Primary Key cannot be blanked out." ErrorCode="YFC0013"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Delete</code>
+                            </b> and ApplicationVersion is associated with records in Qualified Tag Version Compatibility table
+					</Condition>
+                        <Error
+                            Description="Cannot delete Application Version because it has associated Qualified Tag Version Compatibility records." ErrorCode="YCP0454"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>If <code>Action</code> is <b>
+                                <code>Create</code>
+                            </b> and <code>ApplicationCode</code> or <code>ApplicationVersion</code> are not passed.
+					</Condition>
+                        <Error
+                            Description="Both Application Code and Application Version are mandatory." ErrorCode="YCP0046"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ApplicationVersionXSDType">
+        <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Action to take
+					<br/>Valid Values: 
+					<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist or modifies an existing record if it does.
+					<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+					<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Changes the value of an existing record.
+					<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+					<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplicationCode"
+            type="yfctype:ApplicationCode" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_CODE" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>Code to identify an application</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplicationVersion"
+            type="yfctype:ApplicationVersion" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_VERSION" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>Application version identifier.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplicationVersionDesc"
+            type="yfctype:Description-255" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_VERSION_DESC" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>Application version description</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ApplicationVersionKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="APPLICATION_VERSION_KEY" yfc:tableName="PLT_APPLICATION_VERSION">
+                <xsd:documentation>Primary key attribute of PLT_APPLICATION_VERSION.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

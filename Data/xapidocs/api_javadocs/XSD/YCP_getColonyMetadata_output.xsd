@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YCP/getColonyMetadata/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YCP/getColonyMetadata/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YCP_getColonyMetadata_output.xsd" yfc:rootElement="ColonyMetadata">
+        <xsd:appinfo source="yfc:structure">
+            <ColonyMetadata hasAttributes="Y">
+                <PoolList>
+                    <Pool hasAttributes="Y"/>
+                </PoolList>
+                <DefaultPoolParamList hasAttributes="Y">
+                    <Param hasAttributes="Y"/>
+                </DefaultPoolParamList>
+            </ColonyMetadata>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="ColonyMetadata" type="yfc:ColonyMetadataXSDType"/>
+    <xsd:complexType name="ColonyMetadataXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PoolList"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:DefaultPoolParamList"/>
+        </xsd:sequence>
+        <xsd:attribute name="AvailablePrefix" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>A valid prefix that is not currently used by any existing colony</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CurrentVersion" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Current multischema version</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IsEnabled" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Whether multischema support is enabled</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Boolean">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PoolList">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>List of all known <code>TableType</code> and <code>PoolId</code> combinations, optionally filtered by the <code>PoolTableTypes</code> attribute in the input. Note this is not applicable to a non-multischema environment.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Pool"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Pool">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>Mapping from a <code>PoolId</code> to its associated <code>TableType</code>.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Id" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Name that uniquely identifies the shard to use for a database connection</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TableType" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Tables of this type are stored in the shard</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="DefaultPoolParamList">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>List of known database connection parameters and their default values. Note this element will be repeated for each requested database vendor.</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Param"/>
+            </xsd:sequence>
+            <xsd:attribute name="DBVendor" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Associated database vendor.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Param">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>A property for database shard configuration</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DefaultValue" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Default value for the given configuration property. May be empty or missing.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsSuppressed" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>Whether the given DefaultValue is suppressed (for example, if it is a password field).
+                        This attribute is set to Y if the value is suppressed. If this attribute is not present or set to N, then the value
+                        is not suppressed.</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Name" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>A database configuration property</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

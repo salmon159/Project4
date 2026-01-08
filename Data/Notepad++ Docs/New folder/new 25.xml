@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:variable name="varAmountPerUnit" select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@EncirclePointsPerUnit"/>
+    <xsl:variable name="varCancelledQty" select="OrderLine/@ChangeInOrderedQty"/>
+    <xsl:variable name="varReversalPoints" select="(($varAmountPerUnit)*($varCancelledQty)*(-1))"/>
+    <xsl:variable name="varOrderLineStatus" select="(OrderLine/@Status)"/>
+    <xsl:variable name="varEncirclePointsPerLine" select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@EncirclePointsPerLine"/>
+    <xsl:variable name="varEncirclePoints">
+        <xsl:choose>
+            <xsl:when test=" $varOrderLineStatus = 'Cancelled'">
+                <xsl:value-of select="floor($varReversalPoints+$varEncirclePointsPerLine)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="floor($varReversalPoints)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:template match="/">
+        <xsl:element name="Payment">
+            <xsl:attribute name="PaymentGateway">
+                <xsl:value-of select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@PaymentGateway"/>
+            </xsl:attribute>
+            <xsl:attribute name="ChannelCode">tanishq</xsl:attribute>
+            <xsl:attribute name="OutletCode">tab</xsl:attribute>
+			<xsl:attribute name="OrganizationCode">
+                <xsl:value-of select="/Order/@EnterpriseCode"/>
+            </xsl:attribute>
+            <xsl:attribute name="MembershipNo">
+                <xsl:value-of select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@ExtnEncircleNo"/>
+            </xsl:attribute>
+            <xsl:attribute name="ExtnBrand">
+                <xsl:value-of select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@ExtnBrand"/>
+            </xsl:attribute>
+            <xsl:attribute name="UniqueId">
+                <xsl:value-of select="OrderLine/@OrderLineKey"/>
+            </xsl:attribute>
+            <xsl:attribute name="RRNumber">
+                <xsl:value-of select="OrderLine/Extn/TitanPaymentDetailList/TitanPaymentDetail[@PaymentType='Encircle']/@PaymentReference2"/>
+            </xsl:attribute>
+            <xsl:attribute name="ReversalPoints">
+                <xsl:value-of select="$varEncirclePoints"/>
+            </xsl:attribute>
+            <xsl:attribute name="CustomerPhoneNo">
+                <xsl:value-of select="/OrderLine/PersonInfoShipTo/@MobilePhone"/>
+            </xsl:attribute>
+            <xsl:attribute name="CustomerEMailID">
+                <xsl:value-of select="/OrderLine/PersonInfoShipTo/@EMailID"/>
+            </xsl:attribute>
+            <xsl:attribute name="CountryCode">
+                <xsl:value-of select="/OrderLine/Extn/@ExtnCountryCode"/>
+            </xsl:attribute>
+        </xsl:element>
+    </xsl:template>
+</xsl:stylesheet>

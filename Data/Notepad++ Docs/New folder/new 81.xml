@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output indent="yes" method="xml"/>
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="/">
+        <Order>
+            <xsl:copy-of select="Order/@*"/>
+            <PersonInfoBillTo>
+                <xsl:copy-of select="Order/PersonInfoBillTo/@*"/>
+            </PersonInfoBillTo>
+            <PersonInfoShipTo>
+                <xsl:copy-of select="Order/PersonInfoShipTo/@*"/>
+            </PersonInfoShipTo>
+            <PriceInfo>
+                <xsl:copy-of select="Order/PriceInfo/@*"/>
+            </PriceInfo>
+            <CustomAttributes>
+                <xsl:copy-of select="Order/CustomAttributes/@*"/>
+            </CustomAttributes>
+            <OrderLines>
+                <xsl:copy-of select="OrderLines/@*"/>
+                <xsl:for-each select="Order/OrderLines/OrderLine">
+                    <OrderLine>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:variable name="varChangeInOrderedQty">
+                            <xsl:value-of select="@ChangeInOrderedQty"/>
+                        </xsl:variable>
+                        <xsl:variable name="varChangeInOrdrdQty">
+                            <xsl:value-of select="$varChangeInOrderedQty*-1"/>
+                        </xsl:variable>
+                        <xsl:attribute name="OrderedQty">
+                            <xsl:value-of select="$varChangeInOrderedQty*-1"/>
+                        </xsl:attribute>
+                        <!-- Changes for ExtnNetMetalWeight-->
+                        <xsl:variable name="varProductLine" select="ItemDetails/PrimaryInformation/@ProductLine"/>
+                        <xsl:if test="($varProductLine = 'JEWEL')">
+                            <xsl:variable name="varExtnNetMetalWeight" select="Extn/@ExtnNetMetalWeight"/>
+                            <xsl:attribute name="ExtnNetMetalWeight">
+                                <xsl:value-of select="$varExtnNetMetalWeight"/>
+                            </xsl:attribute>
+                        </xsl:if>
+                        <!-- Changes For ExtnNetMetalWeight-->
+                        <Item>
+                            <xsl:copy-of select="Item/@*"/>
+                        </Item>
+                        <Extn>
+                            <xsl:copy-of select="Extn/@*"/>
+                        </Extn>
+                        <ItemDetails>
+                            <xsl:copy-of select="ItemDetails/@*"/>
+                            <PrimaryInformation>
+                                <xsl:copy-of select="ItemDetails/PrimaryInformation/@*"/>
+                            </PrimaryInformation>
+                            <Extn>
+                                <xsl:copy-of select="ItemDetails/PrimaryInformation/Extn/@*"/>
+                            </Extn>
+                        </ItemDetails>
+                        <LinePriceInfo>
+                            <xsl:copy-of select="LinePriceInfo/@*"/>
+                            <xsl:variable name="variable2">
+                                <xsl:value-of select="LinePriceInfo/@RetailPrice"/>
+                            </xsl:variable>
+                            <xsl:variable name="varChangeInLineTotal">
+                                <xsl:value-of select="LinePriceInfo/@ChangeInLineTotal"/>
+                            </xsl:variable>
+                            <xsl:variable name="varLineTot">
+                                <xsl:value-of select="LinePriceInfo/@LineTotal"/>
+                            </xsl:variable>
+                            <xsl:variable name="varQtyAdd" select="format-number($variable2 * 1, '0.00')"/>
+                            <xsl:attribute name="QtyAdd">
+                                <xsl:value-of select="$varQtyAdd"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="ChangeInLineTotal">
+                                <xsl:value-of select="format-number($varChangeInLineTotal*-1,'0.00')"/>
+                            </xsl:attribute>
+                        </LinePriceInfo>
+                        <Custom>
+                            <xsl:variable name="varCurrency" select="/Order/PriceInfo/@Currency"/>
+                            <xsl:variable name="varDecimal1" select="/Order/CustomAttributes/@Decimal1"/>
+                            <xsl:variable name="varChargePerUnit" select="LineCharges/LineCharge[@ChargeCategory='Shipping']/@Reference"/>
+                            <xsl:if test="$varChargePerUnit !=''">
+                                <xsl:variable
+                                    name="varFinalChargePerUnit" select="format-number($varChargePerUnit * 1, '0.00')"/>
+                                <xsl:variable name="varQty" select="@ChangeInOrderedQty"/>
+                                <xsl:variable name="varQtyAdd" select="$varQty * -1"/>
+                                <xsl:variable name="varShippingCharge" select="format-number($varFinalChargePerUnit * $varQtyAdd,'0.00')"/>
+                                <xsl:attribute name="ShippingCharge">
+                                    <xsl:value-of select="$varShippingCharge"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:variable name="varCancelQuantity" select="@ChangeInOrderedQty"/>
+                            <xsl:variable name="varTotalQty" select="format-number($varCancelQuantity * -1, '0.00')"/>
+                            <xsl:variable
+                                name="varDiscountChargePerUnit" select="sum(LineCharges/LineCharge[@ChargeCategory='SellerDiscount' or @ChargeCategory='Discount']/Extn/@ExtnActualChargePerUnit)"/>
+                            <xsl:variable
+                                name="varTotalDiscountChargePerUnit" select="format-number($varDiscountChargePerUnit * $varTotalQty,'0.00')"/>
+                            <xsl:variable
+                                name="varDiscountChargePerLine" select="sum(LineCharges/LineCharge[@ChargeCategory='SellerDiscount' or @ChargeCategory='Discount']/Extn/@ExtnActualChargePerLine)"/>
+                            <xsl:variable name="varSumDiscount" select="format-number($varTotalDiscountChargePerUnit+$varDiscountChargePerLine,'0.00')"/>
+                            <xsl:attribute name="TotalDiscount">
+                                <xsl:value-of select="$varSumDiscount"/>
+                            </xsl:attribute>
+                        </Custom>
+                    </OrderLine>
+                </xsl:for-each>
+            </OrderLines>
+            <HeaderCharges>
+                <HeaderCharge>
+                    <xsl:copy-of select="/Order/HeaderCharges/HeaderCharge/@*"/>
+                    <Extn>
+                        <xsl:copy-of select="/Order/HeaderCharges/HeaderCharge/Extn/@*"/>
+                    </Extn>
+                </HeaderCharge>
+            </HeaderCharges>
+            <Extn>
+                <xsl:copy-of select="Order/Extn/@*"/>
+            </Extn>
+        </Order>
+    </xsl:template>
+</xsl:stylesheet>

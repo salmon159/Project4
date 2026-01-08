@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output indent="yes" method="xml"/>
+
+    <!-- Identity template -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- Shipment -->
+    <xsl:template match="/Shipment">
+        <Shipment>
+            <xsl:copy-of select="./@*"/>
+            <xsl:variable name="varDepartmentCode" select="ShipmentLines/ShipmentLine/Order/@DepartmentCode"/>
+            <xsl:variable name="varShipCA" select="'Ship to CA'"/>
+            <xsl:variable name="varShipUS" select="'Ship to US'"/>
+            
+            <xsl:choose>
+                <xsl:when test="$varDepartmentCode='CA'">
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipCA"/>
+                    </xsl:attribute>
+					<xsl:attribute name="DepartmentCode">
+                        <xsl:value-of select="$varDepartmentCode"/>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="ShipmentDescription">
+                        <xsl:value-of select="$varShipUS"/>
+                    </xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
+            
+            <xsl:apply-templates select="node()"/>
+        </Shipment>
+    </xsl:template>
+
+    <!-- Container ActualWeight conversion -->
+    <xsl:template match="/Shipment/Containers/Container[@ActualWeightUOM='GRAM']">
+        <Container>
+            <xsl:copy-of select="./@*"/>
+            <xsl:apply-templates select="./node()"/>
+            <xsl:variable name="varActualWeight" select="@ActualWeight"/>
+            <xsl:attribute name="ActualWeight">
+                <xsl:value-of select="$varActualWeight div 453"/>
+            </xsl:attribute>
+            <xsl:attribute name="ActualWeightUOM">LBS</xsl:attribute>
+            <xsl:attribute name="ContainerLengthUOM">IN</xsl:attribute>
+        </Container>
+    </xsl:template>
+
+    <!-- ToAddress formatting -->
+    <xsl:template match="/Shipment/ToAddress">
+        <ToAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="CountryCode">
+                <xsl:value-of select="@Country"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine1">
+                <xsl:value-of select="substring(@AddressLine1,1,35)"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine2">
+                <xsl:value-of select="substring(@AddressLine2,1,35)"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine3">
+                <xsl:value-of select="substring(@AddressLine3,1,35)"/>
+            </xsl:attribute>
+        </ToAddress>
+    </xsl:template>
+
+    <!-- FromAddress formatting -->
+    <xsl:template match="/Shipment/FromAddress">
+        <FromAddress>
+            <xsl:apply-templates select="node()|@*"/>
+            <xsl:attribute name="CountryCode">
+                <xsl:value-of select="@Country"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine1">
+                <xsl:value-of select="substring(@AddressLine1,12,35)"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine2">
+                <xsl:value-of select="substring(@AddressLine2,1,35)"/>
+            </xsl:attribute>
+            <xsl:attribute name="AddressLine3">
+                <xsl:value-of select="substring(@AddressLine3,1,35)"/>
+            </xsl:attribute>
+        </FromAddress>
+    </xsl:template>
+
+</xsl:stylesheet>

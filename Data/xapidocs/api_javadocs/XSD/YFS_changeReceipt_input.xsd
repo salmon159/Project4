@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/changeReceipt/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/changeReceipt/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_changeReceipt_input.xsd" yfc:rootElement="Receipt">
+        <xsd:appinfo source="yfc:structure">
+            <Receipt hasAttributes="Y">
+                <ReceiptLines>
+                    <ReceiptLine hasAttributes="Y"/>
+                </ReceiptLines>
+                <Instructions>
+                    <Instruction hasAttributes="Y"/>
+                </Instructions>
+                <Shipment hasAttributes="Y"/>
+            </Receipt>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Receipt" type="yfc:ReceiptXSDType">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_HEADER">
+            <xsd:documentation>Stores receipt information. A receipt is a collection of receipt lines which are received against a shipment or order or order release.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ReceiptXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ReceiptLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Instructions"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+        </xsd:all>
+        <xsd:attribute name="ArrivalDateTime" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="ARRIVAL_DATE_TIME" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The timestamp when the receipt arrived.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DriverName" type="yfctype:Text-50" use="optional">
+            <xsd:annotation yfc:columnName="DRIVER_NAME" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The name of the driver.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NumOfCartons" type="yfctype:Count" use="optional">
+            <xsd:annotation yfc:columnName="NUM_OF_CARTONS" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The number of cartons in the receipt.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="NumOfPallets" type="yfctype:Count" use="optional">
+            <xsd:annotation yfc:columnName="NUM_OF_PALLETS" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The number of pallets in the receipt.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OverrideModificationRules"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Indicates whether modification rule override is allowed or not.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceiptDate" type="yfctype:TimeStamp" use="optional">
+            <xsd:annotation yfc:columnName="RECEIPT_DATE" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The date when the receipt was started.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceiptHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="RECEIPT_HEADER_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_RECEIPT_HEADER</code> table.
+							<Validation>
+                            <Condition>Modification of <code>ReceiptHeaderKey</code> is not allowed.
+								</Condition>
+                            <Error
+                                Description="Key Fields can not be modified." ErrorCode="YFS10415"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The receipt that is to be modified should be open and the status modification rules should allow this operation.
+								</Condition>
+                            <Error
+                                Description="Closed receipt cannot be modified." ErrorCode="OMP10051"/>
+                            <Error
+                                Description="Receipt modification rules do not permit modification of receipt in its current status." ErrorCode="OMP10039"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+								</Condition>
+                            <Error
+                                Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                            <Error Description="Receipt not found." ErrorCode="YFS10466"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceiptNo" type="yfctype:ReceiptNo" use="optional">
+            <xsd:annotation yfc:columnName="RECEIPT_NO"
+                yfc:isConditional="Y" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>
+                    <div>
+						Unique key or business key, which by itself identifies a receipt along with <code>ReceivingNode</code>.
+							<Validation>
+                            <Condition>Modification of <code>ReceiptNo</code> is not allowed.
+								</Condition>
+                            <Error
+                                Description="Key Fields can not be modified." ErrorCode="YFS10415"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The receipt that is to be modified should be open and the status modification rules should allow this operation.
+								</Condition>
+                            <Error
+                                Description="Closed receipt cannot be modified." ErrorCode="OMP10051"/>
+                            <Error
+                                Description="Receipt modification rules do not permit modification of receipt in its current status." ErrorCode="OMP10039"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+								</Condition>
+                            <Error
+                                Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                            <Error Description="Receipt not found." ErrorCode="YFS10466"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceivingDock" type="yfctype:Text-40" use="optional">
+            <xsd:annotation yfc:columnName="RECEIVING_DOCK_ID" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The location where the receiving is done.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReceivingNode" type="yfctype:String" use="optional">
+            <xsd:annotation yfc:isConditional="Y">
+                <xsd:documentation>
+                    <div>
+						The Receiving Node.
+							<Validation>
+                            <Condition>Modification of <code>ReceivingNode</code> is not allowed.
+								</Condition>
+                            <Error
+                                Description="Key Fields can not be modified." ErrorCode="YFS10415"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The receipt that is to be modified should be open and the status modification rules should allow this operation.
+								</Condition>
+                            <Error
+                                Description="Closed receipt cannot be modified." ErrorCode="OMP10051"/>
+                            <Error
+                                Description="Receipt modification rules do not permit modification of receipt in its current status." ErrorCode="OMP10039"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+								</Condition>
+                            <Error
+                                Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                            <Error Description="Receipt not found." ErrorCode="YFS10466"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY"
+                yfc:isConditional="Y" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>
+                    <div>
+						Primary key attribute of <code>YFS_SHIPMENT</code> table. Specifies the shipment being received.
+							<Validation>
+                            <Condition>Modification of <code>ShipmentKey</code> is not allowed.
+								</Condition>
+                            <Error
+                                Description="Key Fields can not be modified." ErrorCode="YFS10415"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>The receipt that is to be modified should be open and the status modification rules should allow this operation.
+								</Condition>
+                            <Error
+                                Description="Closed receipt cannot be modified." ErrorCode="OMP10051"/>
+                            <Error
+                                Description="Receipt modification rules do not permit modification of receipt in its current status." ErrorCode="OMP10039"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+								</Condition>
+                            <Error
+                                Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                            <Error Description="Receipt not found." ErrorCode="YFS10466"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TrailerLPNNo" type="yfctype:ID-40" use="optional">
+            <xsd:annotation yfc:columnName="TRAILER_LPN_NO" yfc:tableName="YFS_RECEIPT_HEADER">
+                <xsd:documentation>The License Plate Number of the Trailer.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="ReceiptLines">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ReceiptLine"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ReceiptLine">
+        <xsd:annotation yfc:tableName="YFS_RECEIPT_LINE">
+            <xsd:documentation>Stores the receipt line information, including item details and item tag information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DispositionLocation"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="DISPOSITION_LOCATION" yfc:tableName="YFS_RECEIPT_LINE">
+                    <xsd:documentation>The location where the item is kept after receiving.                     This column is used for non-WMS nodes.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NetWeight" type="yfctype:Dimension" use="optional">
+                <xsd:annotation yfc:columnName="NET_WEIGHT" yfc:tableName="YFS_RECEIPT_LINE">
+                    <xsd:documentation>The weight of just the items in the receipt. The unit of weight is as specified by the NET_WEIGHT_UOM attribute.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NetWeightUom" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="NET_WEIGHT_UOM" yfc:tableName="YFS_RECEIPT_LINE">
+                    <xsd:documentation>The unit of measure of the net weight.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReceiptLineNo" type="yfctype:LineNo" use="optional">
+                <xsd:annotation yfc:columnName="RECEIPT_LINE_NO" yfc:tableName="YFS_RECEIPT_LINE">
+                    <xsd:documentation>The receipt line number. This field is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instructions">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Instruction"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Instruction">
+        <xsd:annotation yfc:tableName="YFS_INSTRUCTION_DETAIL">
+            <xsd:documentation>Generic table used to store instructions associated with various entities in the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Action" type="yfctype:Action" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>An Action.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionDetailKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_DETAIL_KEY" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Primary key attribute of YFS_INSTRUCTION_DETAIL table that identifies an instruction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionText"
+                type="yfctype:InstructionText" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TEXT" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Free-form text indicating any additional information related to the instruction type or otherwise.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionType"
+                type="yfctype:InstructionType" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_TYPE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Categorization of instructions so that they can be grouped together for reference. For example, you may have instructions of type Pick, Pack, and Ship for an order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionURL" type="yfctype:URL" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_URL" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>The URL relating to and/or containing the instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InstructionUsage"
+                type="yfctype:InstructionUsage" use="optional">
+                <xsd:annotation yfc:columnName="INSTRUCTION_USAGE" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>Another way of categorization of instructions, over and above the instruction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SequenceNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="SEQUENCE_NO" yfc:tableName="YFS_INSTRUCTION_DETAIL">
+                    <xsd:documentation>You could have an instruction exceeding the limits of a single record. Sequence number is used to provide a way to store a link between such instructions.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>Stores shipment information. A shipment is a collection of order lines which will be shipped as a unit. One or more orders from a buyer organization may be grouped into the same shipment to minimize transportation costs.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>A classification of data on which a particular set of business processes must be applied. In this case, it happens to be the document type of the order document - basically the document type of the orders comprising the shipment. A document type derived from the base document type 0001 - ORDER.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_CODE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The enterprise to which this shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_HEADER_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The order header key that is associated with this shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The order number of the order for the shipment while creating with SingleOrder.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderReleaseKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_RELEASE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The order release key that is associated with this shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReleaseNo" type="yfctype:Count" use="optional">
+                <xsd:annotation yfc:columnName="RELEASE_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The release number of the OrderRelease for the shipment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SellerOrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation
+                    yfc:columnName="SELLER_ORGANIZATION_CODE"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The seller organization to which the shipment belongs.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipNode" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIPNODE_KEY"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The ship node where the shipment was created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO"
+                    yfc:isConditional="Y" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

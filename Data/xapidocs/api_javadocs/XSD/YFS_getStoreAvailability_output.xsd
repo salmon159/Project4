@@ -1,0 +1,1259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getStoreAvailability/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getStoreAvailability/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getStoreAvailability_output.xsd" yfc:rootElement="Promise">
+        <xsd:appinfo source="yfc:structure">
+            <Promise hasAttributes="Y">
+                <FulfillmentTypes hasAttributes="Y"/>
+                <ShipToAddress hasAttributes="Y"/>
+                <PromiseLines>
+                    <PromiseLine hasAttributes="Y">
+                        <Tag hasAttributes="Y"/>
+                        <AlternateNodes>
+                            <AlternateNode hasAttributes="Y"/>
+                        </AlternateNodes>
+                        <ShipToAddress hasAttributes="Y"/>
+                        <CurrentStorePickup hasAttributes="Y">
+                            <Pickup hasAttributes="Y"/>
+                        </CurrentStorePickup>
+                        <AlternateNodePickups>
+                            <AlternateNodePickup hasAttributes="Y">
+                                <Pickup hasAttributes="Y"/>
+                            </AlternateNodePickup>
+                        </AlternateNodePickups>
+                        <ShipToHome hasAttributes="Y">
+                            <Assignments>
+                                <Assignment hasAttributes="Y"/>
+                            </Assignments>
+                        </ShipToHome>
+                    </PromiseLine>
+                </PromiseLines>
+                <InventorySupplies>
+                    <Items>
+                        <Item hasAttributes="Y">
+                            <Nodes>
+                                <Node hasAttributes="Y">
+                                    <Supplies>
+                                    <Supply hasAttributes="Y">
+                                    <Tag hasAttributes="Y"/>
+                                    </Supply>
+                                    </Supplies>
+                                </Node>
+                            </Nodes>
+                        </Item>
+                    </Items>
+                </InventorySupplies>
+            </Promise>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="Promise" type="yfc:PromiseXSDType"/>
+    <xsd:complexType name="PromiseXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:FulfillmentTypes"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ShipToAddress">
+                <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="City" type="yfctype:City" use="optional">
+                        <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                            <xsd:documentation>The city in the address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="Country" type="yfctype:Country" use="optional">
+                        <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                            <xsd:documentation>The country in the address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="State" type="yfctype:State" use="optional">
+                        <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                            <xsd:documentation>The state in the address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="ZipCode" type="yfctype:ZipCode" use="optional">
+                        <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                            <xsd:documentation>The zip code in the address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PromiseLines"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InventorySupplies"/>
+        </xsd:all>
+        <xsd:attribute name="AllocationRuleID" type="yfctype:ID-10" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Allocation rule that was used.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="CarrierServiceCode" type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Carrier service code. If transfer schedule is present between two nodes , the tranfer schedule's transit days are used to calculate the transit time, otherwise <code>CarrierServiceCode</code> is used for calculating the transit time.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderNextDayForTransfer"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If <code>ConsiderNextDayForTransfer</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, the available date of goods from the transferring node will be pushed off to the beginning of the next day.  This applies to standard transfer pickup option, expedited transfer pickup option, and special order pickup option.  
+				<BR/>Default: <code>N</code>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DemandType" type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Specifies a <code>DemandType</code> used in the inventory availability calculations.
+				<BR/>Default: OPEN_ORDER
+				<br/>Only valid <code>SupplyType</code>s that can be consumed against the <code>DemandType</code> value are considered in the inventory availability calculations.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreMinNotificationTime" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Flag to ignore Minimum Notification time associated with Item and Shipnode.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="IgnorePromised" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If <code>IgnorePromised</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, promised demands are not considered during inventory availability calculations.
+				<BR/>Default: <code>N</code>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="IgnoreUnpromised" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>If <code>IgnoreUnpromised</code> is passed as <b>
+                            <code>Y</code>
+                        </b>, unpromised demands are not considered during inventory availability calculations.
+				<BR/>Default: <code>N</code>
+                        <br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="LevelOfService" type="yfctype:ID-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+					Determines the level of service to be used for the lines if not passed on the lines.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MaximumRecords" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Positive integer used to determine the maximum number of possible solutions to find.
+				<BR/>Default: <b>
+                            <code>1</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OptimizationType"
+            type="yfctype:EnumOptimizationType" use="optional">
+            <xsd:annotation yfc:columnName="OPTIMIZATION_TYPE" yfc:tableName="YFS_ALLOCATION_RULE">
+                <xsd:documentation>
+                    <div>
+				This value determines the optimization rules to be applied to the scheduling process.
+				<br/>Default: <b>
+                            <code>01</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Inventory is being checked on behalf of the organization specified by <code>OrganizationCode</code>.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ReqStartDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Start Date from which to look inventory
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SCAC" type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Carrier to be used
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ScacAndServiceKey" type="yfctype:Key" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Scac And Service Key
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SourcingClassification"
+            type="yfctype:Text-40" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>This attribute will be used to determine node for sourcing.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Store" type="yfctype:ShipNode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+			Current store where the availabilities were optained.
+			</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="FulfillmentTypes">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Fulfillment types for each sourcing setup.  
+			</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ExpeditedTransferPickupFulfillmentType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Fulfillment type for sourcing rule that handles expedited transfer pickup.  It is expected that sourcing rules for this fulfillment type will be set up with "Receiving node" as the store or alternate node.  Expedited procurement is tried only for items that can be shipped through parcel service.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipToHomeFulfillmentType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Fulfillment type for sourcing rule that handles ship to home options.  This will only be used if ShipToAddress is passed.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SpecialOrderFulfillmentType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Fulfillment type for sourcing rule that handles special order vendor.  It is expected that sourcing rules for this fulfillment type will be set up with "Receiving node" as the store or alternate node.  Node's attributes, CanShipToStore and CanShipToDC, will be used to control whether the special order vendor can ship to the store/DC.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StdTransferPickupFulfillmentType"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Fulfillment type for sourcing rule that handles standard transfer pickup.  It is expected that sourcing rules for this fulfillment type will be set up with "Receiving node" as the store or alternate node.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromiseLines">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:PromiseLine"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PromiseLine">
+        <xsd:annotation yfc:tableName="YFS_ORDER_LINE">
+            <xsd:documentation>This table stores order line information, including item details and shipping information. Multiple lines can be created for a single order defined in the YFS_ORDER_HEADER table.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Tag">
+                    <xsd:annotation yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                        <xsd:documentation>This table stores the requested inventory attributes of an item on a order line .</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="BatchNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>The Batch Number that has been specifed in the Order Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute1"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>Lot Attribute 1 used to specify the details of the lot.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute2"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>Lot Attribute 2 used to specify the details of the lot.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute3"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>Lot Attribute 3 used to specify the details of the lot.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotKeyReference"
+                            type="yfctype:Text-4000" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>The Lot key reference that has been specifed in the Order Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotNumber"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>The Lot Number that has been specifed in the Order Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ManufacturingDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>The Lot manufacturing date that has been specifed in the Order Line.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Date"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="RevisionNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_ORDER_LINE_REQ_TAG">
+                                <xsd:documentation>The Revision Number that has been specifed in the Order Line.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AlternateNodes"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="ShipToAddress">
+                    <xsd:annotation yfc:tableName="YFS_PERSON_INFO">
+                        <xsd:documentation>This table stores relevant personal information and addresses. Addresses are typically organization address, ship node address, customer address, and so forth. Personal information is required in cases where person to person contact needs to be established; for example, taking appointments or speaking during negotiations. The key of this table is posted in various tables to allow access to people and address information.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="City" type="yfctype:City" use="optional">
+                            <xsd:annotation yfc:columnName="CITY" yfc:tableName="YFS_PERSON_INFO">
+                                <xsd:documentation>The city in the address.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Country"
+                            type="yfctype:Country" use="optional">
+                            <xsd:annotation yfc:columnName="COUNTRY" yfc:tableName="YFS_PERSON_INFO">
+                                <xsd:documentation>The country in the address.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="State" type="yfctype:State" use="optional">
+                            <xsd:annotation yfc:columnName="STATE" yfc:tableName="YFS_PERSON_INFO">
+                                <xsd:documentation>The state in the address.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ZipCode"
+                            type="yfctype:ZipCode" use="optional">
+                            <xsd:annotation yfc:columnName="ZIP_CODE" yfc:tableName="YFS_PERSON_INFO">
+                                <xsd:documentation>The zip code in the address.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CurrentStorePickup"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:AlternateNodePickups"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:ShipToHome"/>
+            </xsd:all>
+            <xsd:attribute name="AutoReplacedByPreferredSubstitute"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Flag to indicates whether inventory is replaced with the Preferred Substitute. 
+				<br/>Valid Values: <b>
+                                <code>Y</code>
+                            </b> or <b>
+                                <code>N</code>
+                            </b>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="BundleFulfillmentMode" use="optional">
+                <xsd:annotation yfc:columnName="BUNDLE_FULFILLMENT_MODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The way in which the bundle will be fulfilled. It can be Ship Independent (00), Ship Together (01), or Deliver Together (02) for Bundle Item. Default value is based on the catalog. If the item is not in the catalog, then Ship Together(01) is defaulted for Bundle Item.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Text-2">
+                        <xsd:enumeration value=""/>
+                        <xsd:enumeration value="01"/>
+                        <xsd:enumeration value="02"/>
+                        <xsd:enumeration value="03"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="CarrierServiceCode"
+                type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="CARRIER_SERVICE_CODE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The carrier service code for this order line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ConsiderCurrentStoreInventory"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Indicates whether to consider the availability of the current store inventory or not. 
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ConsiderSpecialOrderOnly"
+                type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Indicates whether to only consider the availability from special order vendors.  This will exclude the availabilities from in stock inventory, standard transfer pickup, and expedited transfer pickup.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FillQuantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation yfc:columnName="FILL_QUANTITY" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The minimum order line quantity that must be fulfilled in an order release before it is shipped.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="IsBundleParent" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Flag to indicate if the promise line is a bundle parent.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The identifier for the item. The ITEM_ID, UOM, and PRODUCT_CLASS form the unique inventory identifier for an order line. The ITEM_ID, UOM and ORGANIZATION_CODE form the unique item identifier for the Product Management module.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LevelOfService"
+                type="yfctype:LevelOfService" use="optional">
+                <xsd:annotation yfc:columnName="LEVEL_OF_SERVICE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>Indicates the level of service required for this order line.  Default is Null.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LineId" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			Unique identifier for the line. 
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="MinShipByDate" use="optional">
+                <xsd:annotation yfc:columnName="MIN_SHIP_BY_DATE" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>
+                        <div>
+            The preferred minimum ship by date of the available supply that promise line can promise against.  Available supply with ship by date earlier than the minimum ship by date will not be considered.
+            <br/>Default: None
+            </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="NewItemID" type="yfctype:Text-40" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			The ItemId of the substitute that is used in place of the original item.
+            </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The product class. This field is used as an inventory identifier.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ReqStartDate" type="yfctype:String" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			Look for inventory from the <code>ReqStartDate</code>.
+			<br/>Default: Current date
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequiredQty" type="yfctype:Quantity" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			Required Quantity.
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SCAC" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="SCAC" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The carrier to be used for this line.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ScacAndServiceKey" type="yfctype:Key" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			Scac And Service Key
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_ORDER_LINE">
+                    <xsd:documentation>The unit of measure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AlternateNodes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AlternateNode"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AlternateNode">
+        <xsd:complexType>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+			Alternate node where the availabilities were optained.
+			</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CurrentStorePickup">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Contains pickup options for current store.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Pickup">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <div>
+				Details on the availability of the inventory for pickup option.
+				</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Backordered" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that item is currently backordered but will be available for pickup. 
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Expedited" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that the item(s) will be expedited transferred from the <code>ProcureFromNode</code>.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PickupDate"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Pickup Date.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ProcureFromNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Node where the item can be procure from.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Quantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Quantity that can be pickup.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SpecialOrder" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that the item(s) will be special ordered from the <code>ProcureFromNode</code>.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="BackorderedQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Backordered quantity for pickup.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastPickupDate" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Last pickup date of all the pickup options.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Current store where the availabilities for pickup were obtained.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeType" type="yfctype:NodeType" use="optional">
+                <xsd:annotation yfc:columnName="NODE_TYPE" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>
+                        <div>
+				Type of Node.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnavailableQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Unavailable quantity for pickup.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AlternateNodePickups">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AlternateNodePickup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AlternateNodePickup">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Contains pickup options for alternate node.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" name="Pickup">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <div>
+				Details on the availability of the inventory for pickup option.
+				</div>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Backordered" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that item is currently backordered but will be available for pickup. 
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Expedited" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that the item(s) will be expedited transferred from the <code>ProcureFromNode</code>.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PickupDate"
+                            type="yfctype:TimeStamp" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Pickup Date.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ProcureFromNode"
+                            type="yfctype:ShipNode" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Node where the item can be procure from.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Quantity"
+                            type="yfctype:Quantity" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Quantity that can be pickup.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="SpecialOrder" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <div>
+					Indicates that the item(s) will be special ordered from the <code>ProcureFromNode</code>.
+					</div>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:restriction base="yfctype:Flag">
+                                    <xsd:enumeration value="Y"/>
+                                    <xsd:enumeration value="N"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="BackorderedQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Backordered quantity for pickup.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastPickupDate" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Last pickup date of all the pickup options.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:TimeStamp"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Alternate node where the availabilities for pickup were obtained.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="NodeType" type="yfctype:NodeType" use="optional">
+                <xsd:annotation yfc:columnName="NODE_TYPE" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>
+                        <div>
+				Type of Node.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnavailableQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Unavailable quantity for pickup.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ShipToHome">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+				Ship to home option according to the ShipToAddress.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Assignments"/>
+            </xsd:all>
+            <xsd:attribute name="BackorderedQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Backordered Quantity for ship to home option.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnavailableQty" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+				Unavailable Quantity for ship to home option.
+				</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Assignments">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Assignment"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Assignment">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+					Assignment node gives details on the availability of the inventory.
+					</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="Backordered" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Indicates that the assignment is backordered.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DeliveryDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Delivery Date of the assignment
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Node where the availability picture was taken from.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Quantity" type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Quantity that can be obtained for this assignemnt.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Shipment Date
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SpecialOrder" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					Indicates that the assignment is for special order.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventorySupplies">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Items"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Items">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Item"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Item">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_ITEM">
+            <xsd:documentation>This table stores definitions for all inventory items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Nodes"/>
+            </xsd:all>
+            <xsd:attribute name="ItemID" type="yfctype:ItemID" use="optional">
+                <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrganizationCode"
+                type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProductClass"
+                type="yfctype:ProductClass" use="optional">
+                <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+                <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                    <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Nodes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Node"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Node">
+        <xsd:annotation yfc:tableName="YFS_SHIP_NODE">
+            <xsd:documentation>This table stores receiving node, ship node, and distribution centers in the system for various organizations.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Supplies"/>
+            </xsd:all>
+            <xsd:attribute name="Node" type="yfctype:ShipNode" use="optional">
+                <xsd:annotation yfc:columnName="SHIP_NODE" yfc:tableName="YFS_SHIP_NODE">
+                    <xsd:documentation>The unique identifier for the ship node.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Supplies">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Supply"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Supply">
+        <xsd:annotation yfc:tableName="YFS_INVENTORY_SUPPLY">
+            <xsd:documentation>This table stores all inventory supply information.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Tag">
+                    <xsd:annotation yfc:tableName="YFS_INVENTORY_TAG">
+                        <xsd:documentation>This table stores tag information for inventory.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="BatchNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="BATCH_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Batch Number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute1"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE1" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute2"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE2" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotAttribute3"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_ATTRIBUTE3" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Any other lot attribute.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotKeyReference"
+                            type="yfctype:Text-4000" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_KEY_REFERENCE" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Stores reference information of the lot number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="LotNumber"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="LOT_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Lot Number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="ManufacturingDate" use="optional">
+                            <xsd:annotation
+                                yfc:columnName="LOT_MANUFACTURE_DATE" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Lot Manufacturing Date.</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:simpleType>
+                                <xsd:union>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="yfctype:Date"/>
+                                    </xsd:simpleType>
+                                    <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value=""/>
+                                    </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:union>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="RevisionNo"
+                            type="yfctype:Text-40" use="optional">
+                            <xsd:annotation yfc:columnName="REVISION_NO" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Revision Number.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="TagNumber"
+                            type="yfctype:TagNumber" use="optional">
+                            <xsd:annotation yfc:columnName="TAG_NUMBER" yfc:tableName="YFS_INVENTORY_TAG">
+                                <xsd:documentation>Unique identifier.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="AvailableQuantity"
+                type="yfctype:Quantity" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Available quantity. If the ship node does not track inventory, then the <code>AvailableQuantity</code> is returned as <b>0</b>.
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="FirstShipDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									First date that item(s) can be shipped.
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="LastShipDate" type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Last date that item(s) can be shipped.
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Track" type="yfctype:Flag" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+									Indicates wether the inventory is tracked or not. If inventory is not tracked, the flag is returned as <b>N</b> and <code>AvailableQuantity</code> is returned as <b>0</b>.
+									</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

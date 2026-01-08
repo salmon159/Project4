@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YPM/managePricelistHeader/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YPM/managePricelistHeader/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YPM_managePricelistHeader_input.xsd" yfc:rootElement="PricelistHeader">
+        <xsd:appinfo source="yfc:structure">
+            <PricelistHeader hasAttributes="Y">
+                <InheritFromPricelistHeader hasAttributes="Y"/>
+                <PricelistOrderAttributeList>
+                    <PricelistOrderAttribute hasAttributes="Y"/>
+                </PricelistOrderAttributeList>
+            </PricelistHeader>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="PricelistHeader" type="yfc:PricelistHeaderXSDType">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_HDR">
+            <xsd:documentation>
+                <div>
+					Specify the price list information to be created, modified or deleted.  <code>PricelistHeaderKey</code> or a combination of <code>OrganizationCode</code> and <code>PricelistName</code> can be specified to identify a price list.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="PricelistHeaderXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:InheritFromPricelistHeader"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:PricelistOrderAttributeList"/>
+        </xsd:all>
+        <xsd:attribute name="AbsoluteAdjustmentOverride" use="optional">
+            <xsd:annotation
+                yfc:columnName="ABSOLUTE_ADJUSTMENT_OVERRIDE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Absolute override valid only for a child price list. This adjustment is applied over the unit price obtained from the parent price list.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:Price"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="AddAllItemsFromCatalog" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> If set to <code>Y</code>, all the items from the product catalog based on the selling entitlements assigned will be added to the organization in which this price list belongs.
+                    The <code>ListPrice</code> defaults to zero for all new price list lines.
+                    <br/>Valid Values: <code>Y</code>,<code>N</code>, NULL
+						<Validation>
+                            <Condition>Price list already has price list lines.</Condition>
+                            <Error
+                                Description="Cannot add price list lines, as the price list already has price list lines." ErrorCode="YPM10003"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>This price list is child or inherited from another price list.</Condition>
+                            <Error
+                                Description="Child price list cannot have price list lines." ErrorCode="YPM10011"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Currency" type="yfctype:Currency" use="optional">
+            <xsd:annotation yfc:columnName="CURRENCY" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>Prices in this price list are applicable to only this currency. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>Currency</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Currency</code> is not valid.
+							</Condition>
+                            <Error Description="YFS: Invalid currency." ErrorCode="YFS10325"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Currency</code> is modified to void.
+							</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>Currency</code> is modified on a child price list.
+							</Condition>
+                            <Error
+                                Description="Currency cannot be modified on a child price list." ErrorCode="YPM10010"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Description" type="yfctype:Text-240" use="optional">
+            <xsd:annotation yfc:columnName="DESCRIPTION" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Description of the price list.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="EndDateActive" use="optional">
+            <xsd:annotation yfc:columnName="END_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>After this date the price list is not active. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>EndDateActive</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>EndDateActive</code> is modified to void.
+							</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="InheritFromPricelistHeaderKey"
+            type="yfctype:Key" use="optional">
+            <xsd:annotation
+                yfc:columnName="INHERIT_FROM_PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>The pricelist header key of the price list from which this price list inherits its prices from.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="MarkedForListPrice" type="yfctype:Flag" use="optional">
+            <xsd:annotation yfc:columnName="MARKED_FOR_LIST_PRICE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Indicates this price list is marked for listing prices. Applicable only for master price list.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Action" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div> Operation to perform
+						<br/>Valid Values: 
+						<br/>
+                        <b>
+                            <code>Manage</code>
+                        </b> - Creates a new record if it does not exist, or modifies an existing record if it does.
+						<br/>
+                        <b>
+                            <code>Create</code>
+                        </b> - Creates a new record. 
+						<br/>
+                        <b>
+                            <code>Modify</code>
+                        </b> - Change values in an existing record.
+						<br/>
+                        <b>
+                            <code>Delete</code>
+                        </b> - Deletes an existing record.
+						<br/>The default behavior is <b>
+                            <code>Manage</code>
+                        </b>.
+					</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>Pricing organization to with this price list belongs. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b>.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid.
+							</Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PercentAdjustmentOverride" use="optional">
+            <xsd:annotation yfc:columnName="PERCENT_ADJUSTMENT_OVERRIDE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Percentage override valid only for a child price list. This adjustment is applied over the unit price obtained from the parent price list.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:PercentAdjustment"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="PricelistHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="PRICELIST_HDR_KEY" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>Primary key attribute of YPM_PRICELIST_HDR table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricelistName" type="yfctype:PricelistName" use="optional">
+            <xsd:annotation yfc:columnName="PRICELIST_NAME" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>Name of the price list. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>PricelistName</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>PricelistName</code> is modified to void.
+							</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="PricingStatus" type="yfctype:PricingStatus" use="optional">
+            <xsd:annotation yfc:columnName="PRICING_STATUS" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>Indicates the status of the price list. It is defaulted to <b>
+                            <code>INACTIVE</code>
+                        </b> when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not passed in the input.
+						<Validation>
+                            <Condition>
+                                <code>PricingStatus</code> is passed and not a valid value.
+							</Condition>
+                            <Error Description="Invalid PricingStatus." ErrorCode="YPM10012"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="RefreshCache" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>Attribute can be used to control whether the cache is updated or not.  If the value <code>N</code> the cache will not be refreshed.  The default value is <code>Y</code>.
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="yfctype:Flag">
+                    <xsd:enumeration value=""/>
+                    <xsd:enumeration value="Y"/>
+                    <xsd:enumeration value="N"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="SellerOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="SELLER_ORGANIZATION_CODE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>This field denotes which Seller organization maintains this price list. By default SellerOrganizationCode is defaulted to the pricing organization.
+						<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is not valid.
+							</Condition>
+                            <Error
+                                Description="YFS:Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>SellerOrganizationCode</code> is not seller organization.
+							</Condition>
+                            <Error
+                                Description="YFS:Invalid seller organization code." ErrorCode="YPM10100"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="StartDateActive" use="optional">
+            <xsd:annotation yfc:columnName="START_DATE_ACTIVE" yfc:tableName="YPM_PRICELIST_HDR">
+                <xsd:documentation>
+                    <div>Date from which the price list is active. Mandatory when <code>Operation</code> is <b>
+                            <code>Create</code>
+                        </b> and not otherwise.
+						<Validation>
+                            <Condition>
+                                <code>StartDateActive</code> must be passed when <code>Operation</code> is <b>
+                                    <code>Create</code>
+                                </b>.
+							</Condition>
+                            <Error
+                                Description="Mandatory Parameters for the Operation are missing." ErrorCode="YPM10000"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>StartDateActive</code> is modified to void.
+							</Condition>
+                            <Error
+                                Description="The attribute cannot be void." ErrorCode="YPM10002"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>StartDateActive</code> is on or after <code>EndDateActive</code>.
+							</Condition>
+                            <Error
+                                Description="StartDateActive cannot be on or after EndDateActive." ErrorCode="YPM10013"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="InheritFromPricelistHeader">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_HDR">
+            <xsd:documentation>
+                <div>The master price list from which this price list inherits it's prices. A master price list is one that defines the prices of items rather than inheriting item prices from a different price list.
+						<Validation>
+                        <Condition>If the specified master price list is already inherited from another price list. Only one level of inheritance is supported.
+							</Condition>
+                        <Error
+                            Description="Cannot inherit from a child price list." ErrorCode="YPM10009"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>The master price list is in a different currency of that of child.
+							</Condition>
+                        <Error
+                            Description="Child and inherit from price list cannot have different currency." ErrorCode="YPM10008"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="PricelistName"
+                type="yfctype:PricelistName" use="optional">
+                <xsd:annotation yfc:columnName="PRICELIST_NAME" yfc:tableName="YPM_PRICELIST_HDR">
+                    <xsd:documentation>Name of the price list.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistOrderAttributeList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:PricelistOrderAttribute"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="PricelistOrderAttribute">
+        <xsd:annotation yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+            <xsd:documentation>
+                <div>
+							This table maintains information about the order attribute filters on which the pricelist selection are defined.
+							<Validation>
+                        <Condition>There is no attribute for passed <code>OrderAttributeKey</code>, <code>OrderAttributeID</code>, <code>OrderAttributeGroupID</code> or <code>OrderAttributeDomainID</code>.
+								</Condition>
+                        <Error Description="Missing required attribute." ErrorCode="YFS10364"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>There is no attribute corresponding to the <code>OrderAttributeKey</code> or <code>OrderAttributeID</code>.
+								</Condition>
+                        <Error Description="No record found." ErrorCode="YFS10001"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>None of <code>OrderAttributeTextValue</code> or <code>OrderAttributeNumberValue</code> or <code>OrderAttributeMinValue</code> or <code>OrderAttributeMaxValue</code> or <code>OrderAttributeBooleanValue</code> are passed, or only one of <code>OrderAttributeMinValue</code> or <code>OrderAttributeMaxValue</code> are passed. 
+								</Condition>
+                        <Error Description="Invalid condition." ErrorCode="YCP0238"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Only one of <code>OrderAttributeTextValue</code> or <code>OrderAttributeNumberValue</code> or <code>OrderAttributeBooleanValue</code> or <code>OrderAttributeMinValue</code> and <code>OrderAttributeMaxValue</code> may be passed.
+								</Condition>
+                        <Error Description="Invalid condition." ErrorCode="YCP0238"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AttributeKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_KEY" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Primary key for the YFS_ATTRIBUTE table.</div>
+                        <div> If this is passed, <code>OrderAttributeDomain</code>, <code>OrderAttributeGroup</code>, and <code>OrderAttributeID</code> values are ignored.
+								<Validation>
+                                <Condition> Either <code>AttributeKey</code> or <code>OrderAttributeDomainID</code>, <code>OrderAttributeGroupID</code>, and <code>OrderAttributeID</code> must be passed.
+									</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="GroupId" type="yfctype:Integer" use="required">
+                <xsd:annotation yfc:columnName="GROUP_ID" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Indicates all the filter order attributes with same group Id will correspond to one "AND" condition.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeBooleanValue" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_BOOLEAN_VALUE" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Boolean value that the order attribute must have to meet this condition.
+								<Validation>
+                                <Condition>
+                                    <code>OrderAttributeBooleanValue</code> is set, but OrderAttributeID corresponds to an attribute of non-boolean datatype, or it is set to something besides "Y" or "N".
+									</Condition>
+                                <Error
+                                    Description="Invalid alteration of datatype" ErrorCode="YPM10207"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrderAttributeBooleanValue</code> is not set, but OrderAttributeID corresponds to an attribute of boolean datatype.
+										</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="yfctype:Flag">
+                        <xsd:enumeration value=""/>
+                        <xsd:enumeration value="Y"/>
+                        <xsd:enumeration value="N"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeDomainID"
+                type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_DOMAIN_ID" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Domain the order attribute belongs to.
+								<Validation>
+                                <Condition> Neither <code>AttributeKey</code> nor <code>OrderAttributeDomainID</code> are passed.
+									</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeGroupID"
+                type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_GROUP_ID" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Attribute group attribute belongs to.
+								<Validation>
+                                <Condition> Neither <code>AttributeKey</code> nor <code>OrderAttributeGroupID</code> are passed.
+									</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeID" type="yfctype:ID-40" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_ID" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Identifier for the attribute to be used in the filter condition.
+								<Validation>
+                                <Condition> Neither <code>AttributeKey</code> nor <code>OrderAttributeID</code> are passed.
+									</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeMaxValue" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_MAX_VALUE" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Values must be less than this value to satisfy this filter condition.
+								<Validation>
+                                <Condition>
+                                    <code>OrderAttributeMaxValue</code> is set, but OrderAttributeID corresponds to an attribute of non-numeric datatype.
+									</Condition>
+                                <Error
+                                    Description="Invalid alteration of datatype" ErrorCode="YPM10207"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrderAttributeDecimal</code>, <code>OrderAttributeMaxValue</code>, and <code>OrderAttributeMinValue</code> are not set, but OrderAttributeID corresponds to an attribute of number datatype.
+										</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:QuantityPositiveAndNegative"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeMinValue" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_MIN_VALUE" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> The minimum value that will satisfy this filter condition, inclusive.
+								<Validation>
+                                <Condition>
+                                    <code>OrderAttributeMinValue</code> is set, but OrderAttributeID corresponds to an attribute of non-numeric datatype.
+								</Condition>
+                                <Error
+                                    Description="Invalid alteration of datatype" ErrorCode="YPM10207"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrderAttributeDecimal</code>, <code>OrderAttributeMaxValue</code>, and <code>OrderAttributeMinValue</code> are not set, but OrderAttributeID corresponds to an attribute of number datatype.
+										</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:QuantityPositiveAndNegative"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeNumberValue" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_NUMBER_VALUE" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Decimal value that the order attribute must have to meet this condition.
+								<Validation>
+                                <Condition>
+                                    <code>OrderAttributeNumberValue</code> is set, but OrderAttributeID corresponds to an attribute of non-numeric datatype.
+									</Condition>
+                                <Error
+                                    Description="Invalid alteration of datatype" ErrorCode="YPM10207"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrderAttributeNumberValue</code>, <code>OrderAttributeMaxValue</code>, and <code>OrderAttributeMinValue</code> are not set, but OrderAttributeID corresponds to an attribute of number datatype.
+										</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:union>
+                        <xsd:simpleType>
+                            <xsd:restriction base="yfctype:QuantityPositiveAndNegative"/>
+                        </xsd:simpleType>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:union>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="OrderAttributeTextValue"
+                type="yfctype:Text-200" use="optional">
+                <xsd:annotation yfc:columnName="ATTRIBUTE_TEXT_VALUE" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Text condition for attribute filter.
+								<Validation>
+                                <Condition>
+                                    <code>OrderAttributeTextValue</code> is set, but OrderAttributeID corresponds to an attribute of non-text datatype.
+									</Condition>
+                                <Error
+                                    Description="Invalid alteration of datatype" ErrorCode="YPM10207"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+                                    <code>OrderAttributeTextValue</code> is not set, but OrderAttributeID corresponds to an attribute of text datatype.
+									</Condition>
+                                <Error
+                                    Description="Missing mandatory parameter" ErrorCode="YFS10364"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PricelistOrderAttributeKey"
+                type="yfctype:Key" use="optional">
+                <xsd:annotation
+                    yfc:columnName="PRICELIST_ORDER_ATTR_KEY" yfc:tableName="YPM_PRICELIST_ORDER_ATTR">
+                    <xsd:documentation>
+                        <div> Primary key for the YPM_PRICELIST_ORDER_ATTR table.
+							</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

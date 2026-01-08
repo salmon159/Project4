@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/getShipNodeInventory/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/getShipNodeInventory/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_getShipNodeInventory_input.xsd" yfc:rootElement="getShipNodeInventory">
+        <xsd:appinfo source="yfc:structure">
+            <getShipNodeInventory hasAttributes="Y"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="getShipNodeInventory" type="yfc:getShipNodeInventoryXSDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <div>
+			Criteria to be used to report on inventory for a Ship Node.
+			<Validation>
+                        <Condition>One or more of these were not passed: <code>ItemId</code>, <code>ProductClass</code> and <code>UnitofMeasure</code>.
+				</Condition>
+                        <Error Description="Blank Item ID" ErrorCode="YFS10047"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="getShipNodeInventoryXSDType">
+        <xsd:attribute name="ConsiderAllNodes" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates whether all nodes are to be considered in the inventory reporting.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                        <br/>Default:<b>
+                            <code>N</code>
+                        </b>
+                        <br/>If the <code>ConsiderAllNodes</code> value is <b>
+                            <code>Y</code>
+                        </b>:
+				<br/>- The availability check is done without applying any distribution rule filter.
+				<br/>- No particular <code>DistributionRule</code> is used and all supplies and demand for the item are considered, including unassigned demands.
+				<br/>- No <code>DistributionRule</code> is used to match supplies and demands for availability calculations.
+				<br/>- <code>DistributionRuleId</code> is ignored.
+				<br/>
+                        <br/>If the <code>ConsiderAllNodes</code> value is <b>
+                            <code>N</code>
+                        </b>, then either the <code>DistributionRuleId</code> passed or the calling organization's default <code>DistributionRuleId</code> is used for availability calculations.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ConsiderAllSegments" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Indicates whether all segments are to be considered in the availability checking.
+				<br/>Valid Values: <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+				 Default:<b>
+                            <code>N</code>
+                        </b>
+                        <br/>If the <code>ConsiderAllSegments</code> value is <b>
+                            <code>Y</code>
+                        </b>, then all matching inventories, regardless of <code>Segment</code> and <code>SegmentType</code>, are considered. The <code>Segment</code> and <code>SegmentType</code> are ignored even if provided, when the <code>ConsiderAllSegments</code> value is <b>
+                            <code>Y</code>
+                        </b>.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DistributionRuleId"
+            type="yfctype:DistributionRuleId" use="optional">
+            <xsd:annotation yfc:columnName="DISTRIBUTION_RULE_ID" yfc:tableName="YFS_ITEM_SHIP_NODE">
+                <xsd:documentation>
+                    <div>
+				If <code>DistributionRuleId</code> is passed then supplies and demands are read, and the distribution rule filter is applied. If not passed, the default <code>DistributionRuleId</code> for the organization identified by the passed
+				<code>OrganizationCode</code> is used.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemID" type="yfctype:ItemID" use="required">
+            <xsd:annotation yfc:columnName="ITEM_ID" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The identifer for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ItemOrganizationCode"
+            type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The code of the organization associated with this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Ship node from which to get the inventory. If the passed Node is not setup in the passed organization's,distribution rule, <code>ConsiderAllNodes</code> must be passed as <b>
+                            <code>Y</code>
+                        </b>.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Inventory rules are read for this organization's inventory consolidator.
+				<Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> not passed.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>OrganizationCode</code> is invalid.
+					</Condition>
+                            <Error
+                                Description="Invalid organization code." ErrorCode="YFS10395"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProductClass" type="yfctype:ProductClass" use="optional">
+            <xsd:annotation yfc:columnName="PRODUCT_CLASS" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The product class for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Segment" type="yfctype:CommonCode" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Segment of inventories to be considered.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="SegmentType" type="yfctype:SegmentType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Segment Type of inventories to be considered.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipDate" type="yfctype:Date" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				If <code>ShipDate</code> is passed, all supplies and demands from current date to the <code>ShipDate</code> are returned. If no  <code>ShipDate</code> is passed, the value is defaulted to the ATP <code>EndDate</code>.
+				<Validation>
+                            <Condition>Date passed is not valid
+					</Condition>
+                            <Error Description="Invalid Date Format." ErrorCode="YFC0004"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="UnitOfMeasure" type="yfctype:UOM" use="optional">
+            <xsd:annotation yfc:columnName="UOM" yfc:tableName="YFS_INVENTORY_ITEM">
+                <xsd:documentation>The unit of measure for this inventory item.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

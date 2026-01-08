@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/MasterAnswerSetTranInput"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/MasterAnswerSetTranInput" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="MasterAnswerSetTranInput.xsd" yfc:rootElement="AnswerSets">
+        <xsd:appinfo source="yfc:structure">
+            <AnswerSets>
+                <AnswerSet hasAttributes="Y">
+                    <Answers>
+                        <Answer hasAttributes="Y"/>
+                    </Answers>
+                </AnswerSet>
+            </AnswerSets>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="AnswerSets" type="yfc:AnswerSetsXSDType"/>
+    <xsd:complexType name="AnswerSetsXSDType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:AnswerSet"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="AnswerSet">
+        <xsd:annotation yfc:tableName="YFS_ANSWER_SET_TRAN">
+            <xsd:documentation>Stores the relationship between a set of answers and the entities which provided these answers.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Answers"/>
+            </xsd:all>
+            <xsd:attribute name="PersonInfoKey" type="yfctype:Key" use="optional">
+                <xsd:annotation yfc:columnName="PERSON_INFO_KEY" yfc:tableName="YFS_PERSON_INFO">
+                    <xsd:documentation>The person info record to store this answer set for.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuestionType" type="yfctype:Text-20" use="required">
+                <xsd:annotation yfc:columnName="QUESTION_TYPE" yfc:tableName="YFS_QUESTION">
+                    <xsd:documentation>
+                        <div>The question type associated to the defined answer set. 
+						<Validation>
+                                <Condition>
+                                    <code>QuestionType</code> not passed.
+								</Condition>
+                                <Error
+                                    Description="Mandatory attributes for answer set are missing." ErrorCode="YCP73_00005"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Invalid <code>QuestionType</code>.
+								</Condition>
+                                <Error
+                                    Description="Invalid Question Attribute." ErrorCode="YCP73_00006"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Answers">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="yfc:Answer"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Answer">
+        <xsd:annotation yfc:tableName="YFS_ANSWER_TRAN">
+            <xsd:documentation>Stores each answer for an answer set.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AnswerValue" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="ANSWER_VALUE" yfc:tableName="YFS_ANSWER_TRAN">
+                    <xsd:documentation>
+                        <div>The answer for the question.
+								<Validation>
+                                <Condition>
+                                    <code>AnswerValue</code> passed should be a valid answer for the question it belongs to.</Condition>
+                                <Error
+                                    Description="Answer is not one of the valid pre-defined answer options." ErrorCode="YCP73_00007"/>
+                                <Error
+                                    Description="Answer for this question should be an integer number." ErrorCode="YCP73_00020"/>
+                                <Error
+                                    Description="Answer for this question should be a decimal number." ErrorCode="YCP73_00021"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="QuestionID" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="QUESTION_ID" yfc:tableName="YFS_ANSWER_TRAN">
+                    <xsd:documentation>
+                        <div>Identifier for the question that this answer is for.
+								<Validation>
+                                <Condition>
+                                    <code>QuestionID</code> should be valid.</Condition>
+                                <Error
+                                    Description="Invalid Question Attribute." ErrorCode="YCP73_00006"/>
+                                <Error
+                                    Description="Question should only be answered when parent answer option is selected." ErrorCode="YCP73_00009"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/WMS/beforeManageDockAppointmentUE/output"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/WMS/beforeManageDockAppointmentUE/output" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation
+        yfc:fileName="WMS_beforeManageDockAppointmentUE_output.xsd" yfc:rootElement="DockAppointment">
+        <xsd:appinfo source="yfc:structure">
+            <DockAppointment hasAttributes="Y">
+                <Order hasAttributes="Y"/>
+                <Shipment hasAttributes="Y"/>
+                <Load hasAttributes="Y"/>
+                <CapacityConsumption hasAttributes="Y"/>
+            </DockAppointment>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="DockAppointment" type="yfc:DockAppointmentXSDType">
+        <xsd:annotation yfc:tableName="YFS_DOCK_APPOINTMENT">
+            <xsd:documentation>
+                <div>
+				All appointments taken for dock location(s) are stored in this table. The appointment type can be either INBOUND or OUTBOUND. The table can also store the reference to the shipment, load, carrier etc. for which appointment is taken.
+				<Validation>
+                        <Condition>If the <code>Operation</code> is <code>Modify</code> or <code>Delete</code> either <code>DockAppointmentKey</code> or <code>ResPoolConsmptnDtlsKey</code> to be passed.
+				</Condition>
+                        <Error
+                            Description="Mandatory Parameter(s) not passed." ErrorCode="WMS00063"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>For creating dock appointment, the <code>ConsumptionDate</code> should be prior to the maximum number of days in the future as configured in the Dock Scheduling Rule.
+				</Condition>
+                        <Error
+                            Description="A dock appointment cannot be taken beyond the maximum number of days in the future, as configured in the Dock Scheduling Rule." ErrorCode="WMS00278"/>
+                    </Validation>
+                    <Validation>
+                        <Condition>Must be a valid <code>Carrier</code>.
+				</Condition>
+                        <Error
+                            Description="SCAC does not exist in the system." ErrorCode="YDM00087"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="DockAppointmentXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Order"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Shipment"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:Load"/>
+            <xsd:element maxOccurs="1" minOccurs="0" ref="yfc:CapacityConsumption"/>
+        </xsd:all>
+        <xsd:attribute name="AppointmentType" type="yfctype:Text-10" use="optional">
+            <xsd:annotation yfc:columnName="APPOINTMENT_TYPE" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>This field indicates the appointment type of the appointment being taken. It can either be OUTBOUND or INBOUND.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="BolNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="BOL_NO" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The bill of lading number .</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Carrier" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="CARRIER" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The carrier service code associated with the dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="DockAppointmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="DOCK_APPOINTMENT_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The primary key for the YFS_DOCK_APPOINTMENT table.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LoadKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="LOAD_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The load key of the load associated with this dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="LocationId" type="yfctype:String" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Specifies the Dock location for which appointment is taken.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Node" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="NODE_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The node key that is associated with this appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Notes" type="yfctype:Text-256" use="optional">
+            <xsd:annotation yfc:columnName="NOTES" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The notes associated with the dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Operation" type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>This flag indicates whether to create, modify or delete operation to perform.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrderHeaderKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="ORDER_HEADER_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The order header key of the order associated with this dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="OrganizationCode" type="yfctype:OrgCode" use="optional">
+            <xsd:annotation yfc:columnName="ORGANIZATION_CODE" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>Organization code of the user creating the appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ProNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="PRO_NO" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The progressive number. It is generated for Loads with shipment mode as LTL, also if shipment mode changes from any other mode to LTL. Re-generation of PRO number happens, when the Carrier changes.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ResPoolConsmptnDtlsKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="RES_POOL_CONSMPTN_DTLS_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The primary key for the YFS_RES_POOL_CONSMPTN_DTLS_KEY table which is associated to this dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentKey" type="yfctype:Key" use="optional">
+            <xsd:annotation yfc:columnName="SHIPMENT_KEY" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The shipment key of the shipment associated with this dock appointment.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="TrailerNo" type="yfctype:DocumentNo" use="optional">
+            <xsd:annotation yfc:columnName="TRAILER_NO" yfc:tableName="YFS_DOCK_APPOINTMENT">
+                <xsd:documentation>The trailer number by which the shipment/load leaves the ship node.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Order">
+        <xsd:annotation yfc:tableName="YFS_ORDER_HEADER">
+            <xsd:documentation>
+                <div>
+				Identifies the Order for which dock appointment is taken.
+				<Validation>
+                        <Condition>Must be a valid <Code>Order</Code>.
+                </Condition>
+                        <Error Description="YFS:Invalid Order." ErrorCode="YFS10003"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="DocumentType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="DOCUMENT_TYPE" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The document type that is associated with this order. For example, Sales Order document (0001), Planned Order document (0002), Return Order document (0003) , and Purchase Order document (0005). This field determines the order's fulfillment cycle and controls the inventory and payment updates performed on the order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EnterpriseCode" type="yfctype:OrgCode" use="optional">
+                <xsd:annotation yfc:columnName="ENTERPRISE_KEY" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The enterprise that is associated with this order.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="OrderNo"
+                type="yfctype:VarcharDocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="ORDER_NO" yfc:tableName="YFS_ORDER_HEADER">
+                    <xsd:documentation>The number of the order, which can be passed during order creation or generated based on a system rule setting.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Shipment">
+        <xsd:annotation yfc:tableName="YFS_SHIPMENT">
+            <xsd:documentation>
+                <div>
+				Identifies the Shipment for which dock appointment is taken.
+				<Validation>
+                        <Condition>
+                            <Code>ShipmentKey</Code> attribute OR the <Code>ShipmentNo</Code> attribute must be valid.
+                </Condition>
+                        <Error
+                            Description="ShipmentKey or ShipmentNo points to an invalid shipment." ErrorCode="YDM00017"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="ShipmentNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="SHIPMENT_NO" yfc:tableName="YFS_SHIPMENT">
+                    <xsd:documentation>The shipment number. This is a part of the unique key or business key.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Load">
+        <xsd:annotation yfc:tableName="YFS_LOAD">
+            <xsd:documentation>
+                <div>
+				Identifies the Load for which dock appointment is taken.
+				<Validation>
+                        <Condition>
+                            <Code>LoadKey</Code> attribute OR the <Code>LoadNo</Code> attribute must be valid.
+                </Condition>
+                        <Error
+                            Description="Load does not exist in the system." ErrorCode="YDM00029"/>
+                    </Validation>
+                </div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="LoadNo" type="yfctype:DocumentNo" use="optional">
+                <xsd:annotation yfc:columnName="LOAD_NO" yfc:tableName="YFS_LOAD">
+                    <xsd:documentation>The load number.A unique key or business key, which by itself identifies a load.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CapacityConsumption">
+        <xsd:complexType>
+            <xsd:attribute name="ConsumptionDate" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> Specifies the date of Dock appointment.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="EndTime" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> End time of Dock appointment.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="StartTime" type="yfctype:String" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div> Start time of Dock appointment.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

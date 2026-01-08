@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Licensed Materials - Property of IBM
+IBM Sterling Selling And Fulfillment Suite
+(C) Copyright IBM Corp. 2005, 2013 All Rights Reserved.
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ -->
+<!--inspectReceipt Input XML-->
+<InspectReceipt DocumentType="Required" EnterpriseCode="" LocationId=""
+    OrderHeaderKey="" OrderNo="" OrderReleaseKey=""
+    OverrideModificationRules="" ReceivingNode="Required" ReleaseNo=""
+    SellerOrganizationCode="Conditional" ShipNode="Conditional"
+    ShipmentKey="Conditional" ShipmentNo="Conditional" TransactionId="" xmlns="http://www.sterlingcommerce.com/documentation/YFS/inspectReceipt/input">
+    <yfc:doc>
+        <Element EntityName="Shipment"/>
+        <Attributes>
+            <Attribute EntityName="Shipment" Name="DocumentType" NameInEntity="Document_Type">
+                <Description>
+                    <div>
+					Indicates a classification of data on which a particular set of business processes must be applied. In this case, it happens to be the document type of the order document - basically the document type of the orders comprising the shipment. A document type derived from the base document type 0001 - ORDER.
+						<Validation>
+                            <Condition>
+                                <code>DocumentType</code> should not be void.
+							</Condition>
+                            <Error Description="Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="LocationId" Name="LocationId">
+                <Description>
+                    <div>
+					Inspection location for the stock in the receipt.
+						<Validation>
+                            <Condition>The location in which, the stock is being inspected. If passed, the location inventory updates are done for this location else for the receipt's receiving dock, provided the receiving dock has the inventory to be inspected. If passed should be a valid location in the Warehouse.
+							</Condition>
+                            <Error
+                                Description="Location does not exist." ErrorCode="WMS00005"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute DataType="Flag" Name="OverrideModificationRules">
+                <Description> Indicates whether to override the status of order that can be considered for modification. Valid values are Y, N and Void. Void implies N.</Description>
+            </Attribute>
+            <Attribute DataType="String" EntityName="Receipt_Header"
+                Name="ReceivingNode" NameInEntity="Receiving_Node">
+                <Description>
+                    <div>
+						The Node doing the inspection.
+							<Validation>
+                            <Condition>
+                                <code>ReceivingNode</code> should not be void.
+								</Condition>
+                            <Error Description="Field Mandatory." ErrorCode="YCP0046"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+                                <code>ReceivingNode</code> should be a valid node.
+								</Condition>
+                            <Error Description="Invalid Receiving Node." ErrorCode="YFS10371"/>
+                        </Validation>
+                    </div>
+                </Description>
+            </Attribute>
+            <Attribute EntityName="Transaction" Name="TransactionId" NameInEntity="Tranid"/>
+        </Attributes>
+    </yfc:doc>
+    <ReceiptLines>
+        <!--1 or more order line / Order release line-->
+        <FromReceiptLine InventoryStatus="Conditional"
+            ReceiptHeaderKey="Conditional" ReceiptLineNo="Required"
+            ReceiptNo="Conditional" yfc:DTDOccurrence="ZeroOrMany">
+            <yfc:doc>
+                <Element EntityName="Receipt_Line"/>
+                <Attributes>
+                    <Attribute DataType="InventoryStatus" Name="InventoryStatus">
+                        <Description> The Inventory Status of the item in the line in inventory. </Description>
+                    </Attribute>
+                    <Attribute EntityName="Receipt_Line"
+                        Name="ReceiptHeaderKey" NameInEntity="Receipt_Header_Key">
+                        <Description>
+                            <div>
+							Link to <code>YFS_RECEIPT</code> table. Part of business unique key.
+								<Validation>
+                                    <Condition>The input attributes passed should identify a receipt. Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+									</Condition>
+                                    <Error
+                                    Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Receipt_Line"
+                        Name="ReceiptLineNo" NameInEntity="Receipt_Line_No">
+                        <Description>
+                            <div>
+							Part of business unique key of <code>YFS_RECEIPT_LINE</code>. This should point to an existing receipt line. 
+								<Validation>
+                                    <Condition>Receipt Line being inspected must be passed. <code>ReceiptLineNo</code> passed should be a valid receipt line.
+									</Condition>
+                                    <Error
+                                    Description="Invalid receipt line." ErrorCode="YFS10471"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                    <Attribute EntityName="Receipt_Header"
+                        Name="ReceiptNo" NameInEntity="Receipt_No">
+                        <Description>
+                            <div>
+							Unique key or business key, which by itself identifies a receipt along with <code>ReceivingNode</code> and <code>ShipmentKey</code>.
+								<Validation>
+                                    <Condition>The input attributes passed should identify a receipt. Either <code>ReceiptHeaderKey</code> or <code>ReceiptNo</code>, <code>ReceivingNode</code> and <code>ShipmentKey</code> has to be passed to identify the receipt. Errors if not valid.
+									</Condition>
+                                    <Error
+                                    Description="Either ReceiptHeaderKey or ReceiptNo, ReceivingNode and ShipmentKey is mandatory." ErrorCode="OMP10043"/>
+                                </Validation>
+                            </div>
+                        </Description>
+                    </Attribute>
+                </Attributes>
+            </yfc:doc>
+            <ToReceiptLines>
+                <!-- Receipt Line numbers has to be new receipt line numbers or blank. -->
+                <ToReceiptLine BatchNo="" DispositionCode="Required"
+                    DispositionLocation="" FifoNo="" InspectedBy=""
+                    InspectionComments="" InspectionDate=""
+                    InventoryStatus="Conditional" LotAttribute1=""
+                    LotAttribute2="" LotAttribute3="" LotKeyReference=""
+                    LotNumber="" ManufacturingDate="" NetWeight=""
+                    NetWeightUom="" Quantity="Required" ReceiptLineNo=""
+                    RevisionNo="" SerialNo="" ShipByDate="" yfc:DTDOccurrence="OneOrMany">
+                    <yfc:doc>
+                        <Element EntityName="Receipt_Line"/>
+                        <Attributes>
+                            <Attribute EntityName="Receipt_Line"
+                                Name="DispositionCode" NameInEntity="Disposition_Code">
+                                <Description>
+                                    <div>
+                                    <Validation>
+                                    <Condition>It should be passed. 
+												</Condition>
+                                    <Error
+                                    Description="YCP:Field Mandatory." ErrorCode="YCP0046"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute DataType="InventoryStatus" Name="InventoryStatus">
+                                <Description> The Inventory Status of the item in the line in inventory. </Description>
+                            </Attribute>
+                            <Attribute EntityName="Receipt_Line"
+                                Name="Quantity" NameInEntity="Quantity">
+                                <Description>
+                                    <div>
+                                    <Validation>
+                                    <Condition>Quantity should be valid. It should be less than or equal to <Code>FromReceiptLine</Code> quantity.
+												</Condition>
+                                    <Error
+                                    Description="Invalid Quantity breakup for Inspection." ErrorCode="YFS10472"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                            <Attribute EntityName="Receipt_Line"
+                                Name="ReceiptLineNo" NameInEntity="Receipt_Line_No">
+                                <Description>
+                                    <div>
+										Part of business unique key of <code>YFS_RECEIPT_LINE</code>. If specified this should not point to an existing receipt line number. It should be a new line number.
+											<Validation>
+                                    <Condition>Receipt Line exists for the passed <code>ReceiptLineNo</code>. 
+												</Condition>
+                                    <Error
+                                    Description="Receipt line already exists." ErrorCode="YFS10476"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Attribute>
+                        </Attributes>
+                    </yfc:doc>
+                    <SerialDetail SecondarySerial1=""
+                        SecondarySerial2="" SecondarySerial3=""
+                        SecondarySerial4="" SecondarySerial5=""
+                        SecondarySerial6="" SecondarySerial7=""
+                        SecondarySerial8="" SecondarySerial9="">
+                        <yfc:doc>
+                            <Element EntityName="Global_Serial_Num">
+                                <Description>
+                                    <div>
+								Stores details about serial numbers. Since serial number scanning is an overhead if it has to be done at every single move operation in the warehouse for tracking purposes, warehouses typically just record the fact that the serial number has reached the warehouse during the receiving process. Similarly, the serial number is scanned at shipping to record the fact that the serial number has left the warehouse. So, the location at any time is the last location at which it was scanned. Similarly, the ship node on the serial number will reflect the ship node at which it was last scanned.
+									<Validation>
+                                    <Condition>As many secondary serials as per the item's configuration must be passed.
+											</Condition>
+                                    <Error
+                                    Description="Required number of Secondary Serials as per item configuration not passed.." ErrorCode="WMS00202"/>
+                                    </Validation>
+                                    </div>
+                                </Description>
+                            </Element>
+                            <Attributes>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial1" NameInEntity="Secondary_Serial_1">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial2" NameInEntity="Secondary_Serial_2">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial3" NameInEntity="Secondary_Serial_3">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial4" NameInEntity="Secondary_Serial_4">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial5" NameInEntity="Secondary_Serial_5">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial6" NameInEntity="Secondary_Serial_6">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial7" NameInEntity="Secondary_Serial_7">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial8" NameInEntity="Secondary_Serial_8">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                                <Attribute
+                                    EntityName="Global_Serial_Num"
+                                    Name="SecondarySerial9" NameInEntity="Secondary_Serial_9">
+                                    <Description>
+                                    <div>
+										Unique identity for each secondary serial within the serial.
+										</div>
+                                    </Description>
+                                </Attribute>
+                            </Attributes>
+                        </yfc:doc>
+                    </SerialDetail>
+                </ToReceiptLine>
+            </ToReceiptLines>
+        </FromReceiptLine>
+    </ReceiptLines>
+</InspectReceipt>

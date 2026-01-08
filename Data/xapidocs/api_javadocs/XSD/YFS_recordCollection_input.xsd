@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.sterlingcommerce.com/documentation/YFS/recordCollection/input"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:yfc="http://www.sterlingcommerce.com/documentation/YFS/recordCollection/input" xmlns:yfctype="http://www.sterlingcommerce.com/documentation/types">
+    <xsd:annotation yfc:fileName="YFS_recordCollection_input.xsd" yfc:rootElement="RecordCollection">
+        <xsd:appinfo source="yfc:structure">
+            <RecordCollection hasAttributes="Y">
+                <PaymentDetails hasAttributes="Y"/>
+            </RecordCollection>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:import
+        namespace="http://www.sterlingcommerce.com/documentation/types" schemaLocation="datatypes.xsd"/>
+    <xsd:element name="RecordCollection" type="yfc:RecordCollectionXSDType"/>
+    <xsd:complexType name="RecordCollectionXSDType">
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" ref="yfc:PaymentDetails"/>
+        </xsd:all>
+        <xsd:attribute name="ChargeTransactionKey" type="yfctype:Key" use="required">
+            <xsd:annotation yfc:columnName="CHARGE_TRANSACTION_KEY" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+				The primary key of the charge transaction record to process.
+				<Validation>
+                            <Condition>ChargeTransactionKey does not identify an existing record.</Condition>
+                            <Error Description="No record found." ErrorCode="YFS10001"/>
+                        </Validation>
+                        <Validation>
+                            <Condition>
+						Charge transaction record is in <code>
+                                    <b>OPEN</b>
+                                </code> status with a <code>ChargeType</code> 
+						of <code>
+                                    <b>AUTHORIZATION</b>
+                                </code> or <code>
+                                    <b>CHARGE</b>
+                                </code>.
+					</Condition>
+                            <Error Description="Invalid status." ErrorCode="YFS10235"/>
+                        </Validation>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ExecutionDate" use="required">
+            <xsd:annotation yfc:columnName="EXECUTION_DATE" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                <xsd:documentation>
+                    <div>
+					This indicates when the charge request was executed.  If not passed, it defaults to the current date and time.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:union>
+                    <xsd:simpleType>
+                        <xsd:restriction base="yfctype:TimeStamp"/>
+                    </xsd:simpleType>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value=""/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:union>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="bHoldOrderAndRaiseEvent"
+            type="yfctype:Flag" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				When <code>bHoldOrderAndRaiseEvent</code> is passed as <code>
+                            <b>Y</b>
+                        </code>, the <code>CHARGE_FAILED</code> event for the <code>PAYMENT_EXECUTION</code> transaction is raised. The <code>CHARGE_FAILED</code> event updates the payment status to <code>
+                            <b>FAILED_CHARGE</b>
+                        </code> for charge requests or <code>
+                            <b>FAILED_AUTH</b>
+                        </code> for authorization requests.
+				<br/>Valid Values:  <b>
+                            <code>Y</code>
+                        </b> or <b>
+                            <code>N</code>
+                        </b>
+                    </div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="sHoldReason" type="yfctype:Text-100" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <div>
+				Specifies the reason for holding an order. If rule 'Use Deprecated hold Functionality' is set, sHoldReason will be set on the Order if bHoldOrderAndRaiseEvent is set to true. If rule is not set, HoldReason will be treated as HoldType. Order hold type will be added for the passed HoldReason, EnterpriseCode and DocumentType combination. Error is thrown if Hold type does not exist for the combination. Task queue records will be updated for hold type changes. HoldFlag is set to "Y" on order in any case.
+				</div>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="PaymentDetails">
+        <xsd:annotation yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+            <xsd:documentation>
+                <div>
+				Records authorization and charge request details.
+				</div>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="AuditTransactionId"
+                type="yfctype:TransactionID" use="optional">
+                <xsd:annotation yfc:columnName="AUDIT_TRANSACTION_ID" yfc:tableName="YFS_CHARGE_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+							AuditTransactionID is a user defined data. This data will be stored on YFS_ORDER_AUDIT table. Also in case of APIs that cause the creation of a CHARGE_REQUEST, the same field will be stored on YFS_CHARGE_TRANSACTION table.
+						</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthAvs" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_AVS" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+					Indicates whether the authorization request was successful. The value of this attribute can be:
+					<ul>
+                                <code>
+                                    <b>1</b>
+                                </code> - Successful
+					<br/>
+                                <code>
+                                    <b>0</b>
+                                </code> - Declined
+					<br/>
+                                <code>
+                                    <b>-1</b>
+                                </code> - Authorization failed due to system, hardware, software, or processing error</ul>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_CODE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+					The authorization code.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthReturnCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_RETURN_CODE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The authorization return code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthReturnFlag" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_RETURN_FLAG" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The authorization return flag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthReturnMessage"
+                type="yfctype:Text-254" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_RETURN_MESSAGE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>
+                        <div>
+					A message explaining the <code>AuthReturnCode</code>.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthTime" type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="AUTH_TIME" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The authorization time.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizationExpirationDate"
+                type="yfctype:Date" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <code>AuthorizationExpirationDate</code> is passed when making an authorization request to return the authorization expiration on the request.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="AuthorizationID" type="yfctype:Text-20" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+                            <code>AuthorizationID</code> is passed when making an authorization request to return the authorization ID on the request.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="CVVAuthCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="CVV_AUTH_CODE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The CVV authorization code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplayPaymentReference1"
+                type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="DISPLAY_PAYMENT_REF1" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>
+							Sets the <code>DisplayPaymentReference1</code> attribute on the charge transaction's payment method. 
+							If it is not passed, but the <code>PaymentReference1</code> attribute is, this attribute will be internally 
+							defaulted to the last 4 characters of <code>PaymentReference1</code>.
+						<Validation>
+                                <Condition>Payment method cannot belong to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT.</Condition>
+                                <Error
+                                    Description="Cannot update payment method attributes when payment type belongs to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="DisplaySvcNo" type="yfctype:Text-4" use="optional">
+                <xsd:annotation yfc:columnName="DISPLAY_SVC_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>
+							Sets the <code>DisplaySvcNo</code> attribute on the charge transaction's payment method. 
+							If it is not passed, but the <code>SvcNo</code> attribute is, this attribute will be internally 
+							defaulted to the last 4 characters of <code>SvcNo</code>.
+						<Validation>
+                                <Condition>Payment method cannot belong to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT.</Condition>
+                                <Error
+                                    Description="Cannot update payment method attributes when payment type belongs to payment type groups CREDIT_CARD or CUSTOMER_ACCOUNT." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InternalReturnCode"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="INTERNAL_RETURN_CODE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The internal return code.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InternalReturnFlag"
+                type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="INTERNAL_RETURN_FLAG" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The internal return flag.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="InternalReturnMessage"
+                type="yfctype:Text-255" use="optional">
+                <xsd:annotation yfc:columnName="INTERNAL_RETURN_MESSAGE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The internal return message.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference1"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE1" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>Sets the PaymentReference1 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference2"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE2" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>Sets the PaymentReference2 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="PaymentReference3"
+                type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="PAYMENT_REFERENCE3" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>Sets the PaymentReference3 attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="ProcessedAmount" type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					The amount to be processed in this authorization or charge request. 
+					<br/>
+                            <code>ProcessedAmount</code>updates the charge transaction record with the authorized or charged amount passed in this attribute. 
+					<br/>If ProcessedAmount is passed, it is set as the <code>AuthAmount</code> of the credit card transaction record.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference1" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE1" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The reference 1.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="Reference2" type="yfctype:Text-100" use="optional">
+                <xsd:annotation yfc:columnName="REFERENCE2" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The reference 2.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestAmount" type="yfctype:Money" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					If <code>RequestAmount</code> is passed, it is set as the <code>TranAmount</code> of the credit card transaction record.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestID" type="yfctype:Text-254" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <div>
+					The charge request ID, generated by the external system.
+					</div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="RequestId" type="yfctype:Text-255" use="optional">
+                <xsd:annotation yfc:columnName="REQUEST_ID" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The request identifier returned by the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="SvcNo" type="yfctype:Text-1000" use="optional">
+                <xsd:annotation yfc:columnName="SVC_NO" yfc:tableName="YFS_PAYMENT">
+                    <xsd:documentation>
+                        <div>Sets the SvcNo attribute on the charge transaction's payment method.
+						<Validation>
+                                <Condition>This payment method's payment type cannot belong to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when the payment type belongs to the CREDIT_CARD or CUSTOMER_ACCOUNT payment type groups." ErrorCode="OMP11053"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>Payment method cannot have multiple charge transactions.</Condition>
+                                <Error
+                                    Description="Cannot update payment method when it has multiple charge transaction records." ErrorCode="OMP11054"/>
+                            </Validation>
+                            <Validation>
+                                <Condition>
+								Value cannot be changed if there exists a payment method with the same values for these attributes:
+								OrderHeaderKey, PaymentType, CustomerAccountNo, CreditCardType, CreditCardName, CreditCardNo, 
+								CreditCardExpDate, PaymentReference1, PaymentReference2, PaymentReference3, SvcNo
+							</Condition>
+                                <Error
+                                    Description="A payment method already exists with these attribute values." ErrorCode="OMP11055"/>
+                            </Validation>
+                        </div>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TranRequestTime"
+                type="yfctype:TimeStamp" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_REQUEST_TIME" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The time at which the transaction request was made.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TranReturnCode" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_RETURN_CODE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The return code for the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TranReturnFlag" type="yfctype:Text-20" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_RETURN_FLAG" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The flag returned by the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TranReturnMessage"
+                type="yfctype:Text-255" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_RETURN_MESSAGE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The message returned by the transaction.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="TranType" type="yfctype:Text-40" use="optional">
+                <xsd:annotation yfc:columnName="TRAN_TYPE" yfc:tableName="YFS_CREDIT_CARD_TRANSACTION">
+                    <xsd:documentation>The transaction type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
